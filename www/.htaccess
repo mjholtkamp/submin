@@ -1,0 +1,14 @@
+AddHandler mod_python .py
+PythonHandler submerge
+PythonAutoReload on
+PythonDebug On
+
+### RewriteRules ###
+RewriteEngine on
+RewriteBase     /
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ submerge.py/$1
+
+RewriteRule ^/?$ submerge.py
+
