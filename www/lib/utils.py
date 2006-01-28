@@ -5,6 +5,8 @@ def mimport(moduleName):
 	try:
 		from mod_python import apache
 		module = apache.import_module(moduleName, autoreload=True)
+# TODO: remove
+		reload(module)
 	except ImportError:
 		module = __import__(moduleName, globals(), locals(), \
 				moduleName.split('.')[:-1])

@@ -1,5 +1,6 @@
 AddHandler mod_python .py
 PythonHandler submerge
+PythonOption SubmergeEnv /home/avaeq/public_html/submerge/submerge.conf
 PythonAutoReload on
 PythonDebug On
 

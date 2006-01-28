@@ -1,2 +1,2 @@
 def handler(input):
-	print 'hoi'
+	print input.req.get_options()
