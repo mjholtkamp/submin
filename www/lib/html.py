@@ -15,7 +15,7 @@ def header(title = None, scripts = [], css = []):
 			media="screen" />'''% iif(title, ' - %s' % title, ' '))
 
 	for sheet in css:
-		html.write('''\t\t<link rel="stylesheet" type="text/css" href="/media/css/%s.css"
+		html.write('''\t\t<link rel="stylesheet" type="text/css" href="%s.css"
 		media="screen" />''' % sheet)
 
 	for script in scripts:

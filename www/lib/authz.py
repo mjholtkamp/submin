@@ -13,11 +13,19 @@ class MemberExistsError(Exception):
 class UnknownMemberError(Exception):
 	pass
 
+class InvalidRepositoryError(Exception):
+	pass
+
+
 class Authz:
 	def __init__(self, authz_file):
 		self.authz_file = authz_file
 		self.parser = ConfigParser.ConfigParser()
 		self.parser.readfp(open(self.authz_file))
+
+		# Silently create groups section if it does not exist:
+		if not self.parser.has_section('groups'):
+			self.parser.add_section('groups')
 
 	def save(self):
 		"""Saves current authz configuration"""
@@ -34,17 +42,14 @@ class Authz:
 					sections.append(section.split(':', 1))
 		return sections
 
-	def currentPermissions(self, repository, path):
-		"""Returns the current permissions for the repository:path entry"""
+	def createSectionName(self, repository, path):
 		if repository is not None:
 			path = '%s:%s' % (repository, path)
 		elif path != '/':
-			return []
-
-		return self.parser.items(path)
+			raise InvalidRepositoryError, (repository, path)
+		return path
 
 	# Group methods
-	# TODO: if no group section, silently create it.
 	def groups(self):
 		"""Returns all the groups"""
 		try:
@@ -92,6 +97,26 @@ class Authz:
 		self.parser.set('groups', group, ', '.join(members))
 		self.save()
 
+	# Permission methods
+	def permissions(self, repository, path):
+		"""Returns the current permissions for the repository:path entry"""
+		if repository is not None:
+			path = '%s:%s' % (repository, path)
+		elif path != '/':
+			return []
+
+		return self.parser.items(path)
+
+	def setPermission(self, repository, path, member, permission=''):
+		"""Sets the permisson on repository:path for member.
+		If member starts with a '@' it is a group, if member == '*' then
+		it matches all members."""
+
+		section = self.createSectionName(repository, path)
+		if not self.parser.has_section(section):
+			self.parser.add_section(section)
+		self.parser.set(section, member, permission)
+		self.save()
 
 if __name__ == '__main__':
 	tmp_conf = "submerge.example.conf"
@@ -106,7 +131,7 @@ if __name__ == '__main__':
 	print 'authz.paths()\n\t', authz.paths()
 	repos, path = authz.paths()[-1]
 	print 'permissions submerge:/\n\t', \
-			authz.currentPermissions(repos, path)
+			authz.permissions(repos, path)
 	print 'permissions /\n\t', authz.currentPermissions(None, '/')
 	print 'groups\n\t', authz.groups()
 	print 'devel members\n\t', authz.members('devel')
@@ -119,6 +144,10 @@ if __name__ == '__main__':
 	print 'foo members\n\t', authz.members('foo')
 	authz.removeMember('foo', 'avaeq')
 	print 'foo members\n\t', authz.members('foo')
+
+	authz.setPermission('foo', '/', 'avaeq', 'r')
+	print 'permissions foo:/\n\t', \
+			authz.currentPermissions('foo', '/')
 
 	try:
 		authz.addGroup('foo')
