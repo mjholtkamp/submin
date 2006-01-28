@@ -1,5 +1,6 @@
 from lib.utils import mimport
 html = mimport('lib.html')
+mod_htpasswd = mimport('lib.htpasswd')
 
 def printprofile():
 	print '''
@@ -21,6 +22,8 @@ def handleinput(input):
 			print 'passwords do not match!'
 		else:
 			print 'you want to change your password to: ' + input.post['password']
+			changepassword(input)
+			print 'yoshi~'
 			return
 	else:
 		if input.post.has_key('password') or input.post.has_key('password2') or\
@@ -28,6 +31,20 @@ def handleinput(input):
 			print 'you need to fill in every field'
 
 	printprofile()
+
+def changepassword(input):
+	pw = input.req.get_basic_auth_pw()
+	user = input.req.user
+	password = input.post['password']
+	oldpassword = input.post['oldpassword']
+	htpasswd = mod_htpasswd.HTPasswd('/usr/local/submerge/.htpasswd')
+	print 'user: ' + str(user) + ' password: ' + password + '<br />'
+	if htpasswd.check(user, oldpassword):
+		print 'correct!<br />'
+		htpasswd.change(user, password)
+		htpasswd.flush()
+	else:
+		print 'incorrect!<br />'
 
 
 def handler(input):
