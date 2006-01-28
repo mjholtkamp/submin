@@ -40,8 +40,8 @@ class Site:
 		self.req = req
 		self.buffer = Buffer()
 		sys.stdout = self.buffer
-# TODO
-		log.open('directory/logfile.log')
+
+		#log.open(open('/usr/local/submerge/log/exceptions.log', 'a+'))
 		self.loglevels = dict(
 				ex=log.addlevel('Exception'),
 				)
@@ -81,9 +81,7 @@ class Site:
 					self.get = get; self.post = post; self.req = req;
 					self.pathInfo = pathInfo;
 
-			try:
-				returnValue = func(\
-						Input(self.get, self.post, self.req, self.pathInfo))
+			returnValue = func(Input(self.get, self.post, self.req, self.pathInfo))
 			if not str(self.buffer):
 				return apache.HTTP_NOT_FOUND
 
@@ -105,23 +103,23 @@ class Site:
 			if not str(url):
 				url =  '/'
 			util.redirect(self.req, str(url))
-		except Exception, e:
+		#except Exception, e:
 			# Get the traceback and log it to file
-			import traceback
-			buffer = Buffer()
-			traceback.print_exc(file=buffer)
-			log.log(self.ip, str(buffer), self.loglevels['ex'])
+			#import traceback
+			#buffer = Buffer()
+			#traceback.print_exc(file=buffer)
+			#log.log(self.ip, str(buffer), self.loglevels['ex'])
 
 			# Output a friendly message
-			buffer = Buffer()
-			buffer.write(
-					html.header('Error'),
-					'''<h1>Error</h1>
-					<p>An error occurred, and the error message was logged.
-					If you'd like to notify the webmaster, mail him at
-					webmaster (at) avaeq.nl</p>''',
-					html.footer())
-			self.req.write(str(buffer))
+			#buffer = Buffer()
+			#buffer.write(
+			#		html.header('Error'),
+			#		'''<h1>Error</h1>
+			#		<p>An error occurred, and the error message was logged.
+			#		If you'd like to notify the webmaster, mail him at
+			#		webmaster (at) avaeq.nl</p>''',
+			#		html.footer())
+			#self.req.write(str(buffer))
 			return apache.OK
 
 	def getPageMod(self):
