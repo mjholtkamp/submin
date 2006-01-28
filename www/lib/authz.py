@@ -98,14 +98,17 @@ class Authz:
 		self.save()
 
 	# Permission methods
-	def permissions(self, repository, path):
+	def permissions(self, repository, path, member=None):
 		"""Returns the current permissions for the repository:path entry"""
 		if repository is not None:
 			path = '%s:%s' % (repository, path)
 		elif path != '/':
 			return []
 
-		return self.parser.items(path)
+		if member is None:
+			return self.parser.items(path)
+
+		return self.parser.get(path, member)
 
 	def setPermission(self, repository, path, member, permission=''):
 		"""Sets the permisson on repository:path for member.
