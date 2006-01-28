@@ -38,7 +38,7 @@ class Authz:
 			return []
 
 if __name__ == '__main__':
-	tmp_conf = "/home/avaeq/public_html/submerge/submerge.conf"
+	tmp_conf = "submerge.example.conf"
 	cp = ConfigParser.ConfigParser()
 	cp.readfp(open(tmp_conf))
 
