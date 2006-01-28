@@ -33,6 +33,10 @@ def handleinput(input):
 def changepassword(input):
 	pw = input.req.get_basic_auth_pw()
 	user = input.req.user
+	if user is None:
+		print 'Nobody is logged in!'
+		return
+	
 	password = input.post['password']
 	oldpassword = input.post['oldpassword']
 	htpasswd = mod_htpasswd.HTPasswd('/usr/local/submerge/.htpasswd')
