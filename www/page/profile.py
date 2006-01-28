@@ -21,9 +21,7 @@ def handleinput(input):
 		if input.post['password'] != input.post['password2']:
 			print 'passwords do not match!'
 		else:
-			print 'you want to change your password to: ' + input.post['password']
 			changepassword(input)
-			print 'yoshi~'
 			return
 	else:
 		if input.post.has_key('password') or input.post.has_key('password2') or\
@@ -38,18 +36,18 @@ def changepassword(input):
 	password = input.post['password']
 	oldpassword = input.post['oldpassword']
 	htpasswd = mod_htpasswd.HTPasswd('/usr/local/submerge/.htpasswd')
-	print 'user: ' + str(user) + ' password: ' + password + '<br />'
 	if htpasswd.check(user, oldpassword):
-		print 'correct!<br />'
 		htpasswd.change(user, password)
 		htpasswd.flush()
+		print 'Password changed<br />'
 	else:
-		print 'incorrect!<br />'
+		print 'Old password incorrect!<br />'
 
 
 def handler(input):
 	print html.header('profile')
 
+	print '<a href=".">main page</a><br />'
 	handleinput(input)
 
 	print html.footer()
