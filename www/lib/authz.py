@@ -61,7 +61,7 @@ class Authz:
 		"""Returns all the members for a group"""
 		try:
 			members = self.parser.get('groups', group).split(',')
-			return [m.strip() for m in members]
+			return [m.strip() for m in members if m.strip()]
 		except ConfigParser.NoOptionError:
 			raise UnknownGroupError, group
 

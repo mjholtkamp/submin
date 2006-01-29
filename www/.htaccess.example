@@ -6,7 +6,7 @@ PythonDebug On
 
 ### RewriteRules ###
 RewriteEngine on
-#RewriteBase     /
+RewriteBase     /path/to/www/dir/ # don't forget the trailing /
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ submerge.py/$1
