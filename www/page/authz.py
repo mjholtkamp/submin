@@ -2,6 +2,7 @@ import urllib
 from lib.utils import mimport
 iif = mimport('lib.utils').iif
 html = mimport('lib.html')
+exceptions = mimport('lib.exceptions')
 mod_authz = mimport('lib.authz')
 
 def _getauthz(input):
@@ -17,6 +18,14 @@ def _getauthz(input):
 
 	return mod_authz.Authz(authz_file)
 
+def _base(input):
+	req = input.req
+	filename = req.uri
+	if req.path_info:
+		index = req.uri.rindex(req.path_info)
+		filename = filename[:index]
+	return filename
+
 def _select(user, permission):
 	checked = ' selected="selected"'
 	select = '<select name="%s">' % user
@@ -27,9 +36,46 @@ def _select(user, permission):
 	return select
 
 def handler(input):
+	msg = None
+	if input.get.has_key('msg'):
+		msg = input.get['msg'][-1]
+
 	authz = _getauthz(input)
 
 	print html.header('Permissions')
+	if msg:
+		print '<p class="msg">%s</p>' % msg
+	print '''<h2>Groups</h2>
+<table>
+	<thead>
+		<td></td>
+		<th style="width: 150px" align="left">Group</th>
+		<th align="left">Members</th>
+	</thead>
+	<form action="%s/authz/delgroups" method="post" onsubmit="return confirm('Do you really want to delete these groups? (there is no undo!)')">
+''' % _base(input)
+	groups = authz.groups()
+	groups.sort()
+	for group in groups:
+		members = authz.members(group)
+		members.sort()
+		print '''\t<tr>
+		<td><input type="checkbox" name="%s" value="1" /></td>
+		<td><a href="%s/group?group=%s">%s</a></td>
+		<td>%s</td>
+	</tr>''' % \
+		(group, _base(input), urllib.quote(group), group, 
+		', '.join(members))
+
+	print '''
+	<tr>
+		<td colspan="3" align="right">
+			<input type="submit" value="Delete checked groups" />
+		</td>
+	</tr>
+	</form>
+</table>'''
+
 	print '<h2>Permissions</h2>'
 	print '<table>'
 	print '\t<thead>'
@@ -40,7 +86,7 @@ def handler(input):
 	paths = authz.paths()
 	paths.sort()
 	for repos, path in paths:
-		print '<form action="./authz/save" method="post">'
+		print '<form action="%s/authz/save" method="post">' % _base(input)
 		print '\t<input type="hidden" name="path" value="%s%s" />' % \
 				(iif(repos is not None, str(repos) + ':', ''), 
 				urllib.quote(path))
@@ -53,9 +99,7 @@ def handler(input):
 		permissions.sort()
 		for user, permission in permissions:
 			print '\t<tr>'
-			print '\t\t<td><a href="./authz/edit/?repos=%s&path=%s&user=%s">%s</a></td>' % \
-					(urllib.quote(str(repos)), urllib.quote(path), 
-							urllib.quote(user), user)
+			print '\t\t<td>%s</td>' % user
 			print '\t\t<td>%s</td>' % _select(user, permission)
 			print '\t</tr>'
 		print '\t<tr>'
@@ -83,5 +127,14 @@ def save(input):
 				value = ' '
 			authz.setPermission(repos, path, key, value)
 
-	exceptions = mimport('lib.exceptions')
-	raise exceptions.Redirect, '../authz'
+	raise exceptions.Redirect, '%s/authz' % _base(input)
+
+def delgroups(input):
+	authz = _getauthz(input)
+	for group in input.post:
+		try:
+			authz.removeGroup(group)
+		except mod_authz.UnknownGroupError:
+			pass
+
+	raise exceptions.Redirect, '%s/authz?msg=Groups+deleted' % _base(input)
