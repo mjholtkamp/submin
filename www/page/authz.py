@@ -13,15 +13,14 @@ def _getauthz(input):
 	try:
 		authz_file = cp.get('svn', 'authz_file')
 	except ConfigParser.NoSectionError, e:
-		print e, 'in', SubmergeEnv
-		return
+		raise Exception, str(e) + 'in' + str(SubmergeEnv)
 
 	return mod_authz.Authz(authz_file)
 
 def _select(user, permission):
 	checked = ' selected="selected"'
-	select = '<select name="%s">' % urllib.quote(user)
-	select += '\n\t\t\t<option value=""%s>-</option>' % iif(permission == '', checked, '')
+	select = '<select name="%s">' % user
+	select += '\n\t\t\t<option value="-"%s>-</option>' % iif(permission == '', checked, '')
 	select += '\n\t\t\t<option value="r"%s>r</option>' % iif(permission == 'r', checked, '')
 	select += '\n\t\t\t<option value="rw"%s>rw</option>' % iif(permission == 'rw', checked, '')
 	select += '\n\t\t</select>'
@@ -41,9 +40,9 @@ def handler(input):
 	paths = authz.paths()
 	paths.sort()
 	for repos, path in paths:
-		print '<form action="./authz/edit" method="post">'
+		print '<form action="./authz/save" method="post">'
 		print '\t<input type="hidden" name="path" value="%s%s" />' % \
-				(iif(repos is not None, urllib.quote(str(repos) + ':'), ''), 
+				(iif(repos is not None, str(repos) + ':', ''), 
 				urllib.quote(path))
 		print '\t<tr>'
 		print '\t\t<th colspan="2" align="left" ' +\
@@ -69,6 +68,20 @@ def handler(input):
 
 	print html.footer()
 
-def edit(input):
+def save(input):
 	authz = _getauthz(input)
-	pass
+	repos = None
+	path = input.post['path']
+	if ':' in path:
+		repos, path = path.split(':', 1)
+	for key, value in input.post.iteritems():
+		if key != 'path':
+			if value not in ('-', 'r', 'rw'):
+				print 'Wrong permission:', value
+				return
+			if value == '-':
+				value = ' '
+			authz.setPermission(repos, path, key, value)
+
+	exceptions = mimport('lib.exceptions')
+	raise exceptions.Redirect, '../authz'
