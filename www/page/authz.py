@@ -43,8 +43,10 @@ def handler(input):
 	authz = _getauthz(input)
 
 	print html.header('Permissions')
+
 	if msg:
 		print '<p class="msg">%s</p>' % msg
+
 	print '''<h2>Groups</h2>
 <table>
 	<thead>
@@ -92,8 +94,11 @@ def handler(input):
 </table>''' % _base(input)
 
 	print '<h2>Permissions</h2>'
-	print '<table>'
+	print '<p><a href="%s/authz/addpath">Add path</a></p>' % _base(input)
+
+	print '<table style="border-collapse: collapse">'
 	print '\t<thead>'
+	print '\t\t<td></td>'
 	print '\t\t<th style="width: 150px" align="left">user / group</th>'
 	print '\t\t<th align="left">Permission</th>'
 	print '\t</thead>'
@@ -101,23 +106,33 @@ def handler(input):
 	paths = authz.paths()
 	paths.sort()
 	for repos, path in paths:
+		rpath = '%s%s' % (iif(repos, str(repos) + ':', ''), path)
+
 		print '<form action="%s/authz/saveperm" method="post">' % _base(input)
 		print '\t<input type="hidden" name="path" value="%s%s" />' % \
 				(iif(repos is not None, str(repos) + ':', ''), 
 				urllib.quote(path))
-		print '\t<tr>'
-		print '\t\t<th colspan="2" align="left" ' +\
-			'style="border-top: 1px solid #000">%s - %s</th>' % \
-			(iif(repos, repos, ''), path)
+		print '\t<tr style="border-top: 1px solid #000">'
+		print '\t\t<td></td>'
+		print '\t\t<th align="left">%s%s</th>' % \
+			(iif(repos, str(repos) + ':', ''), path)
+		print '''\t\t<td>
+		<a href="%s/authz/delpath?path=%s" onclick="return confirm('Do you really want to delete %s? (There is no undo)')" title="Delete">[X]</a>
+		| <a href="%s/authz/addperm?path=%s" title="Add permission">[+]</a>
+		</td>''' % \
+				(_base(input), urllib.quote(rpath), rpath, _base(input), 
+				urllib.quote(rpath))
 		print '\t</tr>'
 		permissions = authz.permissions(repos, path)
 		permissions.sort()
 		for user, permission in permissions:
 			print '\t<tr>'
+			print '\t\t<td><input type="checkbox" title="Delete this user from %s" name="del_%s" value="1" /></td>' % (rpath, user)
 			print '\t\t<td>%s</td>' % user
 			print '\t\t<td>%s</td>' % _select(user, permission)
 			print '\t</tr>'
 		print '\t<tr>'
+		print '\t\t<td></td>'
 		print '\t\t<td colspan="2" align="right">'
 		print '\t\t\t<input type="submit" value="Save %s%s" />' %\
 				(iif(repos is not None, str(repos) + ':', ''), path)
@@ -134,15 +149,79 @@ def saveperm(input):
 	if ':' in path:
 		repos, path = path.split(':', 1)
 	for key, value in input.post.iteritems():
-		if key != 'path':
+		if key != 'path' and not key.startswith('del'):
 			if value not in ('-', 'r', 'rw'):
 				print 'Wrong permission:', value
 				return
 			if value == '-':
 				value = ' '
 			authz.setPermission(repos, path, key, value)
+		elif key.startswith('del'):
+			member = key
+			authz.removePermission(repos, path, member[4:])
 
-	raise exceptions.Redirect, '%s/authz' % _base(input)
+	raise exceptions.Redirect, '%s/authz?msg=Permissions+saved' % _base(input)
+
+def addperm(input):
+	authz = _getauthz(input)
+	if input.get.has_key('path'):
+		path = input.get['path'][-1]
+		print html.header('Adding permission to %s' % path)
+		print '<h2>Adding permission to %s</h2>' % path
+		print '<p>Back to <a href="%s/authz">Authz management</a></p>' % _base(input)
+		print '''<form action="%s/authz/addperm" method="post" name="perm">
+	<input type="hidden" name="path" value="%s" />
+	<input type="text" name="member" /> %s <input type="submit" value="Add user" />
+</form>''' % (_base(input), path, _select('newuser', '-'))
+
+		print '<h2>Groups <small>(For your adding convenience)</small>:</h2><ul>'
+		groups = authz.groups()
+		groups.sort()
+		for group in groups:
+			print '''
+		<li><a href="#" onclick="document.perm.member.value='@%s'; return false">%s</a></li>''' %\
+				(group, group)
+		print '</ul>'
+
+		print html.footer()
+	elif input.post.has_key('member'):
+		repos = None
+		path = input.post['path']
+		if ':' in path:
+			repos, path = path.split(':', 1)
+
+		member = input.post['member']
+		permission = input.post['newuser']
+		if permission not in ('-', 'r', 'rw'):
+			print 'Wrong permission:', value
+			return
+		if permission == '-':
+			permission = ' '
+		authz.setPermission(repos, path, member, permission)
+		raise exceptions.Redirect, '%s/authz?msg=Permissions+added' % _base(input)
+
+def delpath(input):
+	authz = _getauthz(input)
+	if input.get.has_key('path'):
+		repos = None
+		path = input.get['path'][-1]
+		if ':' in path:
+			repos, path = path.split(':', 1)
+		authz.removePath(repos, path)
+	raise exceptions.Redirect, '%s/authz?msg=Path+deleted' % _base(input)
+
+def addpath(input):
+	authz = _getauthz(input)
+	if not input.post.has_key('path'):
+		print html.header('Adding path')
+		print '<h2>Adding path</h2>'
+		print '<p>Back to <a href="%s/authz">Authz management</a></p>' % _base(input)
+		print 'Something with browsing the svn-tree :)'
+		print html.footer()
+	elif input.post.has_key('path'):
+		# something with authz.addPath(repos, path)
+		raise exceptions.Redirect, '%s/authz?msg=Path+adding+not+implemented' % _base(input)
+
 
 def delgroups(input):
 	authz = _getauthz(input)

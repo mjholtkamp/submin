@@ -16,6 +16,9 @@ class UnknownMemberError(Exception):
 class InvalidRepositoryError(Exception):
 	pass
 
+class PathExistsError(Exception):
+	pass
+
 
 class Authz:
 	def __init__(self, authz_file):
@@ -48,6 +51,19 @@ class Authz:
 		elif path != '/':
 			raise InvalidRepositoryError, (repository, path)
 		return path
+
+
+	def removePath(self, repository, path):
+		section = self.createSectionName(repository, path)
+		self.parser.remove_section(section)
+		self.save()
+
+	def addPath(self, repository, path):
+		section = self.createSectionName(repository, path)
+		if section in self.parser.sections():
+			raise PathExistsError, (member, group)
+		self.parser.add_section(section)
+		self.save()
 
 	# Group methods
 	def groups(self):
@@ -120,6 +136,13 @@ class Authz:
 			self.parser.add_section(section)
 		self.parser.set(section, member, permission)
 		self.save()
+	
+	def removePermission(self, repository, path, member):
+		"""Removes the members permission from the repository:path"""
+		section = self.createSectionName(repository, path)
+		self.parser.remove_option(section, member)
+		self.save()
+
 
 if __name__ == '__main__':
 	tmp_conf = "submerge.example.conf"
