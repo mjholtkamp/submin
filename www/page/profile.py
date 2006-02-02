@@ -1,5 +1,4 @@
 from lib.utils import mimport
-html = mimport('lib.html')
 mod_htpasswd = mimport('lib.htpasswd')
 
 def printprofile():
@@ -60,8 +59,8 @@ def changepassword(input):
 
 
 def handler(input):
-	print html.header('profile')
+	print input.html.header('profile')
 
 	handleinput(input)
 
-	print html.footer()
+	print input.html.footer()

@@ -1,7 +1,7 @@
 import urllib
 from lib.utils import mimport
 iif = mimport('lib.utils').iif
-html = mimport('lib.html')
+#html = mimport('lib.html')
 exceptions = mimport('lib.exceptions')
 mod_authz = mimport('lib.authz')
 
@@ -17,14 +17,6 @@ def _getauthz(input):
 		raise Exception, str(e) + 'in' + str(SubmergeEnv)
 
 	return mod_authz.Authz(authz_file)
-
-def _base(input):
-	req = input.req
-	filename = req.uri
-	if req.path_info:
-		index = req.uri.rindex(req.path_info)
-		filename = filename[:index]
-	return filename
 
 def _select(user, permission):
 	checked = ' selected="selected"'
@@ -42,7 +34,7 @@ def handler(input):
 
 	authz = _getauthz(input)
 
-	print html.header('Permissions')
+	print input.html.header('Permissions')
 
 	if msg:
 		print '<p class="msg">%s</p>' % msg
@@ -55,7 +47,7 @@ def handler(input):
 		<th align="left">Members</th>
 	</thead>
 	<form action="%s/authz/delgroups" method="post" onsubmit="return confirm('Do you really want to delete these groups? (there is no undo!)')">
-''' % _base(input)
+''' % input.base
 	groups = authz.groups()
 	groups.sort()
 	for group in groups:
@@ -66,7 +58,7 @@ def handler(input):
 		<td><a href="%s/authz/group?group=%s">%s</a></td>
 		<td>%s</td>
 	</tr>''' % \
-		(group, _base(input), urllib.quote(group), group, 
+		(group, input.base, urllib.quote(group), group, 
 		', '.join(members))
 
 	print '''
@@ -91,10 +83,10 @@ def handler(input):
 		</td>
 	</tr>
 	</form>
-</table>''' % _base(input)
+</table>''' % input.base
 
 	print '<h2>Permissions</h2>'
-	print '<p><a href="%s/authz/addpath">Add path</a></p>' % _base(input)
+	print '<p><a href="%s/authz/addpath">Add path</a></p>' % input.base
 
 	print '<table style="border-collapse: collapse">'
 	print '\t<thead>'
@@ -108,7 +100,7 @@ def handler(input):
 	for repos, path in paths:
 		rpath = '%s%s' % (iif(repos, str(repos) + ':', ''), path)
 
-		print '<form action="%s/authz/saveperm" method="post">' % _base(input)
+		print '<form action="%s/authz/saveperm" method="post">' % input.base
 		print '\t<input type="hidden" name="path" value="%s%s" />' % \
 				(iif(repos is not None, str(repos) + ':', ''), 
 				urllib.quote(path))
@@ -120,7 +112,7 @@ def handler(input):
 		<a href="%s/authz/delpath?path=%s" onclick="return confirm('Do you really want to delete %s? (There is no undo)')" title="Delete">[X]</a>
 		| <a href="%s/authz/addperm?path=%s" title="Add permission">[+]</a>
 		</td>''' % \
-				(_base(input), urllib.quote(rpath), rpath, _base(input), 
+				(input.base, urllib.quote(rpath), rpath, input.base, 
 				urllib.quote(rpath))
 		print '\t</tr>'
 		permissions = authz.permissions(repos, path)
@@ -140,7 +132,7 @@ def handler(input):
 		print '</form>'
 	print '</table>'
 
-	print html.footer()
+	print input.html.footer()
 
 def saveperm(input):
 	authz = _getauthz(input)
@@ -160,19 +152,18 @@ def saveperm(input):
 			member = key
 			authz.removePermission(repos, path, member[4:])
 
-	raise exceptions.Redirect, '%s/authz?msg=Permissions+saved' % _base(input)
+	raise exceptions.Redirect, '%s/authz?msg=Permissions+saved' % input.base
 
 def addperm(input):
 	authz = _getauthz(input)
 	if input.get.has_key('path'):
 		path = input.get['path'][-1]
-		print html.header('Adding permission to %s' % path)
+		print input.html.header('Adding permission to %s' % path)
 		print '<h2>Adding permission to %s</h2>' % path
-		print '<p>Back to <a href="%s/authz">Authz management</a></p>' % _base(input)
 		print '''<form action="%s/authz/addperm" method="post" name="perm">
 	<input type="hidden" name="path" value="%s" />
 	<input type="text" name="member" /> %s <input type="submit" value="Add user" />
-</form>''' % (_base(input), path, _select('newuser', '-'))
+</form>''' % (input.base, path, _select('newuser', '-'))
 
 		print '<h2>Groups <small>(For your adding convenience)</small>:</h2><ul>'
 		groups = authz.groups()
@@ -183,7 +174,7 @@ def addperm(input):
 				(group, group)
 		print '</ul>'
 
-		print html.footer()
+		print input.html.footer()
 	elif input.post.has_key('member'):
 		repos = None
 		path = input.post['path']
@@ -198,7 +189,7 @@ def addperm(input):
 		if permission == '-':
 			permission = ' '
 		authz.setPermission(repos, path, member, permission)
-		raise exceptions.Redirect, '%s/authz?msg=Permissions+added' % _base(input)
+		raise exceptions.Redirect, '%s/authz?msg=Permissions+added' % input.base
 
 def delpath(input):
 	authz = _getauthz(input)
@@ -208,19 +199,18 @@ def delpath(input):
 		if ':' in path:
 			repos, path = path.split(':', 1)
 		authz.removePath(repos, path)
-	raise exceptions.Redirect, '%s/authz?msg=Path+deleted' % _base(input)
+	raise exceptions.Redirect, '%s/authz?msg=Path+deleted' % input.base
 
 def addpath(input):
 	authz = _getauthz(input)
 	if not input.post.has_key('path'):
-		print html.header('Adding path')
+		print input.html.header('Adding path')
 		print '<h2>Adding path</h2>'
-		print '<p>Back to <a href="%s/authz">Authz management</a></p>' % _base(input)
 		print 'Something with browsing the svn-tree :)'
-		print html.footer()
+		print input.html.footer()
 	elif input.post.has_key('path'):
 		# something with authz.addPath(repos, path)
-		raise exceptions.Redirect, '%s/authz?msg=Path+adding+not+implemented' % _base(input)
+		raise exceptions.Redirect, '%s/authz?msg=Path+adding+not+implemented' % input.base
 
 
 def delgroups(input):
@@ -231,7 +221,7 @@ def delgroups(input):
 		except mod_authz.UnknownGroupError:
 			pass
 
-	raise exceptions.Redirect, '%s/authz?msg=Groups+deleted' % _base(input)
+	raise exceptions.Redirect, '%s/authz?msg=Groups+deleted' % input.base
 
 def group(input):
 	authz = _getauthz(input)
@@ -239,8 +229,7 @@ def group(input):
 	members = authz.members(group)
 	members.sort()
 
-	print html.header('Members of group %s' % group)
-	print '<p>Back to <a href="%s/authz">Authz management</a></p>' % _base(input)
+	print input.html.header('Members of group %s' % group)
 
 	if input.get.has_key('msg'):
 		print '<p class="msg">%s</p>' % input.get['msg'][-1]
@@ -250,7 +239,7 @@ def group(input):
 	<form action="%s/authz/delmembers" method="post">
 		<input type="hidden" name="group" value="%s" />
 		<ul>
-	''' % (_base(input), group)
+	''' % (input.base, group)
 	for member in members:
 		print '\t\t\t<li><input type="checkbox" name="%s" value="1" /> %s</li>' %\
 			(member, member)
@@ -263,8 +252,8 @@ def group(input):
 		<input type="hidden" name="group" value="%s" />
 		<input type="text" name="member" />
 		<input type="submit" value="Add member" />
-	</form>''' % (_base(input), group)
-	print html.footer()
+	</form>''' % (input.base, group)
+	print input.html.footer()
 
 def delmembers(input):
 	authz = _getauthz(input)
@@ -276,7 +265,7 @@ def delmembers(input):
 				continue
 			authz.removeMember(group, member)
 	raise exceptions.Redirect, '%s/authz/group?group=%s&msg=Members+deleted' %\
-			(_base(input), group)
+			(input.base, group)
 
 def addmember(input):
 	authz = _getauthz(input)
@@ -285,10 +274,10 @@ def addmember(input):
 	if not member:
 		raise exceptions.Redirect, \
 				'%s/authz/group?group=%s&msg=Please+fill+in+the+member+field' % \
-				(_base(input), group)
+				(input.base, group)
 	authz.addMember(group, member)
 	raise exceptions.Redirect, '%s/authz/group?group=%s&msg=Members+added' %\
-			(_base(input), group)
+			(input.base, group)
 
 def addgroup(input):
 	authz = _getauthz(input)
@@ -296,8 +285,8 @@ def addgroup(input):
 	if not group:
 		raise exceptions.Redirect, \
 				'%s/authz?msg=Please+fill+in+the+group+field' % \
-				(_base(input), group)
+				(input.base, group)
 
 	authz.addGroup(group)
 	raise exceptions.Redirect, '%s/authz/group?group=%s&msg=Group+added' %\
-			(_base(input), group)
+			(input.base, group)

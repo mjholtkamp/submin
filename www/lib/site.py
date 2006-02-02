@@ -35,17 +35,75 @@ def Post(req):
 			post[key] = fs[key]
 	return post
 
+
+class Input:
+	def __init__(self, get, post, req, pathInfo):
+		self.req = req;
+
+		self.get = get; 
+		self.post = post; 
+		self.pathInfo = pathInfo; 
+
+		self.base = self.absolutePath(self.__base())
+
+		self.html = html.Html(self)
+
+	def __base(self):
+		filename = self.req.uri
+		path_info = '/submerge.py%s' % self.req.path_info or ''
+
+		index = self.req.uri.rindex(path_info)
+		filename = filename[:index]
+		return filename
+
+	# taken from trac, maybe we need to write our own method for this? :)
+	def absolutePath(self, path=None):
+		host = self.req.headers_in.get('Host')
+
+		scheme = 'http'
+		if self.req.subprocess_env.get('HTTPS') in ('on', '1') \
+				or self.server_port == 443:
+			scheme = 'https'
+
+
+		if self.req.headers_in.get('X-Forwarded-Host'):
+			host = self.req.headers_in.get('X-Forwarded-Host')
+		if not host:
+			# Missing host header, so reconstruct the host from the
+			# server name and port
+			default_port = {'http': 80, 'https': 443}
+
+			if self.req.connection.local_addr[1] and \
+					self.req.connection.local_addr[1] != default_port[scheme]:
+				host = '%s:%d' % (self.req.server.server_hostname, \
+						self.req.connection.local_addr[1])
+			else:
+				host = self.req.server.server_hostname
+
+		if not path:
+			if len(self.path_info):
+				path = self.req.uri[:-len(self.path_info)] or '/'
+			else:
+				path = self.req.uri
+
+		import urlparse
+		return urlparse.urlunparse((scheme, host, path, None, None, None))
+
+
 class Site:
 	def __init__(self, req):
+		# create own version of request, for in CGI-environment?
 		self.req = req
+
+		# Replace stdout with a buffer for use with print
 		self.buffer = Buffer()
 		sys.stdout = self.buffer
 
-		#log.open(open('/usr/local/submerge/log/exceptions.log', 'a+'))
 		self.loglevels = dict(
 				ex=log.addlevel('Exception'),
 				)
 
+		# move this to Input instance?
 		self.ip = self.req.get_remote_host()
 
 		self.pathInfo = PathInfo(self.req.path_info.strip('/').split('/'))
@@ -56,18 +114,17 @@ class Site:
 		self.post = Post(self.req)
 
 	def handler(self):
-		#buffer = Buffer()
-
 		returnValue = None
 
 		page = self.getPageMod()
 		if not page: return apache.HTTP_NOT_FOUND
 
+		input = Input(self.get, self.post, self.req, self.pathInfo)
 		if hasattr(page, 'login') and page.login:
 			buffer.write(
-					html.header('Error'),
+					input.html.header('Error'),
 					'''<h1>Error</h1><p>Sorry, login is not coded yet ;)</p>''',
-					html.footer())
+					input.html.footer())
 			return apache.OK
 
 		if len(self.pathInfo) >= 2 and hasattr(page, self.pathInfo[1]):
@@ -76,12 +133,7 @@ class Site:
 			func = page.handler
 
 		try:
-			class Input:
-				def __init__(self, get, post, req, pathInfo):
-					self.get = get; self.post = post; self.req = req;
-					self.pathInfo = pathInfo;
-
-			returnValue = func(Input(self.get, self.post, self.req, self.pathInfo))
+			returnValue = func(input)
 			if not str(self.buffer):
 				return apache.HTTP_NOT_FOUND
 
@@ -92,11 +144,11 @@ class Site:
 		except exceptions.error, e:
 			buffer = Buffer()
 			buffer.write(
-					html.header('Error'),
+					input.html.header('Error'),
 					'''<h1>Error</h1>
 					   <p>An error occurred:</p>
 					   <pre>%s</pre>''' % e,
-					html.footer())
+					input.html.footer())
 			self.req.write(str(buffer))
 			return apache.OK
 		except exceptions.Redirect, url:

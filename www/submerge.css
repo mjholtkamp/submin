@@ -9,6 +9,9 @@ a {
 	color: white;
 }
 
+a:hover {
+	text-decoration: underline;
+}
 a:hover, a:link, a:visited {
 	color: black;
 }
