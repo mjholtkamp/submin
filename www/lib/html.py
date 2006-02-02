@@ -11,7 +11,7 @@ def header(title = None, scripts = [], css = []):
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 	<head>
 		<title>Submerge%s</title>
-		<link rel="stylesheet" type="text/css" href="submerge.css" 
+		<link rel="stylesheet" type="text/css" href="../submerge.css" 
 			media="screen" />'''% iif(title, ' - %s' % title, ' '))
 
 	for sheet in css:
@@ -26,7 +26,17 @@ def header(title = None, scripts = [], css = []):
 	<body>
 		<div id="header">
 			<h1><a href="/">Submerge</a></h1>
-		</div>\
+		</div>
+		<div class="container">
+			<div id="menu">
+				<ul>
+					Menu
+		            <li /><a href=".">main page</a>
+		            <li /><a href="profile">profile</a>
+		            <li /><a href="authz">permissions</a>
+		        </ul>
+			</div>
+			<div id="content">\
 ''')
 
 	return str(html)
@@ -34,6 +44,8 @@ def header(title = None, scripts = [], css = []):
 def footer():
 	html = Buffer()
 	html.write('''
+			</div>
+		</div>
 	</body>
 </html>''')
 

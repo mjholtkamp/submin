@@ -5,13 +5,24 @@ mod_htpasswd = mimport('lib.htpasswd')
 def printprofile():
 	print '''
 	<form name="" action="" method="post">
-		Change password into:
-		<input type="password" name="password" value="" /><br />
-		Again:
-		<input type="password" name="password2" value="" /><br />
-		Old password:
-		<input type="password" name="oldpassword" value="" /><br />
-		<input type="submit" value="change" />
+	<div class="container">
+		<div class="row">
+			<span class="label">Change password into:</span>
+			<input class="form" type="password" name="password" value="" />
+		</div>
+		<div class="row">
+			<span class="label">Again:</span>
+			<input class="form" type="password" name="password2" value="" />
+		</div>
+		<div class="row">
+			<span class="label">Old password:</span>
+			<input class="form" type="password" name="oldpassword" value="" />
+		</div>
+		<div class="row">
+			<span class="label">&nbsp;</span>
+			<input class="form" type="submit" value="change" />
+		</div>
+	</div>
 	</form>
 	'''
 
@@ -51,7 +62,6 @@ def changepassword(input):
 def handler(input):
 	print html.header('profile')
 
-	print '<a href=".">main page</a><br />'
 	handleinput(input)
 
 	print html.footer()

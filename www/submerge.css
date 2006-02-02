@@ -1,0 +1,62 @@
+body {
+	font-family: sans-serif;
+	color: white;
+	background-color: #666;
+}
+
+a {
+	text-decoration: none;
+	color: white;
+}
+
+div.container {
+	border: none 1px black;
+}
+
+div.row {
+	clear: both;
+}
+
+span.label {
+	float: left;
+	text-align: right;
+	width: 200px;
+}
+
+span.form {
+	float: right;
+	text-align: left;
+}
+
+div#menu {
+	float: left;
+	background-color: #999;
+	width: 150px;
+}
+
+div#menu ul {
+	padding: 0px;
+	margin: 0px;
+}
+
+div#menu ul li {
+	list-style: none;
+	background-color: #aaa;
+}
+
+div#menu ul li:hover {
+	background-color: #ccc;
+}
+
+div#menu ul li a {
+	padding: 2px;
+	margin: 2px;
+	display: block;
+}
+
+div#content {
+	float: left;
+	text-align: left;
+	padding: 0.5em;
+	width: 650px;
+}
