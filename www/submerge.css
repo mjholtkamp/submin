@@ -9,6 +9,10 @@ a {
 	color: white;
 }
 
+a:hover, a:link, a:visited {
+	color: black;
+}
+
 div.container {
 	border: none 1px black;
 }
