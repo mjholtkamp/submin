@@ -44,9 +44,16 @@ class Input:
 		self.post = post; 
 		self.pathInfo = pathInfo; 
 
+		self.password = self.req.get_basic_auth_pw()
+		self.username = self.req.user
+
 		self.base = self.absolutePath(self.__base())
 
 		self.html = html.Html(self)
+
+	def isAdmin(self):
+		"""Check if current user is in the submerge-admins group"""
+		pass
 
 	def __base(self):
 		filename = self.req.uri

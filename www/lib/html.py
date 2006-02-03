@@ -40,6 +40,7 @@ class Html:
 					Menu
 		            <li><a href=".">main page</a></li>
 		            <li><a href="profile">profile</a></li>
+					<li><a href="group">groups</a></li>
 		            <li><a href="authz">permissions</a></li>
 					<li><a href="https://submerge.air.nl.eu.org/projects/submerge">Trac</a></li>
 		        </ul>
