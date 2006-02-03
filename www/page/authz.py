@@ -18,6 +18,25 @@ def _getauthz(input):
 
 	return mod_authz.Authz(authz_file)
 
+def _getrepositories(input):
+	SubmergeEnv = input.req.get_options()['SubmergeEnv']
+
+	import ConfigParser
+	cp = ConfigParser.ConfigParser()
+	cp.read(SubmergeEnv)
+	try:
+		reposdir = cp.get('svn', 'repositories')
+	except ConfigParser.NoSectionError, e:
+		raise Exception, str(e) + 'in' + str(SubmergeEnv)
+
+	import glob, os.path
+	_repositories = glob.glob(os.path.join(reposdir, '*'))
+	repositories = []
+	for repos in _repositories:
+		if os.path.isdir(repos):
+			repositories.append(repos[len(reposdir)+1:])
+	return repositories
+
 def _select(user, permission):
 	checked = ' selected="selected"'
 	select = '<select name="%s">' % user
@@ -88,6 +107,7 @@ def handler(input):
 
 	print input.html.footer()
 
+
 def saveperm(input):
 	authz = _getauthz(input)
 	repos = None
@@ -101,10 +121,11 @@ def saveperm(input):
 				return
 			if value == '-':
 				value = ' '
+			if 'del_%s' % key in input.post:
+				continue
 			authz.setPermission(repos, path, key, value)
 		elif key.startswith('del'):
-			#print "deleting member: %s from %s:%s" % (key[4:], repos, path)
-			authz.removePermission(repos, path, key[4:])
+			authz.removePermission(repos, path, key[4:].strip())
 
 	raise exceptions.Redirect, '%s/authz?msg=Permissions+saved' % input.base
 
@@ -157,10 +178,14 @@ def delpath(input):
 
 def addpath(input):
 	authz = _getauthz(input)
+	repositories = _getrepositories(input)
 	if not input.post.has_key('path'):
 		print input.html.header('Adding path')
 		print '<h2>Adding path</h2>'
-		print 'Something with browsing the svn-tree :)'
+		print '<ul>'
+		for repos in repositories:
+			print '<li>%s:/</li>' % repos
+		print '</ul>'
 		print input.html.footer()
 	elif input.post.has_key('path'):
 		# something with authz.addPath(repos, path)

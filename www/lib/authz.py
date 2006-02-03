@@ -140,18 +140,18 @@ class Authz:
 	def removePermission(self, repository, path, member):
 		"""Removes the members permission from the repository:path"""
 		section = self.createSectionName(repository, path)
-		self.parser.remove_option(section, member)
+		retval = self.parser.remove_option(section, member)
+		if not retval:
+			raise UnknownMemberError, (section, member)
 		self.save()
 
 
 if __name__ == '__main__':
-	tmp_conf = "submerge.example.conf"
-	cp = ConfigParser.ConfigParser()
-	cp.readfp(open(tmp_conf))
+	import sys
+	if len(sys.argv) != 2:
+		raise Exception, 'Please specify authz-file!'
 
-	authz_file = cp.get('svn', 'authz_file')
-
-	authz = Authz(authz_file)
+	authz = Authz(sys.argv[1])
 
 	# "tests"
 	print 'authz.paths()\n\t', authz.paths()
