@@ -38,9 +38,10 @@ class Html:
 			<div id="menu">
 				<ul>
 					Menu
-		            <li /><a href=".">main page</a>
-		            <li /><a href="profile">profile</a>
-		            <li /><a href="authz">permissions</a>
+		            <li><a href=".">main page</a></li>
+		            <li><a href="profile">profile</a></li>
+		            <li><a href="authz">permissions</a></li>
+					<li><a href="https://submerge.air.nl.eu.org/projects/submerge">Trac</a></li>
 		        </ul>
 			</div>
 			<div id="content">\

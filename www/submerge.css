@@ -67,3 +67,10 @@ div#content {
 	padding: 0.5em;
 	width: 650px;
 }
+
+.msg {
+	border: 5px solid #a7a7a7;
+	padding: 6px;
+	background: #888;
+	color: #fff;
+}

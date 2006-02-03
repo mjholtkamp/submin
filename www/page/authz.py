@@ -149,8 +149,8 @@ def saveperm(input):
 				value = ' '
 			authz.setPermission(repos, path, key, value)
 		elif key.startswith('del'):
-			member = key
-			authz.removePermission(repos, path, member[4:])
+			#print "deleting member: %s from %s:%s" % (key[4:], repos, path)
+			authz.removePermission(repos, path, key[4:])
 
 	raise exceptions.Redirect, '%s/authz?msg=Permissions+saved' % input.base
 
