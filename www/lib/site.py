@@ -1,10 +1,12 @@
 from mod_python import apache, util
 from lib.utils import mimport
 import sys
+import ConfigParser
 html = mimport('lib.html')
 Buffer = mimport('lib.utils').Buffer
 exceptions = mimport('lib.exceptions')
 log = mimport('lib.log')
+mod_authz = mimport('lib.authz')
 
 class PathInfo(list):
 	def get(self, idx, default=None):
@@ -49,11 +51,34 @@ class Input:
 
 		self.base = self.absolutePath(self.__base())
 
+		self.config = self.__getConfig()
+		self.authz = self.__getAuthz()
+
 		self.html = html.Html(self)
 
 	def isAdmin(self):
 		"""Check if current user is in the submerge-admins group"""
-		pass
+		try:
+			admins = self.authz.members('submerge-admins')
+			return self.username in admins
+		except mod_authz.UnknownGroupError:
+			return False
+
+	def __getAuthz(self):
+		try:
+			authz_file = self.config.get('svn', 'authz_file')
+		except ConfigParser.NoSectionError, e:
+			raise Exception, str(e) + 'in' + str(SubmergeEnv)
+
+		return mod_authz.Authz(authz_file)
+
+	def __getConfig(self):
+		SubmergeEnv = self.req.get_options()['SubmergeEnv']
+
+		cp = ConfigParser.ConfigParser()
+		cp.read(SubmergeEnv)
+
+		return cp
 
 	def __base(self):
 		filename = self.req.uri
