@@ -6,28 +6,14 @@ exceptions = mimport('lib.exceptions')
 mod_authz = mimport('lib.authz')
 
 def _getauthz(input):
-	SubmergeEnv = input.req.get_options()['SubmergeEnv']
-
-	import ConfigParser
-	cp = ConfigParser.ConfigParser()
-	cp.read(SubmergeEnv)
-	try:
-		authz_file = cp.get('svn', 'authz_file')
-	except ConfigParser.NoSectionError, e:
-		raise Exception, str(e) + 'in' + str(SubmergeEnv)
-
-	return mod_authz.Authz(authz_file)
+	return input.authz
 
 def _getrepositories(input):
-	SubmergeEnv = input.req.get_options()['SubmergeEnv']
-
 	import ConfigParser
-	cp = ConfigParser.ConfigParser()
-	cp.read(SubmergeEnv)
 	try:
-		reposdir = cp.get('svn', 'repositories')
+		reposdir = input.config.get('svn', 'repositories')
 	except ConfigParser.NoSectionError, e:
-		raise Exception, str(e) + 'in' + str(SubmergeEnv)
+		raise "Error in configuration. No repositories option in svn section."
 
 	import glob, os.path
 	_repositories = glob.glob(os.path.join(reposdir, '*'))
@@ -59,7 +45,12 @@ def handler(input):
 		print '<p class="msg">%s</p>' % msg
 
 	print '<h2>Permissions</h2>'
-	print '<p><a href="%s/authz/addpath">Add path</a></p>' % input.base
+	print '<p><a href="%s/authz/addpath">Add path</a> <small>(using a path-browser)</small></p>' % input.base
+	print '''<form action="authz/manualaddpath" method="post">
+		<p><small>Repository:</small> <input type="text" name="repos" />
+		   <small>Path:</small> <input type="text" name="path" />
+		   <input type="submit" value="Manually add a path" /></p>
+	</form>'''
 
 	print '<table style="border-collapse: collapse">'
 	print '\t<thead>'
@@ -91,9 +82,23 @@ def handler(input):
 		permissions = authz.permissions(repos, path)
 		permissions.sort()
 		for user, permission in permissions:
+			group = False
+			if user.startswith('@'):
+				try:
+					members = authz.members(user[1:])
+					group = True
+				except mod_authz.UnknownGroupError:
+					members = []
+				members.sort()
+
 			print '\t<tr>'
 			print '\t\t<td><input type="checkbox" title="Delete this user from %s" name="del_%s" value="1" /></td>' % (rpath, user)
-			print '\t\t<td>%s</td>' % user
+
+			if user.startswith('@'):
+				print '\t\t<td><a href="group?group=%s" title="%s">%s</a></td>' %\
+						(urllib.quote(user[1:]), ', '.join(members), user)
+			else:
+				print '\t\t<td>%s</td>' % user
 			print '\t\t<td>%s</td>' % _select(user, permission)
 			print '\t</tr>'
 		print '\t<tr>'
@@ -144,9 +149,11 @@ def addperm(input):
 		groups = authz.groups()
 		groups.sort()
 		for group in groups:
+			members = authz.members(group)
+			members.sort()
 			print '''
-		<li><a href="#" onclick="document.perm.member.value='@%s'; return false">%s</a></li>''' %\
-				(group, group)
+		<li><a href="#" onclick="document.perm.member.value='@%s'; return false" title="%s">%s</a></li>''' %\
+				(group, ', '.join(members), group)
 		print '</ul>'
 
 		print input.html.footer()
@@ -190,3 +197,15 @@ def addpath(input):
 	elif input.post.has_key('path'):
 		# something with authz.addPath(repos, path)
 		raise exceptions.Redirect, '%s/authz?msg=Path+adding+not+implemented' % input.base
+
+def manualaddpath(input):
+	repos = input.post.get('repos', None)
+	path = input.post.get('path', None)
+	if not repos and path != '/':
+		msg = urllib.quote("Please fill in both fields!")
+		raise exceptions.Redirect, '%s/authz?msg=%s' % (input.base, msg)
+	input.authz.addPath(repos, path)
+
+	msg = urllib.quote("Path added")
+	raise exceptions.Redirect, '%s/authz?msg=%s' % (input.base, msg)
+		

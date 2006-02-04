@@ -68,6 +68,9 @@ div#content {
 	width: 650px;
 }
 
+label {
+	cursor: pointer;
+}
 .msg {
 	border: 5px solid #a7a7a7;
 	padding: 6px;

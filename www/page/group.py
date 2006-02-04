@@ -98,8 +98,8 @@ def _showgroup(input):
 		<ul>
 	''' % (input.base, group)
 	for member in members:
-		print '\t\t\t<li><input type="checkbox" name="%s" value="1" /> %s</li>' %\
-			(member, member)
+		print '\t\t\t<li><input type="checkbox" name="%s" value="1" id="group_%s" /> <label for="group_%s">%s</label></li>' %\
+			(member, member, member, member)
 	print '''
 		</ul>
 		<input type="submit" value="Delete checked members" />

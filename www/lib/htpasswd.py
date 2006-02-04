@@ -32,7 +32,7 @@ class HTPasswd:
 			fd = open(self.htpasswd_file + '.bak', 'w')
 			for user, encrypted in self.passwords.iteritems():
 				fd.write(user + ':' + encrypted + '\n')
-			fd.close
+			fd.close() # fd.close just returns a pointer to the function - avaeq
 			rename(self.htpasswd_file, self.htpasswd_file + '.old')
 			rename(self.htpasswd_file + '.bak', self.htpasswd_file)
 			self.modified = False
