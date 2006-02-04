@@ -49,7 +49,8 @@ def changepassword(input):
 	
 	password = input.post['password']
 	oldpassword = input.post['oldpassword']
-	htpasswd = mod_htpasswd.HTPasswd('/usr/local/submerge/.htpasswd')
+	access_file = input.config.get('svn', 'access_file')
+	htpasswd = mod_htpasswd.HTPasswd(access_file)
 	if htpasswd.check(user, oldpassword):
 		htpasswd.change(user, password)
 		htpasswd.flush()

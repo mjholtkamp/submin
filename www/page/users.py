@@ -4,12 +4,14 @@ mod_htpasswd = mimport('lib.htpasswd')
 admin = True
 
 def printprofile():
-	htpasswd = mod_htpasswd.HTPasswd('/usr/local/submerge/.htpasswd')
+	access_file = input.config.get('svn', 'access_file')
+	htpasswd = mod_htpasswd.HTPasswd(access_file)
 	users = htpasswd.users()
 
 	print '''
 	<form name="" action="" method="post">
 	<div class="container">
+		<b>Change user</b>
 		<div class="row">
 			<span class="label">User:</span>
 			<select class="form" name="change_user">
@@ -22,7 +24,7 @@ def printprofile():
 			</select>
 		</div>
 		<div class="row">
-			<span class="label">Change password into:</span>
+			<span class="label">New password:</span>
 			<input class="form" type="password" name="password" value="" />
 		</div>
 		<div class="row">
@@ -31,7 +33,7 @@ def printprofile():
 		</div>
 		<div class="row">
 			<span class="label">&nbsp;</span>
-			<input class="form" type="submit" value="change" />
+			<input class="form" type="submit" value="Change user" />
 		</div>
 	</div>
 	</form>
@@ -40,8 +42,9 @@ def printprofile():
 	print '''
 	<form name="" action="" method="post">
 	<div class="container">
+		<b>Add user</b>
 		<div class="row">
-			<span class="label">Add user:</span>
+			<span class="label">User:</span>
 			<input class="form" type="text" name="add_user" value="" />
 		</div>
 		<div class="row">
@@ -63,6 +66,7 @@ def printprofile():
 	print '''
 	<form name="" action="" method="post">
 	<div class="container">
+		<b>Remove user</b>
 		<div class="row">
 			<span class="label">User:</span>
 			<select class="form" name="remove_user">
@@ -114,20 +118,23 @@ def changepassword(input, user, password):
 	if user is None:
 		print 'Nobody is logged in!'
 		return
-	
-	htpasswd = mod_htpasswd.HTPasswd('/usr/local/submerge/.htpasswd')
+
+	access_file = input.config.get('svn', 'access_file')
+	htpasswd = mod_htpasswd.HTPasswd(access_file)
 	htpasswd.change(user, password)
 	htpasswd.flush()
 	print 'Password changed<br />'
 
 def adduser(input, user, password):
-	htpasswd = mod_htpasswd.HTPasswd('/usr/local/submerge/.htpasswd')
+	access_file = input.config.get('svn', 'access_file')
+	htpasswd = mod_htpasswd.HTPasswd(access_file)
 	htpasswd.add(user, password)
 	htpasswd.flush()
 	print 'User ' + user + ' added<br />'
 
 def removeuser(input, user):
-	htpasswd = mod_htpasswd.HTPasswd('/usr/local/submerge/.htpasswd')
+	access_file = input.config.get('svn', 'access_file')
+	htpasswd = mod_htpasswd.HTPasswd(access_file)
 	htpasswd.remove(user)
 	htpasswd.flush()
 	print 'User ' + user + ' removed<br />'
