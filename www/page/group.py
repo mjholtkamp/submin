@@ -2,6 +2,7 @@ import urllib
 from lib.utils import mimport
 mod_authz = mimport('lib.authz')
 exceptions = mimport('lib.exceptions')
+mod_htpasswd = mimport('lib.htpasswd')
 
 admin = True
 
@@ -108,10 +109,22 @@ def _showgroup(input):
 	</form>
 	<h2>Add a member</h2>
 	<form action="%s/group/addmember" method="post">
+		<select class="form" name="member">
+			<option value="">Choose a user</option>
+	''' % input.base
+
+	access_file = input.config.get('svn', 'access_file')
+	htpasswd = mod_htpasswd.HTPasswd(access_file)
+	users = htpasswd.users()
+
+	for user in users:
+		print '<option value="%s">%s</option>' % (user, user)
+
+	print '''
+		</select>
 		<input type="hidden" name="group" value="%s" />
-		<input type="text" name="member" />
 		<input type="submit" value="Add member" />
-	</form>''' % (input.base, group)
+	</form>''' % group
 	print input.html.footer()
 
 def delmembers(input):
