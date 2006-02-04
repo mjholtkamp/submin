@@ -61,6 +61,13 @@ class HTPasswd:
 		for user, encrypted in self.passwords.iteritems():
 			print 'User: ' + user + ' Password: ' + encrypted
 
+	def users(self):
+		users = []
+		for user in self.passwords.iterkeys():
+			users.append(user)
+		return users
+
+
 if __name__ == '__main__':
 	htpasswd = HTPasswd('/home/sabre2th/public_html/submerge/.htpasswd.test')
 	htpasswd.list()
