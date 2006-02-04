@@ -61,6 +61,10 @@ div#menu ul li a {
 	display: block;
 }
 
+div#menu ul ul li {
+	padding: 0em 1em;
+}
+
 div#content {
 	float: left;
 	text-align: left;
