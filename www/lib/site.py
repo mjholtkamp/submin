@@ -152,11 +152,13 @@ class Site:
 		if not page: return apache.HTTP_NOT_FOUND
 
 		input = Input(self.get, self.post, self.req, self.pathInfo)
-		if hasattr(page, 'login') and page.login:
+		if hasattr(page, 'admin') and page.admin and not input.isAdmin():
 			buffer.write(
 					input.html.header('Error'),
-					'''<h1>Error</h1><p>Sorry, login is not coded yet ;)</p>''',
+					'''<h1>Error</h1><p>Sorry, you don't have permission to
+					access this page</p>''',
 					input.html.footer())
+			self.req.write(str(buffer))
 			return apache.OK
 
 		if len(self.pathInfo) >= 2 and hasattr(page, self.pathInfo[1]):

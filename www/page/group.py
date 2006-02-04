@@ -3,6 +3,8 @@ from lib.utils import mimport
 mod_authz = mimport('lib.authz')
 exceptions = mimport('lib.exceptions')
 
+admin = True
+
 def _getauthz(input):
 	SubmergeEnv = input.req.get_options()['SubmergeEnv']
 

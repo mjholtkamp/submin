@@ -5,6 +5,8 @@ iif = mimport('lib.utils').iif
 exceptions = mimport('lib.exceptions')
 mod_authz = mimport('lib.authz')
 
+admin = True
+
 def _getauthz(input):
 	return input.authz
 
