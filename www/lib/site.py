@@ -151,6 +151,8 @@ class Site:
 		page = self.getPageMod()
 		if not page: return apache.HTTP_NOT_FOUND
 
+		self.req.headers_out.add("Cache-control", "no-cache")
+
 		input = Input(self.get, self.post, self.req, self.pathInfo)
 		if hasattr(page, 'admin') and page.admin and not input.isAdmin():
 			buffer = Buffer()
