@@ -3,7 +3,7 @@ mod_htpasswd = mimport('lib.htpasswd')
 
 admin = True
 
-def printprofile():
+def printprofile(input):
 	access_file = input.config.get('svn', 'access_file')
 	htpasswd = mod_htpasswd.HTPasswd(access_file)
 	users = htpasswd.users()
@@ -112,7 +112,7 @@ def handleinput(input):
 	if remove:
 		removeuser(input, input.post['remove_user'])
 
-	printprofile()
+	printprofile(input)
 
 def changepassword(input, user, password):
 	if user is None:
