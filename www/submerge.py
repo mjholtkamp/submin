@@ -7,6 +7,7 @@ def handler(req):
 	
 	# Autoreloading main module. Maybe I need a wrapper for this one, this is ugly.
 	#modSite = apache.import_module('lib.site', autoreload=True)
-	modSite = mimport(modSite)
+
+	modSite = mimport('lib.site')
 	site = modSite.Site(req)
 	return site.handler()

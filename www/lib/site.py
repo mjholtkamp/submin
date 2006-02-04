@@ -153,6 +153,7 @@ class Site:
 
 		input = Input(self.get, self.post, self.req, self.pathInfo)
 		if hasattr(page, 'admin') and page.admin and not input.isAdmin():
+			buffer = Buffer()
 			buffer.write(
 					input.html.header('Error'),
 					'''<h1>Error</h1><p>Sorry, you don't have permission to
