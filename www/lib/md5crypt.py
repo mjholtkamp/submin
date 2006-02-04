@@ -8,6 +8,7 @@
 # * this stuff is worth it, you can buy me a beer in return.   Poul-Henning Kamp
 
 import md5
+import random
 
 def md5crypt(password, salt, magic='$1$'):
     # /* The password first, since that is what is most unknown */ /* Then our magic string */ /* Then the raw salt */
@@ -66,3 +67,16 @@ def md5crypt(password, salt, magic='$1$'):
         rearranged += itoa64[v & 0x3f]; v >>= 6
 
     return magic + salt + '$' + rearranged 
+
+# END original file
+
+def makesalt():
+	salts = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./'
+
+	salt = ''
+	bla = random.Random()
+	for i in range(8):
+		salt += bla.choice(salts)
+
+	return salt
+

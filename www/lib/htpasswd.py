@@ -67,6 +67,17 @@ class HTPasswd:
 			users.append(user)
 		return users
 
+	def add(self, user, password):
+		magic = 'apr1'
+		salt = md5crypt.makesalt()
+		newhash = md5crypt.md5crypt(password, salt, '$' + magic + '$')
+
+		self.passwords[user] = newhash
+		self.modified = True
+	
+	def remove(self, user):
+		del self.passwords[user]
+		self.modified = True
 
 if __name__ == '__main__':
 	htpasswd = HTPasswd('/home/sabre2th/public_html/submerge/.htpasswd.test')

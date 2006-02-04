@@ -46,6 +46,7 @@ class Html:
 			buf.write('''
 					Admin
 					<ul>
+					<li><a href="users">users</a></li>
 					<li><a href="group">groups</a></li>
 		            <li><a href="authz">permissions</a></li>
 					</ul>''')
