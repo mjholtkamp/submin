@@ -61,7 +61,7 @@ class Authz:
 	def addPath(self, repository, path):
 		section = self.createSectionName(repository, path)
 		if section in self.parser.sections():
-			raise PathExistsError, (member, group)
+			raise PathExistsError, (repository, path)
 		self.parser.add_section(section)
 		self.save()
 

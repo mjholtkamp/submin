@@ -25,6 +25,40 @@ def _getrepositories(input):
 			repositories.append(repos[len(reposdir)+1:])
 	return repositories
 
+def _makeUrl(input, repos, path=None):
+	import ConfigParser
+	import os
+	try:
+		reposdir = input.config.get('svn', 'repositories')
+	except ConfigParser.NoSectionError, e:
+		raise "Error in configuration. No repositories option in svn section."
+
+	url = 'file://' + reposdir
+	url = os.path.join(url, repos)
+	if path:
+		url = os.path.join(url, path)
+	return url
+
+def _getPaths(repository):
+	import pysvn
+
+	client = pysvn.Client()
+	
+	files = client.ls(repository, recurse=True)
+	dirs = []
+	for file in files:
+		if file['kind'] == pysvn.node_kind.dir:
+			dirs.append(file['name'])
+
+	return dirs
+
+def _authzify(url, base, repository):
+	index = len(base)
+	path = url[index:]
+	if not path.startswith('/'):
+		path = '/' + path
+	return repository + ':' + path
+
 def _select(user, permission):
 	checked = ' selected="selected"'
 	select = '<select name="%s">' % user
@@ -188,17 +222,47 @@ def delpath(input):
 def addpath(input):
 	authz = _getauthz(input)
 	repositories = _getrepositories(input)
-	if not input.post.has_key('path'):
+	if not input.get.has_key('path'):
 		print input.html.header('Adding path')
 		print '<h2>Adding path</h2>'
+		if input.get.has_key('msg'):
+			print '<p class="msg">%s</p>' % input.get['msg'][0]
+
 		print '<ul>'
 		for repos in repositories:
-			print '<li>%s:/</li>' % repos
+			url = _makeUrl(input, repos)
+			# root...
+			authzroot = '%s:/' % repos
+			if [None, '/'] not in authz.paths():
+				print '<li><a href="authz/addpath?path=/">/</a></li>'
+
+			print '<li><a href="authz/addpath?path=%s">%s</a>' % \
+					(urllib.quote(authzroot), authzroot)
+			# ... and other paths, via pysvn!
+			paths = _getPaths(url)
+			if paths:
+				print '<ul>'
+				for path in paths:
+					authzpath = _authzify(path, url, repos)
+					if authzpath not in authz.parser.sections():
+						print '<li><a href="authz/addpath?path=%s">%s</a></li>' % \
+								(urllib.quote(authzpath), authzpath)
+				print '</ul>'
+			print '</li>'
 		print '</ul>'
 		print input.html.footer()
-	elif input.post.has_key('path'):
+	elif input.get.has_key('path'):
 		# something with authz.addPath(repos, path)
-		raise exceptions.Redirect, '%s/authz?msg=Path+adding+not+implemented' % input.base
+		path = input.get['path'][0]
+		repos = None
+		if ':' in path:
+			repos, path = path.split(':', 1)
+		if (repos, path) not in authz.paths():
+			authz.addPath(repos, path)
+			raise exceptions.Redirect, '%s/authz?msg=Path+added' % input.base
+		else:
+			raise exceptions.Redirect, \
+				'%s/authz/addpath?msg=Path+already+managed' % input.base
 
 def manualaddpath(input):
 	repos = input.post.get('repos', None)
