@@ -5,7 +5,7 @@ iif = mimport('lib.utils').iif
 exceptions = mimport('lib.exceptions')
 mod_authz = mimport('lib.authz')
 
-admin = True
+admin = False
 
 def _getauthz(input):
 	return input.authz
@@ -257,7 +257,7 @@ def addpath(input):
 		repos = None
 		if ':' in path:
 			repos, path = path.split(':', 1)
-		if (repos, path) not in authz.paths():
+		if [repos, path] not in authz.paths():
 			authz.addPath(repos, path)
 			raise exceptions.Redirect, '%s/authz?msg=Path+added' % input.base
 		else:
