@@ -113,6 +113,13 @@ class Authz:
 		self.parser.set('groups', group, ', '.join(members))
 		self.save()
 
+	def removeAllMembers(self, group):
+		"""Removes a member from a group"""
+		if group not in self.groups():
+			raise UnknownGroupError, group
+		self.parser.set('groups', group, '')
+		self.save()
+
 	# Permission methods
 	def permissions(self, repository, path, member=None):
 		"""Returns the current permissions for the repository:path entry"""

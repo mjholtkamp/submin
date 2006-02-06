@@ -1,0 +1,30 @@
+#grouphug {
+	width: 500px;
+}
+
+#d_ingroup {
+	float: left;
+	width: 200px;
+	margin-top: -70px;
+}
+
+#buttons {
+	display: inline;
+	width: 50px;
+}
+
+#buttons input {
+	display: block;
+	margin-top: 70px;
+}
+
+#d_outgroup {
+	float: right;
+	width: 200px;
+	margin-top: -70px;
+}
+
+#groupsubmit {
+	clear: both;
+	padding-top: 10px;
+}

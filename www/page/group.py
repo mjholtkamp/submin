@@ -82,19 +82,7 @@ def handler(input):
 
 	print input.html.footer()
 
-
-def _showgroup(input):
-	authz = _getauthz(input)
-	group = input.get['group'][-1]
-	members = authz.members(group)
-	members.sort()
-
-	print input.html.header('Members of group %s' % group)
-
-	if input.get.has_key('msg'):
-		print '<p class="msg">%s</p>' % input.get['msg'][-1]
-
-	print '<h2>Members of group %s</h2>' % group
+def _oldshouwgroup():
 	print '''
 	<form action="%s/group/delmembers" method="post">
 		<input type="hidden" name="group" value="%s" />
@@ -113,10 +101,6 @@ def _showgroup(input):
 			<option value="">Choose a user</option>
 	''' % input.base
 
-	access_file = input.config.get('svn', 'access_file')
-	htpasswd = mod_htpasswd.HTPasswd(access_file)
-	users = htpasswd.users()
-
 	for user in users:
 		print '<option value="%s">%s</option>' % (user, user)
 
@@ -125,6 +109,67 @@ def _showgroup(input):
 		<input type="hidden" name="group" value="%s" />
 		<input type="submit" value="Add member" />
 	</form>''' % group
+
+def _showgroup(input):
+	authz = _getauthz(input)
+	group = input.get['group'][-1]
+	members = authz.members(group)
+	members.sort()
+
+	access_file = input.config.get('svn', 'access_file')
+	htpasswd = mod_htpasswd.HTPasswd(access_file)
+	users = htpasswd.users()
+
+	print input.html.header('Members of group %s' % group, 
+			css=["group"], scripts=["group"])
+
+	if input.get.has_key('msg'):
+		print '<p class="msg">%s</p>' % input.get['msg'][-1]
+
+	print '<h2>Members of group %s</h2>' % group
+
+	print '''
+	<div id="grouphug">
+	<form action="group/savemember" method="post">
+		<input type="hidden" name="group" value="%s" />
+		<div id="d_ingroup">
+			<p>Users in group %s</p>
+			<select name="ingroup" multiple="multiple" style="width: 150px; height: 200px;">
+		''' % \
+				(group, group)
+	for member in members:
+		print '\t\t\t\t<option value="%s">%s</option>' % (member, member)
+	print '''
+			</select>
+		</div>
+
+		<div id="d_outgroup">
+			<p>Users not in group %s</p>
+			<select name="outgroup" multiple="multiple" style="width: 150px; height: 200px;">
+		''' % group
+
+	for user in users:
+		if user not in members:
+			print '\t\t\t\t<option value="%s">%s</option>' % (user, user)
+	
+	print '''
+			</select>
+		</div>
+
+		<div id="buttons">
+			<input type="button" name="b_movein" value="<-"  onclick="movein(this.form)"  />
+			<input type="button" name="b_moveout" value="->" onclick="moveout(this.form)" />
+		</div>
+
+
+		<div id="groupsubmit">
+			<input type="submit" value="Save members" onclick="selectAllIn(this.form)" />
+		</div>
+	</form>
+	</div>'''
+
+# End test for new interface
+
 	print input.html.footer()
 
 def delmembers(input):
@@ -139,7 +184,7 @@ def delmembers(input):
 	raise exceptions.Redirect, '%s/group?group=%s&msg=Members+deleted' %\
 			(input.base, group)
 
-def addmember(input):
+def addoldmember(input):
 	authz = _getauthz(input)
 	group = input.post['group']
 	member = input.post['member']
@@ -149,6 +194,15 @@ def addmember(input):
 				(input.base, group)
 	authz.addMember(group, member)
 	raise exceptions.Redirect, '%s/group?group=%s&msg=Members+added' %\
+			(input.base, group)
+
+def savemember(input):
+	authz = _getauthz(input)
+	group = input.post['group']
+	authz.removeAllMembers(group)
+	for member in input.post['ingroup']:
+		authz.addMember(group, member)
+	raise exceptions.Redirect, '%s/group?group=%s&msg=Members+saved' %\
 			(input.base, group)
 
 def add(input):

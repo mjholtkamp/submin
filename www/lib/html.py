@@ -17,16 +17,16 @@ class Html:
 		<title>Submerge%s</title>
 		<base href="%s/" />
 		<link rel="stylesheet" type="text/css" href="submerge.css" 
-			media="screen" />'''% \
+			media="screen" />\n'''% \
 					(iif(title, ' - %s' % title, ' '), self.input.base))
 
 		for sheet in css:
-			buf.write('''\t\t<link rel="stylesheet" type="text/css" href="%s.css" media="screen" />''' % \
+			buf.write('''\t\t<link rel="stylesheet" type="text/css" href="%s.css" media="screen" />\n''' % \
 					sheet)
 
 		for script in scripts:
-			buf.write('''\t\t<script src="%s.js" type="text/javascript"></script>''' % \
-					script)
+			buf.write('''\t\t<script src="%s.js" type="text/javascript"></script>\n''' % \
+					(script,))
 
 		buf.write('''
 	</head>
