@@ -10,13 +10,13 @@ def printprofile(input):
 	users = htpasswd.users()
 
 	print '''
-	<form name="" action="" method="post">
+	<form name="" action="%s/users" method="post">
 	<div class="container">
 		<b>Change user</b>
 		<div class="row">
 			<span class="label">User:</span>
 			<select class="form" name="change_user">
-				<option value="">Choose a user</option>'''
+				<option value="">Choose a user</option>''' % input.base
 
 	for user in users:
 		print '<option value="%s">%s</option>' % (user, user)
@@ -41,7 +41,7 @@ def printprofile(input):
 	'''
 
 	print '''
-	<form name="" action="" method="post">
+	<form name="" action="%s/users" method="post">
 	<div class="container">
 		<b>Add user</b>
 		<div class="row">
@@ -62,16 +62,16 @@ def printprofile(input):
 		</div>
 	</div>
 	</form>
-	'''
+	''' % input.base
 
 	print '''
-	<form name="" action="" method="post">
+	<form name="" action="%s/users" method="post">
 	<div class="container">
 		<b>Remove user</b>
 		<div class="row">
 			<span class="label">User:</span>
 			<select class="form" name="remove_user">
-				<option value="">Choose a user</option>'''
+				<option value="">Choose a user</option>''' % input.base
 
 	for user in users:
 		print '<option value="%s">%s</option>' % (user, user)

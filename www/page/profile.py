@@ -3,9 +3,9 @@ mod_htpasswd = mimport('lib.htpasswd')
 
 login_required = True
 
-def printprofile():
+def printprofile(input):
 	print '''
-	<form name="" action="" method="post">
+	<form name="" action="%s/profile" method="post">
 	<div class="container">
 		<div class="row">
 			<span class="label">Change password into:</span>
@@ -25,7 +25,7 @@ def printprofile():
 		</div>
 	</div>
 	</form>
-	'''
+	''' % input.base
 
 def handleinput(input):
 	if input.post.has_key('password') and input.post.has_key('password2') and \
@@ -40,7 +40,7 @@ def handleinput(input):
 		input.post.has_key('oldpassword'):
 			print 'you need to fill in every field'
 
-	printprofile()
+	printprofile(input)
 
 def changepassword(input):
 	user = input.user
