@@ -6,7 +6,9 @@ PythonDebug On
 
 ### RewriteRules ###
 RewriteEngine on
-RewriteBase     /path/to/www/dir/ # don't forget the trailing /
+# What is the location of submerge from your doc-root?
+# Don't forget the trailing /
+RewriteBase     /path/to/www/dir/
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ submerge.py/$1
