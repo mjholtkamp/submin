@@ -1,6 +1,8 @@
 from lib.utils import mimport
 mod_htpasswd = mimport('lib.htpasswd')
 
+login_required = True
+
 def printprofile():
 	print '''
 	<form name="" action="" method="post">
@@ -41,8 +43,7 @@ def handleinput(input):
 	printprofile()
 
 def changepassword(input):
-	pw = input.req.get_basic_auth_pw()
-	user = input.req.user
+	user = input.user
 	if user is None:
 		print 'Nobody is logged in!'
 		return

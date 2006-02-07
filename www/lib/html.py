@@ -51,6 +51,11 @@ class Html:
 		            <li><a href="authz">permissions</a></li>
 					</ul>''')
 
+		if self.input.isLoggedIn():
+			buf.write('<li><a href="logout">logout</a></li>')
+		else:
+			buf.write('<li><a href="login">login</a></li>')
+
 		buf.write('''
 					<li><a href="https://submerge.air.nl.eu.org/projects/submerge">Trac</a></li>
 		        </ul>

@@ -6,6 +6,7 @@ exceptions = mimport('lib.exceptions')
 mod_authz = mimport('lib.authz')
 
 admin = True
+login_required = True
 
 def _getauthz(input):
 	return input.authz

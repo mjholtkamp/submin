@@ -12,8 +12,3 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ submerge.py/$1
 
 RewriteRule ^/?$ submerge.py
-
-AuthUserFile /usr/local/submerge/.htpasswd
-AuthType Basic
-AuthName "Submerge"
-Require valid-user

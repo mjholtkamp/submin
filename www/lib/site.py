@@ -7,6 +7,7 @@ Buffer = mimport('lib.utils').Buffer
 exceptions = mimport('lib.exceptions')
 log = mimport('lib.log')
 mod_authz = mimport('lib.authz')
+from mod_python import Session
 
 class PathInfo(list):
 	def get(self, idx, default=None):
@@ -46,8 +47,8 @@ class Input:
 		self.post = post; 
 		self.pathInfo = pathInfo; 
 
-		self.password = self.req.get_basic_auth_pw()
-		self.username = self.req.user
+#		self.password = self.req.get_basic_auth_pw()
+#		self.username = self.req.user
 
 		self.base = self.absolutePath(self.__base())
 
@@ -55,12 +56,32 @@ class Input:
 		self.authz = self.__getAuthz()
 
 		self.html = html.Html(self)
+		self.session = Session.Session(req)
+
+		self.user = None
+		if self.isLoggedIn():
+			self.user = self.session['user']
+
+	def isLoggedIn(self):
+		if self.session.has_key('user'):
+			return True
+		return False
+
+	def saveSession(self, user):
+		self.session['user'] = user
+		self.user = user
+		self.session.save()
+
+	def deleteSession(self):
+		self.session.delete()
+		self.session.invalidate()
+		self.user = None
 
 	def isAdmin(self):
 		"""Check if current user is in the submerge-admins group"""
 		try:
 			admins = self.authz.members('submerge-admins')
-			return self.username in admins
+			return self.user in admins
 		except mod_authz.UnknownGroupError:
 			return False
 
@@ -154,6 +175,12 @@ class Site:
 		self.req.headers_out.add("Cache-control", "no-cache")
 
 		input = Input(self.get, self.post, self.req, self.pathInfo)
+
+		if hasattr(page, 'login_required') and page.login_required:
+			if input.session.is_new():
+	 			util.redirect(self.req, '%s/login' % input.base)
+				return apache.OK
+
 		if hasattr(page, 'admin') and page.admin and not input.isAdmin():
 			buffer = Buffer()
 			buffer.write(

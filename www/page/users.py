@@ -2,6 +2,7 @@ from lib.utils import mimport
 mod_htpasswd = mimport('lib.htpasswd')
 
 admin = True
+login_required = True
 
 def printprofile(input):
 	access_file = input.config.get('svn', 'access_file')

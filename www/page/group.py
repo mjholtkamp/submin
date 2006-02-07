@@ -5,6 +5,7 @@ exceptions = mimport('lib.exceptions')
 mod_htpasswd = mimport('lib.htpasswd')
 
 admin = True
+login_required = True
 
 def _getauthz(input):
 	SubmergeEnv = input.req.get_options()['SubmergeEnv']
