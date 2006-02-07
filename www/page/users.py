@@ -100,7 +100,7 @@ def handleinput(input):
 			password = input.post['password']
 
 			if input.post.has_key('change_user'):
-				changepassword(input, input.post['change_user'], passord)
+				changepassword(input, input.post['change_user'], password)
 			if input.post.has_key('add_user'):
 				adduser(input, input.post['add_user'], password)
 
