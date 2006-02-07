@@ -9,16 +9,16 @@ def printlogin(input):
 	<form name="" action="%s/login" method="post">
 	<div class="container">
 		<div class="row">
-			<span class="label">Username: </span>
-			<input class="form" type="text" name="user" value="">
+			<label for="user">Username: </label>
+			<input id="user" class="form" type="text" name="user" value="" tabindex="1" />
 		</div>
 		<div class="row">
-			<span class="label">Password: </span>
-			<input class="form" type="password" name="password" value="">
+			<label for="password">Password: </label>
+			<input id="password" class="form" type="password" name="password" value="" tabindex="2" />
 		</div>
 		<div class="row">
-			<span class="label">&nbsp;</span>
-			<input class="form" type="submit" value="login">
+			<label class="label">&nbsp;</label>
+			<input class="form" type="submit" value="login" tabindex="3" />
 		</div>
 	</div>
 	</form>

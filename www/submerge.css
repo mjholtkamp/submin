@@ -24,10 +24,11 @@ div.row {
 	clear: both;
 }
 
-span.label {
+div.row label {
 	float: left;
 	text-align: right;
 	width: 200px;
+	display: block;
 }
 
 span.form {
