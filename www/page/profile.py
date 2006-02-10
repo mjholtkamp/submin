@@ -8,19 +8,19 @@ def printprofile(input):
 	<form name="" action="%s/profile" method="post">
 	<div class="container">
 		<div class="row">
-			<span class="label">Change password into:</span>
-			<input class="form" type="password" name="password" value="" />
+			<label for="password">Change password into:</label>
+			<input class="form" type="password" name="password" value="" id="password" />
 		</div>
 		<div class="row">
-			<span class="label">Again:</span>
-			<input class="form" type="password" name="password2" value="" />
+			<label for="password2">Again:</label>
+			<input class="form" type="password" name="password2" value="" id="password2" />
 		</div>
 		<div class="row">
-			<span class="label">Old password:</span>
-			<input class="form" type="password" name="oldpassword" value="" />
+			<label for="oldpassword">Old password:</label>
+			<input class="form" type="password" name="oldpassword" value="" id="oldpassword" />
 		</div>
 		<div class="row">
-			<span class="label">&nbsp;</span>
+			<label>&nbsp;</label>
 			<input class="form" type="submit" value="change" />
 		</div>
 	</div>

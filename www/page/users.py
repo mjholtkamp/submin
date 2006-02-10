@@ -14,8 +14,8 @@ def printprofile(input):
 	<div class="container">
 		<b>Change user</b>
 		<div class="row">
-			<span class="label">User:</span>
-			<select class="form" name="change_user">
+			<label for="change_user">User:</label>
+			<select class="form" name="change_user" id="change_user">
 				<option value="">Choose a user</option>''' % input.base
 
 	for user in users:
@@ -25,15 +25,15 @@ def printprofile(input):
 			</select>
 		</div>
 		<div class="row">
-			<span class="label">New password:</span>
-			<input class="form" type="password" name="password" value="" />
+			<label for="password">New password:</label>
+			<input class="form" type="password" name="password" value="" id="password" />
 		</div>
 		<div class="row">
-			<span class="label">Again:</span>
-			<input class="form" type="password" name="password2" value="" />
+			<label for="password2">Again:</label>
+			<input class="form" type="password" name="password2" value="" id="password2" />
 		</div>
 		<div class="row">
-			<span class="label">&nbsp;</span>
+			<label>&nbsp;</label>
 			<input class="form" type="submit" value="Change user" />
 		</div>
 	</div>
@@ -45,19 +45,19 @@ def printprofile(input):
 	<div class="container">
 		<b>Add user</b>
 		<div class="row">
-			<span class="label">User:</span>
-			<input class="form" type="text" name="add_user" value="" />
+			<label for="add_user">User:</label>
+			<input class="form" type="text" name="add_user" value="" id="add_user" />
 		</div>
 		<div class="row">
-			<span class="label">Password:</span>
-			<input class="form" type="password" name="password" value="" />
+			<label for="add_password">Password:</label>
+			<input class="form" type="password" name="password" value="" id="add_password" />
 		</div>
 		<div class="row">
-			<span class="label">Again:</span>
-			<input class="form" type="password" name="password2" value="" />
+			<label for="add_password2">Again:</label>
+			<input class="form" type="password" name="password2" value="" id="add_password2" />
 		</div>
 		<div class="row">
-			<span class="label">&nbsp;</span>
+			<label>&nbsp;</label>
 			<input class="form" type="submit" value="Add user" />
 		</div>
 	</div>
@@ -69,8 +69,8 @@ def printprofile(input):
 	<div class="container">
 		<b>Remove user</b>
 		<div class="row">
-			<span class="label">User:</span>
-			<select class="form" name="remove_user">
+			<label for="remove_user">User:</label>
+			<select class="form" name="remove_user" id="remove_user">
 				<option value="">Choose a user</option>''' % input.base
 
 	for user in users:
@@ -80,7 +80,7 @@ def printprofile(input):
 			</select>
 		</div>
 		<div class="row">
-			<span class="label">&nbsp;</span>
+			<label>&nbsp;</label
 			<input class="form" type="submit" value="Remove user" />
 		</div>
 	</div>
