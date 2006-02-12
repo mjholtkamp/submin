@@ -47,9 +47,6 @@ class Input:
 		self.post = post; 
 		self.pathInfo = pathInfo; 
 
-#		self.password = self.req.get_basic_auth_pw()
-#		self.username = self.req.user
-
 		self.base = self.absolutePath(self.__base())
 
 		self.config = self.__getConfig()
