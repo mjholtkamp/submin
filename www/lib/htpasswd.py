@@ -37,6 +37,12 @@ class HTPasswd:
 			rename(self.htpasswd_file + '.bak', self.htpasswd_file)
 			self.modified = False
 
+	def exists(self, user):
+		""" Check if user exists """
+		if not self.passwords.has_key(user):
+			return False
+		return True
+
 	def check(self, user, password):
 		""" Check if user has password """
 		if not self.passwords.has_key(user):
@@ -50,6 +56,9 @@ class HTPasswd:
 
 	def change(self, user, password):
 		""" Change users password """
+		if not self.passwords.has_key(user):
+			return False
+
 		magic, salt, encrypted = self.passwords[user][1:].split('$')
 
 		newhash = md5crypt.md5crypt(password, salt, '$' + magic + '$')
@@ -57,17 +66,15 @@ class HTPasswd:
 		self.passwords[user] = newhash
 		self.modified = True
 
-	def list(self):
-		for user, encrypted in self.passwords.iteritems():
-			print 'User: ' + user + ' Password: ' + encrypted
-
 	def users(self):
+		""" Returns a list of all users """
 		users = []
 		for user in self.passwords.iterkeys():
 			users.append(user)
 		return users
 
 	def add(self, user, password):
+		""" Add/overwrite a new user """
 		magic = 'apr1'
 		salt = md5crypt.makesalt()
 		newhash = md5crypt.md5crypt(password, salt, '$' + magic + '$')
@@ -76,6 +83,10 @@ class HTPasswd:
 		self.modified = True
 	
 	def remove(self, user):
+		""" Remove a user """
+		if not self.passwords.has_key(user):
+			return False
+
 		del self.passwords[user]
 		self.modified = True
 

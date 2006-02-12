@@ -8,6 +8,20 @@ def printprofile(input):
 	access_file = input.config.get('svn', 'access_file')
 	htpasswd = mod_htpasswd.HTPasswd(access_file)
 	users = htpasswd.users()
+	users.sort()
+
+	posted_user = ''
+	posted_change = False
+	posted_remove = False
+	posted_add = False
+	if input.post.has_key('user'):
+		posted_user = input.post['user']
+	if input.post.has_key('change_user'):
+		posted_change = True
+	if input.post.has_key('remove_user'):
+		posted_remove = True
+	if input.post.has_key('add_user'):
+		posted_add = True
 
 	print '''
 	<form name="" action="%s/users" method="post">
@@ -15,130 +29,140 @@ def printprofile(input):
 		<b>Change user</b>
 		<div class="row">
 			<label for="change_user">User:</label>
-			<select class="form" name="change_user" id="change_user">
-				<option value="">Choose a user</option>''' % input.base
+			<select class="form" name="user" id="user">
+				<option value="">Choose a user</option> ''' % input.base
 
 	for user in users:
-		print '<option value="%s">%s</option>' % (user, user)
+		selected = ''
+		if user == posted_user and (posted_remove or posted_change):
+			selected = ' selected'
+
+		print '<option value="%s"%s>%s</option>' % (user, selected, user)
 
 	print '''
 			</select>
 		</div>
 		<div class="row">
 			<label for="password">New password:</label>
-			<input class="form" type="password" name="password" value="" id="password" />
+			<input class="form" type="password" name="password" value="" 
+				id="password" />
 		</div>
 		<div class="row">
 			<label for="password2">Again:</label>
-			<input class="form" type="password" name="password2" value="" id="password2" />
-		</div>
+			<input class="form" type="password" name="password2" value=""
+				id="password2" />
+		</div>'''
+
+	print '''
 		<div class="row">
 			<label>&nbsp;</label>
-			<input class="form" type="submit" value="Change user" />
+			<input class="form" type="submit" name="change_user" 
+				value="Change user" />
+			<input class="form" type="submit" name="remove_user" 
+				value="Remove user" />
 		</div>
 	</div>
 	</form>
 	'''
+
+	posted_add_user = ''
+	if posted_add:
+		posted_add_user = posted_user
 
 	print '''
 	<form name="" action="%s/users" method="post">
 	<div class="container">
 		<b>Add user</b>
 		<div class="row">
-			<label for="add_user">User:</label>
-			<input class="form" type="text" name="add_user" value="" id="add_user" />
+			<label for="user">User:</label>
+			<input class="form" type="text" name="user" value="%s" id="user" />
 		</div>
 		<div class="row">
 			<label for="add_password">Password:</label>
-			<input class="form" type="password" name="password" value="" id="add_password" />
+			<input class="form" type="password" name="password" value="" 
+				id="add_password" />
 		</div>
 		<div class="row">
 			<label for="add_password2">Again:</label>
-			<input class="form" type="password" name="password2" value="" id="add_password2" />
+			<input class="form" type="password" name="password2" value="" 
+				id="add_password2" />
 		</div>
 		<div class="row">
 			<label>&nbsp;</label>
-			<input class="form" type="submit" value="Add user" />
+			<input class="form" type="submit" name="add_user" 
+				value="Add user" />
 		</div>
 	</div>
 	</form>
-	''' % input.base
-
-	print '''
-	<form name="" action="%s/users" method="post">
-	<div class="container">
-		<b>Remove user</b>
-		<div class="row">
-			<label for="remove_user">User:</label>
-			<select class="form" name="remove_user" id="remove_user">
-				<option value="">Choose a user</option>''' % input.base
-
-	for user in users:
-		print '<option value="%s">%s</option>' % (user, user)
-
-	print '''
-			</select>
-		</div>
-		<div class="row">
-			<label>&nbsp;</label
-			<input class="form" type="submit" value="Remove user" />
-		</div>
-	</div>
-	</form>
-	'''
+	''' % (input.base, posted_add_user)
 
 def handleinput(input):
-	change = input.post.has_key('change_user')
-	add = input.post.has_key('add_user')
-	remove = input.post.has_key('remove_user')
+	want_change = input.post.has_key('change_user')
+	want_add = input.post.has_key('add_user')
+	want_remove = input.post.has_key('remove_user')
+	has_user = input.post.has_key('user')
+	has_password = input.post.has_key('password') 
+	has_password2 = input.post.has_key('password2') 
 
-	if ((input.post.has_key('password') and input.post.has_key('password2')) 
-	and (change or add)):
-		if input.post['password'] != input.post['password2']:
-			print 'passwords do not match!'
-		else:
+	if has_user and (want_change or want_add):
+		if has_password and has_password2:
 			password = input.post['password']
+			password2 = input.post['password2']
+			if password != password2:
+				print '<p class="msg">Passwords do not match!</p>'
+			else:
+				if want_change:
+					changepassword(input, input.post['user'], password)
+				if want_add:
+					adduser(input, input.post['user'], password)
+		else:
+			print '''<p class="msg">
+				You need to fill in both password fields to do this</p>'''
 
-			if input.post.has_key('change_user'):
-				changepassword(input, input.post['change_user'], password)
-			if input.post.has_key('add_user'):
-				adduser(input, input.post['add_user'], password)
+	if has_user and want_remove:
+		removeuser(input, input.post['user'])
 
-			return
-	else:
-		if input.post.has_key('password') or input.post.has_key('password2') or\
-		input.post.has_key('user') or input.post.has_key('add_user'):
-			print 'you need to fill in every field'
-
-	if remove:
-		removeuser(input, input.post['remove_user'])
+	if (want_remove or want_add or want_change) and not has_user:
+		print '<p class="msg">Which user do you want to '
+		if want_remove:	print 'remove'
+		if want_change:	print 'change'
+		if want_add: print 'add'
+		print '?</p>'
 
 	printprofile(input)
 
 def changepassword(input, user, password):
 	if user is None:
-		print 'Nobody is logged in!'
+		print '<p class="msg">Nobody is logged in!</p>'
 		return
 
 	access_file = input.config.get('svn', 'access_file')
 	htpasswd = mod_htpasswd.HTPasswd(access_file)
 	htpasswd.change(user, password)
 	htpasswd.flush()
-	print 'Password changed<br />'
+	print '<p class="msg">Password changed</p>'
 
 def adduser(input, user, password):
 	access_file = input.config.get('svn', 'access_file')
 	htpasswd = mod_htpasswd.HTPasswd(access_file)
+	if htpasswd.exists(user):
+		print '<p class="msg">User ' + user + ' already exists</p>'
+		return
+
 	htpasswd.add(user, password)
 	htpasswd.flush()
-	print 'User ' + user + ' added<br />'
+	print '<p class="msg">User ' + user + ' added</p>'
 
 def removeuser(input, user):
 	access_file = input.config.get('svn', 'access_file')
 	htpasswd = mod_htpasswd.HTPasswd(access_file)
+	if not htpasswd.exists(user):
+		print '<p class="msg">User ' + user + ' doesn\'t exist</p>'
+		return
+
 	htpasswd.remove(user)
 	htpasswd.flush()
-	print 'User ' + user + ' removed<br />'
+	print '<p class="msg">' + user + ' removed</p>'
 
 def handler(input):
 	print input.html.header('users')
