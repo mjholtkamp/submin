@@ -1,5 +1,6 @@
 from lib.utils import mimport
 mod_htpasswd = mimport('lib.htpasswd')
+mod_authz = mimport('lib.authz')
 
 admin = True
 login_required = True
@@ -153,6 +154,18 @@ def adduser(input, user, password):
 	htpasswd.flush()
 	print '<p class="msg">User ' + user + ' added</p>'
 
+def removeuserfromgroups(input, user):
+	for group in input.authz.groups():
+		members = input.authz.members(group)
+		if user in members:
+			input.authz.removeMember(group, user)
+
+def removeuserfrompermissions(input, user):
+	for path in input.authz.paths():
+		for permissions in input.authz.permissions(path[0], path[1]):
+			if permissions[0] == user:
+				input.authz.removePermission(path[0], path[1], user)
+
 def removeuser(input, user):
 	access_file = input.config.get('svn', 'access_file')
 	htpasswd = mod_htpasswd.HTPasswd(access_file)
@@ -160,6 +173,8 @@ def removeuser(input, user):
 		print '<p class="msg">User ' + user + ' doesn\'t exist</p>'
 		return
 
+	removeuserfromgroups(input, user)
+	removeuserfrompermissions(input, user)
 	htpasswd.remove(user)
 	htpasswd.flush()
 	print '<p class="msg">' + user + ' removed</p>'
