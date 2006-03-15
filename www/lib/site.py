@@ -100,9 +100,10 @@ class Input:
 
 	def __base(self):
 		filename = self.req.uri
-		path_info = '/submerge.py%s' % self.req.path_info or ''
-
+		path_info = '/submerge.py%s' % (self.req.path_info or '')
 		index = self.req.uri.rindex(path_info)
+		if not index:
+			return '/'
 		filename = filename[:index]
 		return filename
 
@@ -131,8 +132,8 @@ class Input:
 				host = self.req.server.server_hostname
 
 		if not path:
-			if len(self.path_info):
-				path = self.req.uri[:-len(self.path_info)] or '/'
+			if len(self.pathInfo):
+				path = self.req.uri[:-len(self.pathInfo)] or '/'
 			else:
 				path = self.req.uri
 
