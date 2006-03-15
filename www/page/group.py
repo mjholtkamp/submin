@@ -42,7 +42,7 @@ def handler(input):
 		<th style="width: 150px" align="left">Group</th>
 		<th align="left">Members</th>
 	</thead>
-	<form action="%s/group/delgroup" method="post" onsubmit="return confirm('Do you really want to delete these groups? (there is no undo!)')">
+	<form action="%sgroup/delgroup" method="post" onsubmit="return confirm('Do you really want to delete these groups? (there is no undo!)')">
 ''' % input.base
 	groups = authz.groups()
 	groups.sort()
@@ -51,7 +51,7 @@ def handler(input):
 		members.sort()
 		print '''\t<tr>
 		<td><input type="checkbox" name="%s" value="1" /></td>
-		<td><a href="%s/group?group=%s">%s</a></td>
+		<td><a href="%sgroup?group=%s">%s</a></td>
 		<td>%s</td>
 	</tr>''' % \
 		(group, input.base, urllib.quote(group), group, 
@@ -67,7 +67,7 @@ def handler(input):
 </table>
 <h3>Add a group</h3>
 <table>
-	<form action="%s/group/add" method="post">
+	<form action="%sgroup/add" method="post">
 	<tr>
 		<td style="width: 20px"></td>
 		<td style="width: 150px">New group</td>
@@ -85,7 +85,7 @@ def handler(input):
 
 def _oldshouwgroup():
 	print '''
-	<form action="%s/group/delmembers" method="post">
+	<form action="%sgroup/delmembers" method="post">
 		<input type="hidden" name="group" value="%s" />
 		<ul>
 	''' % (input.base, group)
@@ -97,7 +97,7 @@ def _oldshouwgroup():
 		<input type="submit" value="Delete checked members" />
 	</form>
 	<h2>Add a member</h2>
-	<form action="%s/group/addmember" method="post">
+	<form action="%sgroup/addmember" method="post">
 		<select class="form" name="member">
 			<option value="">Choose a user</option>
 	''' % input.base
@@ -182,7 +182,7 @@ def delmembers(input):
 			if member not in members:
 				continue
 			authz.removeMember(group, member)
-	raise exceptions.Redirect, '%s/group?group=%s&msg=Members+deleted' %\
+	raise exceptions.Redirect, '%sgroup?group=%s&msg=Members+deleted' %\
 			(input.base, group)
 
 def addoldmember(input):
@@ -191,10 +191,10 @@ def addoldmember(input):
 	member = input.post['member']
 	if not member:
 		raise exceptions.Redirect, \
-				'%s/group?group=%s&msg=Please+fill+in+the+member+field' % \
+				'%sgroup?group=%s&msg=Please+fill+in+the+member+field' % \
 				(input.base, group)
 	authz.addMember(group, member)
-	raise exceptions.Redirect, '%s/group?group=%s&msg=Members+added' %\
+	raise exceptions.Redirect, '%sgroup?group=%s&msg=Members+added' %\
 			(input.base, group)
 
 def savemember(input):
@@ -203,7 +203,7 @@ def savemember(input):
 	authz.removeAllMembers(group)
 	for member in input.post['ingroup']:
 		authz.addMember(group, member)
-	raise exceptions.Redirect, '%s/group?group=%s&msg=Members+saved' %\
+	raise exceptions.Redirect, '%sgroup?group=%s&msg=Members+saved' %\
 			(input.base, group)
 
 def add(input):
@@ -211,11 +211,11 @@ def add(input):
 	group = input.post['newgroup']
 	if not group:
 		raise exceptions.Redirect, \
-				'%s/group?msg=Please+fill+in+the+group+field' % \
+				'%sgroup?msg=Please+fill+in+the+group+field' % \
 				(input.base, group)
 
 	authz.addGroup(group)
-	raise exceptions.Redirect, '%s/group?group=%s&msg=Group+added' %\
+	raise exceptions.Redirect, '%sgroup?group=%s&msg=Group+added' %\
 			(input.base, group)
 
 def delgroup(input):
@@ -226,6 +226,6 @@ def delgroup(input):
 		except mod_authz.UnknownGroupError:
 			pass
 
-	raise exceptions.Redirect, '%s/group?msg=Groups+deleted' % input.base
+	raise exceptions.Redirect, '%sgroup?msg=Groups+deleted' % input.base
 
 

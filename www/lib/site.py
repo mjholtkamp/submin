@@ -176,7 +176,7 @@ class Site:
 
 		if hasattr(page, 'login_required') and page.login_required:
 			if input.session.is_new():
-	 			util.redirect(self.req, '%s/login' % input.base)
+	 			util.redirect(self.req, '%slogin' % input.base)
 				return apache.OK
 
 		if hasattr(page, 'admin') and page.admin and not input.isAdmin():

@@ -5,7 +5,7 @@ login_required = True
 
 def printprofile(input):
 	print '''
-	<form name="" action="%s/profile" method="post">
+	<form name="" action="%sprofile" method="post">
 	<div class="container">
 		<div class="row">
 			<label for="password">Change password into:</label>

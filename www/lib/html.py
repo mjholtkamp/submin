@@ -15,7 +15,7 @@ class Html:
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 	<head>
 		<title>Submerge%s</title>
-		<base href="%s/" />
+		<base href="%s" />
 		<link rel="stylesheet" type="text/css" href="submerge.css" 
 			media="screen" />\n'''% \
 					(iif(title, ' - %s' % title, ' '), self.input.base))

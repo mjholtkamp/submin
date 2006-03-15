@@ -25,7 +25,7 @@ def printprofile(input):
 		posted_add = True
 
 	print '''
-	<form name="" action="%s/users" method="post">
+	<form name="" action="%susers" method="post">
 	<div class="container">
 		<b>Change user</b>
 		<div class="row">
@@ -71,7 +71,7 @@ def printprofile(input):
 		posted_add_user = posted_user
 
 	print '''
-	<form name="" action="%s/users" method="post">
+	<form name="" action="%susers" method="post">
 	<div class="container">
 		<b>Add user</b>
 		<div class="row">

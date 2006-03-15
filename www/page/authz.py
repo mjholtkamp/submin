@@ -82,7 +82,7 @@ def handler(input):
 		print '<p class="msg">%s</p>' % msg
 
 	print '<h2>Permissions</h2>'
-	print '<p><a href="%s/authz/addpath">Add path</a> <small>(using a path-browser)</small></p>' % input.base
+	print '<p><a href="%sauthz/addpath">Add path</a> <small>(using a path-browser)</small></p>' % input.base
 	print '''<form action="authz/manualaddpath" method="post">
 		<p><small>Repository:</small> <input type="text" name="repos" />
 		   <small>Path:</small> <input type="text" name="path" />
@@ -101,7 +101,7 @@ def handler(input):
 	for repos, path in paths:
 		rpath = '%s%s' % (iif(repos, str(repos) + ':', ''), path)
 
-		print '<form action="%s/authz/saveperm" method="post">' % input.base
+		print '<form action="%sauthz/saveperm" method="post">' % input.base
 		print '\t<input type="hidden" name="path" value="%s%s" />' % \
 				(iif(repos is not None, str(repos) + ':', ''), 
 				urllib.quote(path))
@@ -110,8 +110,8 @@ def handler(input):
 		print '\t\t<th align="left">%s%s</th>' % \
 			(iif(repos, str(repos) + ':', ''), path)
 		print '''\t\t<td>
-		<a href="%s/authz/delpath?path=%s" onclick="return confirm('Do you really want to delete %s? (There is no undo)')" title="Delete">[X]</a>
-		| <a href="%s/authz/addperm?path=%s" title="Add permission">[+]</a>
+		<a href="%sauthz/delpath?path=%s" onclick="return confirm('Do you really want to delete %s? (There is no undo)')" title="Delete">[X]</a>
+		| <a href="%sauthz/addperm?path=%s" title="Add permission">[+]</a>
 		</td>''' % \
 				(input.base, urllib.quote(rpath), rpath, input.base, 
 				urllib.quote(rpath))
@@ -169,7 +169,7 @@ def saveperm(input):
 		elif key.startswith('del'):
 			authz.removePermission(repos, path, key[4:].strip())
 
-	raise exceptions.Redirect, '%s/authz?msg=Permissions+saved' % input.base
+	raise exceptions.Redirect, '%sauthz?msg=Permissions+saved' % input.base
 
 def addperm(input):
 	authz = _getauthz(input)
@@ -177,7 +177,7 @@ def addperm(input):
 		path = input.get['path'][-1]
 		print input.html.header('Adding permission to %s' % path)
 		print '<h2>Adding permission to %s</h2>' % path
-		print '''<form action="%s/authz/addperm" method="post" name="perm">
+		print '''<form action="%sauthz/addperm" method="post" name="perm">
 	<input type="hidden" name="path" value="%s" />
 	<input type="text" name="member" /> %s <input type="submit" value="Add user" />
 </form>''' % (input.base, path, _select('newuser', '-'))
@@ -208,7 +208,7 @@ def addperm(input):
 		if permission == '-':
 			permission = ' '
 		authz.setPermission(repos, path, member, permission)
-		raise exceptions.Redirect, '%s/authz?msg=Permissions+added' % input.base
+		raise exceptions.Redirect, '%sauthz?msg=Permissions+added' % input.base
 
 def delpath(input):
 	authz = _getauthz(input)
@@ -218,7 +218,7 @@ def delpath(input):
 		if ':' in path:
 			repos, path = path.split(':', 1)
 		authz.removePath(repos, path)
-	raise exceptions.Redirect, '%s/authz?msg=Path+deleted' % input.base
+	raise exceptions.Redirect, '%sauthz?msg=Path+deleted' % input.base
 
 def addpath(input):
 	authz = _getauthz(input)
@@ -260,19 +260,19 @@ def addpath(input):
 			repos, path = path.split(':', 1)
 		if [repos, path] not in authz.paths():
 			authz.addPath(repos, path)
-			raise exceptions.Redirect, '%s/authz?msg=Path+added' % input.base
+			raise exceptions.Redirect, '%sauthz?msg=Path+added' % input.base
 		else:
 			raise exceptions.Redirect, \
-				'%s/authz/addpath?msg=Path+already+managed' % input.base
+				'%sauthz/addpath?msg=Path+already+managed' % input.base
 
 def manualaddpath(input):
 	repos = input.post.get('repos', None)
 	path = input.post.get('path', None)
 	if not repos and path != '/':
 		msg = urllib.quote("Please fill in both fields!")
-		raise exceptions.Redirect, '%s/authz?msg=%s' % (input.base, msg)
+		raise exceptions.Redirect, '%sauthz?msg=%s' % (input.base, msg)
 	input.authz.addPath(repos, path)
 
 	msg = urllib.quote("Path added")
-	raise exceptions.Redirect, '%s/authz?msg=%s' % (input.base, msg)
+	raise exceptions.Redirect, '%sauthz?msg=%s' % (input.base, msg)
 		

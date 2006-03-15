@@ -6,7 +6,7 @@ login_required = False
 def printlogin(input):
 	print '''
 	<b>Please login</b><br />
-	<form name="" action="%s/login" method="post">
+	<form name="" action="%slogin" method="post">
 	<div class="container">
 		<div class="row">
 			<label for="user">Username: </label>
@@ -55,7 +55,7 @@ def handler(input):
 	else:
 		if loggedin:
 			print '''Hey %s, you are alread logged in :D<br />
-				Perhaps you want to <a href="%s/logout">logout</a>?
+				Perhaps you want to <a href="%slogout">logout</a>?
 				''' % (input.session['user'], input.base)
 		else:
 			printlogin(input)
