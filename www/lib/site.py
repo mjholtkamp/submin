@@ -48,6 +48,8 @@ class Input:
 		self.pathInfo = pathInfo; 
 
 		self.base = self.absolutePath(self.__base())
+		if self.base[-1] != '/':
+			self.base += '/'
 
 		self.config = self.__getConfig()
 		self.authz = self.__getAuthz()

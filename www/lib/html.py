@@ -24,6 +24,10 @@ class Html:
 			buf.write('''\t\t<link rel="stylesheet" type="text/css" href="%s.css" media="screen" />\n''' % \
 					sheet)
 
+		buf.write('''\t\t<script src="prototype-1.4.0.js" type="text/javascript"></script>\n''')
+		buf.write('''\t\t<script src="effects.js" type="text/javascript"></script>\n''')
+		buf.write('''\t\t<script src="dragdrop.js" type="text/javascript"></script>\n''')
+
 		for script in scripts:
 			buf.write('''\t\t<script src="%s.js" type="text/javascript"></script>\n''' % \
 					(script,))

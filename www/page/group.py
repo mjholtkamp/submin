@@ -30,41 +30,90 @@ def handler(input):
 
 	authz = _getauthz(input)
 
+	access_file = input.config.get('svn', 'access_file')
+	htpasswd = mod_htpasswd.HTPasswd(access_file)
+	users = htpasswd.users()
+	users.sort()
+
 	print input.html.header('Permissions')
 
 	if msg:
 		print '<p class="msg">%s</p>' % msg
 
-	print '''<h2>Groups</h2>
-<table>
-	<thead>
-		<td style="width: 20px"></td>
-		<th style="width: 150px" align="left">Group</th>
-		<th align="left">Members</th>
-	</thead>
-	<form action="%sgroup/delgroup" method="post" onsubmit="return confirm('Do you really want to delete these groups? (there is no undo!)')">
-''' % input.base
+	print '''<div id="wastebin"><h2>Drop items here to delete them</h2></div>
+<script type="text/javascript">
+Droppables.add('wastebin', {accept:['members','groups'],
+onDrop:function(element){
+	if (element.className == 'members')
+	{
+		idx = element.id.lastIndexOf('_');
+		group = element.id.substring(0, idx);
+		member = element.id.substring(idx + 1, element.id.length);
+		new Ajax.Updater(group, 'group/ajax_delmember', 
+			{method: 'get', parameters:'group=' + encodeURIComponent(group) + '&member=' + encodeURIComponent(member), 
+			 evalScripts:true, asynchronous:true});
+		Element.hide(element);
+	}
+	else if (element.className == 'groups')
+	{
+		if (!confirm("Do you really want to delete this group? There is no undo!"))
+			return;
+
+		idx = element.id.lastIndexOf('_');
+		group = element.id.substring(idx + 1, element.id.length);
+		new Ajax.Updater(group, 'group/ajax_delgroup', 
+			{method: 'get', parameters:'group=' + encodeURIComponent(group), 
+			 evalScripts:true, asynchronous:true});
+		Element.hide($('fs_' + group));
+	}
+}, 
+hoverclass:'wastebin-active'})
+</script>
+	'''
+	print '''<h2>Groups</h2>'''
 	groups = authz.groups()
 	groups.sort()
 	for group in groups:
 		members = authz.members(group)
 		members.sort()
-		print '''\t<tr>
-		<td><input type="checkbox" name="%s" value="1" /></td>
-		<td><a href="%sgroup?group=%s">%s</a></td>
-		<td>%s</td>
-	</tr>''' % \
-		(group, input.base, urllib.quote(group), group, 
-		', '.join(members))
+		members = ['<span id="%s_%s" class="members"><img src="images/user.png" />%s</span><script type="text/javascript">new Draggable(\'%s_%s\', {revert:true})</script>' % \
+				(group, member, member, group, member) for member in members]
+		print '''\t<fieldset id="fs_%s">
+		<legend><span id="group_%s" class="groups"><img src="images/group.png" />%s</span></legend>
+		<div id="%s" style="min-height: 15px">%s</div>
+	</fieldset>''' % \
+		(group, group, group, group, ', '.join(members))
+
+		print '''
+		<script type="text/javascript">
+		new Draggable(\'group_%s\', {revert:true});
+		Droppables.add('%s', {accept:'users',
+		onDrop:function(element){
+			idx = element.id.lastIndexOf('_');
+			member = element.id.substring(idx + 1, element.id.length);
+			new Ajax.Updater('%s', 'group/ajax_addmember', 
+				{method: 'get', parameters:'group=' + encodeURIComponent('%s') + '&member=' + encodeURIComponent(member), 
+				 evalScripts:true, asynchronous:true});},
+		hoverclass:'wastebin-active'})
+		</script>
+		''' % (group, group, group, group)
 
 	print '''
-	<tr>
-		<td colspan="3" align="right">
-			<input type="submit" value="Delete checked groups" />
-		</td>
-	</tr>
-	</form>
-</table>
+	<script type="text/javascript">
+      reverteffect = function(element, top_offset, left_offset) {
+		var dur = 0;
+        element._revert = new Effect.Move(element, { x: -left_offset, y: -top_offset, duration: dur});
+      }
+	</script>'''
+	users = ['<li><span id="user_%s" class="users"><img src="images/user.png" />%s</span></li><script type="text/javascript">new Draggable(\'user_%s\', {revert:true, reverteffect:reverteffect})</script>' % \
+			(user, user, user) for user in users]
+	print '''<br />
+	<fieldset>
+		<legend>Users</legend>
+		<ul style="list-style: none">%s</ul>
+	</fieldset>''' % '\n'.join(users)
+
+	print '''
 <h3>Add a group</h3>
 <table>
 	<form action="%sgroup/add" method="post">
@@ -228,4 +277,47 @@ def delgroup(input):
 
 	raise exceptions.Redirect, '%sgroup?msg=Groups+deleted' % input.base
 
+def ajax_delmember(input):
+	authz = _getauthz(input)
 
+	group = input.get['group'][0]
+	del_member = input.get['member'][0]
+
+	try:
+		authz.removeMember(group, del_member)
+	except: pass
+	members = authz.members(group)
+	members.sort()
+	#members.remove(del_member)
+	members = ['<span id="%s_%s" class="members"><img src="images/user.png" />%s</span><script type="text/javascript">new Draggable(\'%s_%s\', {revert:true})</script>' % \
+			(group, member, member, group, member) for member in members]
+	print ', '.join(members)
+
+def ajax_delgroup(input):
+	authz = _getauthz(input)
+
+	group = input.get['group'][0]
+
+	try:
+		authz.removeGroup(group)
+	except mod_authz.UnknownGroupError:
+		pass
+
+	print ' '
+
+
+def ajax_addmember(input):
+	authz = _getauthz(input)
+
+	group = input.get['group'][0]
+	add_member = input.get['member'][0]
+
+	try:
+		authz.addMember(group, add_member)
+	except: pass
+	members = authz.members(group)
+	members.sort()
+	#members.remove(del_member)
+	members = ['<span id="%s_%s" class="members"><img src="images/user.png" />%s</span><script type="text/javascript">new Draggable(\'%s_%s\', {revert:true})</script>' % \
+			(group, member, member, group, member) for member in members]
+	print ', '.join(members)
