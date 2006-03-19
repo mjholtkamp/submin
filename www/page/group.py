@@ -40,6 +40,11 @@ def handler(input):
 	if msg:
 		print '<p class="msg">%s</p>' % msg
 
+	print '''
+	<p id="indicator" style="display:none;position:absolute;top:0;background:white;border:2px solid #000; color: #000; padding: 5px">
+		<img alt="Indicator" src="images/indicator.gif" style="vertical-align: center"/> Updating groups...
+	</p>
+	'''
 	print '''<div id="wastebin"><h2>Drop items here to delete them</h2></div>
 <script type="text/javascript">
 Droppables.add('wastebin', {accept:['members','groups'],
@@ -51,7 +56,9 @@ onDrop:function(element){
 		member = element.id.substring(idx + 1, element.id.length);
 		new Ajax.Updater(group, 'group/ajax_delmember', 
 			{method: 'get', parameters:'group=' + encodeURIComponent(group) + '&member=' + encodeURIComponent(member), 
-			 evalScripts:true, asynchronous:true});
+			 evalScripts:true, asynchronous:true,
+			 onLoading:function(request){Element.show('indicator')}, onComplete:function(request){Element.hide('indicator')}
+			});
 		Element.hide(element);
 	}
 	else if (element.className == 'groups')
@@ -63,7 +70,9 @@ onDrop:function(element){
 		group = element.id.substring(idx + 1, element.id.length);
 		new Ajax.Updater(group, 'group/ajax_delgroup', 
 			{method: 'get', parameters:'group=' + encodeURIComponent(group), 
-			 evalScripts:true, asynchronous:true});
+			 evalScripts:true, asynchronous:true,
+			 onLoading:function(request){Element.show('indicator')}, onComplete:function(request){Element.hide('indicator')}
+			 });
 		Element.hide($('fs_' + group));
 	}
 }, 
@@ -93,7 +102,9 @@ hoverclass:'wastebin-active'})
 			member = element.id.substring(idx + 1, element.id.length);
 			new Ajax.Updater('%s', 'group/ajax_addmember', 
 				{method: 'get', parameters:'group=' + encodeURIComponent('%s') + '&member=' + encodeURIComponent(member), 
-				 evalScripts:true, asynchronous:true});},
+				 evalScripts:true, asynchronous:true,
+				 onLoading:function(request){Element.show('indicator')}, onComplete:function(request){Element.hide('indicator')}
+				 });},
 		hoverclass:'wastebin-active'})
 		</script>
 		''' % (group, group, group, group)
@@ -264,8 +275,8 @@ def add(input):
 				(input.base, group)
 
 	authz.addGroup(group)
-	raise exceptions.Redirect, '%sgroup?group=%s&msg=Group+added' %\
-			(input.base, group)
+	raise exceptions.Redirect, '%sgroup' %\
+			(input.base)
 
 def delgroup(input):
 	authz = _getauthz(input)
