@@ -153,7 +153,17 @@ Object.extend(String.prototype, {
   },
 
   evalScripts: function() {
-    return this.extractScripts().map(eval);
+    /*return this.extractScripts().map(eval);*/
+
+	/* By avaeq: fix eval-bug in opera */
+
+	scripts = this.extractScripts();
+	for (var i = 0; i < scripts.length; i++)
+	{
+		script = scripts[i];
+		eval(script);
+	}
+	return true;
   },
 
   escapeHTML: function() {

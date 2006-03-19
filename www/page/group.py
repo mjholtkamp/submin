@@ -104,7 +104,8 @@ hoverclass:'wastebin-active'})
 				{method: 'get', parameters:'group=' + encodeURIComponent('%s') + '&member=' + encodeURIComponent(member), 
 				 evalScripts:true, asynchronous:true,
 				 onLoading:function(request){Element.show('indicator')}, onComplete:function(request){Element.hide('indicator')}
-				 });},
+				 });
+},
 		hoverclass:'wastebin-active'})
 		</script>
 		''' % (group, group, group, group)
@@ -300,7 +301,7 @@ def ajax_delmember(input):
 	members = authz.members(group)
 	members.sort()
 	#members.remove(del_member)
-	members = ['<span id="%s_%s" class="members"><img src="images/user.png" />%s</span><script type="text/javascript">new Draggable(\'%s_%s\', {revert:true})</script>' % \
+	members = ['''<span id="%s_%s" class="members"><img src="images/user.png" />%s</span><script type="text/javascript">new Draggable(\'%s_%s\', {revert:true});</script>''' %\
 			(group, member, member, group, member) for member in members]
 	print ', '.join(members)
 
@@ -316,7 +317,6 @@ def ajax_delgroup(input):
 
 	print ' '
 
-
 def ajax_addmember(input):
 	authz = _getauthz(input)
 
@@ -329,6 +329,6 @@ def ajax_addmember(input):
 	members = authz.members(group)
 	members.sort()
 	#members.remove(del_member)
-	members = ['<span id="%s_%s" class="members"><img src="images/user.png" />%s</span><script type="text/javascript">new Draggable(\'%s_%s\', {revert:true})</script>' % \
+	members = ['''<span id="%s_%s" class="members"><img src="images/user.png" />%s</span><script type="text/javascript">new Draggable(\'%s_%s\', {revert:true});</script>''' %\
 			(group, member, member, group, member) for member in members]
 	print ', '.join(members)
