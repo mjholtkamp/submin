@@ -41,17 +41,35 @@ def handler(input):
 		print '<p class="msg">%s</p>' % msg
 
 	print '''
-	<p id="indicator" style="display:none;position:absolute;top:0;background:white;border:2px solid #000; color: #000; padding: 5px">
+	<script type="text/javascript">
+      reverteffect = function(element, top_offset, left_offset) {
+		var dur = 1;
+        element._revert = new Effect.Move(element, { x: -left_offset, y: -top_offset, duration: dur});
+      }
+	</script>'''
+
+	users = ['<li><span id="user_%s" class="users"><img src="images/user.png" />%s</span></li><script type="text/javascript">new Draggable(\'user_%s\', {revert:true, reverteffect:reverteffect})</script>' % \
+			(user, user, user) for user in users]
+	print '''<br />
+	<div style="position: fixed; top:20px; right: 20px; width: 205px">
+	<div id="wastebin"></div>
+	<fieldset id="users">
+		<legend>Users</legend>
+		<ul>%s</ul>
+	</fieldset>
+	</div>''' % '\n'.join(users)
+
+	print '''
+	<p id="indicator" style="display:none">
 		<img alt="Indicator" src="images/indicator.gif" style="vertical-align: center"/> Updating groups...
 	</p>
 	'''
-	print '''<div id="wastebin"><h2>Drop items here to delete them</h2></div>
-<script type="text/javascript">
+	print '''<script type="text/javascript">
 Droppables.add('wastebin', {accept:['members','groups'],
 onDrop:function(element){
 	if (element.className == 'members')
 	{
-		idx = element.id.lastIndexOf('_');
+		idx = element.id.lastIndexOf('=');
 		group = element.id.substring(0, idx);
 		member = element.id.substring(idx + 1, element.id.length);
 		new Ajax.Updater(group, 'group/ajax_delmember', 
@@ -66,8 +84,8 @@ onDrop:function(element){
 		if (!confirm("Do you really want to delete this group? There is no undo!"))
 			return;
 
-		idx = element.id.lastIndexOf('_');
-		group = element.id.substring(idx + 1, element.id.length);
+		idx = element.id.indexOf('group_');
+		group = element.id.substring(idx + 6, element.id.length);
 		new Ajax.Updater(group, 'group/ajax_delgroup', 
 			{method: 'get', parameters:'group=' + encodeURIComponent(group), 
 			 evalScripts:true, asynchronous:true,
@@ -85,7 +103,7 @@ hoverclass:'wastebin-active'})
 	for group in groups:
 		members = authz.members(group)
 		members.sort()
-		members = ['<span id="%s_%s" class="members"><img src="images/user.png" />%s</span><script type="text/javascript">new Draggable(\'%s_%s\', {revert:true})</script>' % \
+		members = ['<span id="%s=%s" class="members"><img src="images/user.png" />%s</span><script type="text/javascript">new Draggable(\'%s=%s\', {revert:true})</script>' % \
 				(group, member, member, group, member) for member in members]
 		print '''\t<fieldset id="fs_%s">
 		<legend><span id="group_%s" class="groups"><img src="images/group.png" />%s</span></legend>
@@ -109,21 +127,6 @@ hoverclass:'wastebin-active'})
 		hoverclass:'wastebin-active'})
 		</script>
 		''' % (group, group, group, group)
-
-	print '''
-	<script type="text/javascript">
-      reverteffect = function(element, top_offset, left_offset) {
-		var dur = 0;
-        element._revert = new Effect.Move(element, { x: -left_offset, y: -top_offset, duration: dur});
-      }
-	</script>'''
-	users = ['<li><span id="user_%s" class="users"><img src="images/user.png" />%s</span></li><script type="text/javascript">new Draggable(\'user_%s\', {revert:true, reverteffect:reverteffect})</script>' % \
-			(user, user, user) for user in users]
-	print '''<br />
-	<fieldset>
-		<legend>Users</legend>
-		<ul style="list-style: none">%s</ul>
-	</fieldset>''' % '\n'.join(users)
 
 	print '''
 <h3>Add a group</h3>
@@ -301,7 +304,7 @@ def ajax_delmember(input):
 	members = authz.members(group)
 	members.sort()
 	#members.remove(del_member)
-	members = ['''<span id="%s_%s" class="members"><img src="images/user.png" />%s</span><script type="text/javascript">new Draggable(\'%s_%s\', {revert:true});</script>''' %\
+	members = ['''<span id="%s=%s" class="members"><img src="images/user.png" />%s</span><script type="text/javascript">new Draggable(\'%s=%s\', {revert:true});</script>''' %\
 			(group, member, member, group, member) for member in members]
 	print ', '.join(members)
 
@@ -329,6 +332,6 @@ def ajax_addmember(input):
 	members = authz.members(group)
 	members.sort()
 	#members.remove(del_member)
-	members = ['''<span id="%s_%s" class="members"><img src="images/user.png" />%s</span><script type="text/javascript">new Draggable(\'%s_%s\', {revert:true});</script>''' %\
+	members = ['''<span id="%s=%s" class="members"><img src="images/user.png" />%s</span><script type="text/javascript">new Draggable(\'%s=%s\', {revert:true});</script>''' %\
 			(group, member, member, group, member) for member in members]
 	print ', '.join(members)
