@@ -42,10 +42,10 @@ class Html:
 
 		if self.input.isAdmin():
 			# the LI elements can't be seperated by spaces!
-			links = { 'users':'users', 'groups':'group', 
-				'permissions':'authz', 'repositories':'repository' }
+			links = [('users', 'users'), ('groups', 'group'), 
+				('permissions', 'authz'), ('repositories', 'repository')]
 
-			for name, link in links.iteritems():
+			for name, link in links:
 				if link == self.input.pathInfo[0]:
 					active = ' class="adminactive"'
 				else:
