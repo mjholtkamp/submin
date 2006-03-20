@@ -6,7 +6,7 @@ login_required = False
 def printlogin(input):
 	print '''
 	<b>Please login</b><br />
-	<form name="" action="%s/login" method="post">
+	<form name="" action="%slogin" method="post">
 	<div class="container">
 		<div class="row">
 			<label for="user">Username: </label>
