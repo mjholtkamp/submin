@@ -53,6 +53,7 @@ class Html:
 					<li><a href="users">users</a></li>
 					<li><a href="group">groups</a></li>
 		            <li><a href="authz">permissions</a></li>
+		            <li><a href="repository">repositories</a></li>
 					</ul>''')
 
 		if self.input.isLoggedIn():
