@@ -47,7 +47,7 @@ def addrepository(input):
 
 	repos = _getrepositories(input)
 
-	path = repos + "/" + name
+	path = os.path.join(repos, name)
 
 	if os.access(path, os.F_OK):
 		print 'repository %s already exists' % name
