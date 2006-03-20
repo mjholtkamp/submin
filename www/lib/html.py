@@ -40,6 +40,11 @@ class Html:
 		</div>
 		<div id="nav"><ul>''' % self.input.base)
 
+		if self.input.isLoggedIn():
+			buf.write(
+				'<span class="logged">logged in as: &quot;%s&quot;</span>' % 
+					self.input.user)
+
 		if self.input.isAdmin():
 			# the LI elements can't be seperated by spaces!
 			links = [('users', 'users'), ('groups', 'group'), 

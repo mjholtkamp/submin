@@ -1,7 +1,7 @@
 body {
-	font-family: sans-serif;
 	color: black;
 	background-color: white;
+	font-family: verdana,arial,'Bitstream Vera Sans',helvetica,sans-serif;
 }
 
 a {
@@ -118,6 +118,7 @@ fieldset#users ul {
 
 #nav {
 	background: #f7f7f7 url(images/topbar_gradient.png) 0 0;
+	font: normal 11px verdana,arial,'Bitstream Vera Sans',helvetica,sans-serif;
 	float: right;
 	text-align: right;
 	width: 100%;
@@ -125,7 +126,13 @@ fieldset#users ul {
 	text-decoration: none;
 }
 
-#nav ul, #nav ul li {
+#nav span.logged {
+	font-size: 9px;
+	float: left;
+	padding: .1em .5em;
+}
+
+#nav ul {
 	display: inline;
 }
 
@@ -144,6 +151,8 @@ fieldset#users ul {
 
 #nav ul li {
 	border-left: 1px solid black;
+	display: inline;
+	padding: 0 0;
 }
 
 #nav ul li:hover {
