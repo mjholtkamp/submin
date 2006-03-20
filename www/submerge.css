@@ -1,7 +1,7 @@
 body {
 	font-family: sans-serif;
-	color: white;
-	background-color: #666;
+	color: black;
+	background-color: white;
 }
 
 a {
@@ -93,9 +93,9 @@ fieldset span {
 } 
 
 #wastebin {
-/*	position: fixed; 
-	top:70px; 
-	right:20px;*/
+	position: fixed; 
+	top: 120px; 
+	right: 20px;
 	height: 48px;
 	width: 48px;
 	background: #666 url(images/trash-empty.png);
@@ -107,11 +107,49 @@ fieldset span {
 
 fieldset#users {
 	width: 200px;
-/*	position: fixed;
+	position: fixed;
 	right: 20px;
-	top: 120px;*/
+	top: 170px;
 }
 fieldset#users ul {
 	list-style: none;
 	padding-left: 5px;
+}
+
+#nav {
+	background: #f7f7f7 url(images/topbar_gradient.png) 0 0;
+	float: right;
+	text-align: right;
+	width: 100%;
+	border: 1px solid black;
+	text-decoration: none;
+}
+
+#nav ul, #nav ul li {
+	display: inline;
+}
+
+#nav ul li a {
+	text-decoration: none;
+}
+
+#nav .admin :link, #nav .admin :visited, 
+#nav .adminactive :link, #nav .adminactive :visited {
+	background: url(images/dots.gif) 0 0 no-repeat;
+}
+
+#nav :link, #nav :visited {
+	padding: 0 20px;
+}
+
+#nav ul li {
+	border-left: 1px solid black;
+}
+
+#nav ul li:hover {
+	background: #f7f7f7 url(images/topbar_gradient3.png) 0 0;
+}
+
+#nav ul li.active, #nav ul li.adminactive {
+	background: #f7f7f7 url(images/topbar_gradient2.png) 0 0;
 }

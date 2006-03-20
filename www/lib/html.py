@@ -38,31 +38,41 @@ class Html:
 		<div id="header">
 			<h1><a href="%s">Submerge</a></h1>
 		</div>
-		<div class="container">
-			<div id="menu">
-				<ul>
-					Menu
-		            <li><a href=".">main page</a></li>
-		            <li><a href="profile">profile</a></li>\
-''' % self.input.base)
+		<div id="nav"><ul>''' % self.input.base)
 
 		if self.input.isAdmin():
-			buf.write('''
-					Admin
-					<ul>
-					<li><a href="users">users</a></li>
-					<li><a href="group">groups</a></li>
-		            <li><a href="authz">permissions</a></li>
-		            <li><a href="repository">repositories</a></li>
-					</ul>''')
+			# the LI elements can't be seperated by spaces!
+			links = { 'users':'users', 'groups':'group', 
+				'permissions':'authz', 'repositories':'repository' }
+
+			for name, link in links.iteritems():
+				if link == self.input.pathInfo[0]:
+					active = ' class="adminactive"'
+				else:
+					active = ' class="admin"'
+
+				buf.write('<li%s><a href="%s">%s</a></li>' % 
+						(active, link, name))
 
 		if self.input.isLoggedIn():
-			buf.write('<li><a href="logout">logout</a></li>')
-		else:
-			buf.write('<li><a href="login">login</a></li>')
+			links = { 'profile':'profile', 'logout':'logout' }
 
-		buf.write('''
-					<li><a href="https://submerge.air.nl.eu.org/projects/submerge">Trac</a></li>
+			for name, link in links.iteritems():
+				if link == self.input.pathInfo[0]:
+					active = ' class="active"'
+				else:
+					active = ''
+
+				buf.write('<li%s><a href="%s">%s</a></li>' % 
+						(active, link, name))
+		else:
+			if self.input.pathInfo[0] == 'login':
+				active = ' class="active"'
+			else:
+				active = ''
+			buf.write('<li%s><a href="login">login</a></li>' % active)
+
+		buf.write('''<li><a href="https://submerge.air.nl.eu.org/projects/submerge">Trac</a></li>
 		        </ul>
 			</div>
 			<div id="content">''')
