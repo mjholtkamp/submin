@@ -109,6 +109,10 @@ fieldset legend {
 	padding: 0 .25em; 
 }
 
+fieldset div {
+	padding: .25em;
+}
+
 fieldset#users {
 	width: 200px;
 	position: fixed;
