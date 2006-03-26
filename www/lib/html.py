@@ -16,20 +16,20 @@ class Html:
 	<head>
 		<title>Submerge%s</title>
 		<base href="%s" />
-		<link rel="stylesheet" type="text/css" href="submerge.css" 
+		<link rel="stylesheet" type="text/css" href="css/submerge.css" 
 			media="screen" />\n'''% \
 					(iif(title, ' - %s' % title, ' '), self.input.base))
 
 		for sheet in css:
-			buf.write('''\t\t<link rel="stylesheet" type="text/css" href="%s.css" media="screen" />\n''' % \
+			buf.write('''\t\t<link rel="stylesheet" type="text/css" href="css/%s.css" media="screen" />\n''' % \
 					sheet)
 
-		buf.write('''\t\t<script src="prototype-1.4.0.js" type="text/javascript"></script>\n''')
-		buf.write('''\t\t<script src="effects.js" type="text/javascript"></script>\n''')
-		buf.write('''\t\t<script src="dragdrop.js" type="text/javascript"></script>\n''')
+		buf.write('''\t\t<script src="js/prototype-1.4.0.js" type="text/javascript"></script>\n''')
+		buf.write('''\t\t<script src="js/effects.js" type="text/javascript"></script>\n''')
+		buf.write('''\t\t<script src="js/dragdrop.js" type="text/javascript"></script>\n''')
 
 		for script in scripts:
-			buf.write('''\t\t<script src="%s.js" type="text/javascript"></script>\n''' % \
+			buf.write('''\t\t<script src="js/%s.js" type="text/javascript"></script>\n''' % \
 					(script,))
 
 		buf.write('''

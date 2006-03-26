@@ -98,11 +98,11 @@ fieldset span {
 	right: 20px;
 	height: 48px;
 	width: 48px;
-	background: #666 url(images/trash-empty.png);
+	background: #666 url(../images/trash-empty.png);
 }
 
 #wastebin.wastebin-active {
-	background: #666 url(images/trash-full.png);
+	background: #666 url(../images/trash-full.png);
 }
 
 fieldset#users {
@@ -117,7 +117,7 @@ fieldset#users ul {
 }
 
 #nav {
-	background: #f7f7f7 url(images/topbar_gradient.png) 0 0;
+	background: #f7f7f7 url(../images/topbar_gradient.png) 0 0;
 	font: normal 11px verdana,arial,'Bitstream Vera Sans',helvetica,sans-serif;
 	float: right;
 	text-align: right;
@@ -142,7 +142,7 @@ fieldset#users ul {
 
 #nav .admin :link, #nav .admin :visited, 
 #nav .adminactive :link, #nav .adminactive :visited {
-	background: url(images/dots.gif) 0 0 no-repeat;
+	background: url(../images/dots.gif) 0 0 no-repeat;
 }
 
 #nav :link, #nav :visited {
@@ -156,9 +156,9 @@ fieldset#users ul {
 }
 
 #nav ul li:hover {
-	background: #f7f7f7 url(images/topbar_gradient3.png) 0 0;
+	background: #f7f7f7 url(../images/topbar_gradient3.png) 0 0;
 }
 
 #nav ul li.active, #nav ul li.adminactive {
-	background: #f7f7f7 url(images/topbar_gradient2.png) 0 0;
+	background: #f7f7f7 url(../images/topbar_gradient2.png) 0 0;
 }
