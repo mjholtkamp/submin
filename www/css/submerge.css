@@ -98,11 +98,11 @@ fieldset span {
 	right: 20px;
 	height: 48px;
 	width: 48px;
-	background: #666 url(../images/trash-empty.png);
+	background: url(../images/trash-empty.png);
 }
 
 #wastebin.wastebin-active {
-	background: #666 url(../images/trash-full.png);
+	background: url(../images/trash-full.png);
 }
 
 fieldset#users {
