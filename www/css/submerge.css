@@ -105,6 +105,10 @@ fieldset span {
 	background: url(../images/trash-full.png);
 }
 
+fieldset legend {
+	padding: 0 .25em; 
+}
+
 fieldset#users {
 	width: 200px;
 	position: fixed;
