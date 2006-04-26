@@ -77,7 +77,7 @@ class Html:
 				active = ''
 			buf.write('<li%s><a href="login">login</a></li>' % active)
 
-		buf.write('''<li><a href="https://submerge.air.nl.eu.org/projects/submerge">Trac</a></li>
+		buf.write('''<li><a href="https://cloudwalker.air.nl.eu.org/projects/submerge">Trac</a></li>
 		        </ul>
 			</div>
 			<div id="content">''')
