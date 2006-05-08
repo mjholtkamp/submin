@@ -27,7 +27,6 @@ class Html:
 		buf.write('''\t\t<script src="js/prototype-1.4.0.js" type="text/javascript"></script>\n''')
 		buf.write('''\t\t<script src="js/effects.js" type="text/javascript"></script>\n''')
 		buf.write('''\t\t<script src="js/dragdrop.js" type="text/javascript"></script>\n''')
-		buf.write('''\t\t<script src="resize.js" type="text/javascript"></script>\n''')
 
 		for script in scripts:
 			buf.write('''\t\t<script src="js/%s.js" type="text/javascript"></script>\n''' % \
