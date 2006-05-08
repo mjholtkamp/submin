@@ -94,15 +94,14 @@ fieldset span {
 
 #wastebin {
 	position: fixed; 
-	top: 120px; 
+	top: 100px; 
 	right: 20px;
-	height: 48px;
 	width: 48px;
-	background: url(../images/trash-empty.png);
+	background: url(../images/trash-empty.png) top left no-repeat;
 }
 
 #wastebin.wastebin-active {
-	background: url(../images/trash-full.png);
+	background: url(../images/trash-full.png) top left no-repeat;
 }
 
 fieldset legend {
@@ -117,7 +116,7 @@ fieldset#users {
 	width: 200px;
 	position: fixed;
 	right: 20px;
-	top: 170px;
+	top: 150px;
 }
 fieldset#users ul {
 	list-style: none;

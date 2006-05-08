@@ -52,7 +52,7 @@ def handler(input):
 			(user, user, user) for user in users]
 	print '''<br />
 	<div style="position: fixed; top:20px; right: 20px; width: 205px">
-	<div id="wastebin"></div>
+	<div id="wastebin" style="height: 2000%%"></div> <!-- 2000%% is needed for scrolling; hope 2000%% is enough. Ugly. -->
 	<fieldset id="users">
 		<legend>Users</legend>
 		<ul>%s</ul>
@@ -84,8 +84,8 @@ onDrop:function(element){
 		if (!confirm("Do you really want to delete this group? There is no undo!"))
 			return;
 
-		idx = element.id.indexOf('group_');
-		group = element.id.substring(idx + 6, element.id.length);
+		idx = element.id.indexOf('fs_');
+		group = element.id.substring(idx + 3, element.id.length);
 		new Ajax.Updater(group, 'group/ajax_delgroup', 
 			{method: 'get', parameters:'group=' + encodeURIComponent(group), 
 			 evalScripts:true, asynchronous:true,
@@ -97,7 +97,9 @@ onDrop:function(element){
 hoverclass:'wastebin-active'})
 </script>
 	'''
-	print '''<h2>Groups</h2>'''
+	print '''<h2>Groups</h2>
+	<div id="resizable" style="">
+'''
 	groups = authz.groups()
 	groups.sort()
 	for group in groups:
@@ -105,7 +107,7 @@ hoverclass:'wastebin-active'})
 		members.sort()
 		members = ['<span id="%s=%s" class="members"><img src="images/user.png" />%s</span><script type="text/javascript">new Draggable(\'%s=%s\', {revert:true})</script>' % \
 				(group, member, member, group, member) for member in members]
-		print '''\t<fieldset id="fs_%s">
+		print '''\t<fieldset id="fs_%s" class="groups">
 		<legend><span id="group_%s" class="groups"><img src="images/group.png" />%s</span></legend>
 		<div id="%s" style="min-height: 15px">%s</div>
 	</fieldset>''' % \
@@ -113,7 +115,7 @@ hoverclass:'wastebin-active'})
 
 		print '''
 		<script type="text/javascript">
-		new Draggable(\'group_%s\', {revert:true});
+		new Draggable('fs_%s', {revert:true, handle:'group_%s'});
 		Droppables.add('%s', {accept:'users',
 		onDrop:function(element){
 			idx = element.id.lastIndexOf('_');
@@ -124,9 +126,9 @@ hoverclass:'wastebin-active'})
 				 onLoading:function(request){Element.show('indicator')}, onComplete:function(request){Element.hide('indicator')}
 				 });
 },
-		hoverclass:'wastebin-active'})
+		hoverclass:'wastebin-active'});
 		</script>
-		''' % (group, group, group, group)
+		''' % (group, group, group, group, group)
 
 	print '''
 <h3>Add a group</h3>
@@ -143,7 +145,9 @@ hoverclass:'wastebin-active'})
 		</td>
 	</tr>
 	</form>
-</table>''' % input.base
+</table>
+</div>
+''' % input.base
 
 	print input.html.footer()
 
