@@ -115,7 +115,7 @@ class Input:
 
 		scheme = 'http'
 		if self.req.subprocess_env.get('HTTPS') in ('on', '1') \
-				or self.server_port == 443:
+				or self.req.connection.local_addr[1] == 443:
 			scheme = 'https'
 
 
