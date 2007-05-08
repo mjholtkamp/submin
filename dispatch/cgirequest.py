@@ -11,7 +11,8 @@ class CGIRequest(Request):
 		self.__input = sys.stdin
 		self.__output = sys.stdout
 		
-		self.post = {}
+		self.post = CGIFieldStorage(self.__input, environ=self.__environ,
+			keep_blank_values=1)
 		self.get = CGIGet(self.__environ.get('QUERY_STRING'))
 		self.__incookie.load(self.__environ.get('HTTP_COOKIE', '')) 
 		self.path_info = self.__environ.get('PATH_INFO', '')
@@ -23,3 +24,18 @@ class CGIRequest(Request):
 class CGIGet(GetVariables):
 	def __init__(self, query_string):
 		self.variables = cgi.parse_qs(query_string)
+
+class CGIFieldStorage(cgi.FieldStorage):
+	"""Provide a consistent way to access the POST variables."""
+	
+	get = cgi.FieldStorage.getvalue
+
+	def __setitem__(self, name, value):
+		if self.has_key(name):
+			del self[name]
+		self.list.append(cgi.MiniFieldStorage(name, value))
+
+	def __delitem__(self, name):
+		if not self.has_key(name):
+			raise KeyError(name)
+		self.list = filter(lambda x, name=name: x.name != name, self.list)

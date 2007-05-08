@@ -1,8 +1,12 @@
+from dispatch.response import Response
+
+from views.test import Test
 
 #from views.groups import Groups
 
 classes = {
 	# 'groups': Groups(), # create instance of Group view
+	'test': Test(),
 }
 
 def dispatcher(request):
