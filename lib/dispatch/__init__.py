@@ -13,8 +13,9 @@ def dispatcher(request):
 	path = request.path_info.strip('/').split('/')
 	
 	handlerName = 'handler'
+	ajax = False
 	if path[0].lower() == 'ajax':
-		handlerName = 'ajax_handler'
+		ajax = True
 		del path[0]
 	
 	if path[0].lower() in classes:
@@ -24,7 +25,12 @@ def dispatcher(request):
 		
 		del path[0]
 		handler = getattr(cls, handlerName)
-		response = handler(request, path)
+		try:
+			response = handler(request, path, ajax=ajax)
+		except TypeError, e:
+			if str(e).strip() != "handler() got an unexpected keyword argument 'ajax'":
+				raise
+			response = handler(request, path)
 		
 		if not issubclass(response.__class__, Response):
 			raise Exception, "Handler %r should return a Response instance" % handler
