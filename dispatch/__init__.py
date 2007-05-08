@@ -29,6 +29,7 @@ def dispatcher(request):
 		if not issubclass(response.__class__, Response):
 			raise Exception, "Handler %r should return a Response instance" % handler
 		
+		request.status(response.status_code)
 		request.setHeaders(response.headers)
 		request.writeHeaders()
 		request.write(response.content)
