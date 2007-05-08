@@ -1,0 +1,21 @@
+Options ExecCGI FollowSymLinks
+AddHandler cgi-script py cgi pl
+
+###
+### Mod_python-mode:
+
+#AddHandler mod_python .py
+#PythonHandler modpythonhandler
+#PythonAutoReload on
+#PythonDebug On
+
+###
+### RewriteRules
+
+RewriteEngine on
+RewriteBase /dev_submerge
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ cgi_handler.py/$1
+
+RewriteRule ^/?$ cgi_handler.py/

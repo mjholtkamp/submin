@@ -14,6 +14,8 @@ class Request(object):
 		self.__outcookies = SimpleCookie()
 	
 	def setHeader(self, header, value):
+		if not hasattr(self, 'headers'):
+			self.headers = dict()
 		self.headers[header] = value
 		
 	def setHeaders(self, headers={}):

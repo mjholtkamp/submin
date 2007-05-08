@@ -6,7 +6,7 @@ from request import Request, GetVariables
 
 class CGIRequest(Request):
 	def __init__(self):
-		Request.__init__();
+		Request.__init__(self)
 		self.__environ = os.environ
 		self.__input = sys.stdin
 		self.__output = sys.stdout
@@ -14,12 +14,14 @@ class CGIRequest(Request):
 		self.post = CGIFieldStorage(self.__input, environ=self.__environ,
 			keep_blank_values=1)
 		self.get = CGIGet(self.__environ.get('QUERY_STRING'))
-		self.__incookie.load(self.__environ.get('HTTP_COOKIE', '')) 
+		if self.__environ.get('HTTP_COOKIE'):
+			self.__incookies.load(self.__environ.get('HTTP_COOKIE', '')) 
 		self.path_info = self.__environ.get('PATH_INFO', '')
 		self.remote_address = self.__environ.get('REMOTE_ADDR')
 	
 	def write(self, content):
 		self.__output.write(content)
+		self.__output.flush()
 
 class CGIGet(GetVariables):
 	def __init__(self, query_string):

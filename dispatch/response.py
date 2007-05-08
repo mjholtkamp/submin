@@ -6,12 +6,12 @@ class Response(object):
 		
 class Redirect(Response):
 	def __init__(self, url):
-		super(Response, self).__init__()
+		Response.__init__(self)
 		self.url = url
 		self.status_code = 302
 		self.headers.update({'Location': url})
 
 class HTTP404(Response):
 	def __init__(self):
-		super(Response, self).__init__()
+		Response.__init__(self)
 		self.status_code = 404
