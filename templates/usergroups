@@ -34,13 +34,9 @@
 		<script type="text/javascript" charset="utf-8">
 			Users.userContainer = 'users';
 			Groups.groupContainer = 'groups';
-			new User('tux', 'x@lirama.net');
-			new User('avaeq', 'x@webdevel.nl');
-			new User('sabre2th', 'x@elfstone.nl');
-			new User('will', 'x@elizeo.nl');
+			[iter:users new User([ival]);]
 			
-			new Group('submerge', \['avaeq', 'sabre2th'\]);
-			new Group('willmerge', \['will'\]);
+			[iter:groups new Group([ival]);]
 		</script>
 	</head>
 	

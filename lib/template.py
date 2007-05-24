@@ -125,6 +125,19 @@ def make_callback_mark(meta, callback):
 	meta['_callbacks'] = meta.get('_callbacks',[]) + [(mark, callback)]
 	return mark
 
+def markup_ival(args, text, meta=None, localvars={}, **varargs):
+	return '[ival]'
+
+def markup_iter(args, text, meta=None, localvars={}, **varargs):
+	if not localvars.has_key(args[0]):
+		return ''
+
+	iterarray = ''
+	for var in localvars[args[0]]:
+		iterarray = iterarray + text.replace('[ival]', var)
+
+	return iterarray
+
 def markup_set(args, text, meta=None, localvars={}, **varargs):
 	if text == 'true' or text == 'True':
 		localvars[args[0]] = True
@@ -178,11 +191,14 @@ def test():
 [val test][set:bla true][set:waarheid true]
 [val test2][set:bla test][set:test 42]
 This will give no error or warning: [val test3]
-{iter:a some html {ival} code here<br />} 
+[iter:users some html [ival] code here<br />] 
 [test:waarheid The variable bla is set to '[val bla]'<br />]
 {else xhtml code here<br />}"""
 
-	print markup(template)
+	localvars = {}
+	users = ['sabre2th', 'avaeq', 'will', 'tux']
+	localvars['users'] = users
+	print markup(template, None, localvars)
 
 if __name__ == "__main__":
 	test()

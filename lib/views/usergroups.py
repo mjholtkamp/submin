@@ -8,5 +8,15 @@ class UserGroups(object):
 			return Response('ajax')
 		f = open('../templates/usergroups')
 		template = ''.join(f.readlines())
-		formatted = markup(template)
+		localvars = {}
+		users = ["'sabre2th', 'x@elfstone.nl'", "'avaeq', 'x@webdevel.nl'"]
+		users.append("'will', 'x@elizeo.nl'")
+		users.append("'tux', 'x@lirama.net'")
+		users.append("'jan', 'me@jan.net'")
+		users.append("'piet', 'ik@janpieter.net'")
+		groups = ["'submerge', ['sabre2th', 'avaeq']"]
+		groups.append("'willmerge', ['will']")
+		localvars['users'] = users
+		localvars['groups'] = groups
+		formatted = markup(template, None, localvars)
 		return Response(formatted)
