@@ -133,12 +133,20 @@ def make_callback_mark(meta, callback):
 	return mark
 
 def markup_set(args, text, meta=None, localvars={}, **varargs):
-	localvars[args[0]] = text
+	if text == 'true' or text == 'True':
+		localvars[args[0]] = True
+	else:
+		localvars[args[0]] = text
 	return ''
 
 def markup_val(args, text, meta=None, localvars={}, **varargs):
 	if localvars.has_key(text):
 		return localvars[text]
+	return ''
+
+def markup_test(args, text, meta=None, localvars={}, **varargs):
+	if localvars.has_key(args[0]) and localvars[args[0]] is True:
+		return text
 	return ''
 
 def markup_include(args, text, meta=None, localvars={}, **varargs):
@@ -169,11 +177,11 @@ def markup_include(args, text, meta=None, localvars={}, **varargs):
 
 def test():
 	template="""[set:test2 5][include ../templates/test][set:test 3]here be dragons
-[val test]
+[val test][set:bla true]
 [val test2]
 This will give no error or warning: [val test3]
 {iter:a some html {ival} code here<br />} 
-{test:test xhtml code (test)<br />}
+[test:bla The variable bla is set to 'True'<br />]
 {else xhtml code here<br />}"""
 
 	print markup(template)
