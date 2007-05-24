@@ -1,0 +1,267 @@
+body {
+	font-size: small;
+	font-family: Verdana, Arial, Sans-serif;
+}
+
+a img {
+	border: 0;
+}
+
+#main-controls {
+	width: 92%;
+	text-align: center;
+}
+
+#users-controls, #users {
+	clear: both;
+	width: 45%;
+	margin-right: 7px;
+	float: left;
+	border: 1px solid #fff;
+}
+#users {
+	height: 400px;
+	overflow: auto;
+	font-size: 90%;
+	border: 1px solid #CCC;
+}
+
+#groups-controls, #groups {
+	width: 45%;
+	float: left;
+	margin-left: 7px;
+	border: 1px solid #fff;
+}
+#groups {
+	height: 400px;
+	overflow: auto;
+	border: 1px solid #CCC;
+}
+
+#users select, #groups select {
+	width: 390px;
+}
+
+/* users */
+#users .users {
+	background: #999 url(../img/users-bottom.jpg) bottom left no-repeat;
+	width: 400px;
+	margin: 5px;
+}
+#users .selected {
+	background: #333 url(../img/users-selected-bottom.jpg) bottom left no-repeat;
+	color: #fff;
+}
+#users .expanded {
+	background: #999 url(../img/users-expanded-bottom.jpg) bottom left no-repeat;
+}
+#users .expanded .settings {
+	background: #ccc url(../img/users-expanded-bottom.jpg) bottom left no-repeat;
+}
+#users .expanded.selected {
+	background: #333 url(../img/users-bottom.jpg) bottom left no-repeat;
+}
+#users .expanded.selected .settings {
+	background: #999 url(../img/users-bottom.jpg) bottom left no-repeat;
+}
+
+#users .users span {
+	background: url(../img/users-top.jpg) top left no-repeat;
+	width: 390px;
+	padding: 5px;
+	display: block;
+	line-height: 1.0em;
+	color: #fff;
+	font-weight: bold;
+}
+
+#users .users span small {
+	color: #666;
+	font-size: 90%;
+	font-weight: normal;
+}
+
+#users .users span img {
+	margin: -1px 0;
+}
+
+#users .selected span {
+	background: url(../img/users-selected-top.jpg) top left no-repeat;
+}
+
+#users .settings {
+	border-top: 1px solid #fff;
+	padding: 5px;
+	color: #666;
+	float: none;
+}
+
+#users .settings ul {
+	list-style: none;
+	padding-left: 0;
+	padding-bottom: 10px;
+}
+
+#users .settings ul li {
+	width: 390px;
+	clear: both;
+}
+
+#users .settings ul label {
+	width: 130px;
+	margin-right: 5px;
+	padding-top: 2px;
+	float: left;
+	text-align: right;
+	cursor: pointer;
+}
+
+#users .settings ul input {
+	float: left;
+}
+
+#users .controls {
+	padding: 0px 10px;
+	height: 16px;
+	margin: 10px 0;
+}
+
+/* groups */
+#groups .groups {
+	background: #999 url(../img/users-bottom.jpg) bottom left no-repeat;
+	width: 400px;
+	margin: 5px;
+	font-size: 90%;
+}
+
+#groups .selected {
+	background: #333 url(../img/users-selected-bottom.jpg) bottom left no-repeat;
+	color: #fff;
+}
+
+#groups .expanded {
+	background: #999 url(../img/users-expanded-bottom.jpg) bottom left no-repeat;
+}
+#groups .expanded .members {
+	background: #ccc url(../img/users-expanded-bottom.jpg) bottom left no-repeat;
+}
+#users .expanded.selected {
+	background: #333 url(../img/users-bottom.jpg) bottom left no-repeat;
+}
+#groups .expanded.selected .members {
+	background: #999 url(../img/users-bottom.jpg) bottom left no-repeat;
+}
+
+#groups .groups span {
+	background: url(../img/users-top.jpg) top left no-repeat;
+	width: 390px;
+	padding: 5px;
+	display: block;
+	line-height: 1.0em;
+	font-weight: bold;
+	color: #fff;
+}
+
+#groups .selected span {
+	background: url(../img/users-selected-top.jpg) top left no-repeat;
+}
+
+#groups .groups span img {
+	margin: -1px 0;
+}
+#groups .groups span .addToGroup img {
+	margin: -3px 0;
+}
+
+#groups .members {
+	border-top: 1px solid #fff;
+	padding: 5px;
+	color: #666;
+}
+
+#groups .controls {
+	padding: 0px 10px;
+	height: 16px;
+	margin: 10px 0;
+}
+
+/* Generic */
+h2 {
+	margin: 2px;
+}
+
+
+/* REPOSITORIES */
+body#repositories {
+	background: url(../img/repos-bg.jpg) top left repeat-y;
+	margin: 5px;
+}
+
+#repositories h1 {
+	background: #fff;
+	margin: -5px;
+	line-height: 50px;
+	border-bottom: 1px solid #000;
+	padding: 5px;
+}
+
+#repos {
+	margin-top: 15px;
+	width: 200px;
+	float: left;
+}
+
+#repos h3 {
+	background: transparent url(../img/repos-title_exported.png) top left no-repeat;
+	line-height: 53px;
+	width: 250px;
+	text-align: left;
+	padding: 0;
+	margin: 0;
+	padding-left: 32px;
+	margin-left: -5px;
+	cursor: pointer;
+}
+
+#permissions {
+	margin-top: 15px;
+	margin-left: 205px;
+}
+
+.permission {
+	height: 20px;
+	background: #666666 url(../img/perm-bg-top.jpg) top left no-repeat;
+	width: 380px;
+	padding: 0;
+	margin-bottom: 10px;
+	padding-top: 3px;
+}
+
+.permission .path {
+	color: #EDEDED;
+	height: 20px;
+	background: url(../img/perm-bg-bottom.jpg) bottom left no-repeat;
+	margin: 0;
+	padding: 0;
+	padding-left: 7px;
+}
+
+.permission .path .expandbutton {
+	float: right;
+	margin-right: 5px;
+	margin-top: 1px;
+	cursor: pointer;
+}
+.permission.collapsed .values {
+	display: none;
+}
+
+.permission.expanded .path {
+	background: none;
+}
+.permission.expanded .values {
+	height: 50px;
+	margin: 0;
+	padding: 5px;
+	background: url(../img/perm-bg-expanded.jpg) bottom left no-repeat;
+}

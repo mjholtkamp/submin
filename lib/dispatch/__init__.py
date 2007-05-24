@@ -1,12 +1,11 @@
 from dispatch.response import Response, HTTP404
 
 from views.test import Test
-
-#from views.groups import Groups
+from views.usergroups import UserGroups
 
 classes = {
-	# 'groups': Groups(), # create instance of Group view
 	'test': Test(),
+	'usergroups': UserGroups(),
 }
 
 def dispatcher(request):

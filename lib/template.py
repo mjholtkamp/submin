@@ -17,13 +17,6 @@ def quote_html(text, markup_newlines=False):
 	for a, b in html_quote_sequence:
 		text = text.replace(a, b)
 
-	if markup_newlines:
-		text = re.sub(ur'\n[ \r\t]*(\n[ \r\t]*)+',
-			lambda match:
-			    match.group(0) +
-			    u'<p>' + u'<br>'*(match.group(0).count(u'\n')-2),
-			text)
-
 	return text
 
 def _split_command(thing):
