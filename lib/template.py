@@ -141,6 +141,11 @@ def markup_set(args, text, meta=None, localvars={}, **varargs):
 
 def markup_val(args, text, meta=None, localvars={}, **varargs):
 	if localvars.has_key(text):
+		if localvars[text] is True:
+			return 'true'
+		else:
+			if localvars[text] is False:
+				return 'false'
 		return localvars[text]
 	return ''
 
@@ -177,11 +182,11 @@ def markup_include(args, text, meta=None, localvars={}, **varargs):
 
 def test():
 	template="""[set:test2 5][include ../templates/test][set:test 3]here be dragons
-[val test][set:bla true]
-[val test2]
+[val test][set:bla true][set:waarheid true]
+[val test2][set:bla test][set:test 42]
 This will give no error or warning: [val test3]
 {iter:a some html {ival} code here<br />} 
-[test:bla The variable bla is set to 'True'<br />]
+[test:waarheid The variable bla is set to '[val bla]'<br />]
 {else xhtml code here<br />}"""
 
 	print markup(template)
