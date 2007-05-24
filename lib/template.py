@@ -126,6 +126,9 @@ def make_callback_mark(meta, callback):
 	return mark
 
 def markup_ival(args, text, meta=None, localvars={}, **varargs):
+	if not args:
+		return '[ival]'
+
 	return '[ival.' + ' '.join(args) + ']'
 
 def markup_iter(args, text, meta=None, localvars={}, **varargs):
@@ -134,8 +137,11 @@ def markup_iter(args, text, meta=None, localvars={}, **varargs):
 
 	iterarray = ''
 	for var in localvars[args[0]]:
-		matches = re.findall('(\[ival\.([^\]]+)\])', text)
 		newtext = text
+		if type(var) is str or hasattr(var, '__str__'):
+			newtext = newtext.replace('[ival]', str(var))
+
+		matches = re.findall('(\[ival\.([^\]]+)\])', newtext)
 		for match in matches:
 			newtext = re.sub(re.escape(match[0]),
 					getattr(var, match[1], ''), newtext)

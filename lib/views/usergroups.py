@@ -15,9 +15,9 @@ class UserGroups(object):
 		users.append(User('tux', 'x@lirama.net'))
 		users.append(User('jan', 'me@jan.net'))
 		users.append(User('piet', 'ik@janpieter.net'))
-		#groups = ["'submerge', ['sabre2th', 'avaeq']"]
-		#groups.append("'willmerge', ['will']")
+		groups = ["'submerge', ['sabre2th', 'avaeq']"]
+		groups.append("'willmerge', ['will']")
 		localvars['users'] = users
-		#localvars['groups'] = groups
+		localvars['groups'] = groups
 		formatted = markup(template, None, localvars)
 		return Response(formatted)
