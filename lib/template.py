@@ -84,7 +84,7 @@ def markup(text, meta=None, localvars={}, outermost=True):
 			    text = u''
 			else:
 			    try:
-					cmdargs = command.split(':')
+					cmdargs = re.split('[:.]', command)
 					text = getattr(this_module, 'markup_'+cmdargs[0])(cmdargs[1:], text, meta, localvars, **thing_context)
 			    except AttributeError:
 					import StringIO, traceback
@@ -126,7 +126,7 @@ def make_callback_mark(meta, callback):
 	return mark
 
 def markup_ival(args, text, meta=None, localvars={}, **varargs):
-	return '[ival]'
+	return '[ival.' + ' '.join(args) + ']'
 
 def markup_iter(args, text, meta=None, localvars={}, **varargs):
 	if not localvars.has_key(args[0]):
@@ -134,7 +134,13 @@ def markup_iter(args, text, meta=None, localvars={}, **varargs):
 
 	iterarray = ''
 	for var in localvars[args[0]]:
-		iterarray = iterarray + text.replace('[ival]', var)
+		matches = re.findall('(\[ival\.([^\]]+)\])', text)
+		newtext = text
+		for match in matches:
+			newtext = re.sub(re.escape(match[0]),
+					getattr(var, match[1], ''), newtext)
+
+		iterarray += newtext
 
 	return iterarray
 

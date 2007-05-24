@@ -1,4 +1,5 @@
 from template import markup
+from models.user import User
 
 from dispatch.response import Response
 
@@ -9,14 +10,14 @@ class UserGroups(object):
 		f = open('../templates/usergroups')
 		template = ''.join(f.readlines())
 		localvars = {}
-		users = ["'sabre2th', 'x@elfstone.nl'", "'avaeq', 'x@webdevel.nl'"]
-		users.append("'will', 'x@elizeo.nl'")
-		users.append("'tux', 'x@lirama.net'")
-		users.append("'jan', 'me@jan.net'")
-		users.append("'piet', 'ik@janpieter.net'")
-		groups = ["'submerge', ['sabre2th', 'avaeq']"]
-		groups.append("'willmerge', ['will']")
+		users = [User('sabre2th', 'x@elfstone.nl'), User('avaeq', 'x@webdevel.nl')]
+		users.append(User('will', 'x@elizeo.nl'))
+		users.append(User('tux', 'x@lirama.net'))
+		users.append(User('jan', 'me@jan.net'))
+		users.append(User('piet', 'ik@janpieter.net'))
+		#groups = ["'submerge', ['sabre2th', 'avaeq']"]
+		#groups.append("'willmerge', ['will']")
 		localvars['users'] = users
-		localvars['groups'] = groups
+		#localvars['groups'] = groups
 		formatted = markup(template, None, localvars)
 		return Response(formatted)
