@@ -36,7 +36,7 @@
 			Groups.groupContainer = 'groups';
 			[iter:users new User('[ival.name]', '[ival.email]');]
 			
-			[iter:groups new Group([ival]);]
+			[iter:groups new Group('[ival.name]', [ival.users]);]
 		</script>
 	</head>
 	
