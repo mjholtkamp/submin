@@ -1,5 +1,5 @@
-Options ExecCGI FollowSymLinks
-AddHandler cgi-script py cgi pl
+#Options ExecCGI FollowSymLinks
+#AddHandler cgi-script py cgi pl
 
 ###
 ### Mod_python-mode:
