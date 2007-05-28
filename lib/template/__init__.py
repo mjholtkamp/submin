@@ -1,12 +1,26 @@
+import os
+
 from template import Template
 import template_commands
 
-def render_template(template_string, localvars={}):
-	template = Template(template_string, localvars)
-	print template.parse_tree()
-	print '='*40
-	print template.render()
+def evaluate(templatename, localvars={}):
+    oldcwd = os.getcwd()
+    if os.path.dirname(templatename):
+	    os.chdir(os.path.dirname(templatename))
+    
+    fp = open(os.path.basename(templatename), 'r')
+    evaluated_string = ''
+    if fp:
+	    lines = ''.join(fp.readlines())
+	    template = Template(lines, localvars)
+	    evaluated_string = template.evaluate()
+	    
+	    fp.close()
 
+    if os.path.dirname(templatename):
+	    os.chdir(oldcwd)
+
+    return evaluated_string
 
 def test():
 	template=r"""[set:test2 5][include test_templates/test][set:test 3]here be dragons
@@ -56,7 +70,8 @@ Item dict.baz uit dict: [val dict.dict.baz]
 	
 	list_list = [['foo', 'bar'], ['baz', 'quux']]
 	localvars['list_list'] = list_list
-	render_template(template, localvars)
+	tpl = Template(template, localvars)
+	print tpl.evaluate()
 
 if __name__ == "__main__":
 	test()
