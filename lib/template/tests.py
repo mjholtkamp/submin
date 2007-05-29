@@ -102,6 +102,37 @@ class TestTest(unittest.TestCase):
 		
 		tpl, ev = evaluate('[test:foo.bar baz]', {'foo': Foo()})
 		self.assertEquals(ev, 'baz')
+
+	def testNegationOfValueObject(self):
+		class Foo: bar = False
+		
+		tpl, ev = evaluate('[test:!foo.bar baz]', {'foo': Foo()})
+		self.assertEquals(ev, 'baz')
+
+	def testNegationOfTrue(self):
+		tpl, ev = evaluate('[test:!foo baz]', {'foo': True})
+		self.assertEquals(ev, '')
+
+	def testNegationOfFalse(self):
+		tpl, ev = evaluate('[test:!foo baz]', {'foo': False})
+		self.assertEquals(ev, 'baz')
+	
+	def testNegationOfNone(self):
+		tpl, ev = evaluate('[test:!foo baz]', {'foo': None})
+		self.assertEquals(ev, 'baz')
+	
+	def testNegationOfNoVariable(self):
+		tpl, ev = evaluate('[test:!foo baz]', {})
+		self.assertEquals(ev, 'baz')
+
+class TestIterTest(unittest.TestCase):
+	def testTestIlast(self):
+		tpl, ev = evaluate('[iter:range [ival][test:ilast last!]]', {'range': range(10)})
+		self.assertEquals(ev, '0123456789last!')
+
+	def testTestNotIlast(self):
+		tpl, ev = evaluate('[iter:range [test:!ilast [ival]]]', {'range': range(10)})
+		self.assertEquals(ev, '012345678')
 	
 class ElseTest(unittest.TestCase):
 	def testCorrectValue(self):
@@ -119,6 +150,10 @@ class ElseTest(unittest.TestCase):
 	def testRaiseElseError(self):
 		tpl = Template('[val bar][else baz]')
 		self.assertRaises(template_commands.ElseError, tpl.evaluate)
+	
+	def testNegationElse(self):
+		tpl, ev = evaluate('[test:!foo bar][else baz]', {'foo': True})
+		self.assertEquals(ev, 'baz')
 
 # TODO: write tests for include!
 

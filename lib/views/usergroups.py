@@ -20,5 +20,5 @@ class UserGroups(object):
 		groups.append(Group('willmerge', ['will']))
 		localvars['users'] = users
 		localvars['groups'] = groups
-		formatted = evaluate('../templates/usergroups', None, localvars)
+		formatted = evaluate('../templates/usergroups', localvars)
 		return Response(formatted)

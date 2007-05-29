@@ -85,7 +85,13 @@ def iter(node, tpl):
 	
 	if not tpl.node_variables.has_key('ival'):
 		tpl.node_variables['ival'] = []
+	if not tpl.node_variables.has_key('iindex'):
+		tpl.node_variables['iindex'] = []
+	if not tpl.node_variables.has_key('iseq'):
+		tpl.node_variables['iseq'] = []
 	tpl.node_variables['ival'].append(None)
+	tpl.node_variables['iindex'].append(None)
+	tpl.node_variables['iseq'].append(None)
 	
 	value = ''
 	if node.arguments.startswith('ival'):
@@ -101,10 +107,14 @@ def iter(node, tpl):
 	evaluated_string = ''
 	if not value:
 		return ''
-	for item in value: #tpl.variables[node.arguments]:
+	tpl.node_variables['iseq'][-1] = value
+	for index, item in enumerate(value):
+		tpl.node_variables['iindex'][-1] = index
 		tpl.node_variables['ival'][-1] = item
 		evaluated_string += ''.join([x.evaluate(tpl) for x in node.nodes])
 	tpl.node_variables['ival'].pop()
+	tpl.node_variables['iindex'].pop()
+	tpl.node_variables['iseq'].pop()
 	return evaluated_string
 
 @register.register('ival')
@@ -116,14 +126,38 @@ def ival(node, tpl):
 		return str(tpl.variable_value('', args, tpl.node_variables['ival'][-1]))
 	return ''
 
-@register.register('test')
-def test(node, tpl):
+def ilast(tpl):
+	if tpl.node_variables['iindex'][-1] \
+			>= len(tpl.node_variables['iseq'][-1]) - 1:
+		return True
+	return False
+
+def testTrue(node, tpl):
 	if not node.arguments:
 		raise MissingRequiredArguments, \
 			"Missing required argument variable at file %s, line %d" % \
 			(tpl.filename, node.line)
-	value = tpl.variable_value(node.arguments)
-	if value is None or not value:
+	negation = False
+	args = node.arguments
+	if args.startswith('!'):
+		negation = True
+		args = args[1:]
+
+	if args == 'ilast':
+		value = ilast(tpl)
+	else:
+		value = tpl.variable_value(args)
+
+	expression = value is None or not value
+	if negation:
+		return expression
+	return not expression
+	#return value is not None and not not value
+
+@register.register('test')
+def test(node, tpl):
+	value = testTrue(node, tpl)
+	if not value: # value is None or not value:
 		return ''
 	return ''.join([x.evaluate(tpl) for x in node.nodes])
 
@@ -136,7 +170,9 @@ def else_tag(node, tpl):
 		raise ElseError, \
 			'Previous node to else was not a test-node (file %s, line %d)' % \
 			(tpl.filename, node.line)
-	value = tpl.variable_value(prev.arguments)
-	if value is None or not value:
+	#value = tpl.variable_value(prev.arguments)
+	#if value is None or not value:
+	value = testTrue(prev, tpl)
+	if not value:
 		return ''.join([x.evaluate(tpl) for x in node.nodes])
 	return ''
