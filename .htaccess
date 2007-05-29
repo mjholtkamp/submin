@@ -16,6 +16,6 @@ RewriteEngine on
 RewriteBase /dev_submerge
 
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$ lib/cgi_handler.py/$1
+RewriteRule ^(.*)$ www/submerge.py/$1
 
-RewriteRule ^/?$ lib/cgi_handler.py/
+RewriteRule ^/?$ www/submerge.py/
