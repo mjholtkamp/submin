@@ -1,4 +1,5 @@
 import re
+import os
 import sys
 import string
 from pprint import pprint
@@ -178,10 +179,13 @@ class Parser(object):
 		return self.stack
 
 class Template(object):
-	# TODO: also accept files. Store filename (or 'string') for referencing
-	# in errors.
-	def __init__(self, template_string, variables={}):
-		self.template_string = template_string
+	def __init__(self, template, variables={}):
+		if hasattr(template, 'readlines'):
+			self.template_string = ''.join(template.readlines())
+			self.filename = os.path.join(os.getcwd(), template.name)
+		else:
+			self.template_string = template
+			self.filename = 'string'
 		self.variables = variables.copy()
 		self.node_variables = {}
 		

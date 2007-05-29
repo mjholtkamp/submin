@@ -22,6 +22,10 @@ class SetTagTest(unittest.TestCase):
 	def testMissingArgument(self):
 		tpl = Template('[set bar]')
 		self.assertRaises(template_commands.MissingRequiredArguments, tpl.evaluate)
+	
+	def testDotInArgument(self):
+		tpl = Template('[set:foo.bar true]')
+		self.assertRaises(template_commands.DotInLocalVariable, tpl.evaluate)
 
 class ValTagTest(unittest.TestCase):
 	def testNonEmpty(self):
