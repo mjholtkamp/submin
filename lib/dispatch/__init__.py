@@ -35,7 +35,7 @@ def dispatcher(request):
 			raise Exception, "Handler %r should return a Response instance" % handler
 		
 	else:
-		response = HTTP404()
+		response = HTTP404('/'.join(path))
 
 	request.status(response.status_code)
 	request.setHeaders(response.headers)

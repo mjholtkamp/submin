@@ -12,7 +12,7 @@ class Redirect(Response):
 		self.headers.update({'Location': url})
 
 class HTTP404(Response):
-	def __init__(self):
+	def __init__(self, page='/'):
 		Response.__init__(self)
 		self.status_code = 404
-		self.content = 'Page not found.'
+		self.content = 'Page %s not found.' % page
