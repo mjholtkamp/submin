@@ -1,4 +1,4 @@
-from template import markup
+from template import evaluate
 from models.user import User
 from models.group import Group
 
@@ -8,8 +8,8 @@ class UserGroups(object):
 	def handler(self, req, path, ajax=False):
 		if ajax:
 			return Response('ajax')
-		f = open('../templates/usergroups')
-		template = ''.join(f.readlines())
+		# f = open('../templates/usergroups')
+		# template = ''.join(f.readlines())
 		localvars = {}
 		users = [User('sabre2th', 'x@elfstone.nl'), User('avaeq', 'x@webdevel.nl')]
 		users.append(User('will', 'x@elizeo.nl'))
@@ -20,5 +20,5 @@ class UserGroups(object):
 		groups.append(Group('willmerge', ['will']))
 		localvars['users'] = users
 		localvars['groups'] = groups
-		formatted = markup(template, None, localvars)
+		formatted = evaluate('../templates/usergroups', None, localvars)
 		return Response(formatted)
