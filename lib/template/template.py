@@ -86,6 +86,10 @@ class Parser(object):
 			previous_node = None
 			if len(self.stack):
 				previous_node = self.stack[-1]
+
+
+			# FIXME: Escaping gaat nog niet goed als er geen \, [ of ] erna 
+			# komt: dan blijft het geheel in state ESCAPE.
 			
 			if ch == '\\' and self.state != ESCAPE:
 				prev_state = self.state

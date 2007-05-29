@@ -1,4 +1,5 @@
 import os
+import sys
 
 from template import Template
 import template_commands
@@ -71,6 +72,9 @@ Item dict.baz uit dict: [val dict.dict.baz]
 	list_list = [['foo', 'bar'], ['baz', 'quux']]
 	localvars['list_list'] = list_list
 	tpl = Template(template, localvars)
+	if len(sys.argv) > 1:
+		print tpl.parse_tree()
+		print '='*78
 	print tpl.evaluate()
 
 if __name__ == "__main__":
