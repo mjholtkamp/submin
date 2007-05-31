@@ -86,6 +86,7 @@ Group.prototype.create = function() {
 	this.span.appendChild(this.aExpand);
 	this.span.appendChild(document.createTextNode(" " + this.groupname + " "));
 	
+	var _this = this;
 	this.aExpand.onclick = function() {
 		Groups.byGroupname(this.parentNode.parentNode.id).expandToggle();
 		this.blur();
@@ -106,7 +107,19 @@ Group.prototype.create = function() {
 	};
 	
 	this.span.appendChild(this.aAddToGroup);
-	
+
+	this.users_small = $c('small', {className: 'users'});
+	user_txt = '';
+	for (var i=0; i<Math.min(3, this.members.length); i++) {
+		if (i != 0) user_txt += ', ';
+		user_txt += this.members[i].username;
+	}
+	if (this.members.length > 3)
+		user_txt += '...';
+	this.users_small.appendChild(document.createTextNode(user_txt))
+	this.span.appendChild(this.users_small)
+
+
 	this.div.appendChild(this.span);
 	
 	this.memberdiv = $c('div', {className: 'members', style: {display: 'none'}});

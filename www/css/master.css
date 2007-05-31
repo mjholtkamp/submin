@@ -152,6 +152,14 @@ a img {
 	background: #999 url(../img/users-bottom.jpg) bottom left no-repeat;
 }
 
+#groups span small.users {
+	display: inline;
+	color: #666;
+}
+#groups .expanded small.users {
+	display: none;
+}
+
 #groups .groups span {
 	background: url(../img/users-top.jpg) top left no-repeat;
 	width: 390px;
