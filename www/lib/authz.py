@@ -165,7 +165,7 @@ if __name__ == '__main__':
 	repos, path = authz.paths()[-1]
 	print 'permissions submerge:/\n\t', \
 			authz.permissions(repos, path)
-	print 'permissions /\n\t', authz.currentPermissions(None, '/')
+	print 'permissions /\n\t', authz.permissions(None, '/')
 	print 'groups\n\t', authz.groups()
 	print 'devel members\n\t', authz.members('devel')
 	try:
@@ -180,7 +180,7 @@ if __name__ == '__main__':
 
 	authz.setPermission('foo', '/', 'avaeq', 'r')
 	print 'permissions foo:/\n\t', \
-			authz.currentPermissions('foo', '/')
+			authz.permissions('foo', '/')
 
 	try:
 		authz.addGroup('foo')
