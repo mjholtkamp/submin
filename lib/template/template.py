@@ -231,9 +231,12 @@ class Template(object):
 		if variable is None or recursing:
 			if variable is None:
 				variable = self.variables
-			if not variable.has_key(key):
+			if not variable.has_key(key) and key not in self.node_variables:
 				return None
-			variable = variable.get(key, None)
+			if key in self.node_variables:
+				variable = self.node_variables[key][-1]
+			else:
+				variable = variable.get(key, None)
 		
 		# No attribute, just return the variable
 		if not attr:

@@ -155,6 +155,26 @@ class ElseTest(unittest.TestCase):
 		tpl, ev = evaluate('[test:!foo bar][else baz]', {'foo': True})
 		self.assertEquals(ev, 'baz')
 
+class VariableValueTests(unittest.TestCase):
+	def testVariables(self):
+		tpl = Template('', {'foo': 'bar'})
+		self.assertEquals(tpl.variable_value('foo'), 'bar')
+
+	def testObjectVariables(self):
+		class Foo:
+			bar = 'baz'
+		tpl = Template('', {'foo': Foo()})
+		self.assertEquals(tpl.variable_value('foo.bar'), 'baz')
+
+	def testDictVariables(self):
+		tpl = Template('', {'foo': {'bar': 'baz'}})
+		self.assertEquals(tpl.variable_value('foo.bar'), 'baz')
+
+	def testNodeVariables(self):
+		tpl = Template('')
+		tpl.node_variables['ival'] = ['foo']
+		self.assertEquals(tpl.variable_value('ival'), 'foo')
+
 # TODO: write tests for include!
 
 if __name__ == "__main__":
