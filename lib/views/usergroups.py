@@ -1,23 +1,32 @@
 from template import evaluate
 from models.user import User
 from models.group import Group
-
+from authz.authz import Authz
+from authz.htpasswd import HTPasswd
 from dispatch.response import Response
+from config.config import Config
 
 class UserGroups(object):
 	def handler(self, req, path, ajax=False):
 		if ajax:
 			return Response('ajax')
-		# f = open('../templates/usergroups')
-		# template = ''.join(f.readlines())
+
+		config = Config()
+
+		authz = Authz(config.get('svn', 'authz_file'))
+		htpasswd = HTPasswd(config.get('svn', 'access_file'))
+
 		localvars = {}
-		users = [User('sabre2th', 'x@elfstone.nl'), User('avaeq', 'x@webdevel.nl')]
-		users.append(User('will', 'x@elizeo.nl'))
-		users.append(User('tux', 'x@lirama.net'))
-		users.append(User('jan', 'me@jan.net'))
-		users.append(User('piet', 'ik@janpieter.net'))
-		groups = [Group('submerge', ['sabre2th', 'avaeq'])]
-		groups.append(Group('willmerge', ['will']))
+		users = []
+
+		for user in htpasswd.users():
+			users.append(User(user, user + '@example.com'))
+
+		groups = []
+		for group in authz.groups():
+			members = authz.members(group)
+			groups.append(Group(group, members))
+
 		localvars['users'] = users
 		localvars['groups'] = groups
 		formatted = evaluate('../templates/usergroups', localvars)

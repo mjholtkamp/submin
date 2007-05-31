@@ -1,0 +1,4 @@
+[svn]
+authz_file = /usr/local/submerge/svn.authz
+access_file = /usr/local/submerge/.htpasswd
+repositories = /usr/local/submerge/svn
