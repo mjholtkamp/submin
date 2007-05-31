@@ -129,15 +129,15 @@ User.prototype.createSettings = function() {
 	this.settingsUl = $c('ul');
 	
 	var fields = [
-		{label:'Password', type:'password', name:'password_' + this.username},
-		{label:'E-mailaddress', type:'text', name:'email_' + this.username}
+		{label:'Password', type:'password', name:'password_' + this.username, value:''},
+		{label:'E-mailaddress', type:'text', name:'email_' + this.username, value:this.email}
 	];
 	
 	for (var i=0;i<fields.length;i++) {
 		var cur = fields[i];
 		var li = $c('li');
 		var label = $c('label', {htmlFor:cur.name,innerHTML:cur.label});
-		var input = $c('input', {type:cur.type, name:cur.name, id:cur.name});
+		var input = $c('input', {type:cur.type, name:cur.name, id:cur.name, value:cur.value});
 		li.appendChild(label);
 		li.appendChild(input);
 		this.settingsUl.appendChild(li);
