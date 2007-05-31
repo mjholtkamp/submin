@@ -19,11 +19,15 @@ class UserGroups(object):
 		localvars = {}
 		users = []
 
-		for user in htpasswd.users():
+		htpasswd_users = htpasswd.users()
+		htpasswd_users.sort()
+		for user in htpasswd_users:
 			users.append(User(user, user + '@example.com'))
 
 		groups = []
-		for group in authz.groups():
+		authz_groups = authz.groups()
+		authz_groups.sort()
+		for group in authz_groups:
 			members = authz.members(group)
 			groups.append(Group(group, members))
 
