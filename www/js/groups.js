@@ -105,23 +105,15 @@ Group.prototype.create = function() {
 		this.blur();
 		return false; // prevent following the link.
 	};
-	
+
 	this.span.appendChild(this.aAddToGroup);
 
 	this.users_small = $c('small', {className: 'users'});
-	user_txt = '';
-	for (var i=0; i<Math.min(3, this.members.length); i++) {
-		if (i != 0) user_txt += ', ';
-		user_txt += this.members[i].username;
-	}
-	if (this.members.length > 3)
-		user_txt += '...';
-	this.users_small.appendChild(document.createTextNode(user_txt))
+	this.updateUsersSmall()
 	this.span.appendChild(this.users_small)
 
-
 	this.div.appendChild(this.span);
-	
+
 	this.memberdiv = $c('div', {className: 'members', style: {display: 'none'}});
 	memberul = $c('select', {multiple: 'multiple', size: this.members.length});
 	this.members.each(function(user){
@@ -187,8 +179,22 @@ Group.prototype.addSelectedUsers = function() {
 		this.memberul.appendChild($c('option', {innerHTML:i.username}));
 		this.members.push(i);
 	}
+	this.updateUsersSmall();
 }
 
+Group.prototype.updateUsersSmall = function() {
+	user_txt = '';
+	for (var i=0; i<Math.min(3, this.members.length); i++) {
+		if (i != 0) user_txt += ', ';
+		user_txt += this.members[i].username;
+	}
+	if (this.members.length > 3)
+		user_txt += ' ...';
+
+	this.users_small.innerHTML = user_txt;
+}
+
+// FIXME: is this still used? I don't think so! -- MJH
 function addToGroup() {
 	if (!Users.selectedUsers.length) 
 		return;
