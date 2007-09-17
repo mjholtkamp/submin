@@ -99,6 +99,10 @@ class Installer:
 				yes = raw_input('Path already exists, overwrite? [Y/n]')
 				if self.yes.match(yes):
 					sure = True
+			else:
+				# make sure path exists
+				os.mkdir(os.path.dirname(config_path))
+				sure = True
 
 	def ask_svn_authz_path(self):
 		path = raw_input('''
@@ -113,12 +117,21 @@ Which svn authz should Submerge use? [%s] ''' % self.svn_authz_path)
 		self.svn_authz_path = path
 
 	def write_config(self):
-		print "writing to ", self.config_path
+		import ConfigParser
 
+		cp = ConfigParser.ConfigParser()
+		cp.add_section('svn')
 		config = dict(authz_file=self.svn_authz_path, \
 			access_file=self.htpasswd_path, \
 			repositories=self.svn_dir)
-		print config
+
+		for (option, value) in config.iteritems():
+			cp.set('svn', option, value)
+
+		f = open(self.config_path, 'w+')
+		cp.write(f)
+		f.close()
+
 
 if __name__ == '__main__':
 	installer = Installer()
