@@ -15,9 +15,9 @@ class Installer:
 		while not self.ask_paths_ok():
 			self.ask_config()
 
-		self.ask_apache()
 		self.write_config()
 		self.ask_users()
+		self.ask_apache()
 
 	def ask_paths_ok(self):
 		yes = raw_input('''Installing with:
@@ -58,8 +58,14 @@ Are these settings ok? [Y/n]: ''' % self.paths)
 		if not os.path.exists(os.path.dirname(dst)):
 			os.makedirs(os.path.dirname(dst))
 
-		if not os.path.exists(dst):
-			file(dst, 'w').writelines(file(src).readlines())
+		if os.path.exists(dst):
+			os.rename(dst, dst + '.submerge-old')
+			f = file(dst, 'w')
+			for line in file(src).readlines():
+				line = line.replace('/etc/submerge/submerge.conf', \
+					self.paths['config'])
+
+				f.write(line)
 
 		src = dst
 		dst = '/etc/apache2/conf.d/submerge.conf'
@@ -195,7 +201,6 @@ Which svn authz should Submerge use? [%s] ''' % self.paths['svn_authz'])
 				from getpass import getpass
 				passwd = ''
 				passwd_check = '';
-				#passwd = raw_input('Password for user %s: ' % user)
 				passwd = getpass('Password for user %s: ' % user)
 				passwd_check = getpass('Confirm password: ')
 
