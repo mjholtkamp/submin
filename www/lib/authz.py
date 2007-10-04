@@ -19,13 +19,19 @@ class InvalidRepositoryError(Exception):
 class PathExistsError(Exception):
 	pass
 
+class PermissionError(Exception):
+	pass
+
 
 class Authz:
 	def __init__(self, authz_file):
 		self.authz_file = authz_file
 		self.parser = ConfigParser.ConfigParser()
 		# open, create if it doesn't exist yet
-		self.parser.readfp(open(self.authz_file, 'w+'))
+		try:
+			self.parser.readfp(open(self.authz_file, 'w+'))
+		except IOError:
+			raise PermissionError, self.authz_file
 
 		# Silently create groups section if it does not exist:
 		if not self.parser.has_section('groups'):

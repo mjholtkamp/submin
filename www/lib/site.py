@@ -175,7 +175,16 @@ class Site:
 
 		self.req.headers_out.add("Cache-control", "no-cache")
 
-		input = Input(self.get, self.post, self.req, self.pathInfo)
+		try:
+			input = Input(self.get, self.post, self.req, self.pathInfo)
+		except mod_authz.PermissionError, e:
+			buffer = Buffer()
+			buffer.write(
+					'''<h1>Error</h1>
+					   <p>File permission is incorrect:</p>
+					   <pre>%s</pre>''' % e)
+			self.req.write(str(buffer))
+			return apache.OK
 
 		if hasattr(page, 'login_required') and page.login_required:
 			if input.session.is_new():
