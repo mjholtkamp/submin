@@ -88,7 +88,8 @@ class Input:
 		try:
 			authz_file = self.config.get('svn', 'authz_file')
 		except ConfigParser.NoSectionError, e:
-			raise Exception, str(e) + 'in' + str(SubmergeEnv)
+			SubmergeEnv = self.req.get_options()['SubmergeEnv']
+			raise Exception, str(e) + 'in ' + str(SubmergeEnv)
 
 		return mod_authz.Authz(authz_file)
 
