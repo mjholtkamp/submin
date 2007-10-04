@@ -215,6 +215,20 @@ Which svn authz should Submerge use? [%s] ''' % self.paths['svn_authz'])
 			htp.add(user, passwd)
 			htp.flush()
 
+		self.fix_permissions()
+
+	def fix_permissions(self):
+		import pwd
+		import os
+		user = 'www-data'
+		for line in file('/etc/apache2/apache2.conf'):
+			if 'User ' in line:
+				user = line.replace('User ', '').strip('\n')
+
+		pwent = pwd.getpwnam(user)
+		os.chown(self.paths['svn_authz'], pwent.pw_uid, pwent.pw_gid)
+		os.chown(self.paths['htpasswd'], pwent.pw_uid, pwent.pw_gid)
+
 if __name__ == '__main__':
 	sys.path.append('/usr/share/submerge/www/lib')
 	try:

@@ -29,7 +29,7 @@ class Authz:
 		self.parser = ConfigParser.ConfigParser()
 		# open, create if it doesn't exist yet
 		try:
-			self.parser.readfp(open(self.authz_file, 'w+'))
+			self.parser.readfp(open(self.authz_file, 'r+'))
 		except IOError:
 			raise PermissionError, self.authz_file
 
