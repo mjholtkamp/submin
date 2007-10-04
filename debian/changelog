@@ -1,0 +1,5 @@
+submerge (0.1-1) testing; urgency=low
+
+  * Initial release.
+
+ -- Michiel Holtkamp <submerge@supermind.nl>  Thu, 04 Oct 2007 17:49:01 +0200

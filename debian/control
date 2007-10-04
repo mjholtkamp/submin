@@ -1,0 +1,14 @@
+Source: submerge
+Section: web
+Priority: optional
+Maintainer: Michiel Holtkamp <submerge@supermind.nl>
+Standards-Version: 3.6.1
+
+Package: submerge
+Architecture: all
+Depends: libapache2-mod-python
+Description: A web admin interface for local svn repositories
+ Submerge provides a web-based admin interface to your svn repositories
+ features include: manage users/groups, manage path permissions, add
+ repositories
+

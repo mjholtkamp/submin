@@ -2,10 +2,6 @@
 import re
 import sys
 
-#mkdir -p /var/log/apache2/submerge /usr/share/submerge /etc/submerge
-#cp -a www/* /usr/share/submerge
-#find /usr/share/submerge/ -name .svn -exec rm -rf \{} \;
-
 class Installer:
 	def __init__(self):
 		self.paths = dict(svn='/var/lib/svn/', \
@@ -17,9 +13,9 @@ class Installer:
 
 	def install(self):
 		while not self.ask_paths_ok():
-			self.ask_apache()
 			self.ask_config()
 
+		self.ask_apache()
 		self.write_config()
 		self.ask_users()
 
@@ -39,10 +35,10 @@ Are these settings ok? [Y/n]: ''' % self.paths)
 		return False
 
 	def ask_apache(self):
-		vhost = raw_input('Install for virtual host? [Y/n] ')
-		if self.yes.match(vhost):
-			self.apache_vhost()
-			return
+		#vhost = raw_input('Install for virtual host? [Y/n] ')
+		#if self.yes.match(vhost):
+		#	self.apache_vhost()
+		#	return
 
 		subdir = raw_input('Install for subdir? [Y/n] ')
 		if self.yes.match(subdir):
@@ -54,12 +50,23 @@ Are these settings ok? [Y/n]: ''' % self.paths)
 	def apache_vhost(self):
 #cp /usr/share/submerge/apache.conf.virtual-host-example /etc/apache2/sites-available/submerge
 		print "vhost not yet implemented, sorry"
-		pass
 
 	def apache_subdir(self):
-#cp /usr/share/submerge/.htaccess.example /usr/share/submerge/.htaccess
-		print "subdir not yet implemented, sorry"
-		pass
+		import os
+		src = '/usr/share/submerge/examples/apache.conf.subdir'
+		dst = '/etc/submerge/apache.conf'
+		if not os.path.exists(os.path.dirname(dst)):
+			os.makedirs(os.path.dirname(dst))
+
+		if not os.path.exists(dst):
+			file(dst, 'w').writelines(file(src).readlines())
+
+		src = dst
+		dst = '/etc/apache2/conf.d/submerge.conf'
+		if not os.path.exists(dst):
+			os.symlink(src, dst)
+
+		os.system('apache2ctl configtest && apache2ctl restart')
 
 	def ask_config(self):
 		self.ask_svn_path()
@@ -136,7 +143,7 @@ Which svn authz should Submerge use? [%s] ''' % self.paths['svn_authz'])
 			if not os.path.exists(os.path.dirname(path)):
 				os.makedirs(os.path.dirname(path))
 
-		print "make sure %s permissions allow the webserver write" % \
+		print "make sure %s has write permissions for the webserver" % \
 			self.paths['svn']
 
 	def write_config(self):
@@ -185,10 +192,12 @@ Which svn authz should Submerge use? [%s] ''' % self.paths['svn_authz'])
 			passwd = ''
 			passwd_check = '';
 			while passwd == '' or passwd != passwd_check:
+				from getpass import getpass
 				passwd = ''
 				passwd_check = '';
-				passwd = raw_input('Password for user %s: ' % user)
-				passwd_check = raw_input('Confirm password: ')
+				#passwd = raw_input('Password for user %s: ' % user)
+				passwd = getpass('Password for user %s: ' % user)
+				passwd_check = getpass('Confirm password: ')
 
 			htp.add(user, passwd)
 			htp.flush()
