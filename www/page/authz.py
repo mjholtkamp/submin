@@ -23,7 +23,7 @@ def _getrepositories(input):
 	repositories = []
 	for repos in _repositories:
 		if os.path.isdir(repos):
-			repositories.append(repos[len(reposdir)+1:])
+			repositories.append(repos[len(reposdir):])
 	return repositories
 
 def _makeUrl(input, repos, path=None):
@@ -240,16 +240,19 @@ def addpath(input):
 			print '<li><a href="authz/addpath?path=%s">%s</a>' % \
 					(urllib.quote(authzroot), authzroot)
 			# ... and other paths, via pysvn!
-			paths = _getPaths(url)
-			if paths:
-				print '<ul>'
-				for path in paths:
-					authzpath = _authzify(path, url, repos)
-					if authzpath not in authz.parser.sections():
-						print '<li><a href="authz/addpath?path=%s">%s</a></li>' % \
-								(urllib.quote(authzpath), authzpath)
-				print '</ul>'
-			print '</li>'
+			try:
+				paths = _getPaths(url)
+				if paths:
+					print '<ul>'
+					for path in paths:
+						authzpath = _authzify(path, url, repos)
+						if authzpath not in authz.parser.sections():
+							print '<li><a href="authz/addpath?path=%s">%s</a></li>' % \
+									(urllib.quote(authzpath), authzpath)
+					print '</ul>'
+				print '</li>'
+			except ImportError:
+				print '<li>Missing python module pysvn!</li>'
 		print '</ul>'
 		print input.html.footer()
 	elif input.get.has_key('path'):
