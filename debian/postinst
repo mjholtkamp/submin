@@ -1,3 +1,5 @@
 #!/bin/sh
 
+echo
 echo "Please run submerge-init to initialize your submerge installation"
+echo

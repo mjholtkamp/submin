@@ -23,7 +23,6 @@ install: build
 binary-indep:
 	dh_testdir
 	dh_testroot
-	dh_installinit
 	dh_compress
 	dh_fixperms
 	dh_installdeb
