@@ -29,12 +29,11 @@ class HTPasswd:
 	def flush(self):
 		""" Write changes to disk """
 		if self.modified:
-			fd = open(self.htpasswd_file + '.bak', 'w')
+			self.fd = open(self.htpasswd_file, 'w')
+			self.lock()
 			for user, encrypted in self.passwords.iteritems():
-				fd.write(user + ':' + encrypted + '\n')
-			fd.close() # fd.close just returns a pointer to the function - avaeq
-			rename(self.htpasswd_file, self.htpasswd_file + '.old')
-			rename(self.htpasswd_file + '.bak', self.htpasswd_file)
+				self.fd.write(user + ':' + encrypted + '\n')
+			self.fd.close()
 			self.modified = False
 
 	def exists(self, user):
