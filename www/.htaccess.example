@@ -1,6 +1,7 @@
 AddHandler mod_python .py
 PythonHandler submerge
-PythonOption SubmergeEnv /home/avaeq/public_html/submerge/submerge.conf
+PythonOption SubmergeEnv /etc/submerge/submerge.conf
+PythonPath "sys.path+['/usr/share/submerge/www']"
 PythonAutoReload on
 PythonDebug On
 
@@ -8,9 +9,11 @@ PythonDebug On
 RewriteEngine on
 # What is the location of submerge from your doc-root?
 # Don't forget the trailing /
-RewriteBase     /path/to/www/dir/
+# - Option 1: root in VirtualHost
+RewriteBase     /
+# - Option 2: dir in default host
+#RewriteBase	/submerge/
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ submerge.py/$1
-
 RewriteRule ^/?$ submerge.py
