@@ -53,22 +53,30 @@ Are these settings ok? [Y/n]: ''' % self.paths)
 
 	def apache_subdir(self):
 		import os
+		configname = os.path.basename(self.paths['config'])
+		configname = configname.replace('.conf', '')
+		if configname != 'submerge':
+			configname = '-' + configname
+		else:
+			configname = ''
+
 		src = '/usr/share/submerge/examples/apache.conf.subdir'
-		dst = '/etc/submerge/apache.conf'
+		dst = '/etc/submerge/apache' + configname + '.conf'
 		if not os.path.exists(os.path.dirname(dst)):
 			os.makedirs(os.path.dirname(dst))
 
 		if os.path.exists(dst):
 			os.rename(dst, dst + '.submerge-old')
-			f = file(dst, 'w')
-			for line in file(src).readlines():
-				line = line.replace('/etc/submerge/submerge.conf', \
-					self.paths['config'])
 
-				f.write(line)
+		f = file(dst, 'w')
+		for line in file(src).readlines():
+			line = line.replace('/etc/submerge/submerge.conf', \
+				self.paths['config'])
+
+			f.write(line)
 
 		src = dst
-		dst = '/etc/apache2/conf.d/submerge.conf'
+		dst = '/etc/apache2/conf.d/submerge' + configname + '.conf'
 		if not os.path.exists(dst):
 			os.symlink(src, dst)
 
