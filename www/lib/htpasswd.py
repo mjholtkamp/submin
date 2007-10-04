@@ -9,7 +9,7 @@ class HTPasswd:
 	def __init__(self, file):
 		self.htpasswd_file = file
 		self.modified = False  # have we modified ourselves?
-		self.fd = open(self.htpasswd_file, 'r')
+		self.fd = open(self.htpasswd_file, 'w+')
 		self.lock()
 
 		self.passwords = dict()
