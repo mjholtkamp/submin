@@ -157,9 +157,6 @@ Which svn authz should Submerge use? [%s] ''' % self.paths['svn_authz'])
 			if not os.path.exists(os.path.dirname(path)):
 				os.makedirs(os.path.dirname(path))
 
-		print "make sure %s has write permissions for the webserver" % \
-			self.paths['svn']
-
 	def write_config(self):
 		import ConfigParser
 
@@ -192,28 +189,28 @@ Which svn authz should Submerge use? [%s] ''' % self.paths['svn_authz'])
 			authz.addGroup('submerge-admins')
 			pass
 
-		user = ''
 		if len(members) == 0:
+			user = ''
 			while user == '':
 				user = raw_input('Enter a username to act as submerge admin: ')
 
 			authz.addMember('submerge-admins', user)
 			print 'user %s added' % user
 
-		"""Now add password for user, if it didn't have one already"""
-		htp = HTPasswd(self.paths['htpasswd'])
-		if not htp.exists(user):
-			passwd = ''
-			passwd_check = '';
-			while passwd == '' or passwd != passwd_check:
-				from getpass import getpass
+			"""Now add password for user"""
+			htp = HTPasswd(self.paths['htpasswd'])
+			if not htp.exists(user):
 				passwd = ''
 				passwd_check = '';
-				passwd = getpass('Password for user %s: ' % user)
-				passwd_check = getpass('Confirm password: ')
+				while passwd == '' or passwd != passwd_check:
+					from getpass import getpass
+					passwd = ''
+					passwd_check = '';
+					passwd = getpass('Password for user %s: ' % user)
+					passwd_check = getpass('Confirm password: ')
 
-			htp.add(user, passwd)
-			htp.flush()
+				htp.add(user, passwd)
+				htp.flush()
 
 		self.fix_permissions()
 
@@ -228,6 +225,7 @@ Which svn authz should Submerge use? [%s] ''' % self.paths['svn_authz'])
 		pwent = pwd.getpwnam(user)
 		os.chown(self.paths['svn_authz'], pwent.pw_uid, pwent.pw_gid)
 		os.chown(self.paths['htpasswd'], pwent.pw_uid, pwent.pw_gid)
+		os.chown(self.paths['svn'], pwent.pw_uid, pwent.pw_gid)
 
 if __name__ == '__main__':
 	sys.path.append('/usr/share/submerge/www/lib')
