@@ -41,9 +41,23 @@ class Authz:
 			if section != 'groups':
 				if section == '/':
 					sections.append([None, '/'])
+				elif section.startswith('user.'):
+					pass
 				else:
 					sections.append(section.split(':', 1))
 		return sections
+
+	def users(self):
+		users = {}
+		for section in self.parser.sections():
+			if section.startswith('user.'):
+				name = section[5:]
+				properties = {}
+				for option in self.parser.options(section):
+					properties[option] = self.parser.get(section, option)
+				users[name] = properties
+
+		return users
 
 	def createSectionName(self, repository, path):
 		if repository is not None:
@@ -165,9 +179,11 @@ if __name__ == '__main__':
 	repos, path = authz.paths()[-1]
 	print 'permissions submerge:/\n\t', \
 			authz.permissions(repos, path)
-	print 'permissions /\n\t', authz.currentPermissions(None, '/')
+	print 'permissions /\n\t', authz.permissions(None, '/')
 	print 'groups\n\t', authz.groups()
-	print 'devel members\n\t', authz.members('devel')
+	try:
+		print 'devel members\n\t', authz.members('devel')
+	except UnknownGroupError: pass
 	try:
 		authz.removeGroup('foo')
 	except UnknownGroupError: pass
@@ -180,7 +196,7 @@ if __name__ == '__main__':
 
 	authz.setPermission('foo', '/', 'avaeq', 'r')
 	print 'permissions foo:/\n\t', \
-			authz.currentPermissions('foo', '/')
+			authz.permissions('foo', '/')
 
 	try:
 		authz.addGroup('foo')
@@ -201,4 +217,6 @@ if __name__ == '__main__':
 		authz.removeMember('foo', 'avaeq')
 	except UnknownMemberError, e:
 		print 'Unknown member:', e
+
+	print 'users', authz.users()
 
