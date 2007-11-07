@@ -53,12 +53,15 @@ function Group(groupname, members) {
 	if (typeof members.length != 'undefined') {
 		// members is an array
 		members.each(function(user) {
-			if (typeof user == 'string')
-				tmembers[tmembers.length] = Users.byUsername(user);
-			else
+			if (typeof user == 'string') {
+				var name = Users.byUsername(user);
+				if (name != null)
+					tmembers[tmembers.length] = name;
+			} else if (typeof user != 'undefined')
 				tmembers[tmembers.length] = user;
 		});
 	}
+
 	this.members = tmembers;
 	
 	// Register event handlers for Users.
