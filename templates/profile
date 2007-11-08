@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>		
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Language" content="en-us" />
+		
+		<title>Main screen turn on (Profile)</title>
+		
+		<meta name="ROBOTS" content="ALL" />
+		<meta http-equiv="imagetoolbar" content="no" />
+		<meta name="MSSmartTagsPreventParsing" content="true" />
+		<meta name="Copyright" content="(c) 2006 Copyright content:  Copyright design: Jean-Paul van Oosten" />
+		<!-- (c) Copyright 2006 by Jean-Paul van Oosten All Rights Reserved. -->
+		
+		<meta name="Keywords" content="__KEYWORDS__" />
+		<meta name="Description" content="__DESCRIPTION__" />
+		
+		<link href="css/master.css" rel="stylesheet" type="text/css" media="all" />
+		
+		<!-- import the DOM logic from external javascript files -->
+		<script type="text/javascript" src="js/basic.js"></script>
+		<script type="text/javascript" src="js/users.js"></script>
+		<script type="text/javascript" src="js/groups.js"></script>
+ 					
+ 		<!-- KLUDGE:: Win IE 5 -->
+ 		<!-- corrects the unsightly Flash of Unstyled Content. See http://www.bluerobot.com/web/css/fouc.asp for more info -->
+ 		<script type="text/javascript"></script>
+ 		<!-- END KLUDGE:: -->
+		
+		<base href="./" target="" />
+		
+		<script type="text/javascript" charset="utf-8">
+			Users.userContainer = 'users';
+			//new User('[val user.name]', '[val user.email]')
+		</script>
+	</head>
+	
+	<body id="" onload="init()">
+		<div id="users-controls">
+			<h2>Profile</h2>
+		</div>
+		
+		<div id="users">
+			<div class="users">
+				<div class="expanded">
+				<span> [val user.name]</span>
+				<div class="settings">
+					<ul>
+						<li><label for="Email">Email</label><input type="text" value="[val user.email]"></input></li>
+						<li><label for="Password">Password</label><input type="password"></input></li>
+						<li><label for="Groups">Member of</label><div>[iter:groups [ival][test:!ilast , ]</div></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+	</body>
+</html>

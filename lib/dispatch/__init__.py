@@ -2,10 +2,12 @@ from dispatch.response import Response, HTTP404
 
 from views.test import Test
 from views.usergroups import UserGroups
+from views.profile import Profile
 
 classes = {
 	'test': Test(),
 	'usergroups': UserGroups(),
+	'profile': Profile(),
 }
 
 def dispatcher(request):
