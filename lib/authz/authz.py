@@ -7,6 +7,9 @@ class GroupExistsError(Exception):
 class UnknownGroupError(Exception):
 	pass
 
+class UnknownUserError(Exception):
+	pass
+
 class MemberExistsError(Exception):
 	pass
 
@@ -58,6 +61,19 @@ class Authz:
 				users[name] = properties
 
 		return users
+
+	def userProp(self, user, property):
+		if not self.parser.has_section('user.' + user):
+			raise UnknownUserError, user
+
+		return self.parser.get(user, property)
+
+	def setUserProp(self, user, property, value):
+		if not self.parser.has_section('user.' + user):
+			self.parser.add_section('user.' + user)
+
+		self.parser.set('user.' + user, property, value)
+		self.save()
 
 	def createSectionName(self, repository, path):
 		if repository is not None:

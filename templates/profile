@@ -21,8 +21,8 @@
 		
 		<!-- import the DOM logic from external javascript files -->
 		<script type="text/javascript" src="js/basic.js"></script>
-		<script type="text/javascript" src="js/users.js"></script>
-		<script type="text/javascript" src="js/groups.js"></script>
+		<script type="text/javascript" src="js/ajax.js"></script>
+		<script type="text/javascript" src="js/profile.js"></script>
  					
  		<!-- KLUDGE:: Win IE 5 -->
  		<!-- corrects the unsightly Flash of Unstyled Content. See http://www.bluerobot.com/web/css/fouc.asp for more info -->
@@ -30,10 +30,7 @@
  		<!-- END KLUDGE:: -->
 		
 		<base href="./" target="" />
-		
 		<script type="text/javascript" charset="utf-8">
-			Users.userContainer = 'users';
-			//new User('[val user.name]', '[val user.email]')
 		</script>
 	</head>
 	
@@ -48,7 +45,7 @@
 				<span> [val user.name]</span>
 				<div class="settings">
 					<ul>
-						<li><label for="Email">Email</label><input type="text" value="[val user.email]"></input></li>
+						<li><label for="Email">Email</label><input type="text" value="[val user.email]" id="email"></input><input type="submit" value="change" name="email" onClick="sendEmail()"/></li>
 						<li><label for="Password">Password</label><input type="password"></input></li>
 						<li><label for="Groups">Member of</label><div>[iter:groups [ival][test:!ilast , ]</div></li>
 					</ul>
