@@ -2,5 +2,10 @@ load('dom')
 
 function sendEmail() {
 	var response = AjaxGetRequest("/ajax/profile/?" + "email=" + $('email').value)
-	//$('response').innerHTML = response
+	Log(response)
+}
+
+function sendPassword() {
+	var response = AjaxGetRequest("/ajax/profile/?" + "password=" + $('email').value)
+	Log(response)
 }

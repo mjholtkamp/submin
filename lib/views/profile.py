@@ -42,12 +42,28 @@ class Profile(object):
 		return Response(formatted)
 
 	def ajaxhandler(self, req, path):
+		config = Config()
+		authz = Authz(config.get('svn', 'authz_file'))
+
+		success = False
+		error = ''
+
 		try:
 			email = req.get.get('email')
-			config = Config()
-			authz = Authz(config.get('svn', 'authz_file'))
 			authz.setUserProp('test', 'email', email)
+			success = True
 		except Exception, e:
-			email = ''
+			error = 'Could not change email of user test'
 
-		return Response('ajax email is: ' + email + ' echt waar!')
+		try:
+			password = req.get.get('password')
+			htpasswd = HTPasswd(config.get('svn', 'access_file'))
+			htpasswd.change('test', password)
+			success = True
+		except Exception, e:
+			error = 'Could not change password of user test'
+
+		if success:
+			error = 'success!'
+
+		return Response(error)
