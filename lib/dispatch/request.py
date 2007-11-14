@@ -10,8 +10,8 @@ class Request(object):
 		self.remote_address = ''
 		self.headers = {'Content-Type': 'text/html'}
 		
-		self.__incookies = SimpleCookie()
-		self.__outcookies = SimpleCookie()
+		self._incookies = SimpleCookie()
+		self._outcookies = SimpleCookie()
 	
 	def setHeader(self, header, value):
 		if not hasattr(self, 'headers'):
@@ -23,15 +23,15 @@ class Request(object):
 			self.setHeader(header, value)
 	
 	def setCookieHeaders(self):
-		for name in self.__outcookies.keys():
-			path = self.__outcookies[name].get('path')
+		for name in self._outcookies.keys():
+			path = self._outcookies[name].get('path')
 			if path:
 				path = path.replace(' ', '%20') \
 						.replace(';', '%3B') \
 						.replace(',', '%3C')
-			self.__outcookies[name]['path'] = path
+			self._outcookies[name]['path'] = path
 
-		cookies = self.__outcookies.output(header='')
+		cookies = self._outcookies.output(header='')
 		for cookie in cookies.splitlines():
 			self.setHeader('Set-Cookie', cookie.strip())
 	
@@ -48,14 +48,14 @@ class Request(object):
 		self.write('\r\n');
 	
 	def setCookie(self, key, value, path='/', expires=None):
-		self.__outcookies[key] = value
-		self.__outcookies[key]['path'] = path
+		self._outcookies[key] = value
+		self._outcookies[key]['path'] = path
 		if expires:
-			self.__outcookies[key]['expires'] = expires
+			self._outcookies[key]['expires'] = expires
 	
 	def getCookie(self, key, default=None):
 		try:
-			value = self.__incookies[key]
+			value = self._incookies[key]
 		except KeyError:
 			return default
 			

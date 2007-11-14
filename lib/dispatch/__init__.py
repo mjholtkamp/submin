@@ -4,6 +4,8 @@ from views.test import Test
 from views.usergroups import UserGroups
 from views.profile import Profile
 
+from dispatch.session import Session
+
 classes = {
 	'test': Test(),
 	'usergroups': UserGroups(),
@@ -11,6 +13,9 @@ classes = {
 }
 
 def dispatcher(request):
+	# Add session information to request
+	request.session = Session(request)
+
 	path = request.path_info.strip('/').split('/')
 	
 	handlerName = 'handler'
