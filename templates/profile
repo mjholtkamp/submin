@@ -39,7 +39,7 @@
 			<h2>Profile</h2>
 		</div>
 		
-		<div id="users">
+		<div id="userprofile">
 			<div class="users">
 				<div class="expanded">
 				<span> [val user.name]</span>
