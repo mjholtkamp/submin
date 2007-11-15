@@ -59,6 +59,7 @@ class Profile(object):
 			password = req.get.get('password')
 			htpasswd = HTPasswd(config.get('svn', 'access_file'))
 			htpasswd.change('test', password)
+			htpasswd.flush()
 			success = True
 		except Exception, e:
 			error = 'Could not change password of user test'

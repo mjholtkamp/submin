@@ -6,6 +6,6 @@ function sendEmail() {
 }
 
 function sendPassword() {
-	var response = AjaxGetRequest("/ajax/profile/?" + "password=" + $('email').value)
+	var response = AjaxGetRequest("/ajax/profile/?" + "password=" + $('password').value)
 	Log(response)
 }
