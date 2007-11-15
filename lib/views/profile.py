@@ -64,6 +64,6 @@ class Profile(object):
 			error = 'Could not change password of user test'
 
 		if success:
-			error = 'success!'
+			error = 'Success!'
 
 		return Response(error)
