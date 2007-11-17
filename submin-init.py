@@ -7,7 +7,7 @@ class Installer:
 		self.paths = dict(svn='/var/lib/svn/', \
 			htpasswd='/etc/apache2/svn/htpasswd', \
 			svn_authz='/etc/apache2/svn/authz', \
-			config='/etc/submerge/submerge.conf')
+			config='/etc/submin/submin.conf')
 
 		self.yes = re.compile('([yY]([eE][sS])?|)$')
 
@@ -48,35 +48,35 @@ Are these settings ok? [Y/n]: ''' % self.paths)
 		print "Not configuring apache"
 
 	def apache_vhost(self):
-#cp /usr/share/submerge/apache.conf.virtual-host-example /etc/apache2/sites-available/submerge
+#cp /usr/share/submin/apache.conf.virtual-host-example /etc/apache2/sites-available/submin
 		print "vhost not yet implemented, sorry"
 
 	def apache_subdir(self):
 		import os
 		configname = os.path.basename(self.paths['config'])
 		configname = configname.replace('.conf', '')
-		if configname != 'submerge':
+		if configname != 'submin':
 			configname = '-' + configname
 		else:
 			configname = ''
 
-		src = '/usr/share/submerge/examples/apache.conf.subdir'
-		dst = '/etc/submerge/apache' + configname + '.conf'
+		src = '/usr/share/submin/examples/apache.conf.subdir'
+		dst = '/etc/submin/apache' + configname + '.conf'
 		if not os.path.exists(os.path.dirname(dst)):
 			os.makedirs(os.path.dirname(dst))
 
 		if os.path.exists(dst):
-			os.rename(dst, dst + '.submerge-old')
+			os.rename(dst, dst + '.submin-old')
 
 		f = file(dst, 'w')
 		for line in file(src).readlines():
-			line = line.replace('/etc/submerge/submerge.conf', \
+			line = line.replace('/etc/submin/submin.conf', \
 				self.paths['config'])
 
 			f.write(line)
 
 		src = dst
-		dst = '/etc/apache2/conf.d/submerge' + configname + '.conf'
+		dst = '/etc/apache2/conf.d/submin' + configname + '.conf'
 		if not os.path.exists(dst):
 			os.symlink(src, dst)
 
@@ -141,10 +141,10 @@ Are these settings ok? [Y/n]: ''' % self.paths)
 
 	def ask_svn_authz_path(self):
 		path = raw_input('''
-Submerge uses an authz file to store users/groups, like svn does. For maximum
-ease-of-use, use the same authz-file for svn/submerge (and maybe trac!)
+Submin uses an authz file to store users/groups, like svn does. For maximum
+ease-of-use, use the same authz-file for svn/submin (and maybe trac!)
 
-Which svn authz should Submerge use? [%s] ''' % self.paths['svn_authz'])
+Which svn authz should Submin use? [%s] ''' % self.paths['svn_authz'])
 
 		if path == '':
 			return
@@ -184,17 +184,17 @@ Which svn authz should Submerge use? [%s] ''' % self.paths['svn_authz'])
 		authz = Authz(self.paths['svn_authz'])
 		members = []
 		try:
-			members = authz.members('submerge-admins')
+			members = authz.members('submin-admins')
 		except UnknownGroupError:
-			authz.addGroup('submerge-admins')
+			authz.addGroup('submin-admins')
 			pass
 
 		if len(members) == 0:
 			user = ''
 			while user == '':
-				user = raw_input('Enter a username to act as submerge admin: ')
+				user = raw_input('Enter a username to act as submin admin: ')
 
-			authz.addMember('submerge-admins', user)
+			authz.addMember('submin-admins', user)
 			print 'user %s added' % user
 
 			"""Now add password for user"""
@@ -228,7 +228,7 @@ Which svn authz should Submerge use? [%s] ''' % self.paths['svn_authz'])
 		os.chown(self.paths['svn'], pwent.pw_uid, pwent.pw_gid)
 
 if __name__ == '__main__':
-	sys.path.append('/usr/share/submerge/www/lib')
+	sys.path.append('/usr/share/submin/www/lib')
 	try:
 		installer = Installer()
 		installer.install()

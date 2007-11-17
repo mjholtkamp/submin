@@ -15,10 +15,10 @@ install: build
 	dh_testroot
 	dh_installdirs
 
-	$(installbin) submerge-init.py debian/tmp/usr/bin/submerge-init
-	cp -r www debian/tmp/usr/share/submerge/
-	find debian/tmp/usr/share/submerge -type d -name .svn -exec rm -rf \{\} \; -prune
-	$(installdata) examples/apache.conf.{subdir,vhost} debian/tmp/usr/share/submerge/examples
+	$(installbin) submin-init.py debian/tmp/usr/bin/submin-init
+	cp -r www debian/tmp/usr/share/submin/
+	find debian/tmp/usr/share/submin -type d -name .svn -exec rm -rf \{\} \; -prune
+	$(installdata) examples/apache.conf.{subdir,vhost} debian/tmp/usr/share/submin/examples
 
 binary-indep:
 	dh_testdir

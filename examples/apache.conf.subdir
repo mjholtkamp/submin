@@ -1,16 +1,16 @@
-Alias /submerge /usr/share/submerge/www
+Alias /submin /usr/share/submin/www
 
-<Directory /usr/share/submerge/www/>
+<Directory /usr/share/submin/www/>
 	AddHandler mod_python .py
-	PythonHandler submerge
-	PythonOption SubmergeEnv /etc/submerge/submerge.conf
-	PythonPath "sys.path+['/usr/share/submerge/www']"
+	PythonHandler submin
+	PythonOption SubminEnv /etc/submin/submin.conf
+	PythonPath "sys.path+['/usr/share/submin/www']"
 	PythonAutoReload on
 	PythonDebug On
 
 	RewriteEngine on
-	RewriteBase /submerge/
+	RewriteBase /submin/
 	RewriteCond %{REQUEST_FILENAME} !-f
-	RewriteRule ^(.*)$ submerge.py/$1
-	RewriteRule ^/?$ submerge.py
+	RewriteRule ^(.*)$ submin.py/$1
+	RewriteRule ^/?$ submin.py
 </Directory>

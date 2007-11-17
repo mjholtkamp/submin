@@ -1,5 +1,5 @@
 #!/bin/sh
 
 echo
-echo "Please run submerge-init to initialize your submerge installation"
+echo "Please run submin-init to initialize your submin installation"
 echo

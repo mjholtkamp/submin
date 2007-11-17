@@ -1,12 +1,12 @@
 <VirtualHost *:80>
-	ServerAdmin webmaster@submerge.example.com
-	ServerName submerge.example.com
-	DocumentRoot /usr/share/submerge
-	<Directory /usr/share/submerge/>
+	ServerAdmin webmaster@submin.example.com
+	ServerName submin.example.com
+	DocumentRoot /usr/share/submin
+	<Directory /usr/share/submin/>
 	</Directory>
 
 	LogLevel warn
-	ErrorLog /var/log/apache2/submerge/error.log
-	CustomLog /var/log/apache2/submerge/access.log combined
+	ErrorLog /var/log/apache2/submin/error.log
+	CustomLog /var/log/apache2/submin/access.log combined
 	ServerSignature On
 </VirtualHost>

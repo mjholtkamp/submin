@@ -77,9 +77,9 @@ class Input:
 		self.user = None
 
 	def isAdmin(self):
-		"""Check if current user is in the submerge-admins group"""
+		"""Check if current user is in the submin-admins group"""
 		try:
-			admins = self.authz.members('submerge-admins')
+			admins = self.authz.members('submin-admins')
 			return self.user in admins
 		except mod_authz.UnknownGroupError:
 			return False
@@ -88,22 +88,22 @@ class Input:
 		try:
 			authz_file = self.config.get('svn', 'authz_file')
 		except ConfigParser.NoSectionError, e:
-			SubmergeEnv = self.req.get_options()['SubmergeEnv']
-			raise Exception, str(e) + 'in ' + str(SubmergeEnv)
+			SubminEnv = self.req.get_options()['SubminEnv']
+			raise Exception, str(e) + 'in ' + str(SubminEnv)
 
 		return mod_authz.Authz(authz_file)
 
 	def __getConfig(self):
-		SubmergeEnv = self.req.get_options()['SubmergeEnv']
+		SubminEnv = self.req.get_options()['SubminEnv']
 
 		cp = ConfigParser.ConfigParser()
-		cp.read(SubmergeEnv)
+		cp.read(SubminEnv)
 
 		return cp
 
 	def __base(self):
 		filename = self.req.uri
-		path_info = '/submerge.py%s' % (self.req.path_info or '')
+		path_info = '/submin.py%s' % (self.req.path_info or '')
 		index = self.req.uri.rindex(path_info)
 		if not index:
 			return '/'

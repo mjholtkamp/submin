@@ -1,19 +1,19 @@
 AddHandler mod_python .py
-PythonHandler submerge
-PythonOption SubmergeEnv /etc/submerge/submerge.conf
-PythonPath "sys.path+['/usr/share/submerge/www']"
+PythonHandler submin
+PythonOption SubminEnv /etc/submin/submin.conf
+PythonPath "sys.path+['/usr/share/submin/www']"
 PythonAutoReload on
 PythonDebug On
 
 ### RewriteRules ###
 RewriteEngine on
-# What is the location of submerge from your doc-root?
+# What is the location of submin from your doc-root?
 # Don't forget the trailing /
 # - Option 1: root in VirtualHost
 RewriteBase     /
 # - Option 2: dir in default host
-#RewriteBase	/submerge/
+#RewriteBase	/submin/
 
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$ submerge.py/$1
-RewriteRule ^/?$ submerge.py
+RewriteRule ^(.*)$ submin.py/$1
+RewriteRule ^/?$ submin.py

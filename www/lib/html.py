@@ -14,9 +14,9 @@ class Html:
 		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 	<head>
-		<title>Submerge%s</title>
+		<title>Submin%s</title>
 		<base href="%s" />
-		<link rel="stylesheet" type="text/css" href="css/submerge.css" 
+		<link rel="stylesheet" type="text/css" href="css/submin.css" 
 			media="screen" />\n'''% \
 					(iif(title, ' - %s' % title, ' '), self.input.base))
 
@@ -36,7 +36,7 @@ class Html:
 	</head>
 	<body>
 		<div id="header">
-			<h1><a href="%s">Submerge</a></h1>
+			<h1><a href="%s">Submin</a></h1>
 		</div>
 		<div id="nav"><ul>''' % self.input.base)
 
@@ -76,11 +76,6 @@ class Html:
 			else:
 				active = ''
 			buf.write('<li%s><a href="login">login</a></li>' % active)
-
-		buf.write('''<li><a href="https://cloudwalker.air.nl.eu.org/projects/submerge">Trac</a></li>
-		        </ul>
-			</div>
-			<div id="content">''')
 
 		return str(buf)
 

@@ -5,7 +5,7 @@ import sys
 import time
 
 class Log:
-	levels = ['Submerge']
+	levels = ['Submin']
 	fp = None
 
 	def __init__(self, _file=sys.stdout):

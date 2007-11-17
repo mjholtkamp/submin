@@ -8,15 +8,15 @@ admin = True
 login_required = True
 
 def _getauthz(input):
-	SubmergeEnv = input.req.get_options()['SubmergeEnv']
+	SubminEnv = input.req.get_options()['SubminEnv']
 
 	import ConfigParser
 	cp = ConfigParser.ConfigParser()
-	cp.read(SubmergeEnv)
+	cp.read(SubminEnv)
 	try:
 		authz_file = cp.get('svn', 'authz_file')
 	except ConfigParser.NoSectionError, e:
-		raise Exception, str(e) + 'in' + str(SubmergeEnv)
+		raise Exception, str(e) + 'in' + str(SubminEnv)
 
 	return mod_authz.Authz(authz_file)
 
