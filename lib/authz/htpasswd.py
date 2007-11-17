@@ -91,12 +91,13 @@ class HTPasswd:
 		self.modified = True
 
 if __name__ == '__main__':
-	htpasswd = HTPasswd('/home/sabre2th/public_html/submerge/.htpasswd.test')
+	htpasswd = HTPasswd('/tmp/.htpasswd.test')
+	htpasswd.add('test', 'test')
 	htpasswd.list()
-	if htpasswd.check('sabre2th', 'blabla'):
+	if htpasswd.check('test', 'test'):
 		print 'correct!'
 	else:
 		print 'fail!'
-	htpasswd.change('sabre2th', 'test')
+	htpasswd.change('test', 'test!')
 	htpasswd.flush()
-	
+

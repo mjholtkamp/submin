@@ -59,7 +59,7 @@ class PickleDict:
 class Session(PickleDict):
 	def __init__(self, request, autoupdatecookie=True, autosave=True):
 		self.request = request
-		self.sessionid = self.request.getCookie('SubmergeSessionID', \
+		self.sessionid = self.request.getCookie('SubminSessionID', \
 				self.generateSessionID())
 		if autoupdatecookie:
 			self.updateCookie()
@@ -89,14 +89,14 @@ class Session(PickleDict):
 
 	def destroy(self):
 		self.__destroyed = True
-		self.request.setCookie('SubmergeSessionID', 'xx',
+		self.request.setCookie('SubminSessionID', 'xx',
 				expires=time.asctime())
 	
 	def destroyed(self):
 		return self.__destroyed or self.sessionid == 'xx'
 
 	def updateCookie(self):
-		self.request.setCookie('SubmergeSessionID', self.sessionid)
+		self.request.setCookie('SubminSessionID', self.sessionid)
 	
 	def generateSessionID(self):
 		"""Really an MD5-sum of the current time and a salt"""

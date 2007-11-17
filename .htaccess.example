@@ -13,9 +13,9 @@
 ### RewriteRules
 
 RewriteEngine on
-RewriteBase /dev_submerge
+RewriteBase /submin
 
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$ www/submerge.py/$1
+RewriteRule ^(.*)$ www/submin.py/$1
 
-RewriteRule ^/?$ www/submerge.py/
+RewriteRule ^/?$ www/submin.py/

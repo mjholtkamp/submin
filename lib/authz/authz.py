@@ -193,7 +193,7 @@ if __name__ == '__main__':
 	# "tests"
 	print 'authz.paths()\n\t', authz.paths()
 	repos, path = authz.paths()[-1]
-	print 'permissions submerge:/\n\t', \
+	print 'permissions submin:/\n\t', \
 			authz.permissions(repos, path)
 	print 'permissions /\n\t', authz.permissions(None, '/')
 	print 'groups\n\t', authz.groups()

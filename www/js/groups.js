@@ -77,8 +77,8 @@ function Group(groupname, members) {
 /* Creates the HTML elements for the group */
 Group.prototype.create = function() {
 	// The html for a group:
-	// <div class="groups" id="submerge"><span><a href="#" class="expand"><img src="img/pijltje-right.jpg" alt="" /></a> Submerge <a href="#" class="addToGroup" style="display: none"><img src="img/addtogroup.jpg" alt="" /></a></span>
-	//	<div id="submergemembers" class="members" style="display:none"></div>
+	// <div class="groups" id="submin"><span><a href="#" class="expand"><img src="img/pijltje-right.jpg" alt="" /></a> Submin <a href="#" class="addToGroup" style="display: none"><img src="img/addtogroup.jpg" alt="" /></a></span>
+	//	<div id="subminmembers" class="members" style="display:none"></div>
 	// </div>
 	this.div = $c('div', {className: 'groups', id: this.groupname});
 	this.span = $c('span');
