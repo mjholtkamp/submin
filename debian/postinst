@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo
+echo "Please run submin-admin to initialize your submin installation"
+echo

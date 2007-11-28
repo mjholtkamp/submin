@@ -1,0 +1,15 @@
+Source: submin
+Section: web
+Priority: optional
+Maintainer: Michiel Holtkamp <submin@supermind.nl>
+Standards-Version: 3.6.1
+
+Package: submin
+Architecture: all
+Depends: libapache2-mod-python, python-subversion, python-svn
+Description: A web admin interface for local svn repositories
+ Submin provides a web-based admin interface to your svn repositories.
+ features include: manage users/groups, manage path permissions, add
+ repositories. It uses htpasswd/svn authz for authentication, so it
+ can use the same login information as svn (and trac).
+

@@ -1,0 +1,33 @@
+#!/usr/bin/make -f
+# based on the cvs2cl control file
+
+installbin = install -g root -o root -m 755
+installdata = install -g root -o root -m 644
+
+build:
+clean:
+	dh_testdir
+	dh_testroot
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_installdirs
+
+	$(installbin) bin/submin-admin.py debian/tmp/usr/bin/submin-admin
+	cp -r www debian/tmp/usr/lib/submin/
+	find debian/tmp/usr/lib/submin -type d -name .svn -exec rm -rf \{\} \; -prune
+
+binary-indep:
+	dh_testdir
+	dh_testroot
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary-arch: build install
+binary: binary-arch binary-indep

@@ -1,0 +1,11 @@
+submin (0.99-1) testing; urgency=low
+
+  * started working on the 1.0 branch
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Wed, 28 Nov 2007 21:18:38 +0100
+
+submin (0.1-1) testing; urgency=low
+
+  * Initial release.
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Thu, 04 Oct 2007 17:49:01 +0200
