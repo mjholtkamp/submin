@@ -16,7 +16,7 @@ install: build
 	dh_installdirs
 
 	$(installbin) bin/submin-admin.py debian/tmp/usr/bin/submin-admin
-	cp -r www debian/tmp/usr/lib/submin/
+	cp -r www lib debian/tmp/usr/lib/submin/
 	find debian/tmp/usr/lib/submin -type d -name .svn -exec rm -rf \{\} \; -prune
 
 binary-indep:
