@@ -7,8 +7,8 @@
 		<meta http-equiv="Content-Language" content="en-us" />
 		<title>Sidebar</title>
 		<link rel="stylesheet" href="[val main_media_url]/css/sidebar.css">
-		<link href="css/master.css" rel="stylesheet" type="text/css" media="all" />
-		<link href="css/log.css" rel="stylesheet" type="text/css" media="all" />
+		<link rel="stylesheet" href="[val main_media_url]/css/master.css">
+		<link rel="stylesheet" href="[val main_media_url]/css/log.css">
 	</head>
 	<body>
 		[include sidebar]
