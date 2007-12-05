@@ -9,7 +9,7 @@ from config.config import Config
 class Users(object):
 	def handler(self, req, path, ajax=False):
 		if ajax:
-			return Response('ajax')
+			return self.ajaxhandler(req, path)
 
 		config = Config()
 
@@ -20,14 +20,14 @@ class Users(object):
 		users = []
 
 		authz_users = authz.users()
+		username = 'test'
 		htpasswd_users = htpasswd.users()
-		htpasswd_users.sort()
-		for user in htpasswd_users:
-			email = user + '@example.com'
-			if authz_users.has_key(user):
-				if authz_users[user].has_key('email'):
-					email = authz_users[user]['email']
-			users.append(User(user, email))
+		if username in htpasswd_users:
+			email = ''
+			if authz_users.has_key(username):
+				if authz_users[username].has_key('email'):
+					email = authz_users[username]['email']
+			user = User(username, email)
 
 		groups = []
 		authz_groups = authz.groups()
@@ -36,8 +36,36 @@ class Users(object):
 			members = authz.members(group)
 			groups.append(Group(group, members))
 
-		localvars['users'] = users
-		localvars['groups'] = groups
+		localvars['user'] = user
+		localvars['member_of'] = groups
 		localvars['main_include'] = 'users'
 		formatted = evaluate('../templates/main', localvars)
 		return Response(formatted)
+
+	def ajaxhandler(self, req, path):
+		config = Config()
+		authz = Authz(config.get('svn', 'authz_file'))
+
+		success = False
+		error = ''
+
+		try:
+			email = req.get.get('email')
+			authz.setUserProp('test', 'email', email)
+			success = True
+		except Exception, e:
+			error = 'Could not change email of user test'
+
+		try:
+			password = req.get.get('password')
+			htpasswd = HTPasswd(config.get('svn', 'access_file'))
+			htpasswd.change('test', password)
+			htpasswd.flush()
+			success = True
+		except Exception, e:
+			error = 'Could not change password of user test'
+
+		if success:
+			error = 'Success!'
+
+		return Response(error)

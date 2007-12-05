@@ -1,4 +1,14 @@
+		<script type="text/javascript" src="js/basic.js"></script>
+		<script type="text/javascript" src="js/ajax.js"></script>
+		<script type="text/javascript" src="js/profile.js"></script>
+
 <div id="content">
-	<h2>Standard stuff</h2>
-	<p>BlablablaBFG<span class="test">GFBooblablabla</span>blablabla</p>
+	<h2>Details for user: [val user.name]</h2>
+		<div class="settings">
+			<ul>
+				<li><label for="Email">Email</label><input type="text" value="[val user.email]" id="email"></input><input type="submit" value="change" name="email" onClick="sendEmail()"/></li>
+				<li><label for="Password">Password</label><input type="password" id="password"></input><input type="submit" value="change" name="password" onClick="sendPassword()"></li>
+				<li><label for="Groups">Member of</label><div>[iter:member_of [ival][test:!ilast , ]</div></li>
+			</ul>
+		</div>
 </div>
