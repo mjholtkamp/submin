@@ -25,7 +25,6 @@ class Users(object):
 
 	def ajaxhandler(self, req, path):
 		config = Config()
-		authz = Authz(config.get('svn', 'authz_file'))
 
 		success = False
 		error = ''
@@ -34,7 +33,7 @@ class Users(object):
 
 		try:
 			email = req.get.get('email')
-			authz.setUserProp(username, 'email', email)
+			config.authz.setUserProp(username, 'email', email)
 			success = True
 		except Exception, e:
 			error = 'Could not change email of user ' + username
