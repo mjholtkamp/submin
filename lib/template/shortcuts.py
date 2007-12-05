@@ -2,13 +2,10 @@ from config.config import Config
 from __init__ import evaluate
 from models.user import User
 from models.group import Group
-from authz.authz import Authz
-from authz.htpasswd import HTPasswd
 
 def evaluate_main(templatename, templatevariables={}):
 	templatevariables['main_include'] = templatename
 
-	# TODO: split up into models.
 	config = Config()
 
 	users = []
