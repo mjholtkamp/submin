@@ -8,8 +8,8 @@ from models.group import Group
 from models.repository import Repository
 
 class Repositories(View):
-	def handler(self, req, path, ajax=False):
-		if ajax:
+	def handler(self, req, path):
+		if req.is_ajax():
 			return self.ajaxhandler(req, path)
 
 		config = Config()

@@ -9,8 +9,8 @@ from auth.decorators import *
 
 class Users(View):
 	@login_required
-	def handler(self, req, path, ajax=False):
-		if ajax:
+	def handler(self, req, path):
+		if req.is_ajax():
 			return self.ajaxhandler(req, path)
 
 		config = Config()

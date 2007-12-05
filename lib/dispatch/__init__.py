@@ -31,12 +31,7 @@ def dispatcher(request):
 		
 		del path[0]
 		handler = getattr(cls, handlerName)
-		try:
-			response = handler(request, path, ajax=request.is_ajax())
-		except TypeError, e:
-			if str(e).strip() != "handler() got an unexpected keyword argument 'ajax'":
-				raise
-			response = handler(request, path)
+		response = handler(request, path)
 		
 		if not issubclass(response.__class__, Response):
 			raise Exception, "Handler %r should return a Response instance" % handler
