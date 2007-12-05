@@ -9,7 +9,7 @@
 				<li><label for="Email">Email</label><input type="text" value="[val user.email]" id="email"></input><input type="submit" value="change" name="email" onClick="sendEmail()"/></li>
 				<li><label for="Password">Password</label><input type="password" id="password"></input><input type="submit" value="change" name="password" onClick="sendPassword()"></li>
 				<li><label for="Groups">Member of</label>
-				<ul>[iter:member_of <li>[ival]</li>]</ul></li>
+				<ul>[iter:user.member_of <li>[ival]</li>]</ul></li>
 			</ul>
 		</div>
 </div>

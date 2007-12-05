@@ -3,8 +3,6 @@ from dispatch.response import Response
 from config.config import Config
 from models.user import User
 from models.group import Group
-from authz.authz import Authz
-from authz.htpasswd import HTPasswd
 
 class Users(object):
 	def handler(self, req, path, ajax=False):
@@ -13,34 +11,15 @@ class Users(object):
 
 		config = Config()
 
-		authz = Authz(config.get('svn', 'authz_file'))
-		htpasswd = HTPasswd(config.get('svn', 'access_file'))
-
 		localvars = {}
 
-		user = None
-		authz_users = authz.users()
-		username = ''
-		if len(path) > 0:
-			username = path[0]
+		try:
+			user = User(config, path[0])
+		except IndexError, User.DoesNotExistError:
+			return Response('Woops, user does not exist!') 
 
-		htpasswd_users = htpasswd.users()
-		if username in htpasswd_users:
-			email = ''
-			if authz_users.has_key(username):
-				if authz_users[username].has_key('email'):
-					email = authz_users[username]['email']
-			user = User(username, email)
-
-		groups = []
-		authz_groups = authz.groups()
-		authz_groups.sort()
-		for group in authz_groups:
-			members = authz.members(group)
-			groups.append(Group(group, members))
 
 		localvars['user'] = user
-		localvars['member_of'] = groups
 		formatted = evaluate_main('users', localvars)
 		return Response(formatted)
 

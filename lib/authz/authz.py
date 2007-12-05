@@ -110,6 +110,13 @@ class Authz:
 			return [m.strip() for m in members if m.strip()]
 		except ConfigParser.NoOptionError:
 			raise UnknownGroupError, group
+	
+	def member_of(self, user):
+		member_groups = []
+		for group in self.groups():
+			if user in self.members(group):
+				member_groups.append(group)
+		return member_groups
 
 	def addGroup(self, group, members=[]):
 		"""Adds a group"""

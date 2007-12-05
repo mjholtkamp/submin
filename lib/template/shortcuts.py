@@ -11,26 +11,20 @@ def evaluate_main(templatename, templatevariables={}):
 	# TODO: split up into models.
 	config = Config()
 
-	authz = Authz(config.get('svn', 'authz_file'))
-	htpasswd = HTPasswd(config.get('svn', 'access_file'))
-
 	users = []
-	authz_users = authz.users()
-	htpasswd_users = htpasswd.users()
+	htpasswd_users = config.htpasswd.users()
 	htpasswd_users.sort()
 	for user in htpasswd_users:
-		email = user + '@example.com'
-		if authz_users.has_key(user):
-			if authz_users[user].has_key('email'):
-				email = authz_users[user]['email']
-		users.append(User(user, email))
+		try:
+			users.append(User(config, user))
+		except User.DoesNotExist:
+			pass
 
 	groups = []
-	authz_groups = authz.groups()
+	authz_groups = config.authz.groups()
 	authz_groups.sort()
 	for group in authz_groups:
-		members = authz.members(group)
-		groups.append(Group(group, members))
+		groups.append(Group(config, group))
 
 	templatevariables['main_users'] = users
 	templatevariables['main_groups'] = groups
