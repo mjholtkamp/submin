@@ -1,5 +1,10 @@
 from template.shortcuts import evaluate_main
 from dispatch.response import Response
+from config.config import Config
+from models.user import User
+from models.group import Group
+from authz.authz import Authz
+from authz.htpasswd import HTPasswd
 
 class Users(object):
 	def handler(self, req, path, ajax=False):
@@ -13,6 +18,7 @@ class Users(object):
 
 		localvars = {}
 
+		user = None
 		authz_users = authz.users()
 		username = 'test'
 		htpasswd_users = htpasswd.users()

@@ -1,15 +1,15 @@
 <div id="sidebar">
 	<h1>Submin</h1>
 	<h2>Users</h2>
-	<ul id="users">[iter:users
+	<ul id="users">[iter:main_users
 		<li>[ival.name]</li>]
 	</ul>
 	<h2>Groups</h2>
-	<ul id="groups">[iter:groups 
+	<ul id="groups">[iter:main_groups 
 		<li>[ival.name]</li>]
 	</ul>
 	<h2>Repositories</h2>
-	<ul id="repositories">[iter:repositories 
+	<ul id="repositories">[iter:main_repositories 
 		<li>[ival.name]</li>]
 	</ul>
 </div>
