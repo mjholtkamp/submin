@@ -2,12 +2,14 @@ from dispatch.response import Response, HTTP404
 
 from views.test import Test
 from views.users import Users
+from views.groups import Groups
 
 from dispatch.session import Session
 
 classes = {
 	'test': Test(),
 	'users': Users(),
+	'groups': Groups(),
 }
 
 def dispatcher(request):

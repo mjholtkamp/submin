@@ -7,7 +7,7 @@ class Group:
 		self.config = config
 
 		if self.name not in config.authz.groups():
-			raise DoesNotExist
+			raise Group.DoesNotExist
 
 		self.members = self.config.authz.members(self.name)
 		self.members.sort()
