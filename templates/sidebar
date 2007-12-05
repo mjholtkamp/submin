@@ -2,7 +2,7 @@
 	<h1>Submin</h1>
 	<h2>Users</h2>
 	<ul id="users">[iter:main_users
-		<li>[ival.name]</li>]
+		<li><a href="[val main_media_url]/users/[ival.name]">[ival.name]</a></li>]
 	</ul>
 	<h2>Groups</h2>
 	<ul id="groups">[iter:main_groups 
