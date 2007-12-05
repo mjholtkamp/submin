@@ -43,6 +43,7 @@
 	</head>
 	
 	<body id="" onload="init()">
+		[include sidebar]
 		<div id="users-controls">
 			<h2>Users</h2>
 			<div class="controls">				

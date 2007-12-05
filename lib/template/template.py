@@ -115,7 +115,7 @@ class Parser(object):
 				self.state = COMMAND
 				self.stack.append(CommandNode('', previous_node, self.lines))
 				self.open_cmds += 1
-			elif ch in (' ', ':', '.') and self.state == COMMAND:
+			elif (ch.isspace() or ch in (':', '.')) and self.state == COMMAND:
 				# Represents the end of the command-section. Set the node's
 				# command-name.
 				# The : and . characters also represent the beginning of the
@@ -129,7 +129,7 @@ class Parser(object):
 			elif ch == '.' and self.state == ARGUMENTS:
 				# Ignore subsequent dots, add them to the arguments
 				self.data += ch
-			elif ch == ' ' and self.state == ARGUMENTS:
+			elif ch.isspace() and self.state == ARGUMENTS:
 				# End of the arguments section, fill in the arguments of the
 				# node
 				self.stack[-1].arguments = self.data
@@ -170,12 +170,12 @@ class Parser(object):
 				self.state = None
 			else:
 				# Just character data!
-				
-				if ch == '\n':
-					# Keep track of where we are in the file!
-					self.lines += 1
 				self.data += ch
-		
+
+			if ch == '\n':
+				# Keep track of where we are in the file!
+				self.lines += 1
+	
 		if self.data:
 			# If we have some data left at the end of the template, create
 			# a TextNode for it.

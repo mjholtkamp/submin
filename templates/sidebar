@@ -1,20 +1,15 @@
 <div id="sidebar">
 	<h1>Submin</h1>
 	<h2>Users</h2>
-	<ul id="users">
-		<li>avaeq</li>
-		<li>sabre2th</li>
-		<li>will</li>
+	<ul id="users">[iter:users
+		<li>[ival.name]</li>]
 	</ul>
 	<h2>Groups</h2>
-	<ul id="groups">
-		<li>submerge</li>
-		<li>submerge-admins</li>
-		<li>test</li>
+	<ul id="groups">[iter:groups 
+		<li>[ival.name]</li>]
 	</ul>
 	<h2>Repositories</h2>
-	<ul id="repositories">
-		<li>submerge</li>
-		<li>test</li>
+	<ul id="repositories">[iter:repositories 
+		<li>[ival.name]</li>]
 	</ul>
 </div>
