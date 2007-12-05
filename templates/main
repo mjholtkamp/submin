@@ -9,6 +9,8 @@
 		<link rel="stylesheet" href="[val main_media_url]/css/sidebar.css">
 		<link rel="stylesheet" href="[val main_media_url]/css/master.css">
 		<link rel="stylesheet" href="[val main_media_url]/css/log.css">
+		<script type="text/javascript" src="[val main_media_url]/js/basic.js"></script>
+		<script type="text/javascript" src="[val main_media_url]/js/ajax.js"></script>
 	</head>
 	<body>
 		[include sidebar]
