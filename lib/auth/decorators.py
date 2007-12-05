@@ -7,7 +7,8 @@ def login_required(fun):
 	login_url = os.path.join(config.get('www', 'media_url'), '/login')
 
 	def _decorator(self, *args, **kwargs):
-		self.request.session['redirected_from'] = self.request.url
+		if 'ajax' not in self.request.get and 'ajax' not in self.request.post:
+			self.request.session['redirected_from'] = self.request.url
 
 		if not 'user' in self.request.session:
 			return Redirect(login_url)
