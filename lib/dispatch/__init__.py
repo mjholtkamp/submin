@@ -1,16 +1,12 @@
 from dispatch.response import Response, HTTP404
 
 from views.test import Test
-from views.usergroups import UserGroups
-from views.profile import Profile
 from views.users import Users
 
 from dispatch.session import Session
 
 classes = {
 	'test': Test(),
-	'usergroups': UserGroups(),
-	'profile': Profile(),
 	'users': Users(),
 }
 
