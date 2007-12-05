@@ -43,7 +43,7 @@ class Authz:
 		sections = []
 		for section in self.parser.sections():
 			if section != 'groups':
-				if repository and not section.startswith(repository):
+				if repository and not section.startswith(repository + ':'):
 					pass
 				elif section == '/':
 					sections.append([None, '/'])

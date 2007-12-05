@@ -14,7 +14,7 @@ classes = {
 	'groups': Groups,
 	'login': Login,
 	'logout': Logout,
-	'repositories': Repositories(),
+	'repositories': Repositories,
 }
 
 def dispatcher(request):

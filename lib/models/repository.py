@@ -6,8 +6,8 @@ class Repository:
 		self.name = name
 		self.config = config
 
-		if self.name not in config.authz.groups():
-			raise Repository.DoesNotExist
+#		if self.name not in config.authz.groups():
+#			raise Repository.DoesNotExist
 
 		self.paths = self.config.authz.paths(self.name)
 		self.paths.sort()

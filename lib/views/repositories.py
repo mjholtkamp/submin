@@ -1,12 +1,13 @@
 from template.shortcuts import evaluate_main
 from dispatch.response import Response
 from dispatch.response import HTTP500
+from dispatch.view import View
 from config.config import Config
 from models.user import User
 from models.group import Group
 from models.repository import Repository
 
-class Repositories(object):
+class Repositories(View):
 	def handler(self, req, path, ajax=False):
 		if ajax:
 			return self.ajaxhandler(req, path)
