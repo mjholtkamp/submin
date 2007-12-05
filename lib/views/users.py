@@ -1,10 +1,5 @@
-from template import evaluate
-from models.user import User
-from models.group import Group
-from authz.authz import Authz
-from authz.htpasswd import HTPasswd
+from template.shortcuts import evaluate_main
 from dispatch.response import Response
-from config.config import Config
 
 class Users(object):
 	def handler(self, req, path, ajax=False):
@@ -17,7 +12,6 @@ class Users(object):
 		htpasswd = HTPasswd(config.get('svn', 'access_file'))
 
 		localvars = {}
-		users = []
 
 		authz_users = authz.users()
 		username = 'test'
@@ -39,7 +33,7 @@ class Users(object):
 		localvars['user'] = user
 		localvars['member_of'] = groups
 		localvars['main_include'] = 'users'
-		formatted = evaluate('../templates/main', localvars)
+		formatted = evaluate_main('users')
 		return Response(formatted)
 
 	def ajaxhandler(self, req, path):

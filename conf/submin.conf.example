@@ -3,5 +3,8 @@ authz_file = /usr/local/submin/svn.authz
 access_file = /usr/local/submin/.htpasswd
 repositories = /usr/local/submin/svn
 
+[www]
+media_url = /www
+
 [generated]
 session_salt = 
