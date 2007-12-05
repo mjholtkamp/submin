@@ -4,7 +4,7 @@
 				color: #000;
 				font-family: "Lucida Grande", helvetica, arial, sans-serif;
 				font-size: 12px;
-				background: #fff url(sidebar.png) top left repeat-y;
+				background: #fff url(../img/sidebar.png) top left repeat-y;
 			}
 			#sidebar {
 				width: 150px;
