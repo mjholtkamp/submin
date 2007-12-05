@@ -40,9 +40,8 @@ class Users(object):
 
 		try:
 			password = req.get.get('password')
-			htpasswd = HTPasswd(config.get('svn', 'access_file'))
-			htpasswd.change(username, password)
-			htpasswd.flush()
+			config.htpasswd.change(username, password)
+			config.htpasswd.flush()
 			success = True
 		except Exception, e:
 			error = 'Could not change password of user ' + username
