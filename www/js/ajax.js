@@ -58,7 +58,7 @@ function Log(message) {
 	height = getStyle('log', 'height')
 	log.style.height = height
 
-	value = 5;
+	value = 7;
 	log.style.opacity = value/10;
 	log.style.filter = 'alpha(opacity=' + value*10 + ')';
 
