@@ -4,6 +4,7 @@
 	<h2>Details for group: [val group.name]</h2>
 		<div class="settings">
 			<ul>
+				[iter:group.members <li><a href="[val main_media_url]/users/[ival]">[ival]</a></li>]
 			</ul>
 		</div>
 </div>
