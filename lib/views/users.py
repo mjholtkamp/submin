@@ -20,7 +20,10 @@ class Users(object):
 
 		user = None
 		authz_users = authz.users()
-		username = 'test'
+		username = ''
+		if len(path) > 0:
+			username = path[0]
+
 		htpasswd_users = htpasswd.users()
 		if username in htpasswd_users:
 			email = ''
@@ -48,21 +51,23 @@ class Users(object):
 		success = False
 		error = ''
 
+		username = path[0]
+
 		try:
 			email = req.get.get('email')
-			authz.setUserProp('test', 'email', email)
+			authz.setUserProp(username, 'email', email)
 			success = True
 		except Exception, e:
-			error = 'Could not change email of user test'
+			error = 'Could not change email of user ' + username
 
 		try:
 			password = req.get.get('password')
 			htpasswd = HTPasswd(config.get('svn', 'access_file'))
-			htpasswd.change('test', password)
+			htpasswd.change(username, password)
 			htpasswd.flush()
 			success = True
 		except Exception, e:
-			error = 'Could not change password of user test'
+			error = 'Could not change password of user ' + username
 
 		if success:
 			error = 'Success!'
