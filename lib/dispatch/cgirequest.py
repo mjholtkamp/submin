@@ -29,6 +29,9 @@ class CGIGet(GetVariables):
 
 		if query_string:
 			self.variables = cgi.parse_qs(query_string)
+	
+	def __contains__(self, key):
+		return key in self.variables
 
 class CGIFieldStorage(cgi.FieldStorage):
 	"""Provide a consistent way to access the POST variables."""

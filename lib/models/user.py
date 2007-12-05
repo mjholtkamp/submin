@@ -10,7 +10,7 @@ class User:
 		htpasswd_users = self.config.htpasswd.users()
 
 		if self.name not in htpasswd_users:
-			raise DoesNotExist
+			raise User.DoesNotExist
 
 		self.member_of = self.config.authz.member_of(self.name)
 

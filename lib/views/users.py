@@ -15,7 +15,7 @@ class Users(object):
 
 		try:
 			user = User(config, path[0])
-		except IndexError, User.DoesNotExistError:
+		except (IndexError, User.DoesNotExist):
 			return Response('Woops, user does not exist!') 
 
 
