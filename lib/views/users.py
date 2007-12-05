@@ -38,8 +38,7 @@ class Users(object):
 
 		localvars['user'] = user
 		localvars['member_of'] = groups
-		localvars['main_include'] = 'users'
-		formatted = evaluate_main('users')
+		formatted = evaluate_main('users', localvars)
 		return Response(formatted)
 
 	def ajaxhandler(self, req, path):
