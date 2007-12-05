@@ -1,0 +1,11 @@
+.log {
+	height: 3em;
+	width: 400px;
+	background: #eee;
+	border: 1px solid black;
+	position: absolute;
+	left: 100px;
+	top: 10px;
+	text-align: center;
+	padding-top: 1em;
+}

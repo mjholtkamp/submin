@@ -8,6 +8,7 @@
 		<title>Sidebar</title>
 		<link rel="stylesheet" href="[val main_media_url]/css/sidebar.css">
 		<link href="css/master.css" rel="stylesheet" type="text/css" media="all" />
+		<link href="css/log.css" rel="stylesheet" type="text/css" media="all" />
 	</head>
 	<body>
 		[include sidebar]
