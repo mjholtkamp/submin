@@ -64,7 +64,10 @@ class Request(object):
 			return default
 		
 		return value.value
-		
+
+	def is_ajax(self):
+		return 'ajax' in self.post or 'ajax' in self.get
+
 class NoneObject:
 	pass
 

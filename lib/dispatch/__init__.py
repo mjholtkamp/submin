@@ -24,10 +24,6 @@ def dispatcher(request):
 	path = request.path_info.strip('/').split('/')
 
 	handlerName = 'handler'
-	ajax = False
-	if 'ajax' in request.post or 'ajax' in request.get:
-		ajax = True
-
 	if path[0].lower() in classes:
 		cls = classes[path[0].lower()](request)
 		if not hasattr(cls, handlerName):
@@ -36,7 +32,7 @@ def dispatcher(request):
 		del path[0]
 		handler = getattr(cls, handlerName)
 		try:
-			response = handler(request, path, ajax=ajax)
+			response = handler(request, path, ajax=request.is_ajax())
 		except TypeError, e:
 			if str(e).strip() != "handler() got an unexpected keyword argument 'ajax'":
 				raise
