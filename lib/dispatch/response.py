@@ -3,7 +3,7 @@ class Response(object):
 		self.content = str(content)
 		self.status_code = 200
 		self.headers = {'Content-type': 'text/html'}
-		
+
 class Redirect(Response):
 	def __init__(self, url):
 		Response.__init__(self)
@@ -16,3 +16,9 @@ class HTTP404(Response):
 		Response.__init__(self)
 		self.status_code = 404
 		self.content = 'Page %s not found.' % page
+
+class HTTP500(Response):
+	def __init__(self, content):
+		Response.__init__(self, content)
+		self.status_code = 500
+

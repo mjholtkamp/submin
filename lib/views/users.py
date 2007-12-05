@@ -1,5 +1,6 @@
 from template.shortcuts import evaluate_main
 from dispatch.response import Response
+from dispatch.response import HTTP500
 from config.config import Config
 from models.user import User
 from models.group import Group
@@ -16,8 +17,7 @@ class Users(object):
 		try:
 			user = User(config, path[0])
 		except (IndexError, User.DoesNotExist):
-			return Response('Woops, user does not exist!') 
-
+			return Response('Woops, user does not exist!')
 
 		localvars['user'] = user
 		formatted = evaluate_main('users', localvars)
@@ -28,8 +28,11 @@ class Users(object):
 
 		success = False
 		error = ''
+		response = None
+		username = ''
 
-		username = path[0]
+		if len(path) > 0:
+			username = path[0]
 
 		try:
 			email = req.get.get('email')
@@ -47,6 +50,8 @@ class Users(object):
 			error = 'Could not change password of user ' + username
 
 		if success:
-			error = 'Success!'
+			response = Response('Success!')
+		else:
+			response = HTTP500(error)
 
-		return Response(error)
+		return response

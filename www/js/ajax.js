@@ -2,14 +2,14 @@ function AjaxGetRequest(url) {
 	transport = new XMLHttpRequest();
 	transport.open('get', url, false);
 	transport.send(null);
-	return transport.responseText;
+	return transport;
 }
 
 function AjaxPostRequest(url, body) {
 	transport = new XMLHttpRequest();
 	transport.open('post', url, false);
 	transport.send(body);
-	return transport.responseText;
+	return transport;
 }
 
 // from: http://www.elektronaut.no/articles/2006/06/07/computed-styles
@@ -38,7 +38,7 @@ function getStyle(element, cssRule)
 
 var Log_timeout;
 
-function Log(message) {
+function Log(message, error) {
 	if (message == "") {
 		return;
 	}
@@ -50,7 +50,11 @@ function Log(message) {
 		document.body.removeChild(log)
 	}
 
-	log = $c('div', {className: 'log', id: 'log', innerHTML: message})
+	var classname = 'log_message';
+	if (error == true)
+		classname = 'log_error';
+
+	log = $c('div', {className: classname, id: 'log', innerHTML: message})
 
 	document.body.appendChild(log)
 	_top = getStyle('log', 'top')
@@ -58,7 +62,7 @@ function Log(message) {
 	height = getStyle('log', 'height')
 	log.style.height = height
 
-	value = 7;
+	value = 9;
 	log.style.opacity = value/10;
 	log.style.filter = 'alpha(opacity=' + value*10 + ')';
 

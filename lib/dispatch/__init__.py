@@ -15,13 +15,12 @@ def dispatcher(request):
 	request.session = Session(request)
 
 	path = request.path_info.strip('/').split('/')
-	
+
 	handlerName = 'handler'
 	ajax = False
-	if path[0].lower() == 'ajax':
+	if 'ajax' in request.post or 'ajax' in request.get:
 		ajax = True
-		del path[0]
-	
+
 	if path[0].lower() in classes:
 		cls = classes[path[0].lower()]
 		if not hasattr(cls, handlerName):
