@@ -1,0 +1,10 @@
+		<script type="text/javascript" src="[val main_media_url]/js/repositories.js"></script>
+
+<div id="content">
+	<h2>Details for repository: [val repository.name]</h2>
+		<div class="settings">
+			<ul>
+				[iter:repository.paths <li>[ival]</li>]
+			</ul>
+		</div>
+</div>

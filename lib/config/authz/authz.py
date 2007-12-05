@@ -37,12 +37,15 @@ class Authz:
 		"""Saves current authz configuration"""
 		self.parser.write(open(self.authz_file, 'w+'))
 
-	def paths(self):
-		"""Returns all the repository:path entries in the authz-file"""
+	def paths(self, repository=None):
+		"""Returns all the repository:path entries in the authz-file
+		   if repository is given, returns only paths that belong to it."""
 		sections = []
 		for section in self.parser.sections():
 			if section != 'groups':
-				if section == '/':
+				if repository and not section.startswith(repository):
+					pass
+				elif section == '/':
 					sections.append([None, '/'])
 				elif section.startswith('user.'):
 					pass

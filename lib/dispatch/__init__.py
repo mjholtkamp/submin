@@ -3,6 +3,7 @@ from dispatch.response import Response, HTTP404
 from views.test import Test
 from views.users import Users
 from views.groups import Groups
+from views.repositories import Repositories
 
 from dispatch.session import Session
 
@@ -10,6 +11,7 @@ classes = {
 	'test': Test(),
 	'users': Users(),
 	'groups': Groups(),
+	'repositories': Repositories(),
 }
 
 def dispatcher(request):
