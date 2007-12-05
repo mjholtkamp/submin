@@ -3,14 +3,17 @@ from dispatch.response import Response, HTTP404
 from views.test import Test
 from views.users import Users
 from views.groups import Groups
+from views.authviews import Login, Logout
 from views.repositories import Repositories
 
 from dispatch.session import Session
 
 classes = {
-	'test': Test(),
-	'users': Users(),
-	'groups': Groups(),
+	'test': Test,
+	'users': Users,
+	'groups': Groups,
+	'login': Login,
+	'logout': Logout,
 	'repositories': Repositories(),
 }
 
@@ -26,7 +29,7 @@ def dispatcher(request):
 		ajax = True
 
 	if path[0].lower() in classes:
-		cls = classes[path[0].lower()]
+		cls = classes[path[0].lower()](request)
 		if not hasattr(cls, handlerName):
 			raise Exception, "No handler %r found for view %r" % (handlerName, path[0].lower())
 		

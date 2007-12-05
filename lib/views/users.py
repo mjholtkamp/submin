@@ -1,11 +1,14 @@
+from dispatch.view import View
 from template.shortcuts import evaluate_main
 from dispatch.response import Response
 from dispatch.response import HTTP500
 from config.config import Config
 from models.user import User
 from models.group import Group
+from auth.decorators import *
 
-class Users(object):
+class Users(View):
+	@login_required
 	def handler(self, req, path, ajax=False):
 		if ajax:
 			return self.ajaxhandler(req, path)
@@ -22,6 +25,7 @@ class Users(object):
 		localvars['user'] = user
 		formatted = evaluate_main('users', localvars)
 		return Response(formatted)
+	handler = login_required(handler)
 
 	def ajaxhandler(self, req, path):
 		config = Config()

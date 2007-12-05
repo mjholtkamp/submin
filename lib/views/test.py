@@ -1,6 +1,7 @@
+from dispatch.view import View
 from dispatch.response import Response
 
-class Test(object):
+class Test(View):
 	def handler(self, req, path, ajax=False):
 		if ajax:
 			return Response('Booh from an ajax-request!')

@@ -1,5 +1,6 @@
 <div id="sidebar">
 	<h1>Submin</h1>
+	<p><a href="[val main_media_url]/logout">Logout</a></p>
 	<h2>Users</h2>
 	<ul id="users">[iter:main_users
 		<li><a href="[val main_media_url]/users/[ival.name]">[ival.name]</a></li>]

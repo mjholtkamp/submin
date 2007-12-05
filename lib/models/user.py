@@ -4,15 +4,15 @@ class User:
 
 	def __init__(self, config, name):
 		self.name = name
-		self.config = config
+		self.is_authenticated = False
 
-		authz_users = self.config.authz.users()
-		htpasswd_users = self.config.htpasswd.users()
+		authz_users = config.authz.users()
+		htpasswd_users = config.htpasswd.users()
 
 		if self.name not in htpasswd_users:
 			raise User.DoesNotExist
 
-		self.member_of = self.config.authz.member_of(self.name)
+		self.member_of = config.authz.member_of(self.name)
 
 		self.email = ''
 		if authz_users.has_key(self.name):

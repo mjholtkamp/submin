@@ -41,11 +41,19 @@ class PickleDict:
 		finally:
 			self.lock.release()
 	
+	def __contains__(self, key):
+		return key in self.dict
+
 	def __getitem__(self, key):
 		return self.dict[key]
 	
 	def __setitem__(self, key, value):
 		self.dict[key] = value
+		if self.autosave:
+			self.save()
+	
+	def __delitem__(self, key):
+		del self.dict[key]
 		if self.autosave:
 			self.save()
 
@@ -76,7 +84,17 @@ class Session(PickleDict):
 		if self.destroyed():
 			raise SessionDestroyedError
 		return PickleDict.__setitem__(self, *args)
+
+	def __delitem__(self, *args):
+		if self.destroyed():
+			raise SessionDestroyedError
+		return PickleDict.__delitem__(self, *args)
 	
+	def __contains__(self, *args):
+		if self.destroyed():
+			raise SessionDestroyedError
+		return PickleDict.__contains__(self, *args)
+
 	def __getitem__(self, *args):
 		if self.destroyed():
 			raise SessionDestroyedError

@@ -4,12 +4,11 @@ class Group:
 
 	def __init__(self, config, name):
 		self.name = name
-		self.config = config
 
 		if self.name not in config.authz.groups():
 			raise Group.DoesNotExist
 
-		self.members = self.config.authz.members(self.name)
+		self.members = config.authz.members(self.name)
 		self.members.sort()
 
 	def __str__(self):

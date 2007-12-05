@@ -1,3 +1,4 @@
+from dispatch.view import View
 from template.shortcuts import evaluate_main
 from dispatch.response import Response
 from dispatch.response import HTTP500
@@ -5,7 +6,7 @@ from config.config import Config
 from models.user import User
 from models.group import Group
 
-class Groups(object):
+class Groups(View):
 	def handler(self, req, path, ajax=False):
 		if ajax:
 			return self.ajaxhandler(req, path)

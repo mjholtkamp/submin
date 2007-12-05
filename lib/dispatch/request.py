@@ -6,6 +6,7 @@ class Request(object):
 	def __init__(self):
 		self.post = {}
 		self.get = {}
+		self.url = ''
 		self.path_info = ''
 		self.remote_address = ''
 		self.headers = {'Content-Type': 'text/html'}
