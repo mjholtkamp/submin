@@ -55,7 +55,7 @@ def val(node, tpl):
 
 @register.register('include')
 def include(node, tpl):
-	to_include = node.nodes[0].evaluate()
+	to_include = node.nodes[0].evaluate(tpl)
 	
 	if not os.path.exists(to_include):
 		raise UnknownTemplateError, "Could not find '%s' (file %s, line %d)" % \
