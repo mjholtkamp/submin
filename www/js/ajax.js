@@ -61,6 +61,9 @@ function Log(message, error) {
 	log.style.top = _top
 	height = getStyle('log', 'height')
 	log.style.height = height
+	width = parseInt(getStyle('log', 'width'))
+	windowWidth = WindowWidth()
+	log.style.left = "" + (windowWidth/2 - width/2) + "px";
 
 	value = 9;
 	log.style.opacity = value/10;
@@ -79,4 +82,23 @@ function RemoveLog() {
 	} else {
 		document.body.removeChild(log)
 	}
+}
+
+/* from quirksmode.org */
+function WindowWidth() {
+	if (self.innerWidth)
+	{
+		frameWidth = self.innerWidth;
+	}
+	else if (document.documentElement && document.documentElement.clientWidth)
+	{
+		frameWidth = document.documentElement.clientWidth;
+	}
+	else if (document.body)
+	{
+		frameWidth = document.body.clientWidth;
+	}
+	else return;
+
+	return frameWidth;
 }

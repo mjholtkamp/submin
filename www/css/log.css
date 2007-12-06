@@ -1,18 +1,18 @@
 #log {
-	height: 3em;
 	width: 400px;
-	border: 1px solid black;
+	border: 1px solid #666;
 	position: absolute;
 	left: 100px;
 	top: 10px;
 	text-align: center;
-	padding-top: 1em;
+	padding-top: 1.5em;
+	padding-bottom: 1.5em;
 }
 
 .log_error {
-	background: red;
+	background: #f66;
 }
 
 .log_message {
-	background: green;
+	background: #afa;
 }
