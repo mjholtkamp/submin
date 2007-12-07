@@ -1,6 +1,6 @@
 from config.config import Config
 
-class Repository:
+class Repository(object):
 	class DoesNotExist(Exception):
 		pass
 

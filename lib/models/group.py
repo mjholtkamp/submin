@@ -1,6 +1,6 @@
 from config.config import Config
 
-class Group:
+class Group(object):
 	class DoesNotExist(Exception):
 		pass
 

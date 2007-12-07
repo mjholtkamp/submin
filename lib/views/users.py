@@ -30,9 +30,6 @@ class Users(View):
 	def ajaxhandler(self, req, path):
 		config = Config()
 
-		success = False
-		error = ''
-		response = None
 		username = ''
 
 		if len(path) > 0:
@@ -40,24 +37,24 @@ class Users(View):
 
 		user = User(username)
 
+		if 'email' in req.get:
+			return self.setEmail(req, user)
+
+		if 'password' in req.get:
+			return self.setPassword(req, user)
+
+		return HTTP500('You tried to submit an empty field value')
+
+	def setEmail(self, req, user):
 		try:
-			email = req.get.get('email')
-			config.authz.setUserProp(username, 'email', email)
-			success = True
+			user.email = req.get.get('email')
+			return Response('Success!')
 		except Exception, e:
-			error = 'Could not change email of user ' + username
+			return HTTP500('Could not change email of user ' + user.name)
 
+	def setPassword(self, req, user):
 		try:
-			password = req.get.get('password')
-			config.htpasswd.change(username, password)
-			config.htpasswd.flush()
-			success = True
+			user.password = req.get.get('password')
+			return Response('Success!')
 		except Exception, e:
-			error = 'Could not change password of user ' + username
-
-		if success:
-			response = Response('Success!')
-		else:
-			response = HTTP500(error)
-
-		return response
+			return HTTP500('Could not change password of user ' + user.name)
