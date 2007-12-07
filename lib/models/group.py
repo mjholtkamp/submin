@@ -1,8 +1,12 @@
+from config.config import Config
+
 class Group:
 	class DoesNotExist(Exception):
 		pass
 
-	def __init__(self, config, name):
+	def __init__(self, name):
+		config = Config()
+
 		self.name = name
 
 		if self.name not in config.authz.groups():

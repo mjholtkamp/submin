@@ -17,7 +17,7 @@ class Repositories(View):
 		localvars = {}
 
 		try:
-			repository = Repository(config, path[0])
+			repository = Repository(path[0])
 		except (IndexError, Repository.DoesNotExist):
 			return Response('Woops, repository does not exist!')
 

@@ -18,7 +18,7 @@ class Users(View):
 		localvars = {}
 
 		try:
-			user = User(config, path[0])
+			user = User(path[0])
 		except (IndexError, User.DoesNotExist):
 			return Response('Woops, user does not exist!')
 
@@ -37,6 +37,8 @@ class Users(View):
 
 		if len(path) > 0:
 			username = path[0]
+
+		user = User(username)
 
 		try:
 			email = req.get.get('email')

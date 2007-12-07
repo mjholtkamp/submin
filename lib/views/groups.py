@@ -16,7 +16,7 @@ class Groups(View):
 		localvars = {}
 
 		try:
-			group = Group(config, path[0])
+			group = Group(path[0])
 		except (IndexError, Group.DoesNotExist):
 			return Response('Woops, group does not exist!')
 

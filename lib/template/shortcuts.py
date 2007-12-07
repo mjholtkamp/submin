@@ -14,7 +14,7 @@ def evaluate_main(templatename, templatevariables={}):
 	htpasswd_users.sort()
 	for user in htpasswd_users:
 		try:
-			users.append(User(config, user))
+			users.append(User(user))
 		except User.DoesNotExist:
 			pass
 
@@ -22,7 +22,7 @@ def evaluate_main(templatename, templatevariables={}):
 	authz_groups = config.authz.groups()
 	authz_groups.sort()
 	for group in authz_groups:
-		groups.append(Group(config, group))
+		groups.append(Group(group))
 
 	repositories = []
 	repository_names = []
@@ -33,7 +33,7 @@ def evaluate_main(templatename, templatevariables={}):
 			repository_names.append(repos[0])
 
 	for repos in repository_names:
-		repositories.append(Repository(config, repos))
+		repositories.append(Repository(repos))
 
 	templatevariables['main_users'] = users
 	templatevariables['main_groups'] = groups

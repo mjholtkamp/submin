@@ -21,7 +21,7 @@ class Login(View):
 		if 'redirected_from' in request.session:
 			url = request.session['redirected_from']
 
-		user = User(config, username)
+		user = User(username)
 		user.is_authenticated = True
 		request.session['user'] = user
 		request.session.save()
