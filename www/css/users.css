@@ -9,3 +9,10 @@ tr.noticeshead td.name {
 h3.users {
 	border-bottom: 1px solid black;
 }
+
+.comment {
+	color: #666;
+	font-size: 9pt;
+	font-weight: normal;
+	font-style: italic;
+}
