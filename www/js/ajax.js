@@ -1,14 +1,16 @@
-function AjaxGetRequest(url) {
+function AjaxSyncGetRequest(url, params) {
 	transport = new XMLHttpRequest();
-	transport.open('get', url, false);
+	transport.open('get', url + '?' + params, false);
 	transport.send(null);
 	return transport;
 }
 
-function AjaxPostRequest(url, body) {
+function AjaxSyncPostRequest(url, params) {
 	transport = new XMLHttpRequest();
 	transport.open('post', url, false);
-	transport.send(body);
+	transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	transport.setRequestHeader("Connection", "close");
+	transport.send(params);
 	return transport;
 }
 

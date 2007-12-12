@@ -37,24 +37,24 @@ class Users(View):
 
 		user = User(username)
 
-		if 'email' in req.get:
+		if 'email' in req.post:
 			return self.setEmail(req, user)
 
-		if 'password' in req.get:
+		if 'password' in req.post:
 			return self.setPassword(req, user)
 
 		return HTTP500('You tried to submit an empty field value')
 
 	def setEmail(self, req, user):
 		try:
-			user.email = req.get.get('email')
+			user.email = req.post.get('email')
 			return Response('Success!')
 		except Exception, e:
 			return HTTP500('Could not change email of user ' + user.name)
 
 	def setPassword(self, req, user):
 		try:
-			user.password = req.get.get('password')
+			user.password = req.post.get('password')
 			return Response('Success!')
 		except Exception, e:
 			return HTTP500('Could not change password of user ' + user.name)

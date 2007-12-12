@@ -1,12 +1,16 @@
 load('dom')
 
 function sendEmail() {
-	var response = AjaxGetRequest(document.location + "?ajax&" + "email=" + $('email').value)
+	var response = AjaxSyncPostRequest(document.location,
+		"ajax&" + "email=" + $('email').value)
+
 	Log(response.responseText, response.status != 200)
 }
 
 function sendPassword() {
-	var response = AjaxGetRequest(document.location + "?ajax&" + "password=" + $('password').value)
+	var response = AjaxSyncPostRequest(document.location,
+		"ajax&" + "password=" + $('password').value)
+
 	if (!response.responseText) {
 		responseText = 'Server did report an error, but response text was empty'
 	} else {
