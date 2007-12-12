@@ -25,7 +25,7 @@ body {
 	float: left;
 	margin-left: 10px;
 }
-h1 {
+#sidebar h1 {
 	color: #505D6D;
 	margin: 0;
 }

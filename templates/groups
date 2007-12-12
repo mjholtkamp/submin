@@ -1,7 +1,8 @@
 		<script type="text/javascript" src="[val main_media_url]/js/groups.js"></script>
 
 <div id="content">
-	<h2>Details for group: [val group.name]</h2>
+	<h1 class="content">Group [val group.name]</h1>
+		<h3 class="content">members:</h3>
 		<div class="settings">
 			<ul>
 				[iter:group.members <li><a href="[val main_media_url]/users/[ival]">[ival]</a></li>]

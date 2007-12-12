@@ -6,13 +6,3 @@ tr.noticeshead td.name {
 	width: 100px;
 }
 
-h3.users {
-	border-bottom: 1px solid black;
-}
-
-.comment {
-	color: #666;
-	font-size: 9pt;
-	font-weight: normal;
-	font-style: italic;
-}

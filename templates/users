@@ -2,7 +2,7 @@
 		<link rel="stylesheet" href="[val main_media_url]/css/users.css">
 
 <div id="content">
-	<h2>Details for user: [val user.name]</h2>
+	<h1 class="content">User [val user.name]</h1>
 		<div class="settings">
 			<ul>
 				<li><label for="email">Email</label><input type="text" value="[val user.email]" id="email"></input><input type="submit" value="change" name="email" onClick="sendEmail()"/></li>
