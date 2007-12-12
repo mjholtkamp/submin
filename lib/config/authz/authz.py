@@ -69,7 +69,7 @@ class Authz:
 		if not self.parser.has_section('user.' + user):
 			raise UnknownUserError, user
 
-		return self.parser.get(user, property)
+		return self.parser.get('user.' + user, property)
 
 	def setUserProp(self, user, property, value):
 		if not self.parser.has_section('user.' + user):

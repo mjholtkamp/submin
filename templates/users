@@ -1,4 +1,5 @@
 		<script type="text/javascript" src="[val main_media_url]/js/users.js"></script>
+		<link rel="stylesheet" href="[val main_media_url]/css/users.css">
 
 <div id="content">
 	<h2>Details for user: [val user.name]</h2>
@@ -7,7 +8,22 @@
 				<li><label for="email">Email</label><input type="text" value="[val user.email]" id="email"></input><input type="submit" value="change" name="email" onClick="sendEmail()"/></li>
 				<li><label for="password">Password</label><input type="password" id="password"></input><input type="submit" value="change" name="password" onClick="sendPassword()"></li>
 				<li>
-					<label for="Groups">Member of</label>
+					<h3 class="users">Notices from repositories</h3>
+					<table>
+						<tr class="noticeshead">
+							<td class="name">&nbsp;</td>
+							<td>allowed</td>
+							<td>enabled</td>
+						</tr>
+					[iter:user.notifications 
+						<tr class="notices">
+							<td>[ival.name]</td>
+							<td><input type="checkbox" [test:ival.allowed checked] /></td>
+							<td><input type="checkbox" [test:ival.enabled checked] /></td>
+						</tr>
+					]
+					</table>
+					<h3 class="users">Member of</h3>
 					<ul>
 					[iter:user.member_of 
 						<li><a href="[val main_media_url]/groups/[ival]">[ival]</a></li>]

@@ -1,4 +1,6 @@
 from config.config import Config
+from ConfigParser import NoOptionError
+from config.authz.authz import UnknownUserError
 
 class User(object):
 	class DoesNotExist(Exception):
@@ -22,11 +24,29 @@ class User(object):
 		if authz_users.has_key(self.name):
 			if authz_users[self.name].has_key('email'):
 				self.__email = authz_users[self.name]['email']
-	
+
+		# build notifications
+		allowed = []
+		enabled = []
+		try:
+			allowed = config.authz.userProp(self.name, 'notifications_allowed')
+			allowed = allowed.split(', ')
+			enabled = config.authz.userProp(self.name, 'notifications_enabled')
+			enabled = enabled.split(', ')
+		except (NoOptionError, UnknownUserError):
+			pass
+
+		self.notifications = []
+		for k in allowed:
+			enable = False
+			if k in enabled:
+				enable = True
+
+			self.notifications.append(dict(name=k,allowed=True,enabled=enable))
+
 	def __str__(self):
 		return self.name
-	
-	
+
 	def getEmail(self):
 		return self.__email
 
@@ -43,3 +63,4 @@ class User(object):
 		config.htpasswd.change(self.name, password)
 		config.htpasswd.flush()
 	password = property(getPassword, setPassword)
+
