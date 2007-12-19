@@ -2,7 +2,7 @@ class Response(object):
 	def __init__(self, content=''):
 		self.content = str(content)
 		self.status_code = 200
-		self.headers = {'Content-type': 'text/html'}
+		self.headers = {'Content-Type': 'text/html'}
 
 class Redirect(Response):
 	def __init__(self, url):
@@ -30,11 +30,11 @@ class XMLResponse(Response):
 			content
 
 		Response.__init__(self, content)
-		self.headers = {'Content-type': 'text/xml'}
+		self.headers = {'Content-Type': 'text/xml'}
 
-class XMLStatusResponse(Response):
+class XMLStatusResponse(XMLResponse):
 	def __init__(self, success, text):
 		content = '<response><success>%s</success><text>%s</text></response>' \
 			% (success, text)
 
-		Response.__init__(self, content)
+		XMLResponse.__init__(self, content)

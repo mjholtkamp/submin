@@ -28,14 +28,14 @@ def dispatcher(request):
 		cls = classes[path[0].lower()](request)
 		if not hasattr(cls, handlerName):
 			raise Exception, "No handler %r found for view %r" % (handlerName, path[0].lower())
-		
+
 		del path[0]
 		handler = getattr(cls, handlerName)
 		response = handler(request, path)
-		
+
 		if not issubclass(response.__class__, Response):
 			raise Exception, "Handler %r should return a Response instance" % handler
-		
+
 	else:
 		response = HTTP404('/'.join(path))
 

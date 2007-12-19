@@ -2,7 +2,7 @@ from Cookie import SimpleCookie
 
 class Request(object):
 	"""Provide a consistent way to treat a Request."""
-	
+
 	def __init__(self):
 		self.post = {}
 		self.get = {}
@@ -10,19 +10,19 @@ class Request(object):
 		self.path_info = ''
 		self.remote_address = ''
 		self.headers = {'Content-Type': 'text/html'}
-		
+
 		self._incookies = SimpleCookie()
 		self._outcookies = SimpleCookie()
-	
+
 	def setHeader(self, header, value):
 		if not hasattr(self, 'headers'):
 			self.headers = dict()
 		self.headers[header] = value
-		
+
 	def setHeaders(self, headers={}):
 		for header, value in headers.iteritems():
 			self.setHeader(header, value)
-	
+
 	def setCookieHeaders(self):
 		for name in self._outcookies.keys():
 			path = self._outcookies[name].get('path')
@@ -35,10 +35,10 @@ class Request(object):
 		cookies = self._outcookies.output(header='')
 		for cookie in cookies.splitlines():
 			self.setHeader('Set-Cookie', cookie.strip())
-	
+
 	def write(self, content):
 		raise NotImplementedError
-		
+
 	def status(self, statusCode=200):
 		self.write('Status: %d\r\n' % statusCode)
 
@@ -47,13 +47,13 @@ class Request(object):
 		for header, value in self.headers.iteritems():
 			self.write('%s: %s\r\n' % (header, value))
 		self.write('\r\n');
-	
+
 	def setCookie(self, key, value, path='/', expires=None):
 		self._outcookies[key] = value
 		self._outcookies[key]['path'] = path
 		if expires:
 			self._outcookies[key]['expires'] = expires
-	
+
 	def getCookie(self, key, default=None):
 		try:
 			value = self._incookies[key]
