@@ -60,11 +60,7 @@ function Log(message, success) {
 	}
 
 	// first remove previous logs
-	log = document.getElementById('log')
-	if (log != null) {
-		clearTimeout(Log_timeout)
-		document.body.removeChild(log)
-	}
+	RemoveLog()
 
 	var classname = 'log_message';
 	if (!success)
@@ -85,18 +81,29 @@ function Log(message, success) {
 	log.style.opacity = value/10;
 	log.style.filter = 'alpha(opacity=' + value*10 + ')';
 
-	Log_timeout = setTimeout("RemoveLog()", 2000)
+	// remove on click
+	log.onclick = RemoveLog
+
+	Log_timeout = setTimeout("MoveLog()", 2000)
 }
 
 function RemoveLog() {
+	log = document.getElementById('log')
+	if (log != null) {
+		clearTimeout(Log_timeout)
+		document.body.removeChild(log)
+	}
+}
+
+function MoveLog() {
 	log = document.getElementById('log')
 	_top = parseInt(log.style.top)
 	height = parseInt(log.style.height)
 	if (_top + height > 0) {
 		log.style.top = "" + (_top - 5) + "px";
-		Log_timeout = setTimeout("RemoveLog()", 10)
+		Log_timeout = setTimeout("MoveLog()", 10)
 	} else {
-		document.body.removeChild(log)
+		RemoveLog(log)
 	}
 }
 
