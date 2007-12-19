@@ -1,5 +1,7 @@
 load('dom')
 
+// Using window.onload because an onclick="..." handler doesn't give the
+// handler a this-variable
 var old_load = window.onload;
 window.onload = function() {
 	if (old_load) old_load();
@@ -13,8 +15,8 @@ function sendEmail() {
 	Log(response.responseText, response.status != 200)
 }
 
+// global variable to temporarily store the password to be verified
 var enteredPassword;
-
 function verifyPassword() {
 	enteredPassword = $('password').value;
 	if (!enteredPassword) {
@@ -22,10 +24,12 @@ function verifyPassword() {
 		return false;
 	}
 
+	// Some cleaning up.
 	$('password').value = '';
 	this.parentNode.firstChild.innerHTML = 'Verify';
-	this.onclick = checkPasswords;
 	$('password').focus();
+	// change te onclick handler
+	this.onclick = checkPasswords;
 	return false;
 }
 
@@ -35,11 +39,15 @@ function checkPasswords() {
 		return false;
 	}
 
+	// Again some cleaning up.
 	enteredPassword = '';
 	$('password').value = '';
 	this.parentNode.firstChild.innerHTML = 'Password';
-	this.onclick = verifyPassword;
+	// Make sure the change-button isn't highlighted anymore
 	this.blur();
+	// change the onclick handler back to the verifyPassword function
+	this.onclick = verifyPassword;
+	// Send the entered password to the server.
 	sendPassword(enteredPassword);
 	return false;
 }
