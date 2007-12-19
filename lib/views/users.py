@@ -36,10 +36,10 @@ class Users(View):
 
 		user = User(username)
 
-		if 'email' in req.post:
+		if 'email' in req.post and req.post['email'].value.strip():
 			return self.setEmail(req, user)
 
-		if 'password' in req.post:
+		if 'password' in req.post and req.post['password'].value.strip():
 			return self.setPassword(req, user)
 
 		return XMLStatusResponse(False, 'You tried to submit an empty field value')
