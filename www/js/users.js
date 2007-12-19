@@ -10,9 +10,9 @@ window.onload = function() {
 
 function sendEmail() {
 	var response = AjaxSyncPostRequest(document.location,
-		"ajax&" + "email=" + $('email').value)
+		"email=" + $('email').value)
 
-	Log(response.responseText, response.status != 200)
+	Log(response.text, response.success)
 }
 
 // global variable to temporarily store the password to be verified
@@ -20,7 +20,7 @@ var enteredPassword;
 function verifyPassword() {
 	enteredPassword = $('password').value;
 	if (!enteredPassword) {
-		Log('Please enter a password before pressing "change"', true);
+		Log('Please enter a password before pressing "change"', false);
 		return false;
 	}
 
@@ -43,7 +43,7 @@ function checkPasswords() {
 
 	// Do the check after cleaning up.
 	if ($('password').value != enteredPassword) {
-		Log('Verification of password failed', true);
+		Log('Verification of password failed', false);
 		enteredPassword = '';
 		$('password').value = '';
 		return false;
@@ -59,12 +59,7 @@ function checkPasswords() {
 
 function sendPassword(password) {
 	var response = AjaxSyncPostRequest(document.location,
-		"ajax&" + "password=" + password)
+		"password=" + password)
 
-	if (!response.responseText) {
-		responseText = 'Server did report an error, but response text was empty'
-	} else {
-		responseText = response.responseText
-	}
-	Log(responseText, response.status != 200)
+	Log(response.text, response.success)
 }

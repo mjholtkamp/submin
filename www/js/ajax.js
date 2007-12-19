@@ -1,8 +1,22 @@
+function Response(transport) {
+	doc = transport.responseXML
+	response = {}
+	success = doc.getElementsByTagName('success')[0].childNodes[0].nodeValue
+	response['text'] = doc.getElementsByTagName('text')[0].childNodes[0].nodeValue
+
+	if (success.toLowerCase() == 'true') {
+		response['success'] = true
+	} else {
+		response['success'] = false
+	}
+	return response
+}
+
 function AjaxSyncGetRequest(url, params) {
 	transport = new XMLHttpRequest();
-	transport.open('get', url + '?' + params, false);
+	transport.open('get', url + '?ajax&' + params, false);
 	transport.send(null);
-	return transport;
+	return Response(transport)
 }
 
 function AjaxSyncPostRequest(url, params) {
@@ -10,8 +24,8 @@ function AjaxSyncPostRequest(url, params) {
 	transport.open('post', url, false);
 	transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	transport.setRequestHeader("Connection", "close");
-	transport.send(params);
-	return transport;
+	transport.send('ajax&' + params);
+	return Response(transport)
 }
 
 // from: http://www.elektronaut.no/articles/2006/06/07/computed-styles
@@ -40,7 +54,7 @@ function getStyle(element, cssRule)
 
 var Log_timeout;
 
-function Log(message, error) {
+function Log(message, success) {
 	if (message == "") {
 		return;
 	}
@@ -53,7 +67,7 @@ function Log(message, error) {
 	}
 
 	var classname = 'log_message';
-	if (error == true)
+	if (!success)
 		classname = 'log_error';
 
 	log = $c('div', {className: classname, id: 'log', innerHTML: message})

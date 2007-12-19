@@ -1,7 +1,6 @@
 from dispatch.view import View
 from template.shortcuts import evaluate_main
-from dispatch.response import Response
-from dispatch.response import HTTP500
+from dispatch.response import Response, HTTP500, XMLStatusResponse
 from config.config import Config
 from models.user import User
 from models.group import Group
@@ -43,18 +42,18 @@ class Users(View):
 		if 'password' in req.post:
 			return self.setPassword(req, user)
 
-		return HTTP500('You tried to submit an empty field value')
+		return XMLStatusResponse(False, 'You tried to submit an empty field value')
 
 	def setEmail(self, req, user):
 		try:
 			user.email = req.post.get('email')
-			return Response('Success!')
+			return XMLStatusResponse(True, 'Success!')
 		except Exception, e:
-			return HTTP500('Could not change email of user ' + user.name)
+			return XMLStatusResponse(False, 'Could not change email of user ' + user.name)
 
 	def setPassword(self, req, user):
 		try:
 			user.password = req.post.get('password')
-			return Response('Success!')
+			return XMLStatusResponse(True, 'Success!')
 		except Exception, e:
-			return HTTP500('Could not change password of user ' + user.name)
+			return XMLStatusResponse(False, 'Could not change password of user ' + user.name)

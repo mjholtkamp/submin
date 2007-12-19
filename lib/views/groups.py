@@ -2,6 +2,7 @@ from dispatch.view import View
 from template.shortcuts import evaluate_main
 from dispatch.response import Response
 from dispatch.response import HTTP500
+from dispatch.response import XMLStatusResponse
 from config.config import Config
 from models.user import User
 from models.group import Group
@@ -38,8 +39,8 @@ class Groups(View):
 		error = 'operations for groups are not yet implemented'
 
 		if success:
-			response = Response('Success!')
+			response = XMLStatusResponse('1', 'Success')
 		else:
-			response = HTTP500(error)
+			response = XMLStatusResponse('0', error)
 
 		return response
