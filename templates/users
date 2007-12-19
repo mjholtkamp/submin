@@ -8,7 +8,7 @@
 				<li><label for="email">Email</label><input type="text" value="[val user.email]" id="email"></input><input type="submit" value="change" name="email" onClick="sendEmail()"/></li>
 				<li><label for="password">Password</label><input type="password" id="password"></input><input type="submit" value="change" name="password" id="password_button"></li>
 				<li>
-					<h3 class="users">Notices from repositories <span class="comment">(Not implemented yet)</span></h3>
+					<h3 class="content">Notices from repositories <span class="comment">(Not implemented yet)</span></h3>
 					<table>
 						<tr class="noticeshead">
 							<td class="name">&nbsp;</td>
@@ -23,7 +23,7 @@
 						</tr>
 					]
 					</table>
-					<h3 class="users">Member of</h3>
+					<h3 class="content">Member of</h3>
 					<ul>
 					[iter:user.member_of 
 						<li><a href="[val main_media_url]/groups/[ival]">[ival]</a></li>]
