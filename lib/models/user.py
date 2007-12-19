@@ -55,12 +55,8 @@ class User(object):
 		config.authz.setUserProp(self.name, 'email', email)
 	email = property(getEmail, setEmail)
 
-	def getPassword(self):
-		return '***'
-
 	def setPassword(self, password):
 		config = Config()
 		config.htpasswd.change(self.name, password)
 		config.htpasswd.flush()
-	password = property(getPassword, setPassword)
-
+	password = property(fset=setPassword)

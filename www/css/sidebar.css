@@ -38,3 +38,24 @@ body {
 	margin: auto;
 	color: black;
 }
+
+
+/* ADD icons */
+ul#addicons {
+	position: fixed;
+	bottom: 0;
+	background: url(../img/sidebar-add.png);
+	height: 30px;
+	margin: 0 -5px;
+	padding: 0
+	width: 162px;
+}
+ul#addicons li {
+	width: 40.25px;
+	padding: 0;
+	margin: 0;
+	float: left;
+}
+ul#adicons li a {
+	margin: 0;
+}
