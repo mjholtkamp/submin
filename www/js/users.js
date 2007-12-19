@@ -34,19 +34,24 @@ function verifyPassword() {
 }
 
 function checkPasswords() {
-	if ($('password').value != enteredPassword) {
-		Log('Verification of password failed', true);
-		return false;
-	}
-
 	// Again some cleaning up.
-	enteredPassword = '';
-	$('password').value = '';
 	this.parentNode.firstChild.innerHTML = 'Password';
 	// Make sure the change-button isn't highlighted anymore
 	this.blur();
 	// change the onclick handler back to the verifyPassword function
 	this.onclick = verifyPassword;
+
+	// Do the check after cleaning up.
+	if ($('password').value != enteredPassword) {
+		Log('Verification of password failed', true);
+		enteredPassword = '';
+		$('password').value = '';
+		return false;
+	}
+
+	enteredPassword = '';
+	$('password').value = '';
+
 	// Send the entered password to the server.
 	sendPassword(enteredPassword);
 	return false;
