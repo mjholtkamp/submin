@@ -5,7 +5,7 @@
 		<h3 class="content">members:</h3>
 		<div class="settings">
 			<ul>
-				[iter:group.members <li><a href="[val main_media_url]/users/[ival]">[ival]</a></li>]
+				[iter:group.members <li><a href="[val main_media_url]/users/[ival]">[ival]</a> <input type="submit" value="remove" onClick="removeMember('[ival]')"/></li>]
 			</ul>
 		</div>
 </div>

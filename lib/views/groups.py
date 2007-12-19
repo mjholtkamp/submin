@@ -4,6 +4,7 @@ from dispatch.response import Response
 from dispatch.response import HTTP500
 from dispatch.response import XMLStatusResponse
 from config.config import Config
+from config.authz.authz import UnknownMemberError
 from models.user import User
 from models.group import Group
 
@@ -36,11 +37,22 @@ class Groups(View):
 		if len(path) > 0:
 			groupname = path[0]
 
+		if 'removeMember' in req.post:
+			return self.removeMember(req, groupname, config)
+
 		error = 'operations for groups are not yet implemented'
 
 		if success:
-			response = XMLStatusResponse('1', 'Success')
+			response = XMLStatusResponse(True, 'Success')
 		else:
-			response = XMLStatusResponse('0', error)
+			response = XMLStatusResponse(False, error)
 
 		return response
+
+	def removeMember(self, req, groupname, config):
+		try:
+			config.authz.removeMember(groupname, req.post['removeMember'].value)
+		except UnknownMemberError:
+			return XMLStatusResponse(False, 'No such user')
+		return XMLStatusResponse(True, 'Success')
+
