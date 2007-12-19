@@ -6,7 +6,7 @@
 		<div class="settings">
 			<ul>
 				<li><label for="email">Email</label><input type="text" value="[val user.email]" id="email"></input><input type="submit" value="change" name="email" onClick="sendEmail()"/></li>
-				<li><label for="password">Password</label><input type="password" id="password"></input><input type="submit" value="change" name="password" onClick="sendPassword()"></li>
+				<li><label for="password">Password</label><input type="password" id="password"></input><input type="submit" value="change" name="password" id="password_button"></li>
 				<li>
 					<h3 class="users">Notices from repositories <span class="comment">(Not implemented yet)</span></h3>
 					<table>
