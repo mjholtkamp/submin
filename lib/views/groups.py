@@ -50,9 +50,7 @@ class Groups(View):
 		return response
 
 	def removeMember(self, req, groupname, config):
-		try:
-			config.authz.removeMember(groupname, req.post['removeMember'].value)
-		except UnknownMemberError:
-			return XMLStatusResponse(False, 'No such user')
-		return XMLStatusResponse(True, 'Success')
-
+		success = Group(groupname).removeMember(\
+				req.post['removeMember'].value)
+		msgs = {True: 'Success', False: 'No such user'}
+		return XMLStatusResponse(success, msgs[success])
