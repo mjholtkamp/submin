@@ -27,8 +27,6 @@ class Groups(View):
 		return Response(formatted)
 
 	def ajaxhandler(self, req, path):
-		config = Config()
-
 		success = False
 		error = ''
 		response = None
@@ -38,7 +36,10 @@ class Groups(View):
 			groupname = path[0]
 
 		if 'removeMember' in req.post:
-			return self.removeMember(req, groupname, config)
+			return self.removeMember(req, groupname)
+
+		if 'addMember' in req.post:
+			return self.addMember(req, groupname)
 
 		error = 'operations for groups are not yet implemented'
 
@@ -49,8 +50,14 @@ class Groups(View):
 
 		return response
 
-	def removeMember(self, req, groupname, config):
+	def removeMember(self, req, groupname):
 		success = Group(groupname).removeMember(\
 				req.post['removeMember'].value)
 		msgs = {True: 'Success', False: 'No such user'}
+		return XMLStatusResponse(success, msgs[success])
+
+	def addMember(self, req, groupname):
+		success = Group(groupname).addMember(\
+				req.post['addMember'].value)
+		msgs = {True: 'Success', False: 'This member already is in this group'}
 		return XMLStatusResponse(success, msgs[success])

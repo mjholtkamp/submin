@@ -113,7 +113,7 @@ class Authz:
 			return [m.strip() for m in members if m.strip()]
 		except ConfigParser.NoOptionError:
 			raise UnknownGroupError, group
-	
+
 	def member_of(self, user):
 		member_groups = []
 		for group in self.groups():
@@ -143,7 +143,7 @@ class Authz:
 		members.append(member)
 		self.parser.set('groups', group, ', '.join(members))
 		self.save()
-	
+
 	def removeMember(self, group, member):
 		"""Removes a member from a group"""
 		members = self.members(group)
@@ -183,7 +183,7 @@ class Authz:
 			self.parser.add_section(section)
 		self.parser.set(section, member, permission)
 		self.save()
-	
+
 	def removePermission(self, repository, path, member):
 		"""Removes the members permission from the repository:path"""
 		section = self.createSectionName(repository, path)
