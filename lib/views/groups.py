@@ -7,8 +7,10 @@ from config.config import Config
 from config.authz.authz import UnknownMemberError
 from models.user import User
 from models.group import Group
+from auth.decorators import *
 
 class Groups(View):
+	@login_required
 	def handler(self, req, path):
 		if req.is_ajax():
 			return self.ajaxhandler(req, path)

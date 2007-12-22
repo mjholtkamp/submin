@@ -6,8 +6,10 @@ from config.config import Config
 from models.user import User
 from models.group import Group
 from models.repository import Repository
+from auth.decorators import *
 
 class Repositories(View):
+	@login_required
 	def handler(self, req, path):
 		if req.is_ajax():
 			return self.ajaxhandler(req, path)

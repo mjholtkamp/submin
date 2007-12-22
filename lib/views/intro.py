@@ -2,8 +2,10 @@ from template.shortcuts import evaluate_main
 from dispatch.response import Response, XMLStatusResponse
 from dispatch.view import View
 from config.config import Config
+from auth.decorators import *
 
 class Intro(View):
+	@login_required
 	def handler(self, req, path):
 		if req.is_ajax():
 			return self.ajaxhandler(req, path)
