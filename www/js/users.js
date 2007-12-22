@@ -49,11 +49,11 @@ function checkPasswords() {
 		return false;
 	}
 
-	enteredPassword = '';
 	$('password').value = '';
 
 	// Send the entered password to the server.
 	sendPassword(enteredPassword);
+	enteredPassword = '';
 	return false;
 }
 
