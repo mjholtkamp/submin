@@ -5,6 +5,7 @@ from views.users import Users
 from views.groups import Groups
 from views.authviews import Login, Logout
 from views.repositories import Repositories
+from views.intro import Intro
 
 from dispatch.session import Session
 
@@ -15,6 +16,7 @@ classes = {
 	'login': Login,
 	'logout': Logout,
 	'repositories': Repositories,
+	'': Intro,
 }
 
 def dispatcher(request):
