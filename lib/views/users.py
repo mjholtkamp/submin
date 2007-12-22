@@ -42,6 +42,12 @@ class Users(View):
 		if 'password' in req.post and req.post['password'].value.strip():
 			return self.setPassword(req, user)
 
+		if 'addToGroup' in req.post:
+			return self.addToGroup(req, user)
+
+		if 'removeFromGroup' in req.post:
+			return self.removeFromGroup(req, user)
+
 		return XMLStatusResponse(False, 'You tried to submit an empty field value')
 
 	def setEmail(self, req, user):
@@ -57,3 +63,15 @@ class Users(View):
 			return XMLStatusResponse(True, 'Success!')
 		except Exception, e:
 			return XMLStatusResponse(False, 'Could not change password of user ' + user.name)
+
+	def addToGroup(self, req, user):
+		group = Group(req.post.get('addToGroup'))
+		success = group.addMember(user.name)
+		msgs = {True: 'Success', False: 'This user is already in group %s' % group.name}
+		return XMLStatusResponse(success, msgs[success])
+
+	def removeFromGroup(self, req, user):
+		group = Group(req.post.get('removeFromGroup'))
+		success = group.removeMember(user.name)
+		msgs = {True: 'Success', False: 'User was not a member of %s' % group.name}
+		return XMLStatusResponse(success, msgs[success])

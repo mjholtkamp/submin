@@ -1,3 +1,4 @@
+		<script type="text/javascript">var media_url = "[val main_media_url]";</script>
 		<script type="text/javascript" src="[val main_media_url]/js/users.js"></script>
 		<link rel="stylesheet" href="[val main_media_url]/css/users.css">
 
@@ -24,9 +25,10 @@
 					]
 					</table>
 					<h3 class="content">Member of</h3>
-					<ul>
+					<ul id="memberof">
 					[iter:user.member_of 
-						<li><a href="[val main_media_url]/groups/[ival]">[ival]</a></li>]
+						<li><a href="[val main_media_url]/groups/[ival]">[ival]</a> <a href="#" class="remover">-</a></li>]
+						<li id="add"><select>[iter:user.nonmember_of <option>[ival]</option>]</select> <a href="#" class="adder">+</a></li>
 					</ul>
 				</li>
 			</ul>

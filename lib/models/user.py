@@ -19,6 +19,8 @@ class User(object):
 			raise User.DoesNotExist
 
 		self.member_of = config.authz.member_of(self.name)
+		self.nonmember_of = [nonmember_of for nonmember_of in
+				config.authz.groups() if nonmember_of not in self.member_of]
 
 		self.__email = ''
 		if authz_users.has_key(self.name):
