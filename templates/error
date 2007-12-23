@@ -1,0 +1,4 @@
+<div id="content">
+	<h1>Error</h1>
+	An error occured: [val errormsg]
+</div>
