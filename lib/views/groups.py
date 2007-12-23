@@ -1,8 +1,7 @@
 from dispatch.view import View
 from template.shortcuts import evaluate_main
-from dispatch.response import Response
-from dispatch.response import HTTP500
-from dispatch.response import XMLStatusResponse
+from dispatch.response import Response, XMLStatusResponse
+from views.error import ErrorResponse
 from config.config import Config
 from config.authz.authz import UnknownMemberError
 from models.user import User
@@ -22,7 +21,7 @@ class Groups(View):
 		try:
 			group = Group(path[0])
 		except (IndexError, Group.DoesNotExist):
-			return Response('Woops, group does not exist!')
+			return ErrorResponse('This group does not exist.')
 
 		localvars['group'] = group
 		formatted = evaluate_main('groups', localvars)

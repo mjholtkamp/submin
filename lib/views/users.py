@@ -1,6 +1,7 @@
 from dispatch.view import View
 from template.shortcuts import evaluate_main
-from dispatch.response import Response, HTTP500, XMLStatusResponse
+from dispatch.response import Response, XMLStatusResponse
+from views.error import ErrorResponse
 from config.config import Config
 from models.user import User
 from models.group import Group
@@ -19,7 +20,7 @@ class Users(View):
 		try:
 			user = User(path[0])
 		except (IndexError, User.DoesNotExist):
-			return Response('Woops, user does not exist!')
+			return ErrorResponse('This user does not exist.')
 
 		localvars['user'] = user
 		formatted = evaluate_main('users', localvars)
