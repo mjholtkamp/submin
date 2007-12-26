@@ -67,6 +67,11 @@ class Users(View):
 
 	def removeFromGroup(self, req, user):
 		group = Group(req.post.get('removeFromGroup'))
+		# TODO: Make this a setting in submin.conf?
+		if group.name == "submin-admins" and user.name == req.session['user'].name:
+			return XMLStatusResponse(False,
+					"You cannot remove yourself from %s" % group.name)
+
 		success = group.removeMember(user.name)
 		msgs = {True: 'Success', False: 'User was not a member of %s' % group.name}
 		return XMLStatusResponse(success, msgs[success])

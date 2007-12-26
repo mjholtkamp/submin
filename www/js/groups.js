@@ -5,26 +5,31 @@ function removeMemberAjax(member) {
 		"removeMember=" + member)
 
 	Log(response.text, response.success)
+	return response.success
 }
 
 function addMemberAjax(member) {
 	var response = AjaxSyncPostRequest(document.location,
 			"addMember=" + member)
 	Log(response.text, response.success)
+	return response.success
 }
 
 var selectli = null;
 function remove() {
 	var value = this.parentNode.firstChild.firstChild.nodeValue;
+
+	// Do the serverside thing!
+	var success = removeMemberAjax(value);
+	if (!success)
+		return false;
+
 	this.parentNode.parentNode.removeChild(this.parentNode);
 	var option = document.createElement('option');
 	option.appendChild(document.createTextNode(value));
 	selectli.firstChild.appendChild(option);
 	if (selectli.removed)
 		document.getElementById('members').appendChild(selectli);
-
-	// Do the serverside thing!
-	removeMemberAjax(value);
 
 	// Prevent following the link
 	return false;
@@ -33,6 +38,12 @@ function remove() {
 function add() {
 	// First create the nodes
 	var value = this.parentNode.firstChild.value;
+
+	// Do the serverside thing!
+	var success = addMemberAjax(value);
+	if (!success)
+		return false;
+
 	var li = document.createElement('li');
 	var link = document.createElement('a');
 	link.appendChild(document.createTextNode(value));
@@ -53,9 +64,6 @@ function add() {
 		select.parentNode.parentNode.removeChild(select.parentNode);
 		select.parentNode.removed = true;
 	}
-
-	// Do the serverside thing!
-	addMemberAjax(value);
 
 	// Prevent following the link
 	return false;
