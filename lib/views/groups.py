@@ -2,8 +2,6 @@ from dispatch.view import View
 from template.shortcuts import evaluate_main
 from dispatch.response import Response, XMLStatusResponse
 from views.error import ErrorResponse
-from config.config import Config
-from config.authz.authz import UnknownMemberError
 from models.user import User
 from models.group import Group
 from auth.decorators import *
@@ -13,8 +11,6 @@ class Groups(View):
 	def handler(self, req, path):
 		if req.is_ajax():
 			return self.ajaxhandler(req, path)
-
-		config = Config()
 
 		localvars = {}
 

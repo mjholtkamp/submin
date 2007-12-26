@@ -2,7 +2,6 @@ from template.shortcuts import evaluate_main
 from dispatch.response import Response, XMLStatusResponse
 from views.error import ErrorResponse
 from dispatch.view import View
-from config.config import Config
 from models.user import User
 from models.group import Group
 from models.repository import Repository
@@ -13,8 +12,6 @@ class Repositories(View):
 	def handler(self, req, path):
 		if req.is_ajax():
 			return self.ajaxhandler(req, path)
-
-		config = Config()
 
 		localvars = {}
 
@@ -28,7 +25,6 @@ class Repositories(View):
 		return Response(formatted)
 
 	def ajaxhandler(self, req, path):
-		config = Config()
 		repositoryname = ''
 
 		if len(path) > 0:
