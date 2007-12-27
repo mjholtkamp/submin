@@ -1,4 +1,4 @@
-from dispatch.response import Response, HTTP404
+from dispatch.response import Response, HTTP404, XMLStatusResponse
 
 from views.test import Test
 from views.users import Users
@@ -33,10 +33,15 @@ def dispatcher(request):
 
 		del path[0]
 		handler = getattr(cls, handlerName)
-		response = handler(request, path)
+		try:
+			response = handler(request, path)
 
-		if not issubclass(response.__class__, Response):
-			raise Exception, "Handler %r should return a Response instance" % handler
+			if not issubclass(response.__class__, Response):
+				raise Exception, "Handler %r should return a Response instance" % handler
+		except Exception, e:
+			if not request.is_ajax():
+				raise
+			response = XMLStatusResponse(False, str(e))
 
 	else:
 		response = HTTP404('/'.join(path))
