@@ -1,0 +1,9 @@
+		<div id="content">
+		<h1>New user</h1>
+		<form action="" method="post">
+			<ul>
+				<li><label for="id_username">Username:</label> <input type="text" name="username" /></li>
+				<li><input type="submit" name="submit" value="Create" /></li>
+			</ul>
+		</form>
+		</div>
