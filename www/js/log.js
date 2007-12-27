@@ -30,7 +30,10 @@ function Log(message, success) {
 	// remove on click
 	log.onclick = RemoveLog
 
-	Log_timeout = setTimeout("MoveLog()", 2000)
+	if (success)
+		Log_timeout = setTimeout("MoveLog()", 2000)
+	else
+		log.innerHTML += "<br /><small>Click to close</small>";
 }
 
 function RemoveLog() {

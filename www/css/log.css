@@ -16,3 +16,9 @@
 .log_message {
 	background: #afa;
 }
+
+.log_error small {
+	color: #822;
+	float: right;
+	padding-right: 10px;
+}
