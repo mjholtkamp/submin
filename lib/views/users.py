@@ -65,7 +65,7 @@ class Users(View):
 		username = path[1]
 
 		if action == 'delete':
-			return self.removeUser(username)
+			return self.removeUser(req, username)
 
 		user = User(username)
 
@@ -114,7 +114,9 @@ class Users(View):
 		msgs = {True: 'Success', False: 'User was not a member of %s' % group.name}
 		return XMLStatusResponse(success, msgs[success])
 
-	def removeUser(self, user):
+	def removeUser(self, req, user):
+		if user == req.session['user'].name:
+			return XMLStatusResponse(False, 'You are not allowed to delete yourself')
 		try:
 			user = User(user)
 			user.remove()
