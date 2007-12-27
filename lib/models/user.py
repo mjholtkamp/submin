@@ -38,6 +38,8 @@ class User(object):
 		self.nonmember_of = [nonmember_of for nonmember_of in
 				config.authz.groups() if nonmember_of not in self.member_of]
 
+		self.is_admin = 'submin-admins' in self.member_of
+
 		self.__email = ''
 		if authz_users.has_key(self.name):
 			if authz_users[self.name].has_key('email'):
