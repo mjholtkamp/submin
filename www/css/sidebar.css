@@ -17,6 +17,7 @@ body {
 	font-size: 12px;
 	color: #505D6D;
 	margin-bottom: 0;
+	clear: both;
 }
 #sidebar ul {
 	margin-top: 0;
@@ -29,16 +30,24 @@ body {
 	color: #505D6D;
 	margin: 0;
 }
+#sidebar li {
+	float: left;
+	width: 90%;
+}
 #sidebar li:hover {
 	background: #C0CDED;
 }
 #sidebar li a {
 	display: block;
+	float: left;
+	width: 80%;
 	text-decoration: none;
-	margin: auto;
 	color: black;
 }
 
+#sidebar li span {
+	float: left;
+}
 
 /* ADD icons */
 ul#addicons {

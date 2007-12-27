@@ -80,3 +80,8 @@ class User(object):
 		config.htpasswd.change(self.name, password)
 		config.htpasswd.flush()
 	password = property(fset=setPassword)
+
+	def remove(self):
+		config = Config()
+		config.htpasswd.remove(self.name)
+		config.htpasswd.flush()

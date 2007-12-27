@@ -1,3 +1,5 @@
+load('dom')
+
 var Log_timeout;
 
 function Log(message, success) {

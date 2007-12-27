@@ -1,3 +1,6 @@
+		<script type="text/javascript" src="[val main_media_url]/js/sidebar.js"></script>
+		<link rel="stylesheet" href="[val main_media_url]/css/sidebar.css">
+
 <div id="sidebar">
 	<h1>Submin</h1>
 	<p>
@@ -5,7 +8,7 @@
 	</p>
 	<h2>Users</h2>
 	<ul id="users">[iter:main_users
-		<li><a href="[val main_media_url]/users/show/[ival.name]">[ival.name]</a></li>]
+		<li><a href="[val main_media_url]/users/show/[ival.name]">[ival.name]</a><span class="deleteuser">(-)</span></li>]
 	</ul>
 	<h2>Groups</h2>
 	<ul id="groups">[iter:main_groups 

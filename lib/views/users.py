@@ -65,7 +65,7 @@ class Users(View):
 		username = path[1]
 
 		if action == 'delete':
-			return self.removeUser(req, username)
+			return self.removeUser(username)
 
 		user = User(username)
 
@@ -115,4 +115,11 @@ class Users(View):
 		return XMLStatusResponse(success, msgs[success])
 
 	def removeUser(self, user):
-		return XMLStatusResponse(False, 'User %s not deleted' % user)
+		try:
+			user = User(user)
+			user.remove()
+		except:
+			return XMLStatusResponse(False, 'User %s not deleted' % user)
+
+		return XMLStatusResponse(True, 'User %s deleted' % user)
+

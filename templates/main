@@ -6,9 +6,9 @@
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 		<meta http-equiv="Content-Language" content="en-us" />
 		<title>Submin - Main screen turn on</title>
-		<link rel="stylesheet" href="[val main_media_url]/css/sidebar.css">
 		<link rel="stylesheet" href="[val main_media_url]/css/master.css">
 		<link rel="stylesheet" href="[val main_media_url]/css/log.css">
+		<script type="text/javascript">var media_url = "[val main_media_url]";</script>
 		<script type="text/javascript" src="[val main_media_url]/js/basic.js"></script>
 		<script type="text/javascript" src="[val main_media_url]/js/ajax.js"></script>
 		<script type="text/javascript" src="[val main_media_url]/js/log.js"></script>
