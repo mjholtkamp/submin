@@ -89,6 +89,9 @@ var selectli = null;
 function remove() {
 	var value = this.parentNode.firstChild.firstChild.nodeValue;
 
+	if (value == "---")
+		return false;
+
 	// Do the serverside thing!
 	var success = removeMemberFromGroupAjax(value);
 
@@ -99,8 +102,8 @@ function remove() {
 	var option = document.createElement('option');
 	option.appendChild(document.createTextNode(value));
 	selectli.firstChild.appendChild(option);
-	if (selectli.removed)
-		document.getElementById('memberof').appendChild(selectli);
+	if (selectli.firstChild.disabled)
+		selectli.firstChild.disabled = false;
 
 	// Prevent following the link
 	return false;
@@ -109,6 +112,9 @@ function remove() {
 function add() {
 	// First create the nodes
 	var value = this.parentNode.firstChild.value;
+
+	if (value == "---")
+		return false;
 
 	// Do the serverside thing!
 	var success = addMemberToGroupAjax(value);
@@ -132,10 +138,8 @@ function add() {
 	// Remove the user from the select
 	var select = this.parentNode.firstChild;
 	select.removeChild(select.options[select.selectedIndex]);
-	if (select.options.length == 0) {
-		select.parentNode.parentNode.removeChild(select.parentNode);
-		select.parentNode.removed = true;
-	}
+	if (select.options.length == 1)
+		select.disabled = true;
 
 	// Prevent following the link
 	return false;
@@ -154,8 +158,6 @@ function selectInit() {
 	}
 
 	var select = selectli.firstChild;
-	if (select.options.length == 0) {
-		select.parentNode.parentNode.removeChild(select.parentNode);
-		select.parentNode.removed = true;
-	}
+	if (select.options.length == 1)
+		select.disabled = true;
 }

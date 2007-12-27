@@ -8,7 +8,7 @@
 			<ul id="members">
 				[iter:group.members <li id="user.[ival]"><a href="[val main_media_url]/users/show/[ival]">[ival]</a> <a href="#" class="remover">-</a></li>
 				]
-				<li id="add"><select>[iter:group.nonmembers <option>[ival]</option>]</select> <a href="#" class="adder">+</a></li>
+				<li id="add"><select><option>---</option>[iter:group.nonmembers <option>[ival]</option>]</select> <a href="#" class="adder">+</a></li>
 			</ul>
 		</div>
 </div>
