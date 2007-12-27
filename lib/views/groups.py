@@ -40,8 +40,14 @@ class Groups(View):
 		response = None
 		username = ''
 
-		if len(path) > 0:
-			groupname = path[0]
+		if len(path) < 2:
+			return XMLStatusResponse(False, 'Invalid Path')
+
+		action = path[0]
+		groupname = path[1]
+
+		if action == 'delete':
+			self.removeGroup(groupname)
 
 		if 'removeMember' in req.post:
 			return self.removeMember(req, groupname)
@@ -76,3 +82,6 @@ class Groups(View):
 				req.post['addMember'].value)
 		msgs = {True: 'Success', False: 'This member already is in this group'}
 		return XMLStatusResponse(success, msgs[success])
+
+	def removeUser(self, group):
+		return XMLStatusResponse(False, 'Group %s not deleted' % group)

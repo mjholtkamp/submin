@@ -35,11 +35,22 @@ class Users(View):
 		formatted = evaluate_main('users', localvars)
 		return Response(formatted)
 
+	def add(self, req, path):
+		localvars = {}
+
+		return ErrorResponse('Not implemented yet')
+
 	def ajaxhandler(self, req, path):
 		username = ''
 
-		if len(path) > 0:
-			username = path[0]
+		if len(path) < 2:
+			return XMLStatusResponse(False, 'Invalid path')
+
+		action = path[0]
+		username = path[1]
+
+		if action == 'delete':
+			return self.removeUser(req, username)
 
 		user = User(username)
 
@@ -87,3 +98,6 @@ class Users(View):
 		success = group.removeMember(user.name)
 		msgs = {True: 'Success', False: 'User was not a member of %s' % group.name}
 		return XMLStatusResponse(success, msgs[success])
+
+	def removeUser(self, user):
+		return XMLStatusResponse(False, 'User %s not deleted' % user)
