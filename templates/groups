@@ -6,7 +6,7 @@
 		<h3 class="content">members:</h3>
 		<div class="settings">
 			<ul id="members">
-				[iter:group.members <li id="user.[ival]"><a href="[val main_media_url]/users/[ival]">[ival]</a> <a href="#" class="remover">-</a></li>
+				[iter:group.members <li id="user.[ival]"><a href="[val main_media_url]/users/show/[ival]">[ival]</a> <a href="#" class="remover">-</a></li>
 				]
 				<li id="add"><select>[iter:group.nonmembers <option>[ival]</option>]</select> <a href="#" class="adder">+</a></li>
 			</ul>

@@ -5,15 +5,15 @@
 	</p>
 	<h2>Users</h2>
 	<ul id="users">[iter:main_users
-		<li><a href="[val main_media_url]/users/[ival.name]">[ival.name]</a></li>]
+		<li><a href="[val main_media_url]/users/show/[ival.name]">[ival.name]</a></li>]
 	</ul>
 	<h2>Groups</h2>
 	<ul id="groups">[iter:main_groups 
-		<li><a href="[val main_media_url]/groups/[ival.name]">[ival.name]</a></li>]
+		<li><a href="[val main_media_url]/groups/show/[ival.name]">[ival.name]</a></li>]
 	</ul>
 	<h2>Repositories</h2>
 	<ul id="repositories">[iter:main_repositories 
-		<li><a href="[val main_media_url]/repositories/[ival]">[ival]</a></li>]
+		<li><a href="[val main_media_url]/repositories/show/[ival]">[ival]</a></li>]
 	</ul>
 	<ul id="addicons">
 		<li><a href="/users/add/" title="Add user">U+</a></li>

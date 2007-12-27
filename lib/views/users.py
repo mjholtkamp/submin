@@ -12,6 +12,18 @@ class Users(View):
 		if req.is_ajax():
 			return self.ajaxhandler(req, path)
 
+		if path[0] == 'show':
+			return self.show(req, path[1:])
+
+		if path[0] == 'add':
+			return self.add(req, path[1:])
+
+		if path[0] == 'delete':
+			return self.delete(req, path[1:])
+
+		return ErrorResponse('Unknown path')
+
+	def show(self, req, path):
 		localvars = {}
 
 		try:
