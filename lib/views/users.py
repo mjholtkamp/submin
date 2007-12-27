@@ -2,7 +2,7 @@ from dispatch.view import View
 from template.shortcuts import evaluate_main
 from dispatch.response import Response, XMLStatusResponse
 from views.error import ErrorResponse
-from models.user import User
+from models.user import User, addUser, UserExists
 from models.group import Group
 from auth.decorators import *
 
@@ -36,9 +36,24 @@ class Users(View):
 		return Response(formatted)
 
 	def add(self, req, path):
-		localvars = {}
+		config = Config()
+		media_url = config.get('www', 'media_url').rstrip('/')
 
-		return ErrorResponse('Not implemented yet')
+		if req.post and req.post['username']:
+			username = req.post['username'].value.strip()
+			url = media_url + '/users/show/' + username
+			try:
+				addUser(username)
+			except IOError:
+				return ErrorResponse('Permission denied')
+			except UserExists:
+				return ErrorResponse('User already exists')
+
+			return Redirect(url)
+
+		localvars = {}
+		formatted = evaluate_main('newuser', localvars)
+		return Response(formatted)
 
 	def ajaxhandler(self, req, path):
 		username = ''

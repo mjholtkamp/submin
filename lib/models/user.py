@@ -2,6 +2,23 @@ from config.config import Config
 from ConfigParser import NoOptionError
 from config.authz.authz import UnknownUserError
 
+class UserExists(Exception):
+	pass
+
+def addUser(username):
+	config = Config()
+	if config.htpasswd.exists(username):
+		raise UserExists
+
+	# generate a random password
+	from string import ascii_letters, digits
+	import random
+	password_chars = ascii_letters + digits
+	password = ''.join([random.choice(password_chars) for x in range(0, 50)])
+
+	config.htpasswd.add(username, password)
+	return True
+
 class User(object):
 	class DoesNotExist(Exception):
 		pass

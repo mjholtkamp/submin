@@ -81,6 +81,7 @@ class HTPasswd:
 
 		self.passwords[user] = newhash
 		self.modified = True
+		self.flush()
 	
 	def remove(self, user):
 		""" Remove a user """
