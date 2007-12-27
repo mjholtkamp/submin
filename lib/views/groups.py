@@ -19,9 +19,6 @@ class Groups(View):
 		if path[0] == 'add':
 			return self.add(req, path[1:])
 
-		if path[0] == 'delete':
-			return self.delete(req, path[1:])
-
 		return ErrorResponse('Unknown path')
 
 	def show(self, req, path):
@@ -77,15 +74,7 @@ class Groups(View):
 		if 'addMember' in req.post:
 			return self.addMember(req, groupname)
 
-		error = 'operations for groups are not yet implemented'
-
-		if success:
-			response = XMLStatusResponse(True, 'Success')
-		else:
-			response = XMLStatusResponse(False, error)
-
-		return response
-
+		return XMLStatusResponse(False, 'You tried to submit an empty field value')
 	def removeMember(self, req, groupname):
 		group = Group(groupname)
 		username = req.post['removeMember'].value

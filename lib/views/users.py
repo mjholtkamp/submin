@@ -18,9 +18,6 @@ class Users(View):
 		if path[0] == 'add':
 			return self.add(req, path[1:])
 
-		if path[0] == 'delete':
-			return self.delete(req, path[1:])
-
 		return ErrorResponse('Unknown path')
 
 	def show(self, req, path):
