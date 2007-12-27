@@ -34,6 +34,9 @@ class Groups(View):
 		formatted = evaluate_main('groups', localvars)
 		return Response(formatted)
 
+	def add(self, req, path):
+		return ErrorResponse('Not yet implemented')
+
 	def ajaxhandler(self, req, path):
 		success = False
 		error = ''
