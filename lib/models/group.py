@@ -1,6 +1,10 @@
 from config.config import Config
 from config.authz.authz import UnknownMemberError, MemberExistsError
 
+def addGroup(groupname):
+	config = Config()
+	config.authz.addGroup(groupname)
+
 class Group(object):
 	class DoesNotExist(Exception):
 		pass

@@ -3,7 +3,8 @@ from template.shortcuts import evaluate_main
 from dispatch.response import Response, XMLStatusResponse
 from views.error import ErrorResponse
 from models.user import User
-from models.group import Group
+from models.group import Group, addGroup
+from config.authz.authz import GroupExistsError
 from auth.decorators import *
 
 class Groups(View):
@@ -35,7 +36,25 @@ class Groups(View):
 		return Response(formatted)
 
 	def add(self, req, path):
-		return ErrorResponse('Not yet implemented')
+		config = Config()
+		media_url = config.get('www', 'media_url').rstrip('/')
+
+		if req.post and req.post['groupname']:
+			groupname = req.post['groupname'].value.strip()
+			url = media_url + '/groups/show/' + groupname
+
+			try:
+				addGroup(groupname)
+			except IOError:
+				return ErrorResponse('File permission denied')
+			except GroupExistsError:
+				return ErrorResponse('Group already exists')
+
+			return Redirect(url)
+
+		localvars = {}
+		formatted = evaluate_main('newgroup', localvars)
+		return Response(formatted)
 
 	def ajaxhandler(self, req, path):
 		success = False

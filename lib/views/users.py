@@ -45,7 +45,7 @@ class Users(View):
 			try:
 				addUser(username)
 			except IOError:
-				return ErrorResponse('Permission denied')
+				return ErrorResponse('File permission denied')
 			except UserExists:
 				return ErrorResponse('User already exists')
 

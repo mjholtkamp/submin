@@ -17,7 +17,6 @@ def addUser(username):
 	password = ''.join([random.choice(password_chars) for x in range(0, 50)])
 
 	config.htpasswd.add(username, password)
-	return True
 
 class User(object):
 	class DoesNotExist(Exception):
