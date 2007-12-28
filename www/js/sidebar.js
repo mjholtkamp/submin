@@ -34,6 +34,11 @@ function deleteObject()
 	}
 	var name = this.parentNode.firstChild.firstChild.nodeValue;
 	var url = media_url + '/' + type + '/delete/' + name
+
+	var answer = confirm('Really delete ' + name + '? There is no undo')
+	if (!answer)
+		return
+
 	var response = AjaxSyncPostRequest(url, "")
 	Log(response.text, response.success)
 	if (response.success) {
