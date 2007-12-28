@@ -1,21 +1,18 @@
 from config.config import Config
-from config.authz.authz import UnknownMemberError, MemberExistsError
+from config.authz.authz import UnknownMemberError, MemberExistsError, UnknownGroupError
 
 def addGroup(groupname):
 	config = Config()
 	config.authz.addGroup(groupname)
 
 class Group(object):
-	class DoesNotExist(Exception):
-		pass
-
 	def __init__(self, name):
 		config = Config()
 
 		self.name = name
 
 		if self.name not in config.authz.groups():
-			raise Group.DoesNotExist
+			raise UnknownGroupError
 
 		self.members = config.authz.members(self.name)
 		self.members.sort()
@@ -45,6 +42,10 @@ class Group(object):
 			return True
 		except MemberExistsError:
 			return False
+
+	def remove(self):
+		config = Config()
+		config.authz.removeGroup(self.name)
 
 	def __str__(self):
 		return self.name

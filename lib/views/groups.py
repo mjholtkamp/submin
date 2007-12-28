@@ -4,7 +4,7 @@ from dispatch.response import Response, XMLStatusResponse
 from views.error import ErrorResponse
 from models.user import User
 from models.group import Group, addGroup
-from config.authz.authz import GroupExistsError
+from config.authz.authz import GroupExistsError, UnknownGroupError
 from auth.decorators import *
 
 class Groups(View):
@@ -66,7 +66,7 @@ class Groups(View):
 		groupname = path[1]
 
 		if action == 'delete':
-			self.removeGroup(groupname)
+			return self.removeGroup(groupname)
 
 		if 'removeMember' in req.post:
 			return self.removeMember(req, groupname)
@@ -94,5 +94,17 @@ class Groups(View):
 		msgs = {True: 'Success', False: 'This member already is in this group'}
 		return XMLStatusResponse(success, msgs[success])
 
-	def removeUser(self, group):
-		return XMLStatusResponse(False, 'Group %s not deleted' % group)
+	def removeGroup(self, groupname):
+		if groupname == 'submin-admins':
+			return XMLStatusResponse(False, 'You are not allowed to delete the submin-admins group')
+
+		try:
+			group = Group(groupname)
+			group.remove()
+		except IOError:
+			return XMLStatusResponse(False, 'File permisson denied')
+		except UnknownGroupError:
+			return XMLStatusResponse(False, 'Group %s does not exist' % groupname)
+
+		return XMLStatusResponse(True, 'Group %s deleted' % group)
+

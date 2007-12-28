@@ -111,14 +111,14 @@ class Users(View):
 		msgs = {True: 'Success', False: 'User was not a member of %s' % group.name}
 		return XMLStatusResponse(success, msgs[success])
 
-	def removeUser(self, req, user):
-		if user == req.session['user'].name:
+	def removeUser(self, req, username):
+		if username == req.session['user'].name:
 			return XMLStatusResponse(False, 'You are not allowed to delete yourself')
 		try:
-			user = User(user)
+			user = User(username)
 			user.remove()
 		except:
-			return XMLStatusResponse(False, 'User %s not deleted' % user)
+			return XMLStatusResponse(False, 'User %s not deleted' % username)
 
-		return XMLStatusResponse(True, 'User %s deleted' % user)
+		return XMLStatusResponse(True, 'User %s deleted' % username)
 

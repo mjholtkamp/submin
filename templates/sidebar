@@ -12,7 +12,7 @@
 	</ul>
 	<h2>Groups</h2>
 	<ul id="groups">[iter:main_groups 
-		<li><a href="[val main_media_url]/groups/show/[ival.name]">[ival.name]</a></li>]
+		<li><a href="[val main_media_url]/groups/show/[ival.name]">[ival.name]</a><span class="deletegroup">(-)</span></li>]
 	</ul>
 	<h2>Repositories</h2>
 	<ul id="repositories">[iter:main_repositories 
