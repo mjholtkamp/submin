@@ -18,10 +18,10 @@ class Repositories(View):
 		try:
 			repository = Repository(path[0])
 		except (IndexError, Repository.DoesNotExist):
-			return ErrorResponse('This repository does not exist.')
+			return ErrorResponse('This repository does not exist.', request=req)
 
 		localvars['repository'] = repository
-		formatted = evaluate_main('repositories', localvars)
+		formatted = evaluate_main('repositories', localvars, request=req)
 		return Response(formatted)
 
 	def ajaxhandler(self, req, path):

@@ -11,7 +11,7 @@ class Intro(View):
 
 		localvars = {}
 
-		formatted = evaluate_main('intro', localvars)
+		formatted = evaluate_main('intro', localvars, request=req)
 		return Response(formatted)
 
 	def ajaxhandler(self, req, path):

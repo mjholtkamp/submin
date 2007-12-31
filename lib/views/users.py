@@ -18,7 +18,7 @@ class Users(View):
 		if path[0] == 'add':
 			return self.add(req, path[1:])
 
-		return ErrorResponse('Unknown path')
+		return ErrorResponse('Unknown path', request=req)
 
 	def show(self, req, path):
 		localvars = {}
@@ -26,12 +26,13 @@ class Users(View):
 		try:
 			user = User(path[0])
 		except (IndexError, User.DoesNotExist):
-			return ErrorResponse('This user does not exist.')
+			return ErrorResponse('This user does not exist.', request=req)
 
 		localvars['user'] = user
-		formatted = evaluate_main('users', localvars)
+		formatted = evaluate_main('users', localvars, request=req)
 		return Response(formatted)
 
+	@admin_required
 	def add(self, req, path):
 		config = Config()
 		media_url = config.get('www', 'media_url').rstrip('/')
@@ -42,14 +43,14 @@ class Users(View):
 			try:
 				addUser(username)
 			except IOError:
-				return ErrorResponse('File permission denied')
+				return ErrorResponse('File permission denied', request=req)
 			except UserExists:
-				return ErrorResponse('User already exists')
+				return ErrorResponse('User already exists', request=req)
 
 			return Redirect(url)
 
 		localvars = {}
-		formatted = evaluate_main('newuser', localvars)
+		formatted = evaluate_main('newuser', localvars, request=req)
 		return Response(formatted)
 
 	def ajaxhandler(self, req, path):
@@ -100,6 +101,7 @@ class Users(View):
 		msgs = {True: 'Success', False: 'This user is already in group %s' % group.name}
 		return XMLStatusResponse(success, msgs[success])
 
+	@admin_required
 	def removeFromGroup(self, req, user):
 		group = Group(req.post.get('removeFromGroup'))
 		# TODO: Make this a setting in submin.conf?
@@ -111,6 +113,7 @@ class Users(View):
 		msgs = {True: 'Success', False: 'User was not a member of %s' % group.name}
 		return XMLStatusResponse(success, msgs[success])
 
+	@admin_required
 	def removeUser(self, req, username):
 		if username == req.session['user'].name:
 			return XMLStatusResponse(False, 'You are not allowed to delete yourself')
@@ -121,4 +124,3 @@ class Users(View):
 			return XMLStatusResponse(False, 'User %s not deleted' % username)
 
 		return XMLStatusResponse(True, 'User %s deleted' % username)
-

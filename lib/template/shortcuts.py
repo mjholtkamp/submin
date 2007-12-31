@@ -4,7 +4,7 @@ from models.user import User
 from models.group import Group
 from models.repository import Repository
 
-def evaluate_main(templatename, templatevariables={}):
+def evaluate_main(templatename, templatevariables={}, request=None):
 	templatevariables['main_include'] = templatename
 
 	config = Config()
@@ -41,5 +41,9 @@ def evaluate_main(templatename, templatevariables={}):
 
 	templatevariables['main_media_url'] = config.get('www', 'media_url').rstrip('/')
 
+	if request:
+		templatevariables['request'] = request
+		if 'user' in request.session:
+			templatevariables['user'] = request.session['user']
 
 	return evaluate('../templates/main', templatevariables)

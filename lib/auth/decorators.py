@@ -1,6 +1,10 @@
 import os
 from config.config import Config
 from dispatch.response import Response, Redirect
+from views.error import ErrorResponse
+
+class Unauthorized(Exception):
+	pass
 
 def login_required(fun):
 	config = Config()
@@ -18,4 +22,13 @@ def login_required(fun):
 
 		return fun(self, *args, **kwargs)
 	
+	return _decorator
+
+def admin_required(fun):
+	@login_required
+	def _decorator(self, *args, **kwargs):
+		if not self.request.session['user'].is_admin:
+			return ErrorResponse("Submin-admin privileges are required.",
+				request=self.request)
+		return fun(self, *args, **kwargs)
 	return _decorator

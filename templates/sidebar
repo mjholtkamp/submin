@@ -4,7 +4,7 @@
 <div id="sidebar">
 	<h1>Submin</h1>
 	<p>
-	<ul><li><a href="[val main_media_url]/logout">Logout</a></li></ul>
+	<ul><li><a href="[val main_media_url]/logout">Logout ([val user.name])</a></li></ul>
 	</p>
 	<h2>Users</h2>
 	<ul id="users">[iter:main_users

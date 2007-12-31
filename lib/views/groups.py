@@ -19,19 +19,20 @@ class Groups(View):
 		if path[0] == 'add':
 			return self.add(req, path[1:])
 
-		return ErrorResponse('Unknown path')
+		return ErrorResponse('Unknown path', request=req)
 
 	def show(self, req, path):
 		localvars = {}
 		try:
 			group = Group(path[0])
 		except (IndexError, Group.DoesNotExist):
-			return ErrorResponse('This group does not exist.')
+			return ErrorResponse('This group does not exist.', request=req)
 
 		localvars['group'] = group
-		formatted = evaluate_main('groups', localvars)
+		formatted = evaluate_main('groups', localvars, request=req)
 		return Response(formatted)
 
+	@admin_required
 	def add(self, req, path):
 		config = Config()
 		media_url = config.get('www', 'media_url').rstrip('/')
@@ -43,14 +44,14 @@ class Groups(View):
 			try:
 				addGroup(groupname)
 			except IOError:
-				return ErrorResponse('File permission denied')
+				return ErrorResponse('File permission denied', request=req)
 			except GroupExistsError:
-				return ErrorResponse('Group already exists')
+				return ErrorResponse('Group already exists', request=req)
 
 			return Redirect(url)
 
 		localvars = {}
-		formatted = evaluate_main('newgroup', localvars)
+		formatted = evaluate_main('newgroup', localvars, request=req)
 		return Response(formatted)
 
 	def ajaxhandler(self, req, path):
@@ -75,6 +76,8 @@ class Groups(View):
 			return self.addMember(req, groupname)
 
 		return XMLStatusResponse(False, 'You tried to submit an empty field value')
+
+	@admin_required
 	def removeMember(self, req, groupname):
 		group = Group(groupname)
 		username = req.post['removeMember'].value
@@ -88,12 +91,14 @@ class Groups(View):
 		msgs = {True: 'Success', False: 'No such user'}
 		return XMLStatusResponse(success, msgs[success])
 
+	@admin_required
 	def addMember(self, req, groupname):
 		success = Group(groupname).addMember(\
 				req.post['addMember'].value)
 		msgs = {True: 'Success', False: 'This member already is in this group'}
 		return XMLStatusResponse(success, msgs[success])
 
+	@admin_required
 	def removeGroup(self, groupname):
 		if groupname == 'submin-admins':
 			return XMLStatusResponse(False, 'You are not allowed to delete the submin-admins group')
@@ -107,4 +112,3 @@ class Groups(View):
 			return XMLStatusResponse(False, 'Group %s does not exist' % groupname)
 
 		return XMLStatusResponse(True, 'Group %s deleted' % group)
-
