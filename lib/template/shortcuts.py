@@ -44,6 +44,6 @@ def evaluate_main(templatename, templatevariables={}, request=None):
 	if request:
 		templatevariables['request'] = request
 		if 'user' in request.session:
-			templatevariables['user'] = request.session['user']
+			templatevariables['main_user'] = request.session['user']
 
 	return evaluate('../templates/main', templatevariables)
