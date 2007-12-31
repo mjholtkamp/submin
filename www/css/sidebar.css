@@ -37,6 +37,12 @@ body {
 #sidebar li:hover {
 	background: #C0CDED;
 }
+#sidebar li:hover .deleteuser, #sidebar li:hover .deletegroup {
+	display: inline;
+}
+#sidebar li .deleteuser, #sidebar li .deletegroup {
+	display: none;
+}
 #sidebar li a {
 	display: block;
 	float: left;
