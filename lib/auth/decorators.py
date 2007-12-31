@@ -21,14 +21,13 @@ def login_required(fun):
 			return Redirect(login_url)
 
 		return fun(self, *args, **kwargs)
-	
+
 	return _decorator
 
 def admin_required(fun):
 	@login_required
 	def _decorator(self, *args, **kwargs):
 		if not self.request.session['user'].is_admin:
-			return ErrorResponse("Submin-admin privileges are required.",
-				request=self.request)
+			raise Unauthorized("Submin-admin privileges are required.")
 		return fun(self, *args, **kwargs)
 	return _decorator

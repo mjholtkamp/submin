@@ -1,5 +1,6 @@
 from dispatch.response import Response, HTTP404, XMLStatusResponse
 
+from views.error import ErrorResponse
 from views.test import Test
 from views.users import Users
 from views.groups import Groups
@@ -40,8 +41,9 @@ def dispatcher(request):
 				raise Exception, "Handler %r should return a Response instance" % handler
 		except Exception, e:
 			if not request.is_ajax():
-				raise
-			response = XMLStatusResponse(False, str(e))
+				response = ErrorResponse(str(e), request=request)
+			else:
+				response = XMLStatusResponse(False, str(e))
 
 	else:
 		response = HTTP404('/'.join(path))
