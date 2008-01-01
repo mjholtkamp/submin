@@ -28,3 +28,9 @@ function AjaxSyncPostRequest(url, params) {
 	return Response(transport)
 }
 
+function AjaxSyncPostLog(url, params) {
+	var response = AjaxSyncPostRequest(url, params)
+	Log(response.text, response.success)
+	return response.success
+}
+

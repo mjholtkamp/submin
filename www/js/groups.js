@@ -1,18 +1,11 @@
 load('dom')
 
 function removeMemberAjax(member) {
-	var response = AjaxSyncPostRequest(document.location,
-		"removeMember=" + member)
-
-	Log(response.text, response.success)
-	return response.success
+	return AjaxSyncPostLog(document.location, "removeMember=" + member);
 }
 
 function addMemberAjax(member) {
-	var response = AjaxSyncPostRequest(document.location,
-			"addMember=" + member)
-	Log(response.text, response.success)
-	return response.success
+	return AjaxSyncPostLog(document.location, "addMember=" + member);
 }
 
 var selectli = null;

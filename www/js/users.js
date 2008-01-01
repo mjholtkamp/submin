@@ -12,10 +12,7 @@ window.onload = function() {
 }
 
 function sendEmail() {
-	var response = AjaxSyncPostRequest(document.location,
-		"email=" + $('email').value)
-
-	Log(response.text, response.success)
+	AjaxSyncPostLog(document.location, "email=" + $('email').value);
 }
 
 // global variable to temporarily store the password to be verified
@@ -61,10 +58,7 @@ function checkPasswords() {
 }
 
 function sendPassword(password) {
-	var response = AjaxSyncPostRequest(document.location,
-		"password=" + password)
-
-	Log(response.text, response.success)
+	AjaxSyncPostLog(document.location, "password=" + password)
 }
 
 
@@ -72,17 +66,11 @@ function sendPassword(password) {
  * Adding users to groups and removing them from groups
  */
 function addMemberToGroupAjax(group) {
-	var response = AjaxSyncPostRequest(document.location,
-			"addToGroup=" + group)
-	Log(response.text, response.success)
-	return response.success
+	return AjaxSyncPostLog(document.location, "addToGroup=" + group);
 }
 
 function removeMemberFromGroupAjax(group) {
-	var response = AjaxSyncPostRequest(document.location,
-			"removeFromGroup=" + group)
-	Log(response.text, response.success)
-	return response.success
+	return AjaxSyncPostLog(document.location, "removeFromGroup=" + group);
 }
 
 var selectli = null;
@@ -163,3 +151,4 @@ function selectInit() {
 	if (select.options.length == 1)
 		select.disabled = true;
 }
+
