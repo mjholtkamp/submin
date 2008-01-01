@@ -23,10 +23,18 @@ class Groups(View):
 
 	def show(self, req, path):
 		localvars = {}
+
+		is_admin = req.session['user'].is_admin
 		try:
 			group = Group(path[0])
-		except (IndexError, Group.DoesNotExist):
+		except (IndexError, UnknownGroupError):
+			if not is_admin:
+				return ErrorResponse('Not permitted', request=req)
+
 			return ErrorResponse('This group does not exist.', request=req)
+
+		if not is_admin and req.session['user'].name not in group.members:
+			return ErrorResponse('Not permitted', request=req)
 
 		localvars['group'] = group
 		formatted = evaluate_main('groups', localvars, request=req)

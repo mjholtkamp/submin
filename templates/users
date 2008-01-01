@@ -12,13 +12,13 @@
 					<table>
 						<tr class="noticeshead">
 							<td class="name">&nbsp;</td>
-							<td>allowed</td>
+							[test:is_admin <td>allowed</td>]
 							<td>enabled</td>
 						</tr>
 					[iter:user.notifications 
 						<tr class="notices">
 							<td>[ival.name]</td>
-							<td><input type="checkbox" [test:ival.allowed checked] /></td>
+							[test:is_admin <td><input type="checkbox" [test:ival.allowed checked] /></td>]
 							<td><input type="checkbox" [test:ival.enabled checked] /></td>
 						</tr>
 					]
@@ -26,8 +26,10 @@
 					<h3 class="content">Member of</h3>
 					<ul id="memberof">
 					[iter:user.member_of 
-						<li><a href="[val main_media_url]/groups/show/[ival]">[ival]</a> <a href="#" class="remover">-</a></li>]
+						<li><a href="[val main_media_url]/groups/show/[ival]">[ival]</a> [test:is_admin <a href="#" class="remover">-</a>]</li>]
+						[test:is_admin
 						<li id="add"><select><option>---</option>[iter:user.nonmember_of <option>[ival]</option>]</select> <a href="#" class="adder">+</a></li>
+						]
 					</ul>
 				</li>
 			</ul>

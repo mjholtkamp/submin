@@ -23,6 +23,10 @@ class Users(View):
 	def show(self, req, path):
 		localvars = {}
 
+		is_admin = req.session['user'].is_admin
+		if not is_admin and path[0] != req.session['user'].name:
+			return ErrorResponse('Not permitted', request=req)
+
 		try:
 			user = User(path[0])
 		except (IndexError, User.DoesNotExist):
