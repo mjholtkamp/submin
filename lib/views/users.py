@@ -88,21 +88,21 @@ class Users(View):
 	def setEmail(self, req, user):
 		try:
 			user.email = req.post.get('email')
-			return XMLStatusResponse(True, 'Success!')
+			return XMLStatusResponse(True, 'Changed email address for user %s' % user.name)
 		except Exception, e:
 			return XMLStatusResponse(False, 'Could not change email of user ' + user.name)
 
 	def setPassword(self, req, user):
 		try:
 			user.password = req.post.get('password')
-			return XMLStatusResponse(True, 'Success!')
+			return XMLStatusResponse(True, 'Changed password for user %s' % user.name)
 		except Exception, e:
 			return XMLStatusResponse(False, 'Could not change password of user ' + user.name)
 
 	def addToGroup(self, req, user):
 		group = Group(req.post.get('addToGroup'))
 		success = group.addMember(user.name)
-		msgs = {True: 'Success', False: 'This user is already in group %s' % group.name}
+		msgs = {True: 'User added to group %s' % group.name, False: 'This user is already in group %s' % group.name}
 		return XMLStatusResponse(success, msgs[success])
 
 	@admin_required
@@ -114,7 +114,7 @@ class Users(View):
 					"You cannot remove yourself from %s" % group.name)
 
 		success = group.removeMember(user.name)
-		msgs = {True: 'Success', False: 'User was not a member of %s' % group.name}
+		msgs = {True: 'User removed from group %s' % group.name, False: 'User was not a member of %s' % group.name}
 		return XMLStatusResponse(success, msgs[success])
 
 	@admin_required

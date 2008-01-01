@@ -94,16 +94,15 @@ class Groups(View):
 			return XMLStatusResponse(False,
 					"You cannot remove yourself from %s" % group.name)
 
-		success = Group(groupname).removeMember(\
-				req.post['removeMember'].value)
-		msgs = {True: 'Success', False: 'No such user'}
+		success = Group(groupname).removeMember(username)
+		msgs = {True: 'User %s removed from group' % username, False: 'No such user'}
 		return XMLStatusResponse(success, msgs[success])
 
 	@admin_required
 	def addMember(self, req, groupname):
-		success = Group(groupname).addMember(\
-				req.post['addMember'].value)
-		msgs = {True: 'Success', False: 'This member already is in this group'}
+		username = req.post['addMember'].value
+		success = Group(groupname).addMember(username)
+		msgs = {True: 'User %s added' % username, False: 'This member already is in this group'}
 		return XMLStatusResponse(success, msgs[success])
 
 	@admin_required
