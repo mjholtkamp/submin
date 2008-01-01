@@ -18,9 +18,11 @@
 	<ul id="repositories">[iter:main_repositories 
 		<li><a href="[val main_media_url]/repositories/show/[ival]">[ival]</a></li>]
 	</ul>
+	[test:is_admin
 	<ul id="addicons">
 		<li><a href="/users/add/" title="Add user">U+</a></li>
 		<li><a href="/groups/add/" title="Add group">G+</a></li>
 		<li><a href="/repositories/add/" title="Add repository">R+</a></li>
 	</ul>
+	]
 </div>
