@@ -113,8 +113,10 @@ function add() {
 	// First create the nodes
 	var value = this.parentNode.firstChild.value;
 
-	if (value == "---")
+	if (value == "---") {
+		Log('Please select a group first', false)
 		return false;
+	}
 
 	// Do the serverside thing!
 	var success = addMemberToGroupAjax(value);
