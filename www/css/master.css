@@ -16,6 +16,8 @@ label {
 }
 a img { border: 0; }
 
+a { text-decoration: none; }
+
 h1.content {
 	background: #ddd;
 	padding: 0.3em;
