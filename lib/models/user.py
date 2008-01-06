@@ -3,12 +3,13 @@ from ConfigParser import NoOptionError
 from config.authz.authz import UnknownUserError
 
 class UserExists(Exception):
-	pass
+	def __init__(self, user):
+		Exception.args = 'User %s already exists' % user
 
 def addUser(username):
 	config = Config()
 	if config.htpasswd.exists(username):
-		raise UserExists
+		raise UserExists(username)
 
 	# generate a random password
 	from string import ascii_letters, digits
@@ -19,9 +20,6 @@ def addUser(username):
 	config.htpasswd.add(username, password)
 
 class User(object):
-	class DoesNotExist(Exception):
-		pass
-
 	def __init__(self, name):
 		config = Config()
 
@@ -32,7 +30,7 @@ class User(object):
 		htpasswd_users = config.htpasswd.users()
 
 		if self.name not in htpasswd_users:
-			raise User.DoesNotExist
+			raise UnknownUserError(self.name)
 
 		self.member_of = config.authz.member_of(self.name)
 		self.nonmember_of = [nonmember_of for nonmember_of in
@@ -83,5 +81,13 @@ class User(object):
 
 	def remove(self):
 		config = Config()
+		self.removeFromGroups(config) # pass config, otherwise next line will overwrite changes
+		config.authz.removeUserProps(self.name)
 		config.htpasswd.remove(self.name)
 		config.htpasswd.flush()
+
+	def removeFromGroups(self, config):
+		for group in config.authz.groups():
+			if self.name in config.authz.members(group):
+				config.authz.removeMember(group, self.name)
+

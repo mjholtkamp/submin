@@ -5,6 +5,7 @@ from views.error import ErrorResponse
 from models.user import User, addUser, UserExists
 from models.group import Group
 from auth.decorators import *
+from config.authz.authz import UnknownUserError
 
 class Users(View):
 	@login_required
@@ -29,7 +30,7 @@ class Users(View):
 
 		try:
 			user = User(path[0])
-		except (IndexError, User.DoesNotExist):
+		except (IndexError, UnknownUserError):
 			return ErrorResponse('This user does not exist.', request=req)
 
 		localvars['user'] = user
@@ -124,7 +125,7 @@ class Users(View):
 		try:
 			user = User(username)
 			user.remove()
-		except:
-			return XMLStatusResponse(False, 'User %s not deleted' % username)
+		except Exception, e:
+			return XMLStatusResponse(False, 'User %s not deleted: %s' % (username, str(e)))
 
 		return XMLStatusResponse(True, 'User %s deleted' % username)

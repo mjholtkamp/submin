@@ -2,25 +2,32 @@ import ConfigParser
 
 # Exceptions
 class GroupExistsError(Exception):
-	pass
+	def __init__(self, group):
+		Exception.args = 'Group %s already exists' % group
 
 class UnknownGroupError(Exception):
-	pass
+	def __init__(self, ):
+		Exception.args = 'Group %s does not exist' % group
 
 class UnknownUserError(Exception):
-	pass
+	def __init__(self, user):
+		Exception.args = 'User %s does not exist' % user
 
 class MemberExistsError(Exception):
-	pass
+	def __init__(self, user, group):
+		Exception.args = 'User %s already exists in group %s' % (user, group)
 
 class UnknownMemberError(Exception):
-	pass
+	def __init__(self, user, group):
+		Exception.args = 'User %s is not member of group %s' % (user, group)
 
 class InvalidRepositoryError(Exception):
-	pass
+	def __init__(self, repos, path):
+		Exception.args = 'Repository %s does not exist (path: %s)' % (repos, path)
 
 class PathExistsError(Exception):
-	pass
+	def __init__(self, repos, path):
+		Exception.args = 'Path %s already exists in repositor %s' % (path, repos)
 
 
 class Authz:
@@ -76,6 +83,10 @@ class Authz:
 			self.parser.add_section('user.' + user)
 
 		self.parser.set('user.' + user, property, value)
+		self.save()
+
+	def removeUserProps(self, user):
+		self.parser.remove_section('user.' + user)
 		self.save()
 
 	def createSectionName(self, repository, path):
