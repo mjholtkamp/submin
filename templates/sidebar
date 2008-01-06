@@ -8,11 +8,11 @@
 	</p>
 	<h2>Users</h2>
 	<ul id="users">[iter:main_users
-		<li><a href="[val main_media_url]/users/show/[ival.name]">[ival.name]</a>[test:is_admin <span class="deleteuser">(-)</span>]</li>]
+		<li><a href="[val main_media_url]/users/show/[ival.name]">[ival.name]</a>[test:is_admin <span class="deleteuser"><img class="remover" src="[val main_media_url]/img/min.gif" /></span>]</li>]
 	</ul>
 	<h2>Groups</h2>
 	<ul id="groups">[iter:main_groups 
-		<li><a href="[val main_media_url]/groups/show/[ival.name]">[ival.name]</a>[test:is_admin <span class="deletegroup">(-)</span>]</li>]
+		<li><a href="[val main_media_url]/groups/show/[ival.name]">[ival.name]</a>[test:is_admin <span class="deletegroup"><img class="remover" src="[val main_media_url]/img/min.gif" /></span>]</li>]
 	</ul>
 	<h2>Repositories</h2>
 	<ul id="repositories">[iter:main_repositories 

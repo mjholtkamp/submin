@@ -35,3 +35,9 @@ h3.content {
 	font-weight: normal;
 	font-style: italic;
 }
+
+img.adder, img.remover {
+	height: 13px;
+	vertical-align: middle;
+}
+

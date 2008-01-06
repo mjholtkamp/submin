@@ -26,9 +26,9 @@
 					<h3 class="content">Member of</h3>
 					<ul id="memberof">
 					[iter:user.member_of 
-						<li><a href="[val main_media_url]/groups/show/[ival]">[ival]</a> [test:is_admin <a href="#" class="remover">-</a>]</li>]
+						<li><a href="[val main_media_url]/groups/show/[ival]">[ival]</a> [test:is_admin <a href="#" class="remover"><img class="remover" src="[val main_media_url]/img/min.gif" /></a>]</li>]
 						[test:is_admin
-						<li id="add"><select><option>---</option>[iter:user.nonmember_of <option>[ival]</option>]</select> <a href="#" class="adder">+</a></li>
+						<li id="add"><select><option>---</option>[iter:user.nonmember_of <option>[ival]</option>]</select> <a href="#" class="adder"><img class="adder" src="[val main_media_url]/img/plus.gif" /></a></li>
 						]
 					</ul>
 				</li>
