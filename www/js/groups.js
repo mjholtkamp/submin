@@ -54,7 +54,11 @@ function add() {
 	remover.className = 'remover';
 	remover.onclick = remove;
 	remover.href = '#';
-	remover.appendChild(document.createTextNode('-'));
+	var img = document.createElement('img');
+	img.className = "remover";
+	img.src = media_url + "/img/min.gif";
+	remover.appendChild(document.createTextNode(' '));
+	remover.appendChild(img);
 	li.appendChild(remover);
 	document.getElementById('members').insertBefore(li, this.parentNode);
 
