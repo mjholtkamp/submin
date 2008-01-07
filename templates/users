@@ -5,8 +5,8 @@
 	<h1 class="content">User [val user.name]</h1>
 		<div class="settings">
 			<ul>
-				<li><label for="email">Email</label><input type="text" value="[val user.email]" id="email"></input><input type="submit" value="change" name="email" onClick="sendEmail()"/></li>
-				<li><label for="password">Password</label><input type="password" id="password"></input><input type="submit" value="change" name="password" id="password_button"></li>
+				<li><form onSubmit="sendEmail();return false;"><label for="email">Email</label><input type="text" value="[val user.email]" id="email"></input><input type="submit" value="change" name="email"/></form></li>
+				<li><form onSubmit=""><label for="password">Password</label><input type="password" id="password"></input><input type="submit" value="change" name="password" id="password_button"></form></li>
 				<li>
 					<h3 class="content">Notices from repositories <span class="comment">(Not implemented yet)</span></h3>
 					<table>

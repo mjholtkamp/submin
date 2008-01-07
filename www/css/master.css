@@ -41,3 +41,6 @@ img.adder, img.remover {
 	vertical-align: middle;
 }
 
+li form {
+	margin: 0.1em;
+}

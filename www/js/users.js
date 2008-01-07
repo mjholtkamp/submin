@@ -30,6 +30,7 @@ function verifyPassword() {
 	$('password').focus();
 	// change te onclick handler
 	this.onclick = checkPasswords;
+	Log('Please verify your password', true);
 	return false;
 }
 
