@@ -8,13 +8,13 @@
 		<title>Submin - login</title>
 		<link rel="stylesheet" href="[val media_url]/css/master.css">
 	</head>
-	<body>
+	<body onload="document.getElementById('username').focus();">
 		<h1>Submin</h1>
 		<p>Please login:</p>
 		[test:msg <p class="error">[val msg]</p>]
 		<form action="" method="post">
 			<ul>
-				<li><label for="id_username">Username:</label> <input type="text" name="username" /></li>
+				<li><label for="id_username">Username:</label> <input id="username" type="text" name="username" /></li>
 				<li><label for="id_password">Password:</label> <input type="password" name="password" /></li>
 				<li><input type="submit" name="submit" value="Login" /></li>
 			</ul>
