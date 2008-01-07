@@ -1,8 +1,17 @@
+		<script type="text/javascript">
+		var newrepository_onload = window.onload;
+		window.onload = function() {
+			if (newrepository_onload)
+				newrepository_onload();
+
+			document.getElementById('repository').focus();
+		}
+		</script>
 		<div id="content">
 		<h1>New repository</h1>
 		<form action="" method="post">
 			<ul>
-				<li><label for="id_repository">Repository:</label> <input type="text" name="repository" /></li>
+				<li><label for="id_repository">Repository:</label> <input id="repository" type="text" name="repository" /></li>
 				<li><input type="submit" name="submit" value="Create" /></li>
 			</ul>
 		</form>
