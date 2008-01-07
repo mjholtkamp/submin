@@ -1,4 +1,4 @@
-		<script type="text/javascript" src="[val main_media_url]/js/repositories.js"></script>
+		<!--<script type="text/javascript" src="[val main_media_url]/js/repositories.js"></script> -->
 
 <div id="content">
 	<h1 class="content">Repository [val repository.name]</h1>
