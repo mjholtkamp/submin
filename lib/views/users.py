@@ -13,8 +13,8 @@ class Users(View):
 		if req.is_ajax():
 			return self.ajaxhandler(req, path)
 
-		if len(path) < 2:
-			return ErrorReponse('Invalid path', request=req)
+		if len(path) < 1:
+			return ErrorResponse('Invalid path', request=req)
 
 		if path[0] == 'show':
 			return self.show(req, path[1:])
