@@ -43,7 +43,7 @@ def val(node, tpl):
 		raise MissingRequiredArguments, \
 			"Missing required argument variable at file %s, line %d" % \
 			(tpl.filename, node.line)
-		
+
 	text = node.nodes[0].evaluate()
 	if not text:
 		raise MissingRequiredArguments, \
@@ -154,6 +154,25 @@ def testTrue(node, tpl):
 		return expression
 	return not expression
 	#return value is not None and not not value
+
+def testEquals(node, tpl):
+	if not node.arguments:
+		raise MissingRequiredArguments, \
+			"Missing required argument variable at file %s, line %d" % \
+			(tpl.filename, node.line)
+	args = node.arguments.split(':')
+
+	value1 = tpl.variable_value(args[0])
+	value2 = tpl.variable_value(args[1])
+	return value1 == value2
+
+@register.register('equals')
+def equals(node, tpl):
+	args = node.arguments
+	value = testEquals(node, tpl)
+	if not value:
+		return ''
+	return ''.join([x.evaluate(tpl) for x in node.nodes])
 
 @register.register('test')
 def test(node, tpl):
