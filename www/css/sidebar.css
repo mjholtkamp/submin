@@ -35,11 +35,8 @@ body {
 	float: left;
 	width: 90%;
 }
-#sidebar li:hover {
+#sidebar li:hover, li.selected {
 	background: #C0CDED;
-}
-#sidebar li.selected {
-	background: #A0ADCD;
 }
 #sidebar li:hover .deleteuser, #sidebar li:hover .deletegroup {
 	display: inline;
