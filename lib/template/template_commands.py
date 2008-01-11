@@ -22,8 +22,7 @@ def set(node, tpl):
 	"""Sets a variable to a value, local to the template.
 	Don't use a period (.) in your variable-name, because the [val] tag will
 	not like that."""
-	text = node.nodes[0].evaluate(tpl)
-	value = tpl.variable_value(text)
+	text = ''.join([x.evaluate(tpl) for x in node.nodes])
 	args = node.arguments
 	if not args:
 		raise MissingRequiredArguments, \
