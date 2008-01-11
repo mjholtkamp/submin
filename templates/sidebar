@@ -1,5 +1,9 @@
 		<script type="text/javascript" src="[val main_media_url]/js/sidebar.js"></script>
 		<link rel="stylesheet" href="[val main_media_url]/css/sidebar.css">
+		<script type="text/javascript">
+			var selected_object = "[val selected_object]";
+			var selected_type = "[val selected_type]";
+		</script>
 
 <div id="sidebar">
 	<h1>Submin</h1>

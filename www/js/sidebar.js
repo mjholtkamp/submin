@@ -41,7 +41,9 @@ function deleteObject()
 
 	var response = AjaxSyncPostRequest(url, "")
 	Log(response.text, response.success)
-	if (response.success) {
+	if (response.success)
 		this.parentNode.parentNode.removeChild(this.parentNode)
-	}
+
+	if (selected_type == div.id && name == selected_object)
+		window.location = media_url + '/';
 }
