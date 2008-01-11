@@ -10,23 +10,27 @@ from config.authz.authz import UnknownUserError
 class Users(View):
 	@login_required
 	def handler(self, req, path):
+		localvars = {}
+
 		if req.is_ajax():
 			return self.ajaxhandler(req, path)
 
 		if len(path) < 1:
 			return ErrorResponse('Invalid path', request=req)
 
+		if len(path) > 1:
+			localvars['selected_type'] = 'users'
+			localvars['selected_object'] = path[1]
+
 		if path[0] == 'show':
-			return self.show(req, path[1:])
+			return self.show(req, path[1:], localvars)
 
 		if path[0] == 'add':
-			return self.add(req, path[1:])
+			return self.add(req, path[1:], localvars)
 
 		return ErrorResponse('Unknown path', request=req)
 
-	def show(self, req, path):
-		localvars = {}
-
+	def show(self, req, path, localvars):
 		is_admin = req.session['user'].is_admin
 		if not is_admin and path[0] != req.session['user'].name:
 			return ErrorResponse('Not permitted', request=req)
@@ -41,7 +45,7 @@ class Users(View):
 		return Response(formatted)
 
 	@admin_required
-	def add(self, req, path):
+	def add(self, req, path, localvars):
 		config = Config()
 		media_url = config.get('www', 'media_url').rstrip('/')
 
@@ -57,7 +61,6 @@ class Users(View):
 
 			return Redirect(url)
 
-		localvars = {}
 		formatted = evaluate_main('newuser', localvars, request=req)
 		return Response(formatted)
 
