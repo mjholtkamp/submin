@@ -11,6 +11,7 @@ body {
 	padding: 5px;
 	float: left;
 	color: #000;
+	padding-bottom: 35px;
 }
 #sidebar h2 {
 	text-transform: uppercase;
