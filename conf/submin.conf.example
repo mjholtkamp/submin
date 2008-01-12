@@ -1,10 +1,10 @@
 [svn]
-authz_file = /usr/local/submin/svn.authz
-access_file = /usr/local/submin/.htpasswd
-repositories = /usr/local/submin/svn
+authz_file = /var/lib/submin/svn.authz
+access_file = /var/lib/submin/htpasswd
+repositories = /var/lib/submin/svn
 
 [www]
-media_url = /www
+media_url = /
 
 [generated]
 session_salt = 
