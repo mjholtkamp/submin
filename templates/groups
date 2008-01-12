@@ -6,7 +6,15 @@
 		<h3 class="content">members:</h3>
 		<div class="settings">
 			<ul id="members">
-				[iter:group.members <li id="user.[ival]"><a href="[val main_media_url]/users/show/[ival]">[ival]</a> [test:is_admin <a href="#" class="remover"><img class="remover" src="[val main_media_url]/img/min.gif" /></a>]</li>
+				[iter:group.members 
+					[set:link_begin <a href="[val main_media_url]/users/show/[ival]">]
+					[set:link_end </a>]
+					<li id="user.[ival]">
+						[test:!is_admin [equals:main_user.name:ival [val link_begin]]][test:is_admin [val link_begin]]
+								[ival]
+						[test:!is_admin [equals:main_user.name:ival [val link_end]]][test:is_admin [val link_end]]
+
+						[test:is_admin <a href="#" class="remover"><img class="remover" src="[val main_media_url]/img/min.gif" /></a>]</li>
 				]
 				[test:is_admin <li id="add"><select><option>---</option>[iter:group.nonmembers <option>[ival]</option>]</select> <a href="#" class="adder"><img class="adder" src="[val main_media_url]/img/plus.gif" /></a></li>
 				]
