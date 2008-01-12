@@ -7,12 +7,17 @@ from os import rename, unlink
 
 class HTPasswd:
 	def __init__(self, file):
+		self.passwords = dict()
 		self.htpasswd_file = file
 		self.modified = False  # have we modified ourselves?
-		self.fd = open(self.htpasswd_file, 'r')
+		try:
+			self.fd = open(self.htpasswd_file, 'r')
+		except IOError:
+			open(self.htpasswd_file, 'a')
+			return
+
 		self.lock()
 
-		self.passwords = dict()
 		for line in self.fd.readlines():
 			user, encrypted = line.rstrip().split(':')
 			self.passwords[user] = encrypted
