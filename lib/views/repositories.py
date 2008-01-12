@@ -45,7 +45,12 @@ class Repositories(View):
 		media_url = config.get('www', 'media_url').rstrip('/')
 
 		if req.post and req.post['repository']:
+			import re
+
 			repository = req.post['repository'].value.strip()
+			if re.findall('[^a-zA-Z0-9_]', repository):
+				return ErrorResponse('Invalid characters in repository name', request=req)
+
 			url = media_url + '/repositories/show/' + repository
 
 			return ErrorResponse('not yet implemented, would otherwise redirect to %s' % url, request=req)

@@ -50,7 +50,11 @@ class Users(View):
 		media_url = config.get('www', 'media_url').rstrip('/')
 
 		if req.post and req.post['username']:
+			import re
+
 			username = req.post['username'].value.strip()
+			if re.findall('[^a-zA-Z0-9_]', username):
+				return ErrorResponse('Invalid characters in username', request=req)
 			url = media_url + '/users/show/' + username
 			try:
 				addUser(username)

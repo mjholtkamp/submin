@@ -53,7 +53,12 @@ class Groups(View):
 		media_url = config.get('www', 'media_url').rstrip('/')
 
 		if req.post and req.post['groupname']:
+			import re
+
 			groupname = req.post['groupname'].value.strip()
+			if re.findall('[^a-zA-Z0-9_]', groupname):
+				return ErrorResponse('Invalid characters in groupname', request=req)
+
 			url = media_url + '/groups/show/' + groupname
 
 			try:
