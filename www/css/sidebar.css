@@ -67,6 +67,9 @@ ul#addicons {
 	padding: 0;
 	width: 162px;
 }
+ul#addicons li:hover {
+	background: transparent;
+}
 ul#addicons li {
 	width: 40.25px;
 	padding: 0;
