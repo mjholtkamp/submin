@@ -31,8 +31,8 @@
 	[test:is_admin
 	<ul id="addicons">
 		<li><a href="/users/add/" title="Add user"><img src="[val main_media_url]/img/add-user.png" height="30px" title="Add a user"/></a></li>
-		<li><a href="/groups/add/" title="Add group"><img src="[val main_media_url]/img/add-group.png" height="30px" title="Add a group"/>+</a></li>
-		<li><a href="/repositories/add/" title="Add repository"><img src="[val main_media_url]/img/add-repository.png" height="30px" title="Add a repository"/>+</a></li>
+		<li><a href="/groups/add/" title="Add group"><img src="[val main_media_url]/img/add-group.png" height="30px" title="Add a group"/></a></li>
+		<li><a href="/repositories/add/" title="Add repository"><img src="[val main_media_url]/img/add-repository.png" height="30px" title="Add a repository"/></a></li>
 	</ul>
 	]
 </div>
