@@ -12,7 +12,7 @@ class Group(object):
 		self.name = name
 
 		if self.name not in config.authz.groups():
-			raise UnknownGroupError
+			raise UnknownGroupError, self.name
 
 		self.members = config.authz.members(self.name)
 		self.members.sort()

@@ -6,7 +6,7 @@ class GroupExistsError(Exception):
 		Exception.args = 'Group %s already exists' % group
 
 class UnknownGroupError(Exception):
-	def __init__(self, ):
+	def __init__(self, group):
 		Exception.args = 'Group %s does not exist' % group
 
 class UnknownUserError(Exception):
