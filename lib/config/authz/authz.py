@@ -78,7 +78,7 @@ class Authz:
 
 	def userProp(self, user, property):
 		if not self.parser.has_section('user.' + user):
-			raise UnknownUserError, user
+			raise UnknownUserError(user)
 
 		return self.parser.get('user.' + user, property)
 
@@ -97,7 +97,7 @@ class Authz:
 		if repository is not None:
 			path = '%s:%s' % (repository, path)
 		elif path != '/':
-			raise InvalidRepositoryError, (repository, path)
+			raise InvalidRepositoryError(repository, path)
 		return path
 
 
@@ -109,7 +109,7 @@ class Authz:
 	def addPath(self, repository, path):
 		section = self.createSectionName(repository, path)
 		if section in self.parser.sections():
-			raise PathExistsError, (repository, path)
+			raise PathExistsError(repository, path)
 		self.parser.add_section(section)
 		self.save()
 
@@ -127,7 +127,7 @@ class Authz:
 			members = self.parser.get('groups', group).split(',')
 			return [m.strip() for m in members if m.strip()]
 		except ConfigParser.NoOptionError:
-			raise UnknownGroupError, group
+			raise UnknownGroupError(group)
 
 	def member_of(self, user):
 		member_groups = []
@@ -139,14 +139,14 @@ class Authz:
 	def addGroup(self, group, members=[]):
 		"""Adds a group"""
 		if group in self.groups():
-			raise GroupExistsError, group
+			raise GroupExistsError(group)
 		self.parser.set('groups', group, ', '.join(members))
 		self.save()
 
 	def removeGroup(self, group):
 		"""Removes a group"""
 		if group not in self.groups():
-			raise UnknownGroupError, group
+			raise UnknownGroupError(group)
 		self.parser.remove_option('groups', group)
 		self.save()
 
@@ -154,7 +154,7 @@ class Authz:
 		"""Adds a member to a group"""
 		members = self.members(group)
 		if member in members:
-			raise MemberExistsError, (member, group)
+			raise MemberExistsError(member, group)
 		members.append(member)
 		self.parser.set('groups', group, ', '.join(members))
 		self.save()
@@ -163,7 +163,7 @@ class Authz:
 		"""Removes a member from a group"""
 		members = self.members(group)
 		if member not in members:
-			raise UnknownMemberError, (member, group)
+			raise UnknownMemberError(member, group)
 		members.remove(member)
 		self.parser.set('groups', group, ', '.join(members))
 		self.save()
@@ -171,7 +171,7 @@ class Authz:
 	def removeAllMembers(self, group):
 		"""Removes a member from a group"""
 		if group not in self.groups():
-			raise UnknownGroupError, group
+			raise UnknownGroupError(group)
 		self.parser.set('groups', group, '')
 		self.save()
 
@@ -204,7 +204,7 @@ class Authz:
 		section = self.createSectionName(repository, path)
 		retval = self.parser.remove_option(section, member)
 		if not retval:
-			raise UnknownMemberError, (section, member)
+			raise UnknownMemberError(section, member)
 		self.save()
 
 
