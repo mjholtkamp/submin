@@ -78,6 +78,11 @@ window.onload = function() {
 	var groups = document.getElementById('members');
 	var links = groups.getElementsByTagName('a');
 	selectli = document.getElementById('add');
+
+	// user might be a non-admin, then no selectli exists
+	if (!selectli)
+		return;
+
 	var map = {'adder': add, 'remover': remove};
 	for (var linkidx = 0; linkidx < links.length; ++linkidx) {
 		var link = links[linkidx];
