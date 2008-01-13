@@ -24,7 +24,7 @@
 					]
 					</table>
 					<h3 class="content">Member of</h3>
-					<ul id="memberof">
+					<ul id="memberof" class="selector">
 					[iter:user.member_of 
 						<li><a href="[val main_media_url]/groups/show/[ival]">[ival]</a> [test:is_admin <a href="#" class="remover"><img class="remover" src="[val main_media_url]/img/min.gif" /></a>]</li>]
 						[test:is_admin

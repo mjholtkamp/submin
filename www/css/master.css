@@ -44,3 +44,19 @@ img.adder, img.remover {
 li form {
 	margin: 0.1em;
 }
+
+ul.selector li {
+	width: 200px;
+}
+
+ul.selector li select {
+	width: 175px;
+}
+
+ul.selector li .remover, ul.selector li .adder {
+	float: right;
+}
+
+ul.selector li .adder {
+	padding-top: 2px;
+}

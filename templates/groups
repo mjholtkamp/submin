@@ -5,7 +5,7 @@
 	<h1 class="content">Group [val group.name]</h1>
 		<h3 class="content">members:</h3>
 		<div class="settings">
-			<ul id="members">
+			<ul id="members" class="selector">
 				[iter:group.members 
 					[set:link_begin <a href="[val main_media_url]/users/show/[ival]">]
 					[set:link_end </a>]
