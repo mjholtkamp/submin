@@ -66,6 +66,7 @@ ul#addicons {
 	margin: 0 -5px;
 	padding: 0;
 	width: 161px; /* not 162px, let the border show! */
+	border-top: 1px solid #515151;
 }
 ul#addicons li:hover {
 	background: transparent;
