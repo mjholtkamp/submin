@@ -31,6 +31,9 @@ class Groups(View):
 		return ErrorResponse('Unknown path', request=req)
 
 	def show(self, req, path, localvars):
+		if len(path) < 1:
+			return ErrorResponse('Invalid path', request=req)
+
 		is_admin = req.session['user'].is_admin
 		try:
 			group = Group(path[0])

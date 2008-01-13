@@ -31,6 +31,9 @@ class Users(View):
 		return ErrorResponse('Unknown path', request=req)
 
 	def show(self, req, path, localvars):
+		if len(path) < 1:
+			return ErrorResponse('Invalid path', request=req)
+
 		is_admin = req.session['user'].is_admin
 		if not is_admin and path[0] != req.session['user'].name:
 			return ErrorResponse('Not permitted', request=req)
