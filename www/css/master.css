@@ -60,3 +60,12 @@ ul.selector li .remover, ul.selector li .adder {
 ul.selector li .adder {
 	padding-top: 2px;
 }
+
+div.login {
+	text-align: center;
+}
+
+div.login ul {
+	width: 22em;
+	margin: auto;
+}

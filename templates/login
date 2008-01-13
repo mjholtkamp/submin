@@ -9,9 +9,9 @@
 		<link rel="stylesheet" href="[val media_url]/css/master.css">
 	</head>
 	<body onload="document.getElementById('username').focus();">
+		<div class="login">
 		<h1>Submin</h1>
 		<p>Please login:</p>
-		[test:msg <p class="error">[val msg]</p>]
 		<form action="" method="post">
 			<ul>
 				<li><label for="id_username">Username:</label> <input id="username" type="text" name="username" /></li>
@@ -19,5 +19,7 @@
 				<li><input type="submit" name="submit" value="Login" /></li>
 			</ul>
 		</form>
+		[test:msg <p class="error">[val msg]</p>]
+		</div>
 	</body>
 <html>
