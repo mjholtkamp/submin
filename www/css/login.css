@@ -1,0 +1,23 @@
+div.login {
+	text-align: center;
+}
+
+div.login ul {
+	width: 250px;
+	margin: auto;
+}
+
+div.login ul li {
+	width: 250px;
+	padding: 0.1em 0em;
+}
+
+div.login ul li label {
+	text-align: right;
+	width: 80px;
+}
+
+#username, #password {
+	width: 160px;
+}
+
