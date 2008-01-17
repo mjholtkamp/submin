@@ -25,10 +25,8 @@ body {
 	margin: 0;
 }
 #content {
-	position: absolute;
 	float: left;
-	top: 0;
-	left: 170px;
+	margin-left: 10px;
 }
 #sidebar h1 {
 	color: #505D6D;
