@@ -46,18 +46,29 @@ li form {
 }
 
 ul.selector li {
+	clear: both;
+}
+
+ul.selector li a {
 	width: 200px;
+	float: left;
 }
 
 ul.selector li select {
-	width: 175px;
+	width: 190px;
+	margin-right: 10px;
+	float: left;
 }
 
 ul.selector li .remover, ul.selector li .adder {
-	float: right;
+	float: left;
+	width: 13px;
 }
 
 ul.selector li .adder {
 	padding-top: 2px;
 }
 
+ul.selector li img {
+	height: 13px;
+}
