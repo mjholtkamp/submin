@@ -10,19 +10,20 @@ function addMemberAjax(member) {
 
 var selectli = null;
 function remove() {
-	var value = this.parentNode.firstChild.firstChild.nodeValue;
+	var li = this.parentNode;
+	var username = li.id.replace('user.', '');
 
-	if (value == "---")
+	if (username == "---")
 		return true;
 
 	// Do the serverside thing!
-	var success = removeMemberAjax(value);
+	var success = removeMemberAjax(username);
 	if (!success)
 		return false;
 
 	this.parentNode.parentNode.removeChild(this.parentNode);
 	var option = document.createElement('option');
-	option.appendChild(document.createTextNode(value));
+	option.appendChild(document.createTextNode(username));
 	selectli.firstChild.appendChild(option);
 	if (selectli.firstChild.disabled)
 		selectli.firstChild.disabled = false;
@@ -33,22 +34,23 @@ function remove() {
 
 function add() {
 	// First create the nodes
-	var value = this.parentNode.firstChild.value;
+	var username = this.parentNode.firstChild.value;
 
-	if (value == "---") {
+	if (username == "---") {
 		Log('Please select a user first', false)
 		return false;
 	}
 
 	// Do the serverside thing!
-	var success = addMemberAjax(value);
+	var success = addMemberAjax(username);
 	if (!success)
 		return false;
 
 	var li = document.createElement('li');
+	li.id = 'user.' + username;
 	var link = document.createElement('a');
-	link.appendChild(document.createTextNode(value));
-	link.href = media_url + '/users/' + value;
+	link.appendChild(document.createTextNode(username));
+	link.href = media_url + '/users/show/' + username;
 	li.appendChild(link);
 	var remover = document.createElement('a');
 	remover.className = 'remover';
@@ -57,7 +59,6 @@ function add() {
 	var img = document.createElement('img');
 	img.className = "remover";
 	img.src = media_url + "/img/min.gif";
-	remover.appendChild(document.createTextNode(' '));
 	remover.appendChild(img);
 	li.appendChild(remover);
 	document.getElementById('members').insertBefore(li, this.parentNode);
