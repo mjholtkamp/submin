@@ -6,6 +6,7 @@ var old_load = window.onload;
 window.onload = function() {
 	if (old_load) old_load();
 	$('password_button').parentNode.onsubmit = verifyPassword;
+	$('email').focus();
 
 	// Initialize the select-dropdown
 	selectInit();
