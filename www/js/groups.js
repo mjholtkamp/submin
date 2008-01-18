@@ -34,7 +34,8 @@ function remove() {
 
 function add() {
 	// First create the nodes
-	var username = this.parentNode.firstChild.value;
+	var select = this.parentNode.firstChild;
+	var username = select.options[select.selectedIndex].innerHTML;
 
 	if (username == "---") {
 		Log('Please select a user first', false)
