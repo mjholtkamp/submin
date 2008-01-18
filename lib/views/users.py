@@ -64,7 +64,7 @@ class Users(View):
 			except IOError:
 				return ErrorResponse('File permission denied', request=req)
 			except UserExists:
-				return ErrorResponse('User already exists', request=req)
+				return ErrorResponse('User %s already exists' % username, request=req)
 
 			return Redirect(url)
 
@@ -97,26 +97,35 @@ class Users(View):
 		if 'removeFromGroup' in req.post:
 			return self.removeFromGroup(req, user)
 
-		return XMLStatusResponse(False, 'You tried to submit an empty field value')
+		return XMLStatusResponse(False,
+			'You tried to submit an empty field value')
 
 	def setEmail(self, req, user):
 		try:
 			user.email = req.post.get('email')
-			return XMLStatusResponse(True, 'Changed email address for user %s' % user.name)
+			return XMLStatusResponse(True,
+				'Changed email address for user %s to %s' %
+				(user.name, user.email))
+
 		except Exception, e:
-			return XMLStatusResponse(False, 'Could not change email of user ' + user.name)
+			return XMLStatusResponse(False,
+				'Could not change email of user %s' + user.name)
 
 	def setPassword(self, req, user):
 		try:
 			user.password = req.post.get('password')
-			return XMLStatusResponse(True, 'Changed password for user %s' % user.name)
+			return XMLStatusResponse(True,
+				'Changed password for user %s' % user.name)
 		except Exception, e:
-			return XMLStatusResponse(False, 'Could not change password of user ' + user.name)
+			return XMLStatusResponse(False,
+				'Could not change password of user %s' % user.name)
 
 	def addToGroup(self, req, user):
 		group = Group(req.post.get('addToGroup'))
 		success = group.addMember(user.name)
-		msgs = {True: 'User added to group %s' % group.name, False: 'This user is already in group %s' % group.name}
+		msgs = {True: 'User %s added to group %s' % (user.name, group.name),
+				False: 'User %s already in group %s' % (user.name, group.name)
+				}
 		return XMLStatusResponse(success, msgs[success])
 
 	@admin_required
@@ -128,17 +137,21 @@ class Users(View):
 					"You cannot remove yourself from %s" % group.name)
 
 		success = group.removeMember(user.name)
-		msgs = {True: 'User removed from group %s' % group.name, False: 'User was not a member of %s' % group.name}
+		msgs = {True: 'User %s removed from group %s' % (user.name, group.name),
+				False: 'User %s is not a member of %s' % (user.name, group.name)
+				}
 		return XMLStatusResponse(success, msgs[success])
 
 	@admin_required
 	def removeUser(self, req, username):
 		if username == req.session['user'].name:
-			return XMLStatusResponse(False, 'You are not allowed to delete yourself')
+			return XMLStatusResponse(False,
+				'You are not allowed to delete yourself')
 		try:
 			user = User(username)
 			user.remove()
 		except Exception, e:
-			return XMLStatusResponse(False, 'User %s not deleted: %s' % (username, str(e)))
+			return XMLStatusResponse(False,
+				'User %s not deleted: %s' % (username, str(e)))
 
 		return XMLStatusResponse(True, 'User %s deleted' % username)

@@ -69,6 +69,7 @@ class User(object):
 		return self.__email
 
 	def setEmail(self, email):
+		self.__email = email
 		config = Config()
 		config.authz.setUserProp(self.name, 'email', email)
 	email = property(getEmail, setEmail)

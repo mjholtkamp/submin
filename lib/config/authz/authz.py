@@ -21,6 +21,14 @@ class UnknownMemberError(Exception):
 	def __init__(self, user, group):
 		Exception.args = 'User %s is not member of group %s' % (user, group)
 
+class InvalidUserError(Exception):
+	def __init__(self, user):
+		Exception.args = 'User `%s\' is invalid' % user
+
+class InvalidGroupError(Exception):
+	def __init__(self, group):
+		Exception.args = 'Group `%s\' is invalid' % group
+
 class InvalidRepositoryError(Exception):
 	def __init__(self, repos, path):
 		Exception.args = 'Repository %s does not exist (path: %s)' % (repos, path)
@@ -138,6 +146,10 @@ class Authz:
 
 	def addGroup(self, group, members=[]):
 		"""Adds a group"""
+		if group == '':
+			raise InvalidUserError(group)
+		if '' in members:
+			raise InvalidUserError(member)
 		if group in self.groups():
 			raise GroupExistsError(group)
 		self.parser.set('groups', group, ', '.join(members))
@@ -152,6 +164,8 @@ class Authz:
 
 	def addMember(self, group, member):
 		"""Adds a member to a group"""
+		if member == '':
+			raise InvalidUserError(member)
 		members = self.members(group)
 		if member in members:
 			raise MemberExistsError(member, group)
@@ -161,6 +175,8 @@ class Authz:
 
 	def removeMember(self, group, member):
 		"""Removes a member from a group"""
+		if member == '':
+			raise InvalidUserError(member)
 		members = self.members(group)
 		if member not in members:
 			raise UnknownMemberError(member, group)

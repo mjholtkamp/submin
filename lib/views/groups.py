@@ -69,7 +69,7 @@ class Groups(View):
 			except IOError:
 				return ErrorResponse('File permission denied', request=req)
 			except GroupExistsError:
-				return ErrorResponse('Group already exists', request=req)
+				return ErrorResponse('Group %s already exists' % groupname, request=req)
 
 			return Redirect(url)
 
@@ -109,20 +109,23 @@ class Groups(View):
 					"You cannot remove yourself from %s" % group.name)
 
 		success = Group(groupname).removeMember(username)
-		msgs = {True: 'User %s removed from group' % username, False: 'No such user'}
+		msgs = {True: 'User %s removed from group %s' % (username, groupname),
+				False: 'No such user'}
 		return XMLStatusResponse(success, msgs[success])
 
 	@admin_required
 	def addMember(self, req, groupname):
 		username = req.post['addMember'].value
 		success = Group(groupname).addMember(username)
-		msgs = {True: 'User %s added' % username, False: 'This member already is in this group'}
+		msgs = {True: 'User %s added to group %s' % (username, groupname),
+				False: 'User %s already in group %s' % (username, groupname)}
 		return XMLStatusResponse(success, msgs[success])
 
 	@admin_required
 	def removeGroup(self, groupname):
 		if groupname == 'submin-admins':
-			return XMLStatusResponse(False, 'You are not allowed to delete the submin-admins group')
+			return XMLStatusResponse(False,
+				'You are not allowed to delete the submin-admins group')
 
 		try:
 			group = Group(groupname)
@@ -130,6 +133,8 @@ class Groups(View):
 		except IOError:
 			return XMLStatusResponse(False, 'File permisson denied')
 		except UnknownGroupError:
-			return XMLStatusResponse(False, 'Group %s does not exist' % groupname)
+			return XMLStatusResponse(False,
+				'Group %s does not exist' % groupname)
 
 		return XMLStatusResponse(True, 'Group %s deleted' % group)
+
