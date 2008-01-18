@@ -5,7 +5,7 @@ load('dom')
 var old_load = window.onload;
 window.onload = function() {
 	if (old_load) old_load();
-	$('password_button').onclick = verifyPassword;
+	$('password_button').parentNode.onsubmit = verifyPassword;
 
 	// Initialize the select-dropdown
 	selectInit();
@@ -18,29 +18,30 @@ function sendEmail() {
 // global variable to temporarily store the password to be verified
 var enteredPassword;
 function verifyPassword() {
-	enteredPassword = $('password').value;
+	var input = $('password')
+	enteredPassword = input.value;
 	if (!enteredPassword) {
 		Log('Please enter a password before pressing "change"', false);
 		return false;
 	}
 
 	// Some cleaning up.
-	$('password').value = '';
-	this.parentNode.firstChild.innerHTML = 'Verify';
-	$('password').focus();
+	input.value = '';
+	this.firstChild.innerHTML = 'Verify';
 	// change te onclick handler
-	this.onclick = checkPasswords;
+	input.focus();
+	$('password_button').parentNode.onsubmit = checkPasswords;
 	Log('Please verify your password', true);
 	return false;
 }
 
 function checkPasswords() {
 	// Again some cleaning up.
-	this.parentNode.firstChild.innerHTML = 'Password';
+	this.firstChild.innerHTML = 'Password';
 	// Make sure the change-button isn't highlighted anymore
 	this.blur();
 	// change the onclick handler back to the verifyPassword function
-	this.onclick = verifyPassword;
+	$('password_button').parentNode.onsubmit = verifyPassword;
 
 	// Do the check after cleaning up.
 	if ($('password').value != enteredPassword) {
