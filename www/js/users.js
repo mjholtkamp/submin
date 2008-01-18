@@ -76,20 +76,18 @@ function removeMemberFromGroupAjax(group) {
 
 var selectli = null;
 function remove() {
-	var value = this.parentNode.firstChild.firstChild.nodeValue;
-
-	if (value == "---")
-		return false;
+	var li = this.parentNode;
+	var groupname = li.id.replace('group.', '');
 
 	// Do the serverside thing!
-	var success = removeMemberFromGroupAjax(value);
+	var success = removeMemberFromGroupAjax(groupname);
 
 	if (!success)
 		return false;
 
 	this.parentNode.parentNode.removeChild(this.parentNode);
 	var option = document.createElement('option');
-	option.appendChild(document.createTextNode(value));
+	option.appendChild(document.createTextNode(groupname));
 	selectli.firstChild.appendChild(option);
 	if (selectli.firstChild.disabled)
 		selectli.firstChild.disabled = false;
@@ -100,23 +98,25 @@ function remove() {
 
 function add() {
 	// First create the nodes
-	var value = this.parentNode.firstChild.value;
+	var select = this.parentNode.firstChild;
+	var groupname = select.options[select.selectedIndex].innerHTML;
 
-	if (value == "---") {
+	if (groupname == "---") {
 		Log('Please select a group first', false)
 		return false;
 	}
 
 	// Do the serverside thing!
-	var success = addMemberToGroupAjax(value);
+	var success = addMemberToGroupAjax(groupname);
 
 	if (!success)
 		return false;
 
 	var li = document.createElement('li');
+	li.id = 'group.' + groupname;
 	var link = document.createElement('a');
-	link.appendChild(document.createTextNode(value));
-	link.href = media_url + '/groups/' + value;
+	link.appendChild(document.createTextNode(groupname));
+	link.href = media_url + '/groups/show/' + groupname;
 	li.appendChild(link);
 	var remover = document.createElement('a');
 	remover.className = 'remover';

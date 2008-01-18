@@ -13,9 +13,6 @@ function remove() {
 	var li = this.parentNode;
 	var username = li.id.replace('user.', '');
 
-	if (username == "---")
-		return true;
-
 	// Do the serverside thing!
 	var success = removeMemberAjax(username);
 	if (!success)
