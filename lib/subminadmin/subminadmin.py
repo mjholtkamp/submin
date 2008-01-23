@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-class Admin:
+class SubminAdmin:
 	def __init__(self):
 		self.vars = {}
 		self.vars['submin root'] = '/var/lib/submin/'
