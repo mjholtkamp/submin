@@ -22,12 +22,8 @@ class InitTest(unittest.TestCase):
 				'File %s does not exist' % self.filename)
 
 	def testCreateGroupsSection(self):
-		# XXX: This actually tests several functions!
-		# This test alone does an extra operation authz.save(), therefore we
-		# also need a strict save() test!
-		self.authz.save()
-		lines = open(self.filename).readlines()
-		self.assert_('[groups]\n' in lines, '[groups] section not created')
+		self.assert_(self.authz.parser.has_section('groups'),
+				'[groups] section not created')
 
 class SaveTest(unittest.TestCase):
 	"Testcase for the save() method on the Authz-objects."
