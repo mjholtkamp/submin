@@ -82,7 +82,7 @@ session_salt = %s
 
 	def c_create(self, argv):
 		"""Create a new submin environment
-create <submin-root> <svn-dir> [<trac-dir>]
+create [<submin-root> [<svn-dir> [<trac-dir>]]]
 
 	<submin-root>\t- submin data dir (default: %(submin root)s)
 	\t\t  holds the files: htpasswd, authz, submin.conf
