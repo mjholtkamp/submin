@@ -15,7 +15,7 @@ install: build
 	dh_testroot
 	dh_installdirs
 
-	sh bin/install.sh debian/tmp/usr
+	sh bin/install.sh debian/tmp/usr /usr
 
 binary-indep:
 	dh_testdir

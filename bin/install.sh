@@ -7,9 +7,18 @@ if [ $# -lt 1 ]; then
 fi
 
 PREFIX=$1
+FINAL_PREFIX=${PREFIX}
+
+if [ $# -gt 1 ]; then
+	FINAL_PREFIX=$2
+fi
 
 cd `dirname $0`/..
+# install submin-admin
 install -g root -o root -m 755 bin/submin-admin.py ${PREFIX}/bin/submin-admin
+# fix path
+sed -ie "s@_SUBMIN_LIB_DIR_@${FINAL_PREFIX}/share/submin/lib@" ${PREFIX}/bin/submin-admin
+
 SHARE=${PREFIX}/share/submin
 mkdir -p ${SHARE}
 cp -r www lib ${SHARE}

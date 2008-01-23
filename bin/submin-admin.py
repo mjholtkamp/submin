@@ -2,7 +2,7 @@
 
 if __name__ == "__main__":
 	from sys import argv, path
-	path.append('/usr/share/submin/lib')
+	path.append('_SUBMIN_LIB_DIR_')
 	from subminadmin.subminadmin import SubminAdmin
 
 	try:
