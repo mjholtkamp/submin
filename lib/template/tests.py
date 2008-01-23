@@ -8,11 +8,14 @@ import template_commands
 template_commands.DEBUG = False
 
 def evaluate(tpl_string, variables={}):
+	'Helper function for the tests.'
 	tpl = Template(tpl_string, variables)
 	return (tpl, tpl.evaluate())
 
 
 class SetTagTest(unittest.TestCase):
+	'Testcase for the set-tag which can set a template variable'
+
 	def testEvaluatesEmpty(self):
 		tpl, ev = evaluate('[set:foo bar]')
 		self.assertEquals(ev, '')
@@ -30,6 +33,8 @@ class SetTagTest(unittest.TestCase):
 		self.assertRaises(template_commands.DotInLocalVariable, tpl.evaluate)
 
 class ValTagTest(unittest.TestCase):
+	'Testcase for the val-tag which inserts the value for a variable'
+
 	def testNonEmpty(self):
 		tpl, ev = evaluate('[val foo]', {'foo': 'bar'})
 		self.assertNotEqual(ev, '')
@@ -47,6 +52,7 @@ class ValTagTest(unittest.TestCase):
 		self.assertRaises(template_commands.MissingRequiredArguments, tpl.evaluate)
 
 class IterTagTest(unittest.TestCase):
+	'Testcase for the iter-tag, which iterates over a sequence'
 	def testCorrectValue(self):
 		tpl, ev = evaluate('[iter:range bar]', {'range': range(10)})
 		correctValue = ''.join(['bar' for x in range(10)])
@@ -65,6 +71,8 @@ class IterTagTest(unittest.TestCase):
 		self.assertEquals(ev, '')
 
 class IvalTagTest(unittest.TestCase):
+	'Tests the ival-tag, which returns the current iteration-value'
+
 	def testCorrectValue(self):
 		tpl, ev = evaluate('[iter:range [ival]]', {'range': range(10)})
 		correctValue = ''.join([str(x) for x in range(10)])
@@ -83,6 +91,8 @@ class IvalTagTest(unittest.TestCase):
 		self.assertEquals(ev, correctValue)
 
 class TestTest(unittest.TestCase):
+	'Testcase for the test-tag.'
+
 	def testCorrectValue(self):
 		tpl, ev = evaluate('[test:foo bar]', {'foo': 'bar'})
 		self.assertEquals(ev, 'bar')
@@ -128,6 +138,8 @@ class TestTest(unittest.TestCase):
 		self.assertEquals(ev, 'baz')
 
 class TestIterTest(unittest.TestCase):
+	'Testcase for special iter-variables like ilast'
+
 	def testTestIlast(self):
 		tpl, ev = evaluate('[iter:range [ival][test:ilast last!]]', {'range': range(10)})
 		self.assertEquals(ev, '0123456789last!')
@@ -137,6 +149,8 @@ class TestIterTest(unittest.TestCase):
 		self.assertEquals(ev, '012345678')
 
 class ElseTest(unittest.TestCase):
+	'Testcase for the else-tag.'
+
 	def testCorrectValue(self):
 		tpl, ev = evaluate('[test:foo bar][else baz]')
 		self.assertEquals(ev, 'baz')
@@ -167,6 +181,11 @@ class ElseTest(unittest.TestCase):
 
 
 class VariableValueTests(unittest.TestCase):
+	'''Testcase for the variable_value function of a template-object
+
+	variable_value can parse the variable name in various ways, see it's
+	documentation in template.py'''
+
 	def testVariables(self):
 		tpl = Template('', {'foo': 'bar'})
 		self.assertEquals(tpl.variable_value('foo'), 'bar')
@@ -187,6 +206,8 @@ class VariableValueTests(unittest.TestCase):
 		self.assertEquals(tpl.variable_value('ival'), 'foo')
 
 class IncludeTests(unittest.TestCase):
+	'Testcase for the include-tag'
+
 	def setUp(self):
 		"""Creates a temporary file for inclusion"""
 		# mkstemp returns a filedescriptor, which is an int. Open the file
