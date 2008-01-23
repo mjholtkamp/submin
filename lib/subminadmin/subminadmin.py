@@ -93,28 +93,46 @@ session_salt = %s
 
 	def c_create(self, argv):
 		"""Create a new submin environment
-create [<submin-root> [<svn-dir> [<trac-dir>]]]
+create <name> [<submin-root> [<svn-dir> [<trac-dir>]]]
 
+	<name>\t\t- project name, defines some file names
 	<submin-root>\t- submin data dir (default: %(submin root)s)
 	\t\t  holds the files: htpasswd, authz, submin.conf
 	<svn-dir>\t- svn repository dir (default: %(svn dir)s)
 	<trac-dir>\t- trac projects dir (default: %(trac dir)s)
 """
-		if len(argv) > 2:
-			self._setpath('submin root', argv[2])
+		if len(argv) < 3:
+			self.c_help([argv[0], 'help', 'create'])
+			return
+
+		self.name = argv[2]
 		if len(argv) > 3:
+			self._setpath('submin root', argv[3])
+		if len(argv) > 4:
 			self._setpath('svn dir', argv[3])
-		if len(argv) < 4:
+		if len(argv) < 5:
 			self.vars['trac dir'] = ''
 
 		vars = self.replacedvars()
-		submin_conf_file = vars['submin root'] + 'submin.conf'
+		submin_conf_file = '/etc/submin/' + self.name + '.conf'
 
 		# create dir
 		import os
 		conf_dir = os.path.dirname(submin_conf_file)
 		if not os.path.isdir(conf_dir):
-			os.mkdir(conf_dir)
+			try:
+				os.mkdir(conf_dir)
+			except OSError:
+				print 'making config dir failed, are you root?'
+				return
+
+		root_dir = vars['submin root']
+		if not os.path.isdir(root_dir):
+			try:
+				os.mkdir(root_dir)
+			except OSError:
+				print 'Failed making submin root dir, do you have permissions?'
+				return
 
 		# make submin.conf
 		if not self.create_subminconf_from_template(submin_conf_file):
