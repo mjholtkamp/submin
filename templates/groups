@@ -10,9 +10,9 @@
 					[set:link_begin <a href="[val main_media_url]/users/show/[ival]">]
 					[set:link_end </a>]
 					<li id="user.[ival]">
-						[test:!is_admin [equals:main_user.name:ival [val link_begin]]][test:is_admin [val link_begin]]
+						[test:!is_admin [equals:main_user.name:ival [val link_begin]]][else [val link_begin]]
 								[ival]
-						[test:!is_admin [equals:main_user.name:ival [val link_end]]][test:is_admin [val link_end]]
+						[test:!is_admin [equals:main_user.name:ival [val link_end]]][else [val link_end]]
 
 						[test:is_admin <a href="#" class="remover"><img class="remover" src="[val main_media_url]/img/min.gif" /></a>]</li>
 				]
