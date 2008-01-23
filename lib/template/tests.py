@@ -160,7 +160,7 @@ class ElseTest(unittest.TestCase):
 		self.assertEquals(ev, 'evals false'*10)
 
 	def testElseInSet(self):
-		tpl, ev = evaluate('[set:range [test:foo evals true][else evals false]')
+		tpl, ev = evaluate('[set:range [test:foo evals true][else evals false]]')
 		self.assertEquals(ev, '')
 
 
