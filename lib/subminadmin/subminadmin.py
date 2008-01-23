@@ -131,9 +131,15 @@ create [<submin-root> [<svn-dir> [<trac-dir>]]]
 
 		# fix permissions
 		apache = self.get_apache_users()[0]
-		os.chown(self.repositories, apache.pw_uid, apache.pw_gid)
-		os.chown(self.authz_file, apache.pw_uid, apache.pw_gid)
-		os.chown(self.access_file, apache.pw_uid, apache.pw_gid)
+		try:
+			os.chown(self.repositories, apache.pw_uid, apache.pw_gid)
+			os.chown(self.authz_file, apache.pw_uid, apache.pw_gid)
+			os.chown(self.access_file, apache.pw_uid, apache.pw_gid)
+		except OSError:
+			print '''
+ *** Failed to change permissions to apache user, are you root?
+'''
+
 		print 'created submin configuration with default user admin (password: admin)'
 
 	def c_help(self, argv):
