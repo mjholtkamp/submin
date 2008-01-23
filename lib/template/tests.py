@@ -1,4 +1,6 @@
 import unittest
+from tempfile import mkstemp
+import os
 
 from template import Template
 # import template
@@ -14,15 +16,15 @@ class SetTagTest(unittest.TestCase):
 	def testEvaluatesEmpty(self):
 		tpl, ev = evaluate('[set:foo bar]')
 		self.assertEquals(ev, '')
-	
+
 	def testVariablesSetCorrect(self):
 		tpl, ev = evaluate('[set:foo bar]')
 		self.assertEquals(tpl.variables, {'foo': 'bar'})
-	
+
 	def testMissingArgument(self):
 		tpl = Template('[set bar]')
 		self.assertRaises(template_commands.MissingRequiredArguments, tpl.evaluate)
-	
+
 	def testDotInArgument(self):
 		tpl = Template('[set:foo.bar true]')
 		self.assertRaises(template_commands.DotInLocalVariable, tpl.evaluate)
@@ -31,15 +33,15 @@ class ValTagTest(unittest.TestCase):
 	def testNonEmpty(self):
 		tpl, ev = evaluate('[val foo]', {'foo': 'bar'})
 		self.assertNotEqual(ev, '')
-	
+
 	def testCorrectValue(self):
 		tpl, ev = evaluate('[val foo]', {'foo': 'bar'})
 		self.assertEquals(ev, 'bar')
-	
+
 	def testEmptyValue(self):
 		tpl, ev = evaluate('[val foo]', {'baz': 'bar'})
 		self.assertEquals(ev, '')
-	
+
 	def testMissingArgument(self):
 		tpl = Template('[val]')
 		self.assertRaises(template_commands.MissingRequiredArguments, tpl.evaluate)
@@ -49,15 +51,15 @@ class IterTagTest(unittest.TestCase):
 		tpl, ev = evaluate('[iter:range bar]', {'range': range(10)})
 		correctValue = ''.join(['bar' for x in range(10)])
 		self.assertEquals(ev, correctValue)
-	
+
 	def testMissingArgument(self):
 		tpl = Template('[iter bar]')
 		self.assertRaises(template_commands.MissingRequiredArguments, tpl.evaluate)
-	
+
 	def testEmptyForUnknown(self):
 		tpl, ev = evaluate('[iter:range bar]')
 		self.assertEquals(ev, '')
-	
+
 	def testEmptyValue(self):
 		tpl, ev = evaluate('[iter:range bar]', {'range': []})
 		self.assertEquals(ev, '')
@@ -67,7 +69,7 @@ class IvalTagTest(unittest.TestCase):
 		tpl, ev = evaluate('[iter:range [ival]]', {'range': range(10)})
 		correctValue = ''.join([str(x) for x in range(10)])
 		self.assertEquals(ev, correctValue)
-	
+
 	def testCorrectValueObject(self):
 		class objectTest:
 			def __init__(self, attr): self.attr = attr
@@ -84,28 +86,28 @@ class TestTest(unittest.TestCase):
 	def testCorrectValue(self):
 		tpl, ev = evaluate('[test:foo bar]', {'foo': 'bar'})
 		self.assertEquals(ev, 'bar')
-	
+
 	def testEmptyValue(self):
 		tpl, ev = evaluate('[test:foo bar]')
 		self.assertEquals(ev, '')
-	
+
 	def testMissingArgument(self):
 		tpl = Template('[test foo]')
 		self.assertRaises(template_commands.MissingRequiredArguments, tpl.evaluate)
-	
+
 	def testEmptyText(self):
 		tpl, ev = evaluate('[test:foo]', {'foo': 'bar'})
 		self.assertEquals(ev, '')
-	
+
 	def testCorrectValueObject(self):
 		class Foo: bar = 'baz'
-		
+
 		tpl, ev = evaluate('[test:foo.bar baz]', {'foo': Foo()})
 		self.assertEquals(ev, 'baz')
 
 	def testNegationOfValueObject(self):
 		class Foo: bar = False
-		
+
 		tpl, ev = evaluate('[test:!foo.bar baz]', {'foo': Foo()})
 		self.assertEquals(ev, 'baz')
 
@@ -116,11 +118,11 @@ class TestTest(unittest.TestCase):
 	def testNegationOfFalse(self):
 		tpl, ev = evaluate('[test:!foo baz]', {'foo': False})
 		self.assertEquals(ev, 'baz')
-	
+
 	def testNegationOfNone(self):
 		tpl, ev = evaluate('[test:!foo baz]', {'foo': None})
 		self.assertEquals(ev, 'baz')
-	
+
 	def testNegationOfNoVariable(self):
 		tpl, ev = evaluate('[test:!foo baz]', {})
 		self.assertEquals(ev, 'baz')
@@ -133,12 +135,12 @@ class TestIterTest(unittest.TestCase):
 	def testTestNotIlast(self):
 		tpl, ev = evaluate('[iter:range [test:!ilast [ival]]]', {'range': range(10)})
 		self.assertEquals(ev, '012345678')
-	
+
 class ElseTest(unittest.TestCase):
 	def testCorrectValue(self):
 		tpl, ev = evaluate('[test:foo bar][else baz]')
 		self.assertEquals(ev, 'baz')
-	
+
 	def testWhiteSpaceBeforeElse(self):
 		tpl, ev = evaluate('[test:foo bar] [else baz]')
 		self.assertEquals(ev, ' baz')
@@ -146,15 +148,15 @@ class ElseTest(unittest.TestCase):
 	def testTestSucceeds(self):
 		tpl, ev = evaluate('[test:foo bar][else baz]', {'foo': 'quux'})
 		self.assertEquals(ev, 'bar')
-	
+
 	def testRaiseElseError(self):
 		tpl = Template('[val bar][else baz]')
 		self.assertRaises(template_commands.ElseError, tpl.evaluate)
-	
+
 	def testNegationElse(self):
 		tpl, ev = evaluate('[test:!foo bar][else baz]', {'foo': True})
 		self.assertEquals(ev, 'baz')
-	
+
 	def testElseInIter(self):
 		tpl, ev = evaluate('[iter:range [test:foo evals true][else evals false]', {'range': range(10)})
 		self.assertEquals(ev, 'evals false'*10)
@@ -184,7 +186,34 @@ class VariableValueTests(unittest.TestCase):
 		tpl.node_variables['ival'] = ['foo']
 		self.assertEquals(tpl.variable_value('ival'), 'foo')
 
-# TODO: write tests for include!
+class IncludeTests(unittest.TestCase):
+	def setUp(self):
+		"""Creates a temporary file for inclusion"""
+		# mkstemp returns a filedescriptor, which is an int. Open the file
+		# with os.fdopen.
+		fd, self.filename = mkstemp()
+		self.text = 'SILENCE! I keel joe!\n'
+		filehandle = os.fdopen(fd, 'w+')
+		filehandle.write(self.text)
+		filehandle.close()
+
+	def tearDown(self):
+		"""Removes the temporary file"""
+		os.unlink(self.filename)
+
+	def testInclude(self):
+		tpl, ev = evaluate('[include %s]' % self.filename)
+		self.assertEquals(ev, self.text)
+
+	def testDoesNotIncludeInTest(self):
+		tpl, ev = evaluate('[test:do_include [include %s]]' % self.filename,
+				{'do_include': False})
+		self.assertEquals(ev, '')
+
+	def testDoesIncludeInTest(self):
+		tpl, ev = evaluate('[test:do_include [include %s]]' % self.filename,
+				{'do_include': True})
+		self.assertEquals(ev, self.text)
 
 if __name__ == "__main__":
 	unittest.main()
