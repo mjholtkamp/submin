@@ -215,5 +215,8 @@ class IncludeTests(unittest.TestCase):
 				{'do_include': True})
 		self.assertEquals(ev, self.text)
 
-if __name__ == "__main__":
+def runtests():
 	unittest.main()
+
+if __name__ == "__main__":
+	runtests()

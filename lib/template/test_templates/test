@@ -1,8 +1,0 @@
-included stuff!
-[val users.1]
-[set:included_val blaat]
-[test:included_val In de include-file gaat set:included_val goed!]
-[else In de include-file gaat set:included_val niet goed!]
-
-[include test2]
-foo
