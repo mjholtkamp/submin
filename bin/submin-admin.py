@@ -32,7 +32,7 @@ class Admin:
 
 	def create_subminconf_from_template(self):
 		vars = self.replacedvars()
-		submin_conf = open('/usr/lib/submin/conf/submin.conf.example').read()
+		submin_conf = open('/usr/share/submin/conf/submin.conf.example').read()
 		submin_conf = submin_conf.replace('/var/lib/submin/svn', vars['svn dir'])
 		submin_conf = submin_conf.replace('/var/lib/submin', vars['submin root'])
 		submin_conf_file = vars['submin root'] + 'submin.conf'
@@ -126,7 +126,7 @@ help <command>"""
 
 if __name__ == "__main__":
 	from sys import argv, path
-	path.append('/usr/lib/submin/lib')
+	path.append('/usr/share/submin/lib')
 
 	try:
 		a = Admin()

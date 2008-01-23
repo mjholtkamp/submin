@@ -15,9 +15,7 @@ install: build
 	dh_testroot
 	dh_installdirs
 
-	$(installbin) bin/submin-admin.py debian/tmp/usr/bin/submin-admin
-	cp -r www lib debian/tmp/usr/lib/submin/
-	find debian/tmp/usr/lib/submin -type d -name .svn -exec rm -rf \{\} \; -prune
+	sh bin/install.sh debian/tmp/usr
 
 binary-indep:
 	dh_testdir
