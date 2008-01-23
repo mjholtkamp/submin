@@ -76,6 +76,8 @@ session_salt = %s
 		out.write(submin_conf)
 		out.close()
 
+		os.mkdir(repositories)
+
 		return True
 
 	def c_create(self, argv):
