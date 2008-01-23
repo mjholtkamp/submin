@@ -2,7 +2,6 @@ import re
 import os
 import sys
 import string
-from pprint import pprint
 
 from library import Library
 
@@ -80,7 +79,7 @@ class Parser(object):
 		self.state = None
 		self.data = ''
 		self.lines = 1
-	
+
 	def parse(self):
 		for ch in self.template:
 			previous_node = None
@@ -90,7 +89,7 @@ class Parser(object):
 
 			# FIXME: Escaping gaat nog niet goed als er geen \, [ of ] erna 
 			# komt: dan blijft het geheel in state ESCAPE.
-			
+
 			if ch == '\\' and self.state != ESCAPE:
 				prev_state = self.state
 				self.state = ESCAPE
@@ -101,7 +100,7 @@ class Parser(object):
 				self.state = prev_state
 			elif ch == '[':
 				# Add new CommandNode to the stack
-				
+
 				if not self.state and self.data:
 					# But first, do some text cleaning-up!
 					text = TextNode(self.data, previous_node, self.lines)
@@ -111,7 +110,7 @@ class Parser(object):
 						self.stack[-1].nodes.append(text)
 					else:
 						self.stack.append(text)
-				
+
 				self.state = COMMAND
 				self.stack.append(CommandNode('', previous_node, self.lines))
 				self.open_cmds += 1
@@ -152,7 +151,7 @@ class Parser(object):
 					previous_node = text
 					self.data = ''
 					self.stack[-1].nodes.append(text)
-					
+
 				if self.state == COMMAND:
 					# The command has no character-data, but we need to
 					# finish the command-section
@@ -163,16 +162,22 @@ class Parser(object):
 					# finish the arguments-section
 					self.stack[-1].arguments = self.data
 					self.data = ''
-					
+
 				self.open_cmds -= 1
 
 				if self.open_cmds:
 					# The current CommandNode is embedded in another command.
 					# We need to add this node to the other Node.
 					node = self.stack.pop()
+
+					# Fix the previous node in embedded context.
+					if self.stack[-1].nodes:
+						node.previous_node = self.stack[-1].nodes[-1]
+					else:
+						node.previous_node = None
 					# Add the node to the other's node-stack
 					self.stack[-1].nodes.append(node)
-				
+
 				self.state = None
 			else:
 				# Just character data!

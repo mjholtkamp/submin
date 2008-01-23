@@ -154,6 +154,15 @@ class ElseTest(unittest.TestCase):
 	def testNegationElse(self):
 		tpl, ev = evaluate('[test:!foo bar][else baz]', {'foo': True})
 		self.assertEquals(ev, 'baz')
+	
+	def testElseInIter(self):
+		tpl, ev = evaluate('[iter:range [test:foo evals true][else evals false]', {'range': range(10)})
+		self.assertEquals(ev, 'evals false'*10)
+
+	def testElseInSet(self):
+		tpl, ev = evaluate('[set:range [test:foo evals true][else evals false]')
+		self.assertEquals(ev, '')
+
 
 class VariableValueTests(unittest.TestCase):
 	def testVariables(self):
