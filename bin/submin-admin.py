@@ -30,15 +30,53 @@ class Admin:
 			print "Sorry, don't know command `%s', try help" % argv[1]
 			raise
 
+	def generate_session_salt(self):
+		import random
+		salts = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./'
+		salt = ''
+		rand = random.Random()
+		for i in range(16):
+			salt += rand.choice(salts)
+
+		return salt
+
 	def create_subminconf_from_template(self):
+		import os
+
 		vars = self.replacedvars()
-		submin_conf = open('/usr/share/submin/conf/submin.conf.example').read()
-		submin_conf = submin_conf.replace('/var/lib/submin/svn', vars['svn dir'])
-		submin_conf = submin_conf.replace('/var/lib/submin', vars['submin root'])
+		authz_file = vars['submin root'] + 'svn.authz'
+		access_file = vars['submin root'] + 'htpasswd'
+		repositories = vars['svn dir']
+		session_salt = self.generate_session_salt()
 		submin_conf_file = vars['submin root'] + 'submin.conf'
+
+		# bail if one of these things exists
+		if os.path.exists(submin_conf_file):
+			return False
+		if os.path.exists(authz_file):
+			return False
+		if os.path.exists(access_file):
+			return False
+		if os.path.exists(repositories):
+			return False
+
+		submin_conf = '''[svn]
+authz_file = %s
+access_file = %s
+repositories = %s
+
+[www]
+media_url = /
+
+[generated]
+session_salt = %s
+''' % (authz_file, access_file, repositories, session_salt)
+
 		out = open(submin_conf_file, 'w')
 		out.write(submin_conf)
 		out.close()
+
+		return True
 
 	def c_create(self, argv):
 		"""Create a new submin environment
@@ -61,16 +99,20 @@ create <submin-root> <svn-dir> [<trac-dir>]
 
 		# create dir
 		import os
-		os.mkdir(os.path.dirname(submin_conf_file))
+		conf_dir = os.path.dirname(submin_conf_file)
+		if not os.path.isdir(conf_dir):
+			os.mkdir(conf_dir)
 
 		# make submin.conf
-		self.create_subminconf_from_template()
+		if not self.create_subminconf_from_template():
+			print 'previous installation (partly) available, aborting'
+			return False
 
 		# add an admin user and submin-admin group
 		from config.config import Config
 		conf = Config(submin_conf_file)
 		conf.htpasswd.add('admin', 'admin')
-		conf.authz.addGroup('submin-admin', ['admin'])
+		conf.authz.addGroup('submin-admins', ['admin'])
 		print 'created submin configuration with default user admin (password: admin)'
 
 	def c_help(self, argv):
