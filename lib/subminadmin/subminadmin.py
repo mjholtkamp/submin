@@ -40,24 +40,37 @@ class SubminAdmin:
 
 		return salt
 
-	def create_subminconf_from_template(self):
+	def get_apache_users(self):
+		from pwd import getpwnam
+		users = []
+		for user in ['www-data', 'httpd', 'apache']:
+			pwd = ()
+			try:
+				pwd = getpwnam(user)
+			except KeyError, e:
+				pass
+			else:
+				users.append(pwd)
+
+		return users
+
+	def create_subminconf_from_template(self, submin_conf_file):
 		import os
 
 		vars = self.replacedvars()
-		authz_file = vars['submin root'] + 'svn.authz'
-		access_file = vars['submin root'] + 'htpasswd'
-		repositories = vars['svn dir']
+		self.authz_file = vars['submin root'] + 'svn.authz'
+		self.access_file = vars['submin root'] + 'htpasswd'
+		self.repositories = vars['svn dir']
 		session_salt = self.generate_session_salt()
-		submin_conf_file = vars['submin root'] + 'submin.conf'
 
 		# bail if one of these things exists
 		if os.path.exists(submin_conf_file):
 			return False
-		if os.path.exists(authz_file):
+		if os.path.exists(self.authz_file):
 			return False
-		if os.path.exists(access_file):
+		if os.path.exists(self.access_file):
 			return False
-		if os.path.exists(repositories):
+		if os.path.exists(self.repositories):
 			return False
 
 		submin_conf = '''[svn]
@@ -70,13 +83,11 @@ media_url = /
 
 [generated]
 session_salt = %s
-''' % (authz_file, access_file, repositories, session_salt)
+''' % (self.authz_file, self.access_file, self.repositories, session_salt)
 
 		out = open(submin_conf_file, 'w')
 		out.write(submin_conf)
 		out.close()
-
-		os.mkdir(repositories)
 
 		return True
 
@@ -106,7 +117,7 @@ create [<submin-root> [<svn-dir> [<trac-dir>]]]
 			os.mkdir(conf_dir)
 
 		# make submin.conf
-		if not self.create_subminconf_from_template():
+		if not self.create_subminconf_from_template(submin_conf_file):
 			print 'previous installation (partly) available, aborting'
 			return False
 
@@ -115,6 +126,14 @@ create [<submin-root> [<svn-dir> [<trac-dir>]]]
 		conf = Config(submin_conf_file)
 		conf.htpasswd.add('admin', 'admin')
 		conf.authz.addGroup('submin-admins', ['admin'])
+
+		os.mkdir(self.repositories)
+
+		# fix permissions
+		apache = self.get_apache_users()[0]
+		os.chown(self.repositories, apache.pw_uid, apache.pw_gid)
+		os.chown(self.authz_file, apache.pw_uid, apache.pw_gid)
+		os.chown(self.access_file, apache.pw_uid, apache.pw_gid)
 		print 'created submin configuration with default user admin (password: admin)'
 
 	def c_help(self, argv):
@@ -168,13 +187,4 @@ help <command>"""
 			print "\t%10s - %s" % (c, self.getshortdescription(command))
 		print
 
-if __name__ == "__main__":
-	from sys import argv, path
-	path.append('/usr/share/submin/lib')
-
-	try:
-		a = Admin()
-		a.run(argv)
-	except KeyboardInterrupt:
-		print
 
