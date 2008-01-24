@@ -35,5 +35,19 @@ class Config:
 		if not self.htpasswd:
 			self.htpasswd = HTPasswd(self.get('svn', 'access_file'))
 
+	def repositories(self):
+		import glob, os.path
+		reposdir = self.get('svn', 'repositories')
+		if reposdir[-1:] != '/':
+			reposdir += '/'
+
+		_repositories = glob.glob(os.path.join(reposdir, '*'))
+		repositories = []
+		for repos in _repositories:
+			if os.path.isdir(repos):
+				repositories.append(repos[len(reposdir):])
+
+		return repositories
+
 	def get(self, section, variable):
 		return self.cp.get(section, variable)
