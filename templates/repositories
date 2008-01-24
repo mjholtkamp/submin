@@ -4,7 +4,7 @@
 	<h1 class="content">Repository [val repository.name]</h1>
 		<div class="settings">
 			<ul>
-				[iter:repository.paths <li>[ival.1]</li>]
+				[iter:repository.paths <li>[ival]</li>]
 			</ul>
 		</div>
 </div>
