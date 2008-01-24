@@ -1,5 +1,5 @@
 from template.shortcuts import evaluate_main
-from dispatch.response import Response, XMLStatusResponse
+from dispatch.response import Response, XMLStatusResponse, Redirect
 from views.error import ErrorResponse
 from dispatch.view import View
 from models.user import User
@@ -53,7 +53,12 @@ class Repositories(View):
 
 			url = media_url + '/repositories/show/' + repository
 
-			return ErrorResponse('not yet implemented, would otherwise redirect to %s' % url, request=req)
+			reposdir = config.get('svn', 'repositories')
+			newrepos = reposdir + '/' + repository
+			if os.system('svnadmin create %s' % newrepos) == 0:
+				return Redirect(url)
+
+			return ErrorResponse('could not create repository', request=req)
 
 		formatted = evaluate_main('newrepository', localvars, request=req)
 		return Response(formatted)
