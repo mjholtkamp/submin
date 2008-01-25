@@ -38,14 +38,11 @@ class Config:
 	def repositories(self):
 		import glob, os.path
 		reposdir = self.get('svn', 'repositories')
-		if reposdir[-1:] != '/':
-			reposdir += '/'
-
 		_repositories = glob.glob(os.path.join(reposdir, '*'))
 		repositories = []
 		for repos in _repositories:
 			if os.path.isdir(repos):
-				repositories.append(repos[len(reposdir):])
+				repositories.append(repos[repos.rfind('/') + 1:])
 
 		return repositories
 
