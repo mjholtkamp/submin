@@ -19,6 +19,7 @@ window.onload = function() {
 	}
 
 	setupSidebarImages();
+	setupCollapsables();
 }
 
 var sidebar_img_add_user = new Image();
@@ -52,6 +53,64 @@ function setupSidebarImages() {
 		img_repository.onmousedown = function() { this.src = sidebar_img_add_repository_pressed.src; };
 		img_repository.onmouseout = function() { this.src = sidebar_img_add_repository.src; };
 	}
+}
+
+var sidebar_arrow_collapsed = new Image();
+var sidebar_arrow_halfway = new Image();
+var sidebar_arrow_expanded = new Image();
+
+function setupCollapsables() {
+	var collapsables = document.getElementsByTagName('img');
+
+	sidebar_arrow_collapsed.src = media_url + '/img/arrow-collapsed.png';
+	sidebar_arrow_halfway.src = media_url + '/img/arrow-halfway.png';
+	sidebar_arrow_expanded.src = media_url + '/img/arrow-expanded.png';
+
+	for (var idx = 0; idx < collapsables.length; ++idx) {
+		if (collapsables[idx].className == 'collapser') {
+			collapsables[idx].onclick = function() { arrowCollapse(this); }
+		}
+	}
+}
+
+function arrowCollapse(image)
+{
+	// animate image
+	image.src = sidebar_arrow_halfway.src;
+	setTimeout(function() { image.src = sidebar_arrow_collapsed.src; }, 100);
+
+	// do the collapse
+	var collapsable = image.parentNode;
+	while (collapsable.className != 'showhide')
+		collapsable = collapsable.parentNode;
+
+	var collapsee = collapsable.getElementsByTagName('ul')
+
+	for (var idx = 0; idx < collapsee.length; ++idx)
+		collapsee[idx].style.display = 'none';
+
+	// make sure we can expand after this
+	image.onclick = function() { arrowExpand(this); }
+}
+
+function arrowExpand(image)
+{
+	// animate image
+	image.src = sidebar_arrow_halfway.src;
+	setTimeout(function() { image.src = sidebar_arrow_expanded.src; }, 100);
+
+	// do the expand
+	var collapsable = image.parentNode;
+	while (collapsable.className != 'showhide')
+		collapsable = collapsable.parentNode;
+
+	var collapsee = collapsable.getElementsByTagName('ul')
+
+	for (var idx = 0; idx < collapsee.length; ++idx)
+		collapsee[idx].style.display = 'inline';
+
+	// make sure we can expand after this
+	image.onclick = function() { arrowCollapse(this); }
 }
 
 function deleteObject()

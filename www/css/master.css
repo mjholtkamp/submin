@@ -72,3 +72,9 @@ ul.selector li .adder {
 ul.selector li img {
 	height: 13px;
 }
+
+img.collapser {
+	height: 1em;
+	width: 1em;
+	padding-right: 0.5em;
+}
