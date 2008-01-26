@@ -11,24 +11,24 @@
 	<ul><li><a href="[val main_media_url]/logout">Logout ([val main_user.name])</a></li></ul>
 	</p>
 	<div class="showhide">
-	<h2><img class="collapser" src="[val main_media_url]/img/arrow-expanded.png" />Users</h2>
-	<ul class="collapsee" id="users">[iter:main_users
+	<h2 class="showhide-trigger"><img class="showhide-icon" src="[val main_media_url]/img/arrow-expanded.png" />Users</h2>
+	<ul class="showhide-object" id="users">[iter:main_users
 		[set:type users]
 		[set:selected [equals:selected_type:type [equals:selected_object:ival.name  class="selected"]]]
 		<li[val selected]><a href="[val main_media_url]/users/show/[ival.name]">[ival.name]</a>[test:is_admin <span class="deleteuser"><img class="remover" src="[val main_media_url]/img/min.gif" /></span>]</li>]
 	</ul>
 	</div>
 	<div class="showhide">
-	<h2><img class="collapser" src="[val main_media_url]/img/arrow-expanded.png" />Groups</h2>
-	<ul id="groups">[iter:main_groups 
+	<h2 class="showhide-trigger"><img class="showhide-icon" src="[val main_media_url]/img/arrow-expanded.png" />Groups</h2>
+	<ul class="showhide-object" id="groups">[iter:main_groups 
 		[set:type groups]
 		[set:selected [equals:selected_type:type [equals:selected_object:ival.name  class="selected"]]]
 		<li[val selected]><a href="[val main_media_url]/groups/show/[ival.name]">[ival.name]</a>[test:is_admin <span class="deletegroup"><img class="remover" src="[val main_media_url]/img/min.gif" /></span>]</li>]
 	</ul>
 	</div>
 	<div class="showhide">
-	<h2><img class="collapser" src="[val main_media_url]/img/arrow-expanded.png" />Repositories</h2>
-	<ul id="repositories">[iter:main_repositories 
+	<h2 class="showhide-trigger"><img class="showhide-icon" src="[val main_media_url]/img/arrow-expanded.png" />Repositories</h2>
+	<ul class="showhide-object" id="repositories">[iter:main_repositories 
 		[set:type repositories]
 		[set:selected [equals:selected_type:type [equals:selected_object:ival.name  class="selected"]]]
 		<li[val selected]><a href="[val main_media_url]/repositories/show/[ival]">[ival]</a></li>]

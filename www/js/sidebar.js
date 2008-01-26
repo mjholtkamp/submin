@@ -60,57 +60,103 @@ var sidebar_arrow_halfway = new Image();
 var sidebar_arrow_expanded = new Image();
 
 function setupCollapsables() {
-	var collapsables = document.getElementsByTagName('img');
+	var collapsables = showhide_findClassNames(document.body, 'showhide-trigger');
 
 	sidebar_arrow_collapsed.src = media_url + '/img/arrow-collapsed.png';
 	sidebar_arrow_halfway.src = media_url + '/img/arrow-halfway.png';
 	sidebar_arrow_expanded.src = media_url + '/img/arrow-expanded.png';
 
 	for (var idx = 0; idx < collapsables.length; ++idx) {
-		if (collapsables[idx].className == 'collapser') {
-			collapsables[idx].onclick = function() { arrowCollapse(this); }
-		}
+		collapsables[idx].onclick =
+			function() { arrowCollapse(this); }
 	}
 }
 
-function arrowCollapse(image)
+function showhide_findClassNames(node, classname)
 {
-	// animate image
-	image.src = sidebar_arrow_halfway.src;
-	setTimeout(function() { image.src = sidebar_arrow_collapsed.src; }, 100);
+	var classNodes = [];
+	for (var idx = 0; idx < node.childNodes.length; ++idx) {
+		if (node.childNodes[idx].className == classname)
+			classNodes.push(node.childNodes[idx]);
 
-	// do the collapse
-	var collapsable = image.parentNode;
-	while (collapsable.className != 'showhide')
-		collapsable = collapsable.parentNode;
+		var nodes = showhide_findClassNames(node.childNodes[idx], classname);
+		classNodes = classNodes.concat(nodes);
+	}
 
-	var collapsee = collapsable.getElementsByTagName('ul')
-
-	for (var idx = 0; idx < collapsee.length; ++idx)
-		collapsee[idx].style.display = 'none';
-
-	// make sure we can expand after this
-	image.onclick = function() { arrowExpand(this); }
+	return classNodes;
 }
 
-function arrowExpand(image)
+function showhide_getRoot(node)
+{
+	while (node.className != 'showhide')
+		node = node.parentNode;
+
+	return node;
+}
+
+function showhide_getTriggers(node)
+{
+	var root = showhide_getRoot(node);
+	return showhide_findClassNames(root, 'showhide-trigger');
+}
+
+function showhide_getCollapsees(node)
+{
+	var root = showhide_getRoot(node);
+	return showhide_findClassNames(root, 'showhide-object');
+}
+
+function showhide_getImages(node)
+{
+	var root = showhide_getRoot(node);
+	return showhide_findClassNames(root, 'showhide-icon');
+}
+
+function arrowCollapse(triggered)
+{
+	arrowChange(triggered, true);
+}
+
+function arrowExpand(triggered)
+{
+	arrowChange(triggered, false);
+}
+
+function arrowChange(triggered, collapse)
 {
 	// animate image
-	image.src = sidebar_arrow_halfway.src;
-	setTimeout(function() { image.src = sidebar_arrow_expanded.src; }, 100);
+	var images = showhide_getImages(triggered);
+	for (var idx = 0; idx < images.length; ++idx) {
+		image = images[idx];
+		image.src = sidebar_arrow_halfway.src;
+		if (collapse) {
+			setTimeout(
+				function() { image.src = sidebar_arrow_collapsed.src; }, 100);
+		} else {
+			setTimeout(
+				function() { image.src = sidebar_arrow_expanded.src; }, 100);
+		}
+	}
 
-	// do the expand
-	var collapsable = image.parentNode;
-	while (collapsable.className != 'showhide')
-		collapsable = collapsable.parentNode;
-
-	var collapsee = collapsable.getElementsByTagName('ul')
-
-	for (var idx = 0; idx < collapsee.length; ++idx)
-		collapsee[idx].style.display = 'inline';
+	// do the collapse
+	var collapsees = showhide_getCollapsees(triggered);
+	for (var idx = 0; idx < collapsees.length; ++idx) {
+		if (collapse) {
+			collapsees[idx].style.display = 'none';
+		} else {
+			collapsees[idx].style.display = 'inline';
+		}
+	}
 
 	// make sure we can expand after this
-	image.onclick = function() { arrowCollapse(this); }
+	var triggers = showhide_getTriggers(triggered);
+	for (var idx = 0; idx < triggers.length; ++idx) {
+		if (collapse) {
+			triggers[idx].onclick = function() { arrowExpand(this); }
+		} else {
+			triggers[idx].onclick = function() { arrowCollapse(this); }
+		}
+	}
 }
 
 function deleteObject()
