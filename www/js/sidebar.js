@@ -75,6 +75,7 @@ function setupCollapsables() {
 
 		// prevent selecting trigger (looks ugly)
 		collapsables[idx].onmousedown = function() { return false; }
+		collapsables[idx].onselectstart = function() { return false; } // ie
 	}
 }
 
@@ -152,6 +153,9 @@ function arrowChange(triggered, collapse)
 		} else {
 			collapsees[idx].style.display = '';
 		}
+		root = showhide_getRoot(triggered);
+		root.style.display = 'none';
+		root.style.display = '';
 	}
 
 	// make sure we can expand after this
