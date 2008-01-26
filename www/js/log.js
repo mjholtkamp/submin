@@ -19,10 +19,8 @@ function Log(message, success) {
 	document.body.appendChild(log)
 	_top = getStyle('log', 'top')
 	log.style.top = _top
-	height = getStyle('log', 'height')
-	log.style.height = height
-	width = parseInt(getStyle('log', 'width'))
-	windowWidth = WindowWidth()
+	width = parseInt(getStyle('log', 'width'));
+	windowWidth = WindowWidth();
 	log.style.left = "" + (windowWidth/2 - width/2) + "px";
 
 	value = 9;
