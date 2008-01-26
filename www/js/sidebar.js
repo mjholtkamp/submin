@@ -38,19 +38,22 @@ function setupSidebarImages() {
 	if (img_user) {
 		sidebar_img_add_user.src = media_url + '/img/add-user.png';
 		sidebar_img_add_user_pressed.src = media_url + '/img/add-user-pressed.png';
-		img_user.onmousedown = function() { this.src = sidebar_img_add_user_pressed.src; };
+		img_user.onmousedown = function() { this.src = sidebar_img_add_user_pressed.src; return false; };
+		img_user.onmouseup = function() { this.src = sidebar_img_add_user.src; };
 		img_user.onmouseout = function() { this.src = sidebar_img_add_user.src; };
 	}
 	if (img_group) {
 		sidebar_img_add_group.src = media_url + '/img/add-group.png';
 		sidebar_img_add_group_pressed.src = media_url + '/img/add-group-pressed.png';
-		img_group.onmousedown = function() { this.src = sidebar_img_add_group_pressed.src; };
+		img_group.onmousedown = function() { this.src = sidebar_img_add_group_pressed.src; return false; };
+		img_group.onmouseup = function() { this.src = sidebar_img_add_group.src; };
 		img_group.onmouseout = function() { this.src = sidebar_img_add_group.src; };
 	}
 	if (img_repository) {
 		sidebar_img_add_repository.src = media_url + '/img/add-repository.png';
 		sidebar_img_add_repository_pressed.src = media_url + '/img/add-repository-pressed.png';
-		img_repository.onmousedown = function() { this.src = sidebar_img_add_repository_pressed.src; };
+		img_repository.onmousedown = function() { this.src = sidebar_img_add_repository_pressed.src; return false; };
+		img_repository.onmouseup = function() { this.src = sidebar_img_add_repository.src; };
 		img_repository.onmouseout = function() { this.src = sidebar_img_add_repository.src; };
 	}
 }
@@ -69,6 +72,9 @@ function setupCollapsables() {
 	for (var idx = 0; idx < collapsables.length; ++idx) {
 		collapsables[idx].onclick =
 			function() { arrowCollapse(this); }
+
+		// prevent selecting trigger (looks ugly)
+		collapsables[idx].onmousedown = function() { return false; }
 	}
 }
 
@@ -144,7 +150,7 @@ function arrowChange(triggered, collapse)
 		if (collapse) {
 			collapsees[idx].style.display = 'none';
 		} else {
-			collapsees[idx].style.display = 'inline';
+			collapsees[idx].style.display = '';
 		}
 	}
 
