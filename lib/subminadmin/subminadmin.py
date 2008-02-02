@@ -79,7 +79,7 @@ access_file = %s
 repositories = %s
 
 [www]
-media_url = /
+media_url = /submin
 
 [generated]
 session_salt = %s
@@ -90,6 +90,42 @@ session_salt = %s
 		out.close()
 
 		return True
+
+	def create_apache_conf(self, submin_conf_file):
+		vars = {'submin_config': submin_conf_file,
+				'REQ_FILENAME': '%{REQUEST_FILENAME}',
+				'www dir': '/usr/share/submin/www/'}
+
+		apache_conf = '''
+    Alias /submin/ %(www dir)s
+    <Directory %(www dir)s>
+        Options ExecCGI FollowSymLinks
+        AddHandler cgi-script py cgi pl
+        SetEnv SUBMIN_CONF %(submin_config)s
+
+        RewriteEngine on
+        RewriteBase /submin/
+
+        RewriteCond %(REQ_FILENAME)s !-f
+        RewriteRule ^(.+)$ submin.py/$1
+
+        RewriteRule ^/?$ submin.py/
+    </Directory>
+
+''' % vars
+
+		apache_conf_file = submin_conf_file.replace('.conf', '-apache.conf')
+
+		import os
+		if (os.path.exists(apache_conf_file)):
+			backup = apache_conf_file + '.submin-backup'
+			os.rename(apache_conf_file, backup)
+			print 'Apache config file found, renamed to %s' % backup
+
+		file(apache_conf_file, 'w').write(apache_conf)
+		print 'Apache file %s created, please include it in your apache.conf' \
+			% apache_conf_file
+
 
 	def c_create(self, argv):
 		"""Create a new submin environment
@@ -158,6 +194,9 @@ create <name> [<submin-root> [<svn-dir> [<trac-dir>]]]
 			print '''
  *** Failed to change permissions to apache user, are you root?
 '''
+
+		# create apache.conf
+		self.create_apache_conf(submin_conf_file)
 
 		print 'created submin configuration with default user admin (password: admin)'
 
