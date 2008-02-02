@@ -35,6 +35,10 @@ class Config:
 		if not self.htpasswd:
 			self.htpasswd = HTPasswd(self.get('svn', 'access_file'))
 
+		# make sure media_url has a sane value
+		if self.get('www', 'media_url') == '':
+			self.set('www', 'media_url', '/')
+
 	def repositories(self):
 		import glob, os.path
 		reposdir = self.get('svn', 'repositories')
