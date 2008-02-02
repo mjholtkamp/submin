@@ -62,4 +62,4 @@ def evaluate_main(templatename, templatevariables={}, request=None):
 
 	templatevariables['is_admin'] = is_admin
 
-	return evaluate('../templates/main', templatevariables)
+	return evaluate('main', templatevariables)

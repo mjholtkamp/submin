@@ -39,6 +39,13 @@ class Config:
 		if self.get('www', 'media_url') == '':
 			self.set('www', 'media_url', '/')
 
+		import os
+		if os.environ.has_key('SCRIPT_FILENAME'):
+			self.base_path = os.path.dirname(os.environ['SCRIPT_FILENAME'])
+		else:
+			# no cgi script
+			self.base_path = ''
+
 	def repositories(self):
 		import glob, os.path
 		reposdir = self.get('svn', 'repositories')
