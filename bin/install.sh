@@ -21,7 +21,7 @@ sed -ie "s@_SUBMIN_LIB_DIR_@${FINAL_PREFIX}/share/submin/lib@" ${PREFIX}/bin/sub
 
 SHARE=${PREFIX}/share/submin
 mkdir -p ${SHARE}
-cp -r www lib ${SHARE}
+cp -r www lib templates ${SHARE}
 chown root:root ${SHARE}/www/submin.py
 chmod 755 ${SHARE}/www/submin.py
 find ${SHARE} -type d -name .svn -exec rm -rf \{} \; -prune
