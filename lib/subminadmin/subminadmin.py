@@ -150,6 +150,7 @@ create <name> [<submin-root> [<svn-dir> [<trac-dir>]]]
 		# fix permissions
 		apache = self.get_apache_users()[0]
 		try:
+			os.chown(self.vars['submin root'], apache.pw_uid, apache.pw_gid)
 			os.chown(self.repositories, apache.pw_uid, apache.pw_gid)
 			os.chown(self.authz_file, apache.pw_uid, apache.pw_gid)
 			os.chown(self.access_file, apache.pw_uid, apache.pw_gid)
