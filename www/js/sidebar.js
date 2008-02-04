@@ -133,8 +133,8 @@ function arrowChange(triggered, collapse)
 {
 	// animate image
 	var images = showhide_getImages(triggered);
-	for (var idx = 0; idx < images.length; ++idx) {
-		image = images[idx];
+	for (var idx = 0; idx < 1; ++idx) {
+		var image = images[idx];
 		image.src = sidebar_arrow_halfway.src;
 		if (collapse) {
 			setTimeout(
@@ -147,7 +147,7 @@ function arrowChange(triggered, collapse)
 
 	// do the collapse
 	var collapsees = showhide_getCollapsees(triggered);
-	for (var idx = 0; idx < collapsees.length; ++idx) {
+	for (var idx = 0; idx < 1; ++idx) {
 		if (collapse) {
 			collapsees[idx].style.display = 'none';
 		} else {
@@ -160,7 +160,7 @@ function arrowChange(triggered, collapse)
 
 	// make sure we can expand after this
 	var triggers = showhide_getTriggers(triggered);
-	for (var idx = 0; idx < triggers.length; ++idx) {
+	for (var idx = 0; idx < 1; ++idx) {
 		if (collapse) {
 			triggers[idx].onclick = function() { arrowExpand(this); }
 		} else {
