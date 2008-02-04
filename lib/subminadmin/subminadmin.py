@@ -94,7 +94,10 @@ session_salt = %s
 	def create_apache_conf(self, submin_conf_file):
 		vars = {'submin_config': submin_conf_file,
 				'REQ_FILENAME': '%{REQUEST_FILENAME}',
-				'www dir': '/usr/share/submin/www/'}
+				'www dir': '/usr/share/submin/www/',
+				'htpasswd file': self.access_file,
+				'authz file': self.authz_file,
+				'svn dir': self.repositories}
 
 		apache_conf = '''
     Alias /submin/ %(www dir)s
@@ -111,6 +114,20 @@ session_salt = %s
 
         RewriteRule ^/?$ submin.py/
     </Directory>
+
+    <Location /svn>
+        DAV svn
+        SVNParentPath %(svn dir)s
+
+        AuthType Basic
+        AuthName "Subversion repository"
+
+        AuthUserFile %(htpasswd file)s
+        AuthzSVNAccessFile %(authz file)s
+
+        Satisfy Any
+        Require valid-user
+    </Location>
 
 ''' % vars
 
