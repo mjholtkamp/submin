@@ -27,7 +27,6 @@ function getsubdirs(me)
 		var span = document.createElement('span');
 		span.className = prefix + '-trigger';
 		span.appendChild(img);
-		span.appendChild(document.createTextNode(dir));
 
 		var ul = document.createElement('ul');
 		ul.className = prefix + '-object';
@@ -41,6 +40,7 @@ function getsubdirs(me)
 		var li = document.createElement('li');
 		li.className = prefix;
 		li.appendChild(span);
+		li.appendChild(document.createTextNode(dir));
 		li.appendChild(ul);
 
 		collapsee.appendChild(li);
