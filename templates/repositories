@@ -1,10 +1,17 @@
-		<!--<script type="text/javascript" src="[val main_media_url]/js/repositories.js"></script> -->
+		<script type="text/javascript" src="[val main_media_url]/js/repositories.js"></script>
+		<link rel="stylesheet" href="[val main_media_url]/css/repository.css">
 
 <div id="content">
 	<h1 class="content">Repository [val repository.name]</h1>
 		<div class="settings">
 			<ul>
-				[iter:repository.paths <li>[ival]</li>]
+				[iter:repository.dirs 
+				<li class="repostree">
+					<span class="repostree-trigger"><img class="repostree-icon" src="[val main_media_url]/img/arrow-expanded.png" /></span>[ival]
+					<ul class="repostree-object" id="repostree_[ival]">
+					</ul>
+				</li>
+				]
 			</ul>
 		</div>
 </div>

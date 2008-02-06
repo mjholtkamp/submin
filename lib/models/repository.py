@@ -15,9 +15,9 @@ class Repository(object):
 
 		self.authz_paths = self.config.authz.paths(self.name)
 		self.authz_paths.sort()
-		self.paths = self.getsubdirs()
+		self.dirs = self.getsubdirs("")
 
-	def getsubdirs(self):
+	def getsubdirs(self, path):
 		import pysvn
 		import os
 
@@ -25,13 +25,14 @@ class Repository(object):
 		reposdir = self.config.get('svn', 'repositories')
 		url = 'file://' + reposdir
 		url = os.path.join(url, self.name)
+		url = os.path.join(url, path)
 
-		files = client.ls(url, recurse=True)
+		files = client.ls(url, recurse=False)
 		dirs = []
 		for file in files:
 			if file['kind'] == pysvn.node_kind.dir:
 				name = file['name']
-				dirs.append(name[len(url):])
+				dirs.append(name[name.rindex('/') + 1:])
 
 		return dirs
 

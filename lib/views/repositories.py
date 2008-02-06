@@ -63,11 +63,31 @@ class Repositories(View):
 		formatted = evaluate_main('newrepository', localvars, request=req)
 		return Response(formatted)
 
+	def getsubdirs(self, req, repository):
+		try:
+			repository = Repository(repository)
+		except (IndexError, Repository.DoesNotExist):
+			return ErrorResponse('This repository does not exist.', request=req)
+
+		svn_path = req.post['getsubdirs'].value
+		dirs = repository.getsubdirs(svn_path)
+		xmldirs = ''
+		for dir in dirs:
+			xmldirs += '<dir>' + dir + '</dir>'
+
+		return XMLStatusResponse(False, xmldirs)
+
 	def ajaxhandler(self, req, path):
 		repositoryname = ''
 
-		if len(path) > 0:
-			repositoryname = path[0]
+		if len(path) < 2:
+			return XMLStatusResponse(False, 'Invalid path')
+
+		action = path[0]
+		repositoryname = path[1]
+
+		if req.post['getsubdirs']:
+			return self.getsubdirs(req, path[1])
 
 		return XMLStatusResponse(False, 'operations for repositories are not yet implemented')
 
