@@ -1,3 +1,4 @@
+load('collapsables');
 
 var sidebar_old_load = window.onload;
 window.onload = function() {
@@ -19,7 +20,7 @@ window.onload = function() {
 	}
 
 	setupSidebarImages();
-	setupCollapsables();
+	setupCollapsables(document.body, "showhide");
 }
 
 var sidebar_img_add_user = new Image();
@@ -55,117 +56,6 @@ function setupSidebarImages() {
 		img_repository.onmousedown = function() { this.src = sidebar_img_add_repository_pressed.src; return false; };
 		img_repository.onmouseup = function() { this.src = sidebar_img_add_repository.src; };
 		img_repository.onmouseout = function() { this.src = sidebar_img_add_repository.src; };
-	}
-}
-
-var sidebar_arrow_collapsed = new Image();
-var sidebar_arrow_halfway = new Image();
-var sidebar_arrow_expanded = new Image();
-
-function setupCollapsables() {
-	var collapsables = showhide_findClassNames(document.body, 'showhide-trigger');
-
-	sidebar_arrow_collapsed.src = media_url + '/img/arrow-collapsed.png';
-	sidebar_arrow_halfway.src = media_url + '/img/arrow-halfway.png';
-	sidebar_arrow_expanded.src = media_url + '/img/arrow-expanded.png';
-
-	for (var idx = 0; idx < collapsables.length; ++idx) {
-		collapsables[idx].onclick =
-			function() { arrowCollapse(this); }
-
-		// prevent selecting trigger (looks ugly)
-		collapsables[idx].onmousedown = function() { return false; }
-		collapsables[idx].onselectstart = function() { return false; } // ie
-	}
-}
-
-function showhide_findClassNames(node, classname)
-{
-	var classNodes = [];
-	for (var idx = 0; idx < node.childNodes.length; ++idx) {
-		if (node.childNodes[idx].className == classname)
-			classNodes.push(node.childNodes[idx]);
-
-		var nodes = showhide_findClassNames(node.childNodes[idx], classname);
-		classNodes = classNodes.concat(nodes);
-	}
-
-	return classNodes;
-}
-
-function showhide_getRoot(node)
-{
-	while (node.className != 'showhide')
-		node = node.parentNode;
-
-	return node;
-}
-
-function showhide_getTriggers(node)
-{
-	var root = showhide_getRoot(node);
-	return showhide_findClassNames(root, 'showhide-trigger');
-}
-
-function showhide_getCollapsees(node)
-{
-	var root = showhide_getRoot(node);
-	return showhide_findClassNames(root, 'showhide-object');
-}
-
-function showhide_getImages(node)
-{
-	var root = showhide_getRoot(node);
-	return showhide_findClassNames(root, 'showhide-icon');
-}
-
-function arrowCollapse(triggered)
-{
-	arrowChange(triggered, true);
-}
-
-function arrowExpand(triggered)
-{
-	arrowChange(triggered, false);
-}
-
-function arrowChange(triggered, collapse)
-{
-	// animate image
-	var images = showhide_getImages(triggered);
-	for (var idx = 0; idx < 1; ++idx) {
-		var image = images[idx];
-		image.src = sidebar_arrow_halfway.src;
-		if (collapse) {
-			setTimeout(
-				function() { image.src = sidebar_arrow_collapsed.src; }, 100);
-		} else {
-			setTimeout(
-				function() { image.src = sidebar_arrow_expanded.src; }, 100);
-		}
-	}
-
-	// do the collapse
-	var collapsees = showhide_getCollapsees(triggered);
-	for (var idx = 0; idx < 1; ++idx) {
-		if (collapse) {
-			collapsees[idx].style.display = 'none';
-		} else {
-			collapsees[idx].style.display = '';
-		}
-		root = showhide_getRoot(triggered);
-		root.style.display = 'none';
-		root.style.display = '';
-	}
-
-	// make sure we can expand after this
-	var triggers = showhide_getTriggers(triggered);
-	for (var idx = 0; idx < 1; ++idx) {
-		if (collapse) {
-			triggers[idx].onclick = function() { arrowExpand(this); }
-		} else {
-			triggers[idx].onclick = function() { arrowCollapse(this); }
-		}
 	}
 }
 
