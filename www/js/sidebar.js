@@ -20,7 +20,7 @@ window.onload = function() {
 	}
 
 	setupSidebarImages();
-	setupCollapsables(document.body, "showhide");
+	setupCollapsables(document.getElementById('sidebar'), "showhide");
 }
 
 var sidebar_img_add_user = new Image();

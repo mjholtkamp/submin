@@ -5,7 +5,7 @@ load('dom')
 var repos_old_load = window.onload;
 window.onload = function() {
 	if (repos_old_load) repos_old_load();
-	setupCollapsables(document.body, 'repostree', null, getsubdirs);
+	setupCollapsables(document.getElementById('content'), 'repostree', null, getsubdirs);
 }
 
 function getsubdirs(me)
