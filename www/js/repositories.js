@@ -33,6 +33,11 @@ function getsubdirs(me)
 		ul.className = prefix + '-object';
 		ul.id = prefix + '_' + path + '/' + dir;
 
+		// already added?
+		var added = document.getElementById(ul.id);
+		if (added)
+			continue;
+
 		var li = document.createElement('li');
 		li.className = prefix;
 		li.appendChild(span);
