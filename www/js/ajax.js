@@ -1,8 +1,18 @@
 function Response(transport) {
-	doc = transport.responseXML
-	response = {}
-	success = doc.getElementsByTagName('success')[0].childNodes[0].nodeValue
-	response['text'] = doc.getElementsByTagName('text')[0].childNodes[0].nodeValue
+	doc = transport.responseXML;
+	response = {};
+	success = doc.getElementsByTagName('success')[0].childNodes[0].nodeValue;
+	var text = doc.getElementsByTagName('text');
+	if (text)
+		text = text[0];
+	if (text)
+		text = text.childNodes[0];
+	if (text)
+		text = text.nodeValue;
+	if (!text)
+		text = '';
+	response['text'] = '';
+	response['xml'] = doc;
 
 	if (success.toLowerCase() == 'true') {
 		response['success'] = true
