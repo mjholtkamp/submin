@@ -1,4 +1,16 @@
-
+/* So how does this work?
+ *
+ * In the html-code you need to have 3 classes:
+ *  - 'prefix'-trigger      (onclick target)
+ *  - 'prefix'-icon         (the image that shows the state)
+ *  - 'prefix'-object       (the node that is shown or hidden)
+ *
+ * The 'prefix' depends on the prefix you use, so you can have multiple
+ * types of collapsables with different callbacks.
+ *
+ * Callbacks are called when the trigger is triggered. There are two callbacks:
+ * one for collapsing and one for expanding.
+ */
 var sidebar_arrow_collapsed = new Image();
 var sidebar_arrow_halfway = new Image();
 var sidebar_arrow_expanded = new Image();
@@ -11,8 +23,14 @@ function setupCollapsables(docroot, prefix, collapseFun, expandFun) {
 	sidebar_arrow_expanded.src = media_url + '/img/arrow-expanded.png';
 
 	for (var idx = 0; idx < collapsables.length; ++idx) {
-		collapsables[idx].onclick =
-			function() { arrowCollapse(prefix, this, collapseFun, expandFun); }
+		image = showhide_getImage(prefix, collapsables[idx]);
+		if (image.src == sidebar_arrow_expanded.src) {
+			collapsables[idx].onclick =
+				function() { arrowCollapse(prefix, this, collapseFun, expandFun); }
+		} else {
+			collapsables[idx].onclick =
+				function() { arrowExpand(prefix, this, collapseFun, expandFun); }
+		}
 
 		// prevent selecting trigger (looks ugly)
 		collapsables[idx].onmousedown = function() { return false; }
@@ -34,6 +52,12 @@ function showhide_findClassNames(node, classname)
 	return classNodes;
 }
 
+function showhide_findFirstClassName(node, classname)
+{
+	classNodes = showhide_findClassNames(node, classname);
+	return classNodes[0];
+}
+
 function showhide_getRoot(prefix, node)
 {
 	while (node.className != prefix)
@@ -42,22 +66,22 @@ function showhide_getRoot(prefix, node)
 	return node;
 }
 
-function showhide_getTriggers(prefix, node)
+function showhide_getTrigger(prefix, node)
 {
 	var root = showhide_getRoot(prefix, node);
-	return showhide_findClassNames(root, prefix + '-trigger');
+	return showhide_findFirstClassName(root, prefix + '-trigger');
 }
 
-function showhide_getCollapsees(prefix, node)
+function showhide_getCollapsee(prefix, node)
 {
 	var root = showhide_getRoot(prefix, node);
-	return showhide_findClassNames(root, prefix + '-object');
+	return showhide_findFirstClassName(root, prefix + '-object');
 }
 
-function showhide_getImages(prefix, node)
+function showhide_getImage(prefix, node)
 {
 	var root = showhide_getRoot(prefix, node);
-	return showhide_findClassNames(root, prefix + '-icon');
+	return showhide_findFirstClassName(root, prefix + '-icon');
 }
 
 function arrowCollapse(prefix, triggered, collapseFun, expandFun)
@@ -73,46 +97,42 @@ function arrowExpand(prefix, triggered, collapseFun, expandFun)
 function arrowChange(prefix, triggered, collapse, collapseFun, expandFun)
 {
 	// animate image
-	var images = showhide_getImages(prefix, triggered);
-	for (var idx = 0; idx < 1; ++idx) {
-		var image = images[idx];
-		image.src = sidebar_arrow_halfway.src;
-		if (collapse) {
-			setTimeout(
-				function() { image.src = sidebar_arrow_collapsed.src; }, 100);
-		} else {
-			setTimeout(
-				function() { image.src = sidebar_arrow_expanded.src; }, 100);
-		}
+	var image = showhide_getImage(prefix, triggered);
+	image.src = sidebar_arrow_halfway.src;
+	if (collapse) {
+		setTimeout(
+			function() { image.src = sidebar_arrow_collapsed.src; }, 100);
+	} else {
+		setTimeout(
+			function() { image.src = sidebar_arrow_expanded.src; }, 100);
 	}
 
 	// do the collapse
-	var collapsees = showhide_getCollapsees(prefix, triggered);
-	for (var idx = 0; idx < 1; ++idx) {
-		if (collapse) {
-			collapsees[idx].style.display = 'none';
-		} else {
-			collapsees[idx].style.display = '';
-		}
-		root = showhide_getRoot(prefix, triggered);
-		root.style.display = 'none';
-		root.style.display = '';
+	var collapsee = showhide_getCollapsee(prefix, triggered);
+	if (collapse) {
+		collapsee.style.display = 'none';
+	} else {
+		collapsee.style.display = '';
 	}
+	root = showhide_getRoot(prefix, triggered);
+	root.style.display = 'none';
+	root.style.display = '';
 
-	// make sure we can expand after this
-	var triggers = showhide_getTriggers(prefix, triggered);
-	for (var idx = 0; idx < 1; ++idx) {
-		if (collapse) {
-			if (collapseFun)
-				collapseFun(triggers[idx]);
+	// triggered isn't necessarily the trigger itself, can be a
+	// childnode, so get the real trigger node
+	var trigger = showhide_getTrigger(prefix, triggered);
+	if (collapse) {
+		if (collapseFun)
+			collapseFun(trigger);
 
-			triggers[idx].onclick = function() { arrowExpand(prefix, this, collapseFun, expandFun); }
-		} else {
-			if (expandFun)
-				expandFun(triggers[idx]);
+		trigger.onclick =
+			function() { arrowExpand(prefix, this, collapseFun, expandFun); }
+	} else {
+		if (expandFun)
+			expandFun(trigger);
 
-			triggers[idx].onclick = function() { arrowCollapse(prefix, this, collapseFun, expandFun); }
-		}
+		trigger.onclick =
+			function() { arrowCollapse(prefix, this, collapseFun, expandFun); }
 	}
 }
 

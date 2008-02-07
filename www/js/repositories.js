@@ -11,8 +11,7 @@ window.onload = function() {
 function getsubdirs(me)
 {
 	prefix = 'repostree';
-	collapsees = showhide_getCollapsees(prefix, me);
-	collapsee = collapsees[0];
+	collapsee = showhide_getCollapsee(prefix, me);
 	path = collapsee.id.substring(prefix.length + 1, collapsee.id.length);
 	response = AjaxSyncPostRequest(document.location, 'getsubdirs=' + path);
 	Log(response.text, response.success);
@@ -22,7 +21,7 @@ function getsubdirs(me)
 
 		var img = document.createElement('img');
 		img.className = prefix + '-icon';
-		img.src = media_url + '/img/arrow-expanded.png';
+		img.src = media_url + '/img/arrow-collapsed.png';
 
 		var span = document.createElement('span');
 		span.className = prefix + '-trigger';
@@ -44,7 +43,7 @@ function getsubdirs(me)
 		li.appendChild(ul);
 
 		collapsee.appendChild(li);
-		setupCollapsables(collapsee, prefix, null, getsubdirs);
 	}
+	setupCollapsables(collapsee, prefix, null, getsubdirs);
 }
 
