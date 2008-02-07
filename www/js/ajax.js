@@ -11,7 +11,7 @@ function Response(transport) {
 		text = text.nodeValue;
 	if (!text)
 		text = '';
-	response['text'] = '';
+	response['text'] = text;
 	response['xml'] = doc;
 
 	if (success.toLowerCase() == 'true') {
