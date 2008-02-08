@@ -10,14 +10,13 @@ class Repository(object):
 		self.name = name
 		self.config = config
 
-#		if self.name not in config.authz.groups():
-#			raise Repository.DoesNotExist
-
 		self.authz_paths = self.config.authz.paths(self.name)
 		self.authz_paths.sort()
 		self.dirs = self.getsubdirs("")
 
 	def getsubdirs(self, path):
+		'''Return subdirs (not recursive) of 'path' relative to our reposdir
+		Subdirs are returned as a hash with two entities: 'name' and 'has_subdirs', which should speak for themselves.'''
 		import pysvn
 		import os
 
@@ -32,9 +31,24 @@ class Repository(object):
 		for file in files:
 			if file['kind'] == pysvn.node_kind.dir:
 				name = file['name']
-				dirs.append(name[name.rindex('/') + 1:])
+				entry = {}
+				entry['name'] = name[name.rindex('/') + 1:]
+				entry['has_subdirs'] = self.hassubdirs(os.path.join(url, entry['name']))
+				dirs.append(entry)
 
 		return dirs
+
+	def hassubdirs(self, url):
+		import pysvn
+		import os
+
+		client = pysvn.Client()
+		files = client.ls(url, recurse=False)
+		if len(files) > 0:
+			return True
+
+		return False
+
 
 	def __str__(self):
 		return self.name

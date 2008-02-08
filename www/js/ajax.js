@@ -1,6 +1,9 @@
 function Response(transport) {
 	doc = transport.responseXML;
 	response = {};
+	// DEBUG
+	//var string = (new XMLSerializer()).serializeToString(doc);
+	//alert(string);
 	success = doc.getElementsByTagName('success')[0].childNodes[0].nodeValue;
 	var text = doc.getElementsByTagName('text');
 	if (text)

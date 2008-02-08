@@ -73,7 +73,11 @@ class Repositories(View):
 		dirs = repository.getsubdirs(svn_path)
 		xmldirs = ''
 		for dir in dirs:
-			xmldirs += '<dir>' + dir + '</dir>'
+			has_subdirs = ''
+			if dir['has_subdirs']:
+				has_subdirs = ' has_subdirs="true"'
+
+			xmldirs += '<dir' + has_subdirs + '>' + dir['name'] + '</dir>'
 
 		return XMLStatusResponse(False, xmldirs)
 

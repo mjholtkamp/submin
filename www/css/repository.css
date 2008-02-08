@@ -3,3 +3,7 @@ img.repostree-icon {
 	width: 1em;
 	padding-right: 0.5em;
 }
+
+span.repostree-noncollapsable {
+	padding-left: 1.5em;
+}

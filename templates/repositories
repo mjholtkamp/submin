@@ -6,9 +6,9 @@
 		<div class="settings">
 			<ul>
 				[iter:repository.dirs 
-				<li class="repostree">
-					<span class="repostree-trigger"><img class="repostree-icon" src="[val main_media_url]/img/arrow-collapsed.png" /></span>[ival]
-					<ul class="repostree-object" id="repostree_[ival]">
+				<li class="repostree" id="repostree_[ival.name]">
+					<span class="repostree-trigger"><img class="repostree-icon" src="[val main_media_url]/img/arrow-collapsed.png" /></span>[ival.name]
+					<ul class="repostree-object">
 					</ul>
 				</li>
 				]
