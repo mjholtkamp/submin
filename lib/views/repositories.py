@@ -1,5 +1,5 @@
 from template.shortcuts import evaluate_main
-from dispatch.response import Response, XMLStatusResponse, Redirect
+from dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse, Redirect
 from views.error import ErrorResponse
 from dispatch.view import View
 from models.user import User
@@ -71,15 +71,8 @@ class Repositories(View):
 
 		svn_path = req.post['getsubdirs'].value
 		dirs = repository.getsubdirs(svn_path)
-		xmldirs = ''
-		for dir in dirs:
-			has_subdirs = ''
-			if dir['has_subdirs']:
-				has_subdirs = ' has_subdirs="true"'
-
-			xmldirs += '<dir' + has_subdirs + '>' + dir['name'] + '</dir>'
-
-		return XMLStatusResponse(False, xmldirs)
+		templatevars = {'dirs': dirs}
+		return XMLTemplateResponse('ajax_repostree', templatevars)
 
 	def ajaxhandler(self, req, path):
 		repositoryname = ''

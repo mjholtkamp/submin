@@ -1,0 +1,7 @@
+<response>
+	<success>True</success>
+	<dirs>
+		[iter:dirs 
+			<dir has_subdirs="[val ival.has_subdirs]">[val ival.name]</dir>]
+	</dirs>
+</response>

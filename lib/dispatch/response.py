@@ -38,3 +38,10 @@ class XMLStatusResponse(XMLResponse):
 			% (success, text)
 
 		XMLResponse.__init__(self, content)
+
+class XMLTemplateResponse(XMLResponse):
+	def __init__(self, template, templatevariables):
+		from template import evaluate
+		content = evaluate(template, templatevariables)
+
+		XMLResponse.__init__(self, content)
