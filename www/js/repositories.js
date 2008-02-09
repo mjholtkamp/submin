@@ -6,6 +6,7 @@ var repos_old_load = window.onload;
 window.onload = function() {
 	if (repos_old_load) repos_old_load();
 	setupCollapsables(document.getElementById('content'), 'repostree', null, getsubdirs);
+	getsubdirs(document.getElementById('repostree_'));
 }
 
 function getsubdirs(me)
@@ -23,7 +24,10 @@ function getsubdirs(me)
 		if (dirs[idx].getAttribute('has_subdirs'))
 			has_subdirs = true;
 
-		var new_id = prefix + '_' + path + '/' + dir;
+		if (path != '')
+			path += '/';
+
+		var new_id = prefix + '_' + path + dir;
 
 		// already added?
 		var added = document.getElementById(new_id);

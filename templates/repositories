@@ -3,15 +3,9 @@
 
 <div id="content">
 	<h1 class="content">Repository [val repository.name]</h1>
-		<div class="settings">
-			<ul>
-				[iter:repository.dirs 
-				<li class="repostree" id="repostree_[ival.name]">
-					<span class="repostree-trigger"><img class="repostree-icon" src="[val main_media_url]/img/arrow-collapsed.png" /></span><img class="repostree-folder" src="[val main_media_url]/img/repostree-folder.png" />[ival.name]
-					<ul class="repostree-object">
-					</ul>
-				</li>
-				]
+		<div class="repostree" id="repostree_">
+			<span class="repostree-trigger"><span class="repostree-icon"></span></span>
+			<ul class="repostree-object">
 			</ul>
 		</div>
 </div>
