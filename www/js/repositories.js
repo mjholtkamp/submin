@@ -35,7 +35,6 @@ function getsubdirs(me)
 		li.className = prefix;
 
 		if (has_subdirs) {
-
 			var img = document.createElement('img');
 			img.className = prefix + '-icon';
 			img.src = media_url + '/img/arrow-collapsed.png';
@@ -47,12 +46,22 @@ function getsubdirs(me)
 			var ul = document.createElement('ul');
 			ul.className = prefix + '-object';
 
+			var folder_img = document.createElement('img');
+			folder_img.src = media_url + '/img/repostree-folder.png';
+			folder_img.className = "repostree-folder";
+
 			li.appendChild(span);
+			li.appendChild(folder_img);
 			li.appendChild(document.createTextNode(dir));
 			li.appendChild(ul);
 		} else {
+			var folder_img = document.createElement('img');
+			folder_img.src = media_url + '/img/repostree-folder.png';
+			folder_img.className = "repostree-folder";
+
 			var span = document.createElement('span');
 			span.className = 'repostree-noncollapsable';
+			span.appendChild(folder_img);
 			span.appendChild(document.createTextNode(dir));
 			li.appendChild(span);
 		}

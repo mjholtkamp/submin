@@ -2,8 +2,17 @@ img.repostree-icon {
 	height: 1em;
 	width: 1em;
 	padding-right: 0.5em;
+	vertical-align: bottom;
+}
+
+img.repostree-folder {
+	height: 1em;
+	width: 1em;
+	padding-right: 0.25em;
+	vertical-align: bottom;
 }
 
 span.repostree-noncollapsable {
 	padding-left: 1.5em;
 }
+
