@@ -16,6 +16,10 @@ span.repostree-noncollapsable {
 	padding-left: 1.5em;
 }
 
+#repostree li span {
+	cursor: pointer;
+}
+
 div#repostree {
 	float: left;
 }
