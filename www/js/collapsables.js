@@ -24,17 +24,23 @@ function setupCollapsables(docroot, prefix, collapseFun, expandFun) {
 
 	for (var idx = 0; idx < collapsables.length; ++idx) {
 		image = showhide_getImage(prefix, collapsables[idx]);
-		if (image.src == sidebar_arrow_expanded.src) {
-			collapsables[idx].onclick =
-				function() { arrowCollapse(prefix, this, collapseFun, expandFun); }
-		} else {
-			collapsables[idx].onclick =
-				function() { arrowExpand(prefix, this, collapseFun, expandFun); }
-		}
 
-		// prevent selecting trigger (looks ugly)
-		collapsables[idx].onmousedown = function() { return false; }
-		collapsables[idx].onselectstart = function() { return false; } // ie
+		// if no image, assume not collapsable (sometimes needed for bootstrap)
+		if (image) {
+			if (image.src == sidebar_arrow_expanded.src) {
+				collapsables[idx].onclick =
+					function() { arrowCollapse(prefix, this, collapseFun, expandFun); }
+				showhide_collapse(prefix, collapsables[idx], false);
+			} else {
+				collapsables[idx].onclick =
+					function() { arrowExpand(prefix, this, collapseFun, expandFun); }
+				showhide_collapse(prefix, collapsables[idx], true);
+			}
+
+			// prevent selecting trigger (looks ugly)
+			collapsables[idx].onmousedown = function() { return false; }
+			collapsables[idx].onselectstart = function() { return false; } // ie
+		}
 	}
 }
 
@@ -106,17 +112,7 @@ function arrowChange(prefix, triggered, collapse, collapseFun, expandFun)
 		setTimeout(
 			function() { image.src = sidebar_arrow_expanded.src; }, 100);
 	}
-
-	// do the collapse
-	var collapsee = showhide_getCollapsee(prefix, triggered);
-	if (collapse) {
-		collapsee.style.display = 'none';
-	} else {
-		collapsee.style.display = '';
-	}
-	root = showhide_getRoot(prefix, triggered);
-	root.style.display = 'none';
-	root.style.display = '';
+	showhide_collapse(prefix, triggered, collapse);
 
 	// triggered isn't necessarily the trigger itself, can be a
 	// childnode, so get the real trigger node
@@ -134,5 +130,21 @@ function arrowChange(prefix, triggered, collapse, collapseFun, expandFun)
 		trigger.onclick =
 			function() { arrowCollapse(prefix, this, collapseFun, expandFun); }
 	}
+}
+
+function showhide_collapse(prefix, triggered, collapse)
+{
+	// do the collapse
+	var collapsee = showhide_getCollapsee(prefix, triggered);
+	if (collapse) {
+		collapsee.style.display = 'none';
+	} else {
+		collapsee.style.display = '';
+	}
+
+	// force refresh on certain browsers
+	root = showhide_getRoot(prefix, triggered);
+	root.style.display = 'none';
+	root.style.display = '';
 }
 
