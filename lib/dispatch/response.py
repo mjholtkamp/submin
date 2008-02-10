@@ -36,7 +36,7 @@ class XMLStatusResponse(XMLResponse):
 	def __init__(self, success, text):
 		from template import evaluate
 		tvars = {'success': str(success), 'text': text}
-		content = evaluate('ajax_response', tvars)
+		content = evaluate('ajax/response.xml', tvars)
 
 		XMLResponse.__init__(self, content)
 

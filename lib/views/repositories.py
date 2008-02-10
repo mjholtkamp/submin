@@ -72,7 +72,7 @@ class Repositories(View):
 		svn_path = req.post['getsubdirs'].value.strip('/')
 		dirs = repository.getsubdirs(svn_path)
 		templatevars = {'dirs': dirs}
-		return XMLTemplateResponse('ajax_repostree', templatevars)
+		return XMLTemplateResponse('ajax/repositorytree.xml', templatevars)
 
 	def getpermissions(self, req, repositoryname):
 		config = Config()
@@ -91,7 +91,7 @@ class Repositories(View):
 			perms = config.authz.permissions(repositoryname, svn_path)
 
 		templatevars = {'perms': perms, 'repository': repositoryname, 'path': svn_path}
-		return XMLTemplateResponse('ajax_repositoryperms', templatevars)
+		return XMLTemplateResponse('ajax/repositoryperms.xml', templatevars)
 
 	def ajaxhandler(self, req, path):
 		repositoryname = ''
