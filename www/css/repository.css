@@ -16,3 +16,17 @@ span.repostree-noncollapsable {
 	padding-left: 1.5em;
 }
 
+div#repostree {
+	float: left;
+}
+
+div#permissions-view {
+	border: 1px solid black;
+	float: right;
+	width: 300px;
+	margin-left: 10em;
+}
+
+div#permissions-view label {
+	width: 10em;
+}

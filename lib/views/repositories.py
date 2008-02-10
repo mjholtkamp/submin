@@ -63,16 +63,35 @@ class Repositories(View):
 		formatted = evaluate_main('newrepository', localvars, request=req)
 		return Response(formatted)
 
-	def getsubdirs(self, req, repository):
+	def getsubdirs(self, req, repositoryname):
 		try:
-			repository = Repository(repository)
+			repository = Repository(repositoryname)
 		except (IndexError, Repository.DoesNotExist):
 			return ErrorResponse('This repository does not exist.', request=req)
 
-		svn_path = req.post['getsubdirs'].value
+		svn_path = req.post['getsubdirs'].value.strip('/')
 		dirs = repository.getsubdirs(svn_path)
 		templatevars = {'dirs': dirs}
 		return XMLTemplateResponse('ajax_repostree', templatevars)
+
+	def getpermissions(self, req, repositoryname):
+		config = Config()
+		try:
+			repository = Repository(repositoryname)
+		except (IndexError, Repository.DoesNotExist):
+			return ErrorResponse('This repository does not exist.', request=req)
+
+		svn_path = req.post['getpermissions'].value
+		if not svn_path.startswith('/'):
+			svn_path = '/' + svn_path
+
+		perms = []
+		authz_paths = [x[1] for x in repository.authz_paths]
+		if svn_path in authz_paths:
+			perms = config.authz.permissions(repositoryname, svn_path)
+
+		templatevars = {'perms': perms, 'repository': repositoryname, 'path': svn_path}
+		return XMLTemplateResponse('ajax_repositoryperms', templatevars)
 
 	def ajaxhandler(self, req, path):
 		repositoryname = ''
@@ -83,8 +102,11 @@ class Repositories(View):
 		action = path[0]
 		repositoryname = path[1]
 
-		if req.post['getsubdirs']:
-			return self.getsubdirs(req, path[1])
+		if req.post.has_key('getsubdirs'):
+			return self.getsubdirs(req, repositoryname)
+
+		if req.post.has_key('getpermissions'):
+			return self.getpermissions(req, repositoryname)
 
 		return XMLStatusResponse(False, 'operations for repositories are not yet implemented')
 
