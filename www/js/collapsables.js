@@ -90,6 +90,15 @@ function collapsables_getImage(prefix, node)
 	return collapsables_findFirstClassName(root, prefix + '-icon');
 }
 
+function collapsables_isCollapsed(prefix, node)
+{
+	var image = collapsables_getImage(prefix, node);
+	if (image.src == sidebar_arrow_collapsed.src)
+		return true;
+
+	return false;
+}
+
 function arrowCollapse(prefix, triggered, collapseFun, expandFun)
 {
 	arrowChange(prefix, triggered, true, collapseFun, expandFun);
