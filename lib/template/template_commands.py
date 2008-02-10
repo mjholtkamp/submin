@@ -185,13 +185,20 @@ def else_tag(node, tpl):
 	prev = node.previous_node
 	if prev.type == 'text' and prev.content.isspace():
 		prev = prev.previous_node
-	if prev.type != 'command' or prev.command != 'test':
+	if prev.type != 'command' or (prev.command != 'test' and prev.command != 'equals'):
 		raise ElseError, \
 			'Previous node to else was not a test-node (file %s, line %d)' % \
 			(tpl.filename, node.line)
-	#value = tpl.variable_value(prev.arguments)
-	#if value is None or not value:
-	value = testTrue(prev, tpl)
-	if not value:
-		return ''.join([x.evaluate(tpl) for x in node.nodes])
-	return ''
+
+	if prev.command == 'test':
+		value = testTrue(prev, tpl)
+		if not value:
+			return ''.join([x.evaluate(tpl) for x in node.nodes])
+		return ''
+
+	if prev.command == 'equals':
+		value = testEquals(prev, tpl)
+		if not value:
+			return ''.join([x.evaluate(tpl) for x in node.nodes])
+		return ''
+
