@@ -102,10 +102,10 @@ class Repositories(View):
 		action = path[0]
 		repositoryname = path[1]
 
-		if req.post.has_key('getsubdirs'):
+		if 'getsubdirs' in req.post:
 			return self.getsubdirs(req, repositoryname)
 
-		if req.post.has_key('getpermissions'):
+		if 'getpermissions' in req.post:
 			return self.getpermissions(req, repositoryname)
 
 		return XMLStatusResponse(False, 'operations for repositories are not yet implemented')
