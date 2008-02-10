@@ -47,7 +47,7 @@ class Groups(View):
 			return ErrorResponse('Not permitted', request=req)
 
 		localvars['group'] = group
-		formatted = evaluate_main('groups', localvars, request=req)
+		formatted = evaluate_main('groups.html', localvars, request=req)
 		return Response(formatted)
 
 	@admin_required
@@ -73,7 +73,7 @@ class Groups(View):
 
 			return Redirect(url)
 
-		formatted = evaluate_main('newgroup', localvars, request=req)
+		formatted = evaluate_main('newgroup.html', localvars, request=req)
 		return Response(formatted)
 
 	def ajaxhandler(self, req, path):

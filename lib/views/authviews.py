@@ -34,7 +34,7 @@ class Login(View):
 		localvalues['msg'] = msg
 		localvalues['media_url'] = config.get('www',
 				'media_url').rstrip('/')
-		return Response(evaluate('login', localvalues))
+		return Response(evaluate('login.html', localvalues))
 
 
 class Logout(View):

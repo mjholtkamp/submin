@@ -37,7 +37,7 @@ class Repositories(View):
 			return ErrorResponse('This repository does not exist.', request=req)
 
 		localvars['repository'] = repository
-		formatted = evaluate_main('repositories', localvars, request=req)
+		formatted = evaluate_main('repositories.html', localvars, request=req)
 		return Response(formatted)
 
 	def add(self, req, path, localvars):
@@ -60,7 +60,7 @@ class Repositories(View):
 
 			return ErrorResponse('could not create repository', request=req)
 
-		formatted = evaluate_main('newrepository', localvars, request=req)
+		formatted = evaluate_main('newrepository.html', localvars, request=req)
 		return Response(formatted)
 
 	def getsubdirs(self, req, repositoryname):

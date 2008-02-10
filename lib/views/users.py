@@ -44,7 +44,7 @@ class Users(View):
 			return ErrorResponse('This user does not exist.', request=req)
 
 		localvars['user'] = user
-		formatted = evaluate_main('users', localvars, request=req)
+		formatted = evaluate_main('users.html', localvars, request=req)
 		return Response(formatted)
 
 	@admin_required
@@ -68,7 +68,7 @@ class Users(View):
 
 			return Redirect(url)
 
-		formatted = evaluate_main('newuser', localvars, request=req)
+		formatted = evaluate_main('newuser.html', localvars, request=req)
 		return Response(formatted)
 
 	def ajaxhandler(self, req, path):

@@ -5,6 +5,6 @@ class ErrorResponse(Response):
 	def __init__(self, errormsg, request=None):
 		localvars = {}
 		localvars['errormsg'] = errormsg
-		formatted = evaluate_main('error', localvars, request=request)
+		formatted = evaluate_main('error.html', localvars, request=request)
 		Response.__init__(self, formatted)
 
