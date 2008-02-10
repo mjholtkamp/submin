@@ -26,7 +26,7 @@ function setupCollapsables(docroot, prefix, collapseFun, expandFun) {
 		image = showhide_getImage(prefix, collapsables[idx]);
 
 		// if no image, assume not collapsable (sometimes needed for bootstrap)
-		if (image) {
+		if (image && image.src) {
 			if (image.src == sidebar_arrow_expanded.src) {
 				collapsables[idx].onclick =
 					function() { arrowCollapse(prefix, this, collapseFun, expandFun); }
