@@ -12,8 +12,8 @@ window.onload = function() {
 function getsubdirs(me)
 {
 	prefix = 'repostree';
-	collapsee = showhide_getCollapsee(prefix, me);
-	root = showhide_getRoot(prefix, collapsee);
+	collapsee = collapsables_getCollapsee(prefix, me);
+	root = collapsables_getRoot(prefix, collapsee);
 	path = root.id.substring(prefix.length + 1, root.id.length);
 	if (path != '/')
 		path += '/';

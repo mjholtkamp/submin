@@ -16,25 +16,25 @@ var sidebar_arrow_halfway = new Image();
 var sidebar_arrow_expanded = new Image();
 
 function setupCollapsables(docroot, prefix, collapseFun, expandFun) {
-	var collapsables = showhide_findClassNames(docroot, prefix + '-trigger');
+	var collapsables = collapsables_findClassNames(docroot, prefix + '-trigger');
 
 	sidebar_arrow_collapsed.src = media_url + '/img/arrow-collapsed.png';
 	sidebar_arrow_halfway.src = media_url + '/img/arrow-halfway.png';
 	sidebar_arrow_expanded.src = media_url + '/img/arrow-expanded.png';
 
 	for (var idx = 0; idx < collapsables.length; ++idx) {
-		image = showhide_getImage(prefix, collapsables[idx]);
+		image = collapsables_getImage(prefix, collapsables[idx]);
 
 		// if no image, assume not collapsable (sometimes needed for bootstrap)
 		if (image && image.src) {
 			if (image.src == sidebar_arrow_expanded.src) {
 				collapsables[idx].onclick =
 					function() { arrowCollapse(prefix, this, collapseFun, expandFun); }
-				showhide_collapse(prefix, collapsables[idx], false);
+				collapsables_collapse(prefix, collapsables[idx], false);
 			} else {
 				collapsables[idx].onclick =
 					function() { arrowExpand(prefix, this, collapseFun, expandFun); }
-				showhide_collapse(prefix, collapsables[idx], true);
+				collapsables_collapse(prefix, collapsables[idx], true);
 			}
 
 			// prevent selecting trigger (looks ugly)
@@ -44,27 +44,27 @@ function setupCollapsables(docroot, prefix, collapseFun, expandFun) {
 	}
 }
 
-function showhide_findClassNames(node, classname)
+function collapsables_findClassNames(node, classname)
 {
 	var classNodes = [];
 	for (var idx = 0; idx < node.childNodes.length; ++idx) {
 		if (node.childNodes[idx].className == classname)
 			classNodes.push(node.childNodes[idx]);
 
-		var nodes = showhide_findClassNames(node.childNodes[idx], classname);
+		var nodes = collapsables_findClassNames(node.childNodes[idx], classname);
 		classNodes = classNodes.concat(nodes);
 	}
 
 	return classNodes;
 }
 
-function showhide_findFirstClassName(node, classname)
+function collapsables_findFirstClassName(node, classname)
 {
-	classNodes = showhide_findClassNames(node, classname);
+	classNodes = collapsables_findClassNames(node, classname);
 	return classNodes[0];
 }
 
-function showhide_getRoot(prefix, node)
+function collapsables_getRoot(prefix, node)
 {
 	while (node.className != prefix)
 		node = node.parentNode;
@@ -72,22 +72,22 @@ function showhide_getRoot(prefix, node)
 	return node;
 }
 
-function showhide_getTrigger(prefix, node)
+function collapsables_getTrigger(prefix, node)
 {
-	var root = showhide_getRoot(prefix, node);
-	return showhide_findFirstClassName(root, prefix + '-trigger');
+	var root = collapsables_getRoot(prefix, node);
+	return collapsables_findFirstClassName(root, prefix + '-trigger');
 }
 
-function showhide_getCollapsee(prefix, node)
+function collapsables_getCollapsee(prefix, node)
 {
-	var root = showhide_getRoot(prefix, node);
-	return showhide_findFirstClassName(root, prefix + '-object');
+	var root = collapsables_getRoot(prefix, node);
+	return collapsables_findFirstClassName(root, prefix + '-object');
 }
 
-function showhide_getImage(prefix, node)
+function collapsables_getImage(prefix, node)
 {
-	var root = showhide_getRoot(prefix, node);
-	return showhide_findFirstClassName(root, prefix + '-icon');
+	var root = collapsables_getRoot(prefix, node);
+	return collapsables_findFirstClassName(root, prefix + '-icon');
 }
 
 function arrowCollapse(prefix, triggered, collapseFun, expandFun)
@@ -103,7 +103,7 @@ function arrowExpand(prefix, triggered, collapseFun, expandFun)
 function arrowChange(prefix, triggered, collapse, collapseFun, expandFun)
 {
 	// animate image
-	var image = showhide_getImage(prefix, triggered);
+	var image = collapsables_getImage(prefix, triggered);
 	image.src = sidebar_arrow_halfway.src;
 	if (collapse) {
 		setTimeout(
@@ -112,11 +112,11 @@ function arrowChange(prefix, triggered, collapse, collapseFun, expandFun)
 		setTimeout(
 			function() { image.src = sidebar_arrow_expanded.src; }, 100);
 	}
-	showhide_collapse(prefix, triggered, collapse);
+	collapsables_collapse(prefix, triggered, collapse);
 
 	// triggered isn't necessarily the trigger itself, can be a
 	// childnode, so get the real trigger node
-	var trigger = showhide_getTrigger(prefix, triggered);
+	var trigger = collapsables_getTrigger(prefix, triggered);
 	if (collapse) {
 		if (collapseFun)
 			collapseFun(trigger);
@@ -132,10 +132,10 @@ function arrowChange(prefix, triggered, collapse, collapseFun, expandFun)
 	}
 }
 
-function showhide_collapse(prefix, triggered, collapse)
+function collapsables_collapse(prefix, triggered, collapse)
 {
 	// do the collapse
-	var collapsee = showhide_getCollapsee(prefix, triggered);
+	var collapsee = collapsables_getCollapsee(prefix, triggered);
 	if (collapse) {
 		collapsee.style.display = 'none';
 	} else {
@@ -143,7 +143,7 @@ function showhide_collapse(prefix, triggered, collapse)
 	}
 
 	// force refresh on certain browsers
-	root = showhide_getRoot(prefix, triggered);
+	root = collapsables_getRoot(prefix, triggered);
 	root.style.display = 'none';
 	root.style.display = '';
 }
