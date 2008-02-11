@@ -18,8 +18,9 @@ class Users(View):
 		if len(path) < 1:
 			return ErrorResponse('Invalid path', request=req)
 
-		if len(path) > 1:
+		if len(path) > 0:
 			localvars['selected_type'] = 'users'
+		if len(path) > 1:
 			localvars['selected_object'] = path[1]
 
 		if path[0] == 'show':
