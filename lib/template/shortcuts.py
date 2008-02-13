@@ -33,6 +33,13 @@ def evaluate_main(templatename, templatevariables={}, request=None):
 	groups = []
 	authz_groups = config.authz.groups()
 	authz_groups.sort()
+
+	# make sure submin-admins is in front (it's special!)
+	special_group = 'submin-admins'
+	if special_group in authz_groups:
+		authz_groups.remove(special_group)
+		authz_groups.insert(0, special_group)
+
 	for groupname in authz_groups:
 		group = Group(groupname)
 		if is_admin or session_user.name in group.members:
