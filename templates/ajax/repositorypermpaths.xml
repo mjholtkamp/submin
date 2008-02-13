@@ -1,0 +1,7 @@
+<response>
+	<success>True</success>
+	<paths repository="[val repository]">
+		[iter:paths <path name="[ival]"/>
+		]
+	</paths>
+</response>
