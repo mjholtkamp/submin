@@ -27,3 +27,11 @@ class Path(object):
 
 	def __add__(self, other):
 		return self.join(other)
+
+	def __str__(self):
+		path = self.path
+		if self.append_slash:
+			path += "/"
+		else:
+			path = path.rstrip("/")
+		return path

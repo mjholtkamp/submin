@@ -39,5 +39,9 @@ class PathTests(unittest.TestCase):
 		p2 = Path("/jeanpaul/")
 		self.assertEquals(p1 + p2, "/home/jeanpaul")
 
+	def testStr(self):
+		p = Path("/home/jeanpaul/")
+		self.assertEquals(str(p), "/home/jeanpaul")
+
 if __name__ == "__main__":
 	unittest.main()
