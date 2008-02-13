@@ -59,6 +59,7 @@ class Authz:
 	def paths(self, repository=None):
 		"""Returns all the repository:path entries in the authz-file
 		   if repository is given, returns only paths that belong to it."""
+		from path.path import Path
 		sections = []
 		for section in self.parser.sections():
 			if section != 'groups':
@@ -69,7 +70,9 @@ class Authz:
 				elif section.startswith('user.'):
 					pass
 				else:
-					sections.append(section.split(':', 1))
+					s = section.split(':', 1)
+					s[1] = str(Path(s[1], absolute=True))
+					sections.append(s)
 		return sections
 
 	def users(self):
