@@ -6,6 +6,7 @@ from models.user import User
 from models.group import Group
 from models.repository import Repository
 from auth.decorators import *
+from path.path import Path
 
 class Repositories(View):
 	@login_required
@@ -82,13 +83,11 @@ class Repositories(View):
 		except (IndexError, Repository.DoesNotExist):
 			return ErrorResponse('This repository does not exist.', request=req)
 
-		svn_path = req.post['getpermissions'].value.rstrip('/')
-		if not svn_path.startswith('/'):
-			svn_path = '/' + svn_path
+		svn_path = Path(req.post['getpermissions'].value)
 
 		perms = []
 		authz_paths = [x[1] for x in repository.authz_paths]
-		if svn_path in authz_paths:
+		if str(svn_path) in authz_paths:
 			perms = config.authz.permissions(repositoryname, svn_path)
 
 		templatevars = {'perms': perms, 'repository': repositoryname, 'path': svn_path}
