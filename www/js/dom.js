@@ -39,21 +39,29 @@ function byTag(elem, tag) {
 
 /* Adds a className to element */
 function addClassName(element, nClassName) {
-	var classnames = element.className.split(/\s+/);
-	classnames[classnames.length] = nClassName;
+	try {
+		var classnames = element.className.split(/\s+/);
+	} catch (e) {
+		var classnames = new Array();
+	}
+	if (!classnames.member(nClassName))
+		classnames[classnames.length] = nClassName;
 	element.className = classnames.join(' ');
 }
 
 /* Removes a classname from element */
 function removeClassName(element, oClassName) {
+	if (!element.className)
+		return;
+
 	if (element.className == oClassName) {
 		element.className = '';
 		return;
 	}
-	
+
 	if (element.className.indexOf(' ') < 0)
 		return;
-		
+
 	var classnames = element.className.split(/\s+/);
 	classnames.del(oClassName);
 	element.className = classnames.join(' ');
@@ -93,3 +101,4 @@ var Element = {
 		elem.style.display = 'none';
 	}
 }
+
