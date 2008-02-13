@@ -94,6 +94,17 @@ class Repositories(View):
 		templatevars = {'perms': perms, 'repository': repositoryname, 'path': svn_path}
 		return XMLTemplateResponse('ajax/repositoryperms.xml', templatevars)
 
+	def getpermissionpaths(self, req, repositoryname):
+		config = Config()
+		try:
+			repository = Repository(repositoryname)
+		except (IndexError, Repository.DoesNotExist):
+			return ErrorResponse('This repository does not exist.', request=req)
+
+		authz_paths = [x[1] for x in repository.authz_paths]
+		templatevars = {'repository': repositoryname, 'paths': authz_paths}
+		return XMLTemplateResponse('ajax/repositorypermpaths.xml', templatevars)
+
 	def ajaxhandler(self, req, path):
 		repositoryname = ''
 
@@ -108,6 +119,9 @@ class Repositories(View):
 
 		if 'getpermissions' in req.post:
 			return self.getpermissions(req, repositoryname)
+
+		if 'getpermissionpaths' in req.post:
+			return self.getpermissionpaths(req, repositoryname)
 
 		return XMLStatusResponse(False, 'operations for repositories are not yet implemented')
 
