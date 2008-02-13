@@ -1,4 +1,5 @@
-load('dom')
+load('dom');
+load('window');
 
 var Log_timeout;
 
@@ -54,25 +55,6 @@ function MoveLog() {
 	} else {
 		RemoveLog(log)
 	}
-}
-
-/* from quirksmode.org */
-function WindowWidth() {
-	if (self.innerWidth)
-	{
-		frameWidth = self.innerWidth;
-	}
-	else if (document.documentElement && document.documentElement.clientWidth)
-	{
-		frameWidth = document.documentElement.clientWidth;
-	}
-	else if (document.body)
-	{
-		frameWidth = document.body.clientWidth;
-	}
-	else return;
-
-	return frameWidth;
 }
 
 // from: http://www.elektronaut.no/articles/2006/06/07/computed-styles
