@@ -9,22 +9,42 @@ repository_tree = new ReposNode('repostree');
 var repos_old_load = window.onload;
 window.onload = function() {
 	if (repos_old_load) repos_old_load();
-	setupCollapsables(document.getElementById('content'), 'repostree', null, getsubdirs);
+	setupCollapsables(document.getElementById('content'), 'repostree', repostree_collapseCB, repostree_expandCB);
 	repository_tree.attach('repostree_/');
 
-	getsubdirs(repository_tree.trigger);
+	repostree_expandCB(repository_tree.trigger);
 }
 
-function getsubdirs(me)
+function repostree_getnode(me)
 {
-	// get reposnode that is linked to element 'me'
 	var root = collapsables_getRoot(repository_tree.prefix, me);
 	if (!root)
-		return;
+		return null;
+
 	var reposnode = repository_tree.findNodeById(root.id);
 	if (!reposnode)
-		return;
+		return null;
 
+	return reposnode;
+}
+
+// callback function for when reposnode collapses
+function repostree_collapseCB(me)
+{
+	reposnode = repostree_getnode(me);
+	reposnode.collapsed = true;
+}
+
+// callback function for when reposnode expands
+function repostree_expandCB(me)
+{
+	reposnode = repostree_getnode(me);
+	reposnode.collapse = false;
+	getsubdirs(reposnode);
+}
+
+function getsubdirs(reposnode)
+{
 	var response = AjaxSyncPostRequest(document.location, 'getsubdirs=' + reposnode.path);
 
 	// log in case there is a problem
@@ -39,7 +59,7 @@ function getsubdirs(me)
 
 		reposnode.createChild(dir, has_subdirs);
 	}
-	setupCollapsables(reposnode.collapsee, reposnode.prefix, null, getsubdirs);
+	setupCollapsables(reposnode.collapsee, reposnode.prefix, repostree_collapseCB, repostree_expandCB);
 }
 
 function permissions_update(prefix, triggered)
