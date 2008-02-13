@@ -11,23 +11,23 @@
  * Callbacks are called when the trigger is triggered. There are two callbacks:
  * one for collapsing and one for expanding.
  */
-var sidebar_arrow_collapsed = new Image();
-var sidebar_arrow_halfway = new Image();
-var sidebar_arrow_expanded = new Image();
+var collapsables_arrow_collapsed = new Image();
+var collapsables_arrow_halfway = new Image();
+var collapsables_arrow_expanded = new Image();
 
 function setupCollapsables(docroot, prefix, collapseFun, expandFun) {
 	var collapsables = collapsables_findClassNames(docroot, prefix + '-trigger');
 
-	sidebar_arrow_collapsed.src = media_url + '/img/arrow-collapsed.png';
-	sidebar_arrow_halfway.src = media_url + '/img/arrow-halfway.png';
-	sidebar_arrow_expanded.src = media_url + '/img/arrow-expanded.png';
+	collapsables_arrow_collapsed.src = media_url + '/img/arrow-collapsed.png';
+	collapsables_arrow_halfway.src = media_url + '/img/arrow-halfway.png';
+	collapsables_arrow_expanded.src = media_url + '/img/arrow-expanded.png';
 
 	for (var idx = 0; idx < collapsables.length; ++idx) {
 		image = collapsables_getImage(prefix, collapsables[idx]);
 
 		// if no image, assume not collapsable (sometimes needed for bootstrap)
 		if (image && image.src) {
-			if (image.src == sidebar_arrow_expanded.src) {
+			if (image.src == collapsables_arrow_expanded.src) {
 				collapsables[idx].onclick =
 					function() { arrowCollapse(prefix, this, collapseFun, expandFun); }
 				collapsables_collapse(prefix, collapsables[idx], false);
@@ -93,7 +93,7 @@ function collapsables_getImage(prefix, node)
 function collapsables_isCollapsed(prefix, node)
 {
 	var image = collapsables_getImage(prefix, node);
-	if (image && image.src && image.src == sidebar_arrow_collapsed.src)
+	if (image && image.src && image.src == collapsables_arrow_collapsed.src)
 		return true;
 
 	return false;
@@ -113,13 +113,13 @@ function arrowChange(prefix, triggered, collapse, collapseFun, expandFun)
 {
 	// animate image
 	var image = collapsables_getImage(prefix, triggered);
-	image.src = sidebar_arrow_halfway.src;
+	image.src = collapsables_arrow_halfway.src;
 	if (collapse) {
 		setTimeout(
-			function() { image.src = sidebar_arrow_collapsed.src; }, 100);
+			function() { image.src = collapsables_arrow_collapsed.src; }, 100);
 	} else {
 		setTimeout(
-			function() { image.src = sidebar_arrow_expanded.src; }, 100);
+			function() { image.src = collapsables_arrow_expanded.src; }, 100);
 	}
 	collapsables_collapse(prefix, triggered, collapse);
 
