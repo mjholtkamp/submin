@@ -93,7 +93,7 @@ function collapsables_getImage(prefix, node)
 function collapsables_isCollapsed(prefix, node)
 {
 	var image = collapsables_getImage(prefix, node);
-	if (image.src == sidebar_arrow_collapsed.src)
+	if (image && image.src && image.src == sidebar_arrow_collapsed.src)
 		return true;
 
 	return false;
