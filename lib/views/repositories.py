@@ -82,7 +82,7 @@ class Repositories(View):
 		except (IndexError, Repository.DoesNotExist):
 			return ErrorResponse('This repository does not exist.', request=req)
 
-		svn_path = req.post['getpermissions'].value
+		svn_path = req.post['getpermissions'].value.rstrip('/')
 		if not svn_path.startswith('/'):
 			svn_path = '/' + svn_path
 
