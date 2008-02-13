@@ -1,9 +1,10 @@
 import os.path
 
 class Path(object):
-	def __init__(self, path, append_slash=False):
-		self.path = path
+	def __init__(self, path, append_slash=False, absolute=True):
 		self.append_slash = append_slash
+		self.absolute = absolute
+		self.path = self.canonicalize(path)
 
 	def basename(self):
 		return os.path.basename(self.path)
@@ -13,25 +14,28 @@ class Path(object):
 
 	def join(self, other):
 		if isinstance(other, Path):
-			other = other.path
+			other = other.path.lstrip('/')
 
-		if other[0] == "/":
-			other = other.lstrip('/')
+		other = os.path.join(self.path, other)
 
-		newpath = os.path.join(self.path, other)
-		if self.append_slash:
-			newpath += "/"
+		return self.canonicalize(other)
+
+	def canonicalize(self, path):
+		'''Return canonical form of path, depending on options'''
+		if not self.absolute:
+			path = path.lstrip('/')
 		else:
-			newpath = newpath.rstrip("/")
-		return newpath
+			if path[0] != '/':
+				path = '/' + path
+
+		if self.append_slash:
+			return path + '/'
+
+		return path.rstrip('/')
 
 	def __add__(self, other):
 		return self.join(other)
 
 	def __str__(self):
-		path = self.path
-		if self.append_slash:
-			path += "/"
-		else:
-			path = path.rstrip("/")
-		return path
+		return self.path
+

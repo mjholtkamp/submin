@@ -21,8 +21,12 @@ class PathTests(unittest.TestCase):
 		self.assertEquals(p.dirname(), "/home/jeanpaul")
 
 	def testDirnameForFile(self):
-		p = Path("/home/jeanpaul/")
+		p = Path("/home/jeanpaul/", append_slash=True)
 		self.assertEquals(p.dirname(), "/home/jeanpaul")
+
+	def testDirnameForFileNoAppend(self):
+		p = Path("/home/michiel")
+		self.assertEquals(p.dirname(), "/home")
 
 	def testConcatRelative(self):
 		p1 = Path("/home")
@@ -42,6 +46,10 @@ class PathTests(unittest.TestCase):
 	def testStr(self):
 		p = Path("/home/jeanpaul/")
 		self.assertEquals(str(p), "/home/jeanpaul")
+
+	def testAbsoluteFix(self):
+		p = Path("home/michiel")
+		self.assertEquals(str(p), "/home/michiel")
 
 if __name__ == "__main__":
 	unittest.main()
