@@ -20,6 +20,11 @@ span.repostree-noncollapsable {
 	cursor: pointer;
 }
 
+#repostree li span.has-perms {
+	font-style: italic;
+	color: blue;
+}
+
 div#repostree {
 	float: left;
 }
@@ -34,3 +39,4 @@ div#permissions-view {
 div#permissions-view label {
 	width: 10em;
 }
+

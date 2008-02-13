@@ -3,6 +3,7 @@ load('array');
 
 // for ReposNode object, see below
 repository_tree = new ReposNode('repostree');
+repository_paths = new Array();
 
 // Using window.onload because an onclick="..." handler doesn't give the
 // handler a this-variable
@@ -12,6 +13,7 @@ window.onload = function() {
 	setupCollapsables(document.getElementById('content'), 'repostree', repostree_collapseCB, repostree_expandCB);
 	repository_tree.attach('repostree_/');
 
+	repostree_getpaths();
 	repostree_expandCB(repository_tree.trigger);
 }
 
@@ -33,14 +35,68 @@ function repostree_collapseCB(me)
 {
 	reposnode = repostree_getnode(me);
 	reposnode.collapsed = true;
+	repostree_markPermissions(reposnode);
 }
 
 // callback function for when reposnode expands
 function repostree_expandCB(me)
 {
 	reposnode = repostree_getnode(me);
-	reposnode.collapse = false;
+	reposnode.collapsed = false;
 	getsubdirs(reposnode);
+	repostree_markPermissions(reposnode);
+}
+
+// mark ReposNodes which have permissions
+function repostree_markPermissions(reposnode)
+{
+	var mark = false;
+	for (var idx = 0; idx < repository_paths.length; ++idx) {
+		elem = repository_paths[idx];
+		if (reposnode.collapsed) {
+			if (reposnode.path == elem.substring(0, reposnode.path.length)) {
+				mark = true;
+				break;
+			}
+		} else {
+			if (reposnode.path == elem) {
+				mark = true;
+				break;
+			}
+		}
+	}
+
+	var node;
+	if (reposnode.has_subdirs) {
+		node = reposnode.root.childNodes[1];
+	} else {
+		node = reposnode.root.childNodes[0];
+	}
+
+	if (mark) {
+		addClassName(node, 'has-perms');
+	} else {
+		removeClassName(node, 'has-perms');
+	}
+
+	for (var idx = 0; idx < reposnode.children.length; ++idx)
+		repostree_markPermissions(reposnode.children[idx]);
+}
+
+function repostree_getpaths()
+{
+	var response = AjaxSyncPostRequest(document.location, 'getpermissionpaths');
+
+	// log in case there is a problem
+	Log(response.text, response.success);
+
+	var permpaths = document.getElementById('permissions-paths');
+
+	var paths = response.xml.getElementsByTagName('path');
+	for (var idx = 0; idx < paths.length; ++idx) {
+		var path = paths[idx].getAttribute('name');
+		repository_paths.push(path);
+	}
 }
 
 function getsubdirs(reposnode)
@@ -115,8 +171,6 @@ function ReposNode(prefix)
 ReposNode.prototype.id2path = function(id)
 {
 	var path = id.substring(this.prefix.length + 1, id.length);
-	if (path != '/')
-		path += '/';
 
 	return path;
 }
@@ -138,7 +192,11 @@ ReposNode.prototype.attach = function(id)
  */
 ReposNode.prototype.createChild = function(dir, has_subdirs)
 {
-	var new_id = this.prefix + '_' + this.path + dir;
+	var path = this.path;
+	if (path != '/')
+		path += '/';
+
+	var new_id = this.prefix + '_' + path + dir;
 
 	// already added to structure?
 	var added = document.getElementById(new_id);
