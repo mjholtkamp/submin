@@ -20,7 +20,11 @@ window.onload = function() {
 	}
 
 	setupSidebarImages();
-	setupCollapsables(document.getElementById('sidebar'), "showhide");
+	var sidebar = document.getElementById('sidebar')
+	setupCollapsables(sidebar, "showhide");
+
+	sidebar.onmousedown = function() { return false; }
+	sidebar.onselectstart = function() { return false; } // ie
 }
 
 var sidebar_img_add_user = new Image();
