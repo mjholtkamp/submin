@@ -1,6 +1,5 @@
 load('dom');
 load('array');
-load('overlay');
 
 // for ReposNode object, see below
 repository_tree = new ReposNode('repostree');
@@ -121,8 +120,6 @@ function getsubdirs(reposnode)
 
 function permissions_update(prefix, triggered)
 {
-	Overlay();
-
 	var li = triggered;
 	while (li.nodeName.toLowerCase() != 'li')
 		li = li.parentNode;
