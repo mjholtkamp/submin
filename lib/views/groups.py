@@ -111,7 +111,7 @@ class Groups(View):
 
 		success = Group(groupname).removeMember(username)
 		msgs = {True: 'User %s removed from group %s' % (username, groupname),
-				False: 'No such user'}
+				False: 'User %s is not a member of group %s' % (username, groupname)}
 		return XMLStatusResponse(success, msgs[success])
 
 	@admin_required
