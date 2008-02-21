@@ -1,6 +1,6 @@
 from dispatch.view import View
 from template.shortcuts import evaluate_main
-from dispatch.response import Response, XMLStatusResponse
+from dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse
 from views.error import ErrorResponse
 from models.user import User, addUser, UserExists
 from models.group import Group
@@ -98,6 +98,9 @@ class Users(View):
 		if 'removeFromGroup' in req.post:
 			return self.removeFromGroup(req, user)
 
+		if 'initSelector' in req.post:
+			return self.initSelector(req, user)
+
 		return XMLStatusResponse(False,
 			'You tried to submit an empty field value')
 
@@ -128,6 +131,11 @@ class Users(View):
 				False: 'User %s already in group %s' % (user.name, group.name)
 				}
 		return XMLStatusResponse(success, msgs[success])
+
+	def initSelector(self, req, user):
+		return XMLTemplateResponse("ajax/usermemberof.xml",
+				{"memberof": user.member_of, "nonmemberof": user.nonmember_of,
+					"user": user.name})
 
 	@admin_required
 	def removeFromGroup(self, req, user):

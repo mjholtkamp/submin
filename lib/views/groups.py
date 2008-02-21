@@ -1,6 +1,6 @@
 from dispatch.view import View
 from template.shortcuts import evaluate_main
-from dispatch.response import Response, XMLStatusResponse
+from dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse
 from views.error import ErrorResponse
 from models.user import User
 from models.group import Group, addGroup
@@ -98,7 +98,15 @@ class Groups(View):
 		if 'addMember' in req.post:
 			return self.addMember(req, groupname)
 
+		if 'initSelector' in req.post:
+			return self.initSelector(req, Group(groupname))
+
 		return XMLStatusResponse(False, 'You tried to submit an empty field value')
+
+	def initSelector(self, req, group):
+		return XMLTemplateResponse("ajax/groupmembers.xml",
+				{"members": group.members, "nonmembers": group.nonmembers,
+					"group": group.name});
 
 	@admin_required
 	def removeMember(self, req, groupname):
