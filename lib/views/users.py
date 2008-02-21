@@ -37,7 +37,8 @@ class Users(View):
 
 		is_admin = req.session['user'].is_admin
 		if not is_admin and path[0] != req.session['user'].name:
-			return ErrorResponse('Not permitted', request=req)
+			return ErrorResponse('Permission denied to view this user',
+					request=req)
 
 		try:
 			user = User(path[0])
@@ -133,8 +134,17 @@ class Users(View):
 		return XMLStatusResponse(success, msgs[success])
 
 	def initSelector(self, req, user):
+		if req.session['user'].is_admin:
+			return XMLTemplateResponse("ajax/usermemberof.xml",
+					{"memberof": user.member_of,
+						"nonmemberof": user.nonmember_of, "user": user.name})
+
+		if req.session['user'].name != user.name:
+			return XMLStatusResponse(False, "You do not have permission to "
+					"view this user.")
+
 		return XMLTemplateResponse("ajax/usermemberof.xml",
-				{"memberof": user.member_of, "nonmemberof": user.nonmember_of,
+				{"memberof": user.member_of, "nonmemberof": [],
 					"user": user.name})
 
 	@admin_required

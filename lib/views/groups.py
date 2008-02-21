@@ -104,9 +104,18 @@ class Groups(View):
 		return XMLStatusResponse(False, 'You tried to submit an empty field value')
 
 	def initSelector(self, req, group):
+		if req.session['user'].is_admin:
+			return XMLTemplateResponse("ajax/groupmembers.xml",
+					{"members": group.members, "nonmembers": group.nonmembers,
+						"group": group.name})
+
+		if group.name not in req.session['user'].member_of:
+			return XMLStatusResponse(False, "You do not have permission to"
+					"view this group.")
+
 		return XMLTemplateResponse("ajax/groupmembers.xml",
-				{"members": group.members, "nonmembers": group.nonmembers,
-					"group": group.name});
+				{"members": group.members, "nonmembers": [],
+					"group": group.name})
 
 	@admin_required
 	def removeMember(self, req, groupname):
