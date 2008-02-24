@@ -1,5 +1,6 @@
 load('dom');
 load('array');
+load('window');
 
 // for ReposNode object, see below
 repository_tree = new ReposNode('repostree');
@@ -15,6 +16,31 @@ window.onload = function() {
 
 	repostree_getpaths();
 	repostree_expandCB(repository_tree.trigger);
+	fix_content_div();
+}
+
+var repos_old_resize = window.onresize;
+window.onresize = function() {
+	if (repos_old_resize) repos_old_resize();
+	fix_content_div();
+}
+
+function fix_content_div()
+{
+	var content = document.getElementById('content');
+	if (!content)
+		return;
+
+	var width = WindowWidth() - 200;
+	content.style.width = '' + width + 'px';
+
+	var repostree = document.getElementById('repostree');
+	var permissions_view = document.getElementById('permissions-view');
+
+	width = width / 2 - 4;
+
+	repostree.style.width = '' + width + 'px';
+	permissions_view.style.width = '' + width + 'px';
 }
 
 function repostree_getnode(me)

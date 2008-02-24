@@ -26,10 +26,7 @@ body {
 #sidebar ul {
 	margin: 0;
 }
-#content {
-	float: left;
-	margin-left: 10px;
-}
+
 #sidebar h1 {
 	color: #505D6D;
 	margin: 0;

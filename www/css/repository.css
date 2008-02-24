@@ -27,13 +27,16 @@ span.repostree-noncollapsable {
 
 div#repostree {
 	float: left;
+	white-space: nowrap;
+	overflow: auto;
+	width: 49%; /* overwritten by www/js/repostree.js: fix_content_div() */
 }
 
 div#permissions-view {
-	border: 1px solid black;
 	float: right;
-	width: 300px;
-	margin-left: 10em;
+	width: 49%; /* overwritten by www/js/repostree.js: fix_content_div() */
+	border: 1px solid black;
+	overflow: auto;
 }
 
 div#permissions-view label {

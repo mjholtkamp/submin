@@ -3,6 +3,14 @@ body {
 	font-family: Verdana, Arial, Sans-serif;
 }
 
+#content {
+	float: left;
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	margin-left: 180px;
+}
+
 ul { 
 	padding-left: 0em; 
 }
