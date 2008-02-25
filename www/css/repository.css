@@ -29,17 +29,17 @@ div#repostree {
 	float: left;
 	white-space: nowrap;
 	overflow: auto;
-	width: 49%; /* overwritten by www/js/repostree.js: fix_content_div() */
+	width: 49%; /* overwritten by www/js/repostree.js: resize_content_div() */
 }
 
-div#permissions-view {
+div#permissions-editor {
 	float: right;
-	width: 49%; /* overwritten by www/js/repostree.js: fix_content_div() */
+	width: 49%; /* overwritten by www/js/repostree.js: resize_content_div() */
 	border: 1px solid black;
 	overflow: auto;
 }
 
-div#permissions-view label {
+div#permissions-editor label {
 	width: 10em;
 }
 

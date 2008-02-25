@@ -1,6 +1,7 @@
 load('dom');
 load('array');
 load('window');
+load('permeditor');
 
 // for ReposNode object, see below
 repository_tree = new ReposNode('repostree');
@@ -17,6 +18,7 @@ window.onload = function() {
 	repostree_getpaths();
 	repostree_expandCB(repository_tree.trigger);
 	resize_content_div();
+	initPermissionsEditor('/');
 }
 
 var repos_old_resize = window.onresize;
@@ -35,12 +37,12 @@ function resize_content_div()
 	content.style.width = '' + width + 'px';
 
 	var repostree = document.getElementById('repostree');
-	var permissions_view = document.getElementById('permissions-view');
+	var permissions_editor = document.getElementById('permissions-editor');
 
 	width = width / 2 - 4;
 
 	repostree.style.width = '' + width + 'px';
-	permissions_view.style.width = '' + width + 'px';
+	permissions_editor.style.width = '' + width + 'px';
 }
 
 function repostree_getnode(me)
@@ -144,7 +146,7 @@ function getsubdirs(reposnode)
 	setupCollapsables(reposnode.collapsee, reposnode.prefix, repostree_collapseCB, repostree_expandCB);
 }
 
-function permissions_update(prefix, triggered)
+function reloadPermissions(triggered)
 {
 	var li = triggered;
 	while (li.nodeName.toLowerCase() != 'li')
@@ -152,34 +154,74 @@ function permissions_update(prefix, triggered)
 
 	path = repository_tree.id2path(li.id);
 
-	var permview = document.getElementById('permissions-view');
+	initPermissionsEditor(path);
+}
+
+function loadPermissions(path)
+{
+	var permview = document.getElementById('permissions-editor');
 	var h3 = permview.getElementsByTagName('h3')[0];
 	h3.innerHTML = path;
 
-	// first clear list
-	var permlist = document.getElementById('permissions-list');
-	while (permlist.childNodes.length >= 1)
-		permlist.removeChild(permlist.firstChild);
+	// get users
+	userresponse = AjaxSyncPostRequest(media_url + '/users/', 'list');
+	Log(userresponse.text, userresponse.success);
+	var addable = new Array()
+	users = userresponse.xml.getElementsByTagName('user');
+	for (var idx = 0; idx < users.length; ++idx) {
+		addable[addable.length] = users[idx].getAttribute('name');
+	}
+
+	// get groups as well
+	groupresponse = AjaxSyncPostRequest(media_url + '/groups/', 'list');
+	Log(groupresponse.text, groupresponse.success);
+	groups = groupresponse.xml.getElementsByTagName('group');
+	for (var idx = 0; idx < groups.length; ++idx) {
+		addable[addable.length] = '@' + groups[idx].getAttribute('name');
+	}
+
+	addable[addable.length] = '*'; // for all users
+
+	addable.sort();
 
 	response = AjaxSyncPostRequest(document.location, 'getpermissions=' + path);
 	Log(response.text, response.success);
 	perms = response.xml.getElementsByTagName('member');
+	var added = [];
 	for (var idx = 0; idx < perms.length; ++idx) {
 		var name = perms[idx].getAttribute('name');
 		var perm = perms[idx].getAttribute('permission');
 
-		var label = document.createElement('label');
-		label.appendChild(document.createTextNode(name));
-
-		var span = document.createElement('span');
-		span.appendChild(document.createTextNode(perm));
-
-		var li = document.createElement('li');
-		li.appendChild(label);
-		li.appendChild(span);
-
-		permlist.appendChild(li);
+		added[added.length] = {"name": name, "permissions": perm};
+		delete addable.del(name);
 	}
+	return {'added': added, 'addable': addable};
+}
+
+function addPermissionToPath(id, path) {
+	var type = 'user';
+	if (id[0] == '@')
+		type = 'group';
+
+	AjaxSyncPostLog(document.location, 'addpermission&type=' + type + '&name=' + id + '&path=' + path);
+}
+
+function removePermissionFromPath(id, path) {
+	var type = 'user';
+	if (id[0] == '@')
+		type = 'group';
+
+	AjaxSyncPostLog(document.location, 'removepermission&type=' + type + '&name=' + id + '&path=' + path);
+}
+
+function initPermissionsEditor(path) {
+	var permissionsEditor = new PermissionsEditor({
+		"editorId": "permissions-list",
+		"initCallback": loadPermissions,
+		"addCallback": addPermissionToPath,
+		"removeCallback": removePermissionFromPath,
+		"path": path
+	});
 }
 
 //////////////////////////
@@ -259,7 +301,7 @@ ReposNode.prototype.createChild = function(dir, has_subdirs)
 		var span2 = document.createElement('span');
 		span2.appendChild(folder_img);
 		span2.appendChild(document.createTextNode(dir));
-		span2.onclick = function () { permissions_update(prefix, this); };
+		span2.onclick = function () { reloadPermissions(this); };
 
 		li.appendChild(span);
 		li.appendChild(span2);
@@ -273,7 +315,7 @@ ReposNode.prototype.createChild = function(dir, has_subdirs)
 		span.className = 'repostree-noncollapsable';
 		span.appendChild(folder_img);
 		span.appendChild(document.createTextNode(dir));
-		span.onclick = function () { permissions_update(prefix, this); };
+		span.onclick = function () { reloadPermissions(this); };
 		li.appendChild(span);
 	}
 
