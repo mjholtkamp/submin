@@ -32,6 +32,7 @@ class Repositories(View):
 
 		return ErrorResponse('Unknown path', request=req)
 
+	@admin_required
 	def show(self, req, path, localvars):
 		try:
 			repository = Repository(path[0])
@@ -42,6 +43,7 @@ class Repositories(View):
 		formatted = evaluate_main('repositories.html', localvars, request=req)
 		return Response(formatted)
 
+	@admin_required
 	def add(self, req, path, localvars):
 		config = Config()
 		media_url = config.get('www', 'media_url').rstrip('/')
@@ -65,44 +67,55 @@ class Repositories(View):
 		formatted = evaluate_main('newrepository.html', localvars, request=req)
 		return Response(formatted)
 
-	def getsubdirs(self, req, repositoryname):
-		try:
-			repository = Repository(repositoryname)
-		except (IndexError, Repository.DoesNotExist):
-			return ErrorResponse('This repository does not exist.', request=req)
-
+	@admin_required
+	def getsubdirs(self, req, repository):
 		svn_path = req.post['getsubdirs'].value.strip('/')
 		dirs = repository.getsubdirs(svn_path)
 		templatevars = {'dirs': dirs}
 		return XMLTemplateResponse('ajax/repositorytree.xml', templatevars)
 
-	def getpermissions(self, req, repositoryname):
+	@admin_required
+	def getpermissions(self, req, repository):
 		config = Config()
-		try:
-			repository = Repository(repositoryname)
-		except (IndexError, Repository.DoesNotExist):
-			return ErrorResponse('This repository does not exist.', request=req)
-
 		svn_path = Path(req.post['getpermissions'].value)
 
 		perms = []
 		authz_paths = [x[1] for x in repository.authz_paths]
 		if str(svn_path) in authz_paths:
-			perms = config.authz.permissions(repositoryname, svn_path)
+			perms = config.authz.permissions(repository.name, svn_path)
 
-		templatevars = {'perms': perms, 'repository': repositoryname, 'path': svn_path}
+		templatevars = {'perms': perms, 'repository': repository.name, 'path': svn_path}
 		return XMLTemplateResponse('ajax/repositoryperms.xml', templatevars)
 
-	def getpermissionpaths(self, req, repositoryname):
-		config = Config()
-		try:
-			repository = Repository(repositoryname)
-		except (IndexError, Repository.DoesNotExist):
-			return ErrorResponse('This repository does not exist.', request=req)
-
+	@admin_required
+	def getpermissionpaths(self, req, repository):
 		authz_paths = [x[1] for x in repository.authz_paths]
-		templatevars = {'repository': repositoryname, 'paths': authz_paths}
+		templatevars = {'repository': repository.name, 'paths': authz_paths}
 		return XMLTemplateResponse('ajax/repositorypermpaths.xml', templatevars)
+
+	@admin_required
+	def addpermission(self, req, repository):
+		config = Config()
+		name = req.post['name'].value
+		type = req.post['type'].value
+		path = req.post['path'].value
+
+		# add member with no permissions (let the user select that)
+		config.authz.setPermission(repository.name, path, name)
+		config.authz.save()
+		return XMLStatusResponse(True, ('User', 'Group')[type == 'group'] + ' %s added to path %s' % (name, path))
+
+	@admin_required
+	def removepermission(self, req, repository):
+		config = Config()
+		name = req.post['name'].value
+		type = req.post['type'].value
+		path = req.post['path'].value
+
+		config.authz.removePermission(repository.name, path, name)
+		config.authz.save()
+		return XMLStatusResponse(True, ('User', 'Group')[type == 'group'] + ' %s removed from path %s' % (name, path))
+
 
 	def ajaxhandler(self, req, path):
 		repositoryname = ''
@@ -113,14 +126,26 @@ class Repositories(View):
 		action = path[0]
 		repositoryname = path[1]
 
+		try:
+			repository = Repository(repositoryname)
+		except (IndexError, Repository.DoesNotExist):
+			return XMLStatusResponse(False,
+				'Repository %s does not exist.' % repositoryname)
+
 		if 'getsubdirs' in req.post:
-			return self.getsubdirs(req, repositoryname)
+			return self.getsubdirs(req, repository)
 
 		if 'getpermissions' in req.post:
-			return self.getpermissions(req, repositoryname)
+			return self.getpermissions(req, repository)
 
 		if 'getpermissionpaths' in req.post:
-			return self.getpermissionpaths(req, repositoryname)
+			return self.getpermissionpaths(req, repository)
+
+		if 'addpermission' in req.post:
+			return self.addpermission(req, repository)
+
+		if 'removepermission' in req.post:
+			return self.removepermission(req, repository)
 
 		return XMLStatusResponse(False, 'operations for repositories are not yet implemented')
 
