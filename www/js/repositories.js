@@ -193,7 +193,7 @@ function loadPermissions(path)
 		var perm = perms[idx].getAttribute('permission');
 
 		added[added.length] = {"name": name, "permissions": perm};
-		delete addable.del(name);
+		addable.del(name);
 	}
 	return {'added': added, 'addable': addable};
 }
