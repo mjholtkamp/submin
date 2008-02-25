@@ -224,6 +224,10 @@ class Authz:
 		retval = self.parser.remove_option(section, member)
 		if not retval:
 			raise UnknownMemberError(section, member)
+
+		if len(self.parser.items(section)) == 0:
+			self.parser.remove_section(section)
+
 		self.save()
 
 
