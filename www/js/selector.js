@@ -94,6 +94,7 @@ Selector.prototype.disableSelect = function() {
 
 	// Disable the add-button and change the cursor-style. Maybe hide?
 	this.select.adder.disabled_onclick = this.select.adder.onclick;
+	this.select.adder.firstChild.src = media_url + "/img/plus-greyed.png";
 	this.select.adder.onclick = function() { return false; }
 	this.select.adder.style.cursor = 'default';
 }
