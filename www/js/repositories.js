@@ -16,7 +16,7 @@ window.onload = function() {
 
 	repostree_getpaths();
 	repostree_expandCB(repository_tree.trigger);
-	fix_content_div();
+	resize_content_div();
 }
 
 var repos_old_resize = window.onresize;
@@ -25,7 +25,7 @@ window.onresize = function() {
 	fix_content_div();
 }
 
-function fix_content_div()
+function resize_content_div()
 {
 	var content = document.getElementById('content');
 	if (!content)
