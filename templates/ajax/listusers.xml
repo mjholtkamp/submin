@@ -1,0 +1,6 @@
+<response>
+	<success>True</success>
+	<users>
+		[iter:users <user name="[ival]" />]
+	</users>
+</response>
