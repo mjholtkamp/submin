@@ -16,7 +16,8 @@ class Repository(object):
 
 	def getsubdirs(self, path):
 		'''Return subdirs (not recursive) of 'path' relative to our reposdir
-		Subdirs are returned as a hash with two entities: 'name' and 'has_subdirs', which should speak for themselves.'''
+		Subdirs are returned as a hash with two entities: 'name' and 
+		'has_subdirs', which should be self-explanatory.'''
 		import pysvn
 		import os
 
@@ -44,8 +45,9 @@ class Repository(object):
 
 		client = pysvn.Client()
 		files = client.ls(url, recurse=False)
-		if len(files) > 0:
-			return True
+		for file in files:
+			if file['kind'] == 'dir':
+				return True
 
 		return False
 

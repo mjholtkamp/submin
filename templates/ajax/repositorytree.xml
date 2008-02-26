@@ -1,7 +1,6 @@
 <response>
 	<success>True</success>
 	<dirs>
-		[iter:dirs 
-			<dir has_subdirs="[val ival.has_subdirs]">[val ival.name]</dir>]
+		[iter:dirs <dir has_subdirs="[ival.has_subdirs]">[ival.name]</dir>]
 	</dirs>
 </response>
