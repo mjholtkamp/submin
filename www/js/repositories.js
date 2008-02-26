@@ -196,9 +196,14 @@ function loadPermissions(path)
 
 		added[added.length] = {"name": name, "permissions": perm, 'type': type};
 
-		var dict = {'type': type, 'name': name};
-		if (addable.index(dict) != -1)
-			addable.del(dict);
+		for (var addable_idx = 0; addable_idx < addable.length; ++addable_idx) {
+			if (addable[addable_idx].name == name &&
+				addable[addable_idx].type == type
+			) {
+				addable.splice(addable_idx, 1);
+				break;
+			}
+		}
 	}
 
 	return {'added': added, 'addable': addable};
