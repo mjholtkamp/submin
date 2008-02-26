@@ -1,10 +1,19 @@
 #!/usr/bin/python
 
-if __name__ == "__main__":
+def main():
 	from sys import argv, path
+	import os
 	path.append('_SUBMIN_LIB_DIR_')
-	path.append('/var/www/submin/lib')
-	from subminadmin.subminadmin import SubminAdmin
+	env = 'SUBMIN_LIB_DIR'
+	if env in os.environ:
+		path.append(os.environ[env])
+
+	try:
+		from subminadmin.subminadmin import SubminAdmin
+	except Exception, e:
+		print e
+		print "is environment %s set?" % env
+		return
 
 	try:
 		a = SubminAdmin()
@@ -12,3 +21,5 @@ if __name__ == "__main__":
 	except KeyboardInterrupt:
 		print
 
+if __name__ == "__main__":
+	main()
