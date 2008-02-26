@@ -122,6 +122,8 @@ function repostree_getpaths()
 
 	var permpaths = document.getElementById('permissions-paths');
 
+	// first empty array
+	repository_paths.splice(0, repository_paths.length);
 	var paths = response.xml.getElementsByTagName('path');
 	for (var idx = 0; idx < paths.length; ++idx) {
 		var path = paths[idx].getAttribute('name');
@@ -210,12 +212,22 @@ function loadPermissions(path)
 	return {'added': added, 'addable': addable};
 }
 
+function repostree_reMark(path)
+{
+	repostree_getpaths();
+	var id = 'repostree_' + path;
+	var node = repostree_getnode(document.getElementById(id));
+	repostree_markPermissions(node);
+}
+
 function addPermissionToPath(id, type, path) {
 	AjaxSyncPostLog(document.location, 'addpermission&type=' + type + '&name=' + id + '&path=' + path);
+	repostree_reMark(path);
 }
 
 function removePermissionFromPath(id, type, path) {
 	AjaxSyncPostLog(document.location, 'removepermission&type=' + type + '&name=' + id + '&path=' + path);
+	repostree_reMark(path);
 }
 
 function changePathPermission(id, type, permission, path) {
