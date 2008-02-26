@@ -82,7 +82,8 @@ function repostree_markPermissions(reposnode)
 	for (var idx = 0; idx < repository_paths.length; ++idx) {
 		elem = repository_paths[idx];
 		if (reposnode.collapsed) {
-			if (reposnode.path == elem.substring(0, reposnode.path.length)) {
+			if (reposnode.path == elem.substring(0, reposnode.path.length) &&
+				elem.charAt(reposnode.path.length) == '/') {
 				mark = true;
 				break;
 			}
