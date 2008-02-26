@@ -52,7 +52,7 @@ class Repositories(View):
 			import re
 
 			repository = req.post['repository'].value.strip()
-			if re.findall('[^a-zA-Z0-9_]', repository):
+			if re.findall('[^a-zA-Z0-9_-]', repository):
 				return ErrorResponse('Invalid characters in repository name', request=req)
 
 			url = media_url + '/repositories/show/' + repository

@@ -60,7 +60,7 @@ class Groups(View):
 			import re
 
 			groupname = req.post['groupname'].value.strip()
-			if re.findall('[^a-zA-Z0-9_]', groupname):
+			if re.findall('[^a-zA-Z0-9_-]', groupname):
 				return ErrorResponse('Invalid characters in groupname', request=req)
 
 			url = media_url + '/groups/show/' + groupname

@@ -58,7 +58,7 @@ class Users(View):
 			import re
 
 			username = req.post['username'].value.strip()
-			if re.findall('[^a-zA-Z0-9_]', username):
+			if re.findall('[^a-zA-Z0-9_-]', username):
 				return ErrorResponse('Invalid characters in username', request=req)
 			url = media_url + '/users/show/' + username
 			try:
