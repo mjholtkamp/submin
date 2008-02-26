@@ -52,16 +52,22 @@ function AjaxAsyncPostRequest(url, params, callback) {
 	transport.open('post', url, false);
 	transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	transport.setRequestHeader("Connection", "close");
-	transport.onreadystatechange = function() { callback(transport); };
+	transport.onreadystatechange = function() {
+		AjaxCallback(transport, callback);
+	};
 	transport.send('ajax&' + params);
 
 }
 
-function AjaxLog(transport) {
+function AjaxCallback(transport, callback) {
 	if (transport.readyState == 4) {
 		var response = Response(transport);
-		Log(response.text, response.success);
+		callback(response);
 	}
+}
+
+function AjaxLog(response) {
+	Log(response.text, response.success);
 }
 
 function AjaxAsyncPostLog(url, params) {
