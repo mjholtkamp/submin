@@ -77,8 +77,9 @@ PermissionsEditor.prototype.init = function() {
 PermissionsEditor.prototype.permissionsSelect = function(name, type, permissions) {
 	var select = $c("select");
 	var values = ['', 'r', 'rw'];
+	var inner = ['none', 'r', 'rw'];
 	for (var idx = 0; idx < values.length; ++idx) {
-		select.appendChild($c("option", {'value': values[idx], 'innerHTML': values[idx]}));
+		select.appendChild($c("option", {'value': values[idx], 'innerHTML': inner[idx]}));
 		if (values[idx] == permissions)
 			select.selectedIndex = idx;
 	}
