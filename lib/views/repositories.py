@@ -116,6 +116,18 @@ class Repositories(View):
 		config.authz.save()
 		return XMLStatusResponse(True, ('User', 'Group')[type == 'group'] + ' %s removed from path %s' % (name, path))
 
+	@admin_required
+	def setpermission(self, req, repository):
+		config = Config()
+		name = req.post['name'].value
+		type = req.post['type'].value
+		path = req.post['path'].value
+		permission = req.post['permission'].value
+
+		config.authz.setPermission(repository.name, path, name, type, permission)
+		config.authz.save()
+		return XMLStatusResponse(True, 'Permission for %s %s changed to %s' %
+			(('user', 'group')[type == 'group'], name, permission))
 
 	def ajaxhandler(self, req, path):
 		repositoryname = ''
@@ -146,6 +158,9 @@ class Repositories(View):
 
 		if 'removepermission' in req.post:
 			return self.removepermission(req, repository)
+
+		if 'setpermission' in req.post:
+			return self.setpermission(req, repository)
 
 		return XMLStatusResponse(False, 'operations for repositories are not yet implemented')
 

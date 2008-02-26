@@ -74,14 +74,21 @@ PermissionsEditor.prototype.init = function() {
 		this.disableSelect();
 }
 
-PermissionsEditor.prototype.permissionsSelect = function(permission) {
+PermissionsEditor.prototype.permissionsSelect = function(name, type, permissions) {
 	var select = $c("select");
 	var values = ['', 'r', 'rw'];
 	for (var idx = 0; idx < values.length; ++idx) {
 		select.appendChild($c("option", {'value': values[idx], 'innerHTML': values[idx]}));
-		if (values[idx] == permission)
+		if (values[idx] == permissions)
 			select.selectedIndex = idx;
 	}
+	var _this = this;
+	select.onchange = function() {
+		var permissions = values[parseInt(select.selectedIndex)];
+		_this.options.changeCallback(name, type, permissions, _this.options.path);
+		_this.reInit();
+		return false;
+	};
 	return select;
 }
 
@@ -90,19 +97,20 @@ PermissionsEditor.prototype.setupAddedItem = function(added) {
 		var permissions = added['permissions'];
 		if (permissions == '')
 			permissions = 'none';
+		var type = added['type'];
+		var name = added['name'];
 
-		var displayname = '[' + added['type'] + '] ' + added['name'];
+		var displayname = '[' + type + '] ' + name;
 		item.appendChild($c("label", {"innerHTML": displayname}));
-		item.appendChild(this.permissionsSelect(permissions));
+		item.appendChild(this.permissionsSelect(name, type, permissions));
 
 		var remover = this.makeButton("remover");
 		item.appendChild(remover);
 
 		var _this = this; // this is out of scope in onclick below!
-		var _type = added['type'];
 		remover.onclick = function() {
 			var name = this.parentNode.name;
-			_this.options.removeCallback(name, _type, _this.options.path);
+			_this.options.removeCallback(name, type, _this.options.path);
 			_this.reInit();
 			return false;
 		};

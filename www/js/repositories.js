@@ -211,12 +211,17 @@ function removePermissionFromPath(id, type, path) {
 	AjaxSyncPostLog(document.location, 'removepermission&type=' + type + '&name=' + id + '&path=' + path);
 }
 
+function changePathPermission(id, type, permission, path) {
+	AjaxSyncPostLog(document.location, 'setpermission&type=' + type + '&name=' + id + '&path=' + path + '&permission=' + permission);
+}
+
 function initPermissionsEditor(path) {
 	var permissionsEditor = new PermissionsEditor({
 		"editorId": "permissions-list",
 		"initCallback": loadPermissions,
 		"addCallback": addPermissionToPath,
 		"removeCallback": removePermissionFromPath,
+		"changeCallback": changePathPermission,
 		"path": path
 	});
 }
