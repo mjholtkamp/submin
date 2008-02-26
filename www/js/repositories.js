@@ -142,7 +142,7 @@ function getsubdirs(reposnode)
 	for (var idx = 0; idx < dirs.length; ++idx) {
 		dir = dirs[idx].childNodes[0].nodeValue;
 		var has_subdirs = false;
-		if (dirs[idx].getAttribute('has_subdirs'))
+		if (dirs[idx].getAttribute('has_subdirs') == 'True')
 			has_subdirs = true;
 
 		reposnode.createChild(dir, has_subdirs);

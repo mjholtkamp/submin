@@ -46,7 +46,7 @@ class Repository(object):
 		client = pysvn.Client()
 		files = client.ls(url, recurse=False)
 		for file in files:
-			if file['kind'] == 'dir':
+			if str(file['kind']) == 'dir':
 				return True
 
 		return False
