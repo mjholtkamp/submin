@@ -22,16 +22,18 @@ class Path(object):
 
 	def canonicalize(self, path):
 		'''Return canonical form of path, depending on options'''
+		path = path.rstrip('/')
+
 		if not self.absolute:
 			path = path.lstrip('/')
 		else:
-			if path[0] != '/':
+			if path == '' or path[0] != '/':
 				path = '/' + path
 
 		if self.append_slash:
 			return path + '/'
 
-		return path.rstrip('/')
+		return path
 
 	def __add__(self, other):
 		return self.join(other)
