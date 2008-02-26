@@ -24,7 +24,7 @@ window.onload = function() {
 var repos_old_resize = window.onresize;
 window.onresize = function() {
 	if (repos_old_resize) repos_old_resize();
-	fix_content_div();
+	resize_content_div();
 }
 
 function resize_content_div()
