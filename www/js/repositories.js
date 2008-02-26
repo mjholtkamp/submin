@@ -212,8 +212,9 @@ function loadPermissions(path)
 	return {'added': added, 'addable': addable};
 }
 
-function repostree_reMark(path)
+function repostree_reMark(response, path)
 {
+	AjaxLog(response);
 	repostree_getpaths();
 	var id = 'repostree_' + path;
 	var node = repostree_getnode(document.getElementById(id));
@@ -221,17 +222,15 @@ function repostree_reMark(path)
 }
 
 function addPermissionToPath(id, type, path) {
-	AjaxSyncPostLog(document.location, 'addpermission&type=' + type + '&name=' + id + '&path=' + path);
-	repostree_reMark(path);
+	AjaxAsyncPost(document.location, 'addpermission&type=' + type + '&name=' + id + '&path=' + path, function(response) { repostree_reMark(response, path); } );
 }
 
 function removePermissionFromPath(id, type, path) {
-	AjaxSyncPostLog(document.location, 'removepermission&type=' + type + '&name=' + id + '&path=' + path);
-	repostree_reMark(path);
+	AjaxAsyncPost(document.location, 'removepermission&type=' + type + '&name=' + id + '&path=' + path, function(response) { repostree_reMark(response, path); } );
 }
 
 function changePathPermission(id, type, permission, path) {
-	AjaxSyncPostLog(document.location, 'setpermission&type=' + type + '&name=' + id + '&path=' + path + '&permission=' + permission);
+	AjaxAsyncPostLog(document.location, 'setpermission&type=' + type + '&name=' + id + '&path=' + path + '&permission=' + permission);
 }
 
 function initPermissionsEditor(path) {
