@@ -169,7 +169,8 @@ function loadPermissions(path)
 	var addable = new Array()
 	users = userresponse.xml.getElementsByTagName('user');
 	for (var idx = 0; idx < users.length; ++idx) {
-		addable[addable.length] = users[idx].getAttribute('name');
+		addable[addable.length] =
+			{'type': 'user', 'name': users[idx].getAttribute('name')};
 	}
 
 	// get groups as well
@@ -177,12 +178,11 @@ function loadPermissions(path)
 	Log(groupresponse.text, groupresponse.success);
 	groups = groupresponse.xml.getElementsByTagName('group');
 	for (var idx = 0; idx < groups.length; ++idx) {
-		addable[addable.length] = '@' + groups[idx].getAttribute('name');
+		addable[addable.length] =
+			{'type': 'group', 'name': groups[idx].getAttribute('name')};
 	}
 
-	addable[addable.length] = '*'; // for all users
-
-	addable.sort();
+	addable[addable.length] = {'type': 'user', 'name': '*'}; // for all users
 
 	response = AjaxSyncPostRequest(document.location, 'getpermissions=' + path);
 	Log(response.text, response.success);
@@ -191,26 +191,23 @@ function loadPermissions(path)
 	for (var idx = 0; idx < perms.length; ++idx) {
 		var name = perms[idx].getAttribute('name');
 		var perm = perms[idx].getAttribute('permission');
+		var type = perms[idx].getAttribute('type');
 
-		added[added.length] = {"name": name, "permissions": perm};
-		addable.del(name);
+		added[added.length] = {"name": name, "permissions": perm, 'type': type};
+
+		var dict = {'type': type, 'name': name};
+		if (addable.index(dict) != -1)
+			addable.del(dict);
 	}
+
 	return {'added': added, 'addable': addable};
 }
 
-function addPermissionToPath(id, path) {
-	var type = 'user';
-	if (id[0] == '@')
-		type = 'group';
-
+function addPermissionToPath(id, type, path) {
 	AjaxSyncPostLog(document.location, 'addpermission&type=' + type + '&name=' + id + '&path=' + path);
 }
 
-function removePermissionFromPath(id, path) {
-	var type = 'user';
-	if (id[0] == '@')
-		type = 'group';
-
+function removePermissionFromPath(id, type, path) {
 	AjaxSyncPostLog(document.location, 'removepermission&type=' + type + '&name=' + id + '&path=' + path);
 }
 

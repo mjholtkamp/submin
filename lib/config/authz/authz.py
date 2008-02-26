@@ -35,8 +35,11 @@ class InvalidRepositoryError(Exception):
 
 class PathExistsError(Exception):
 	def __init__(self, repos, path):
-		Exception.args = 'Path %s already exists in repositor %s' % (path, repos)
+		Exception.args = 'Path %s already exists in repository %s' % (path, repos)
 
+class UnknownPermissionError(Exception):
+	def __init__(self, path, name):
+		Exception.args = 'Permission for %s does not exist in path %s' % (name, path)
 
 class Authz:
 	def __init__(self, authz_file):
@@ -194,6 +197,18 @@ class Authz:
 		self.parser.set('groups', group, '')
 		self.save()
 
+	def permissionDicts(self, path):
+		dicts = []
+		for tuple in self.parser.items(path):
+			type = 'user'
+			if tuple[0][0] == '@':
+				type = 'group'
+
+			dicts.append({'name': tuple[0][(type == 'group'):],
+						'permission': tuple[1],
+						'type': type})
+		return dicts
+
 	# Permission methods
 	def permissions(self, repository, path, member=None):
 		"""Returns the current permissions for the repository:path entry"""
@@ -203,14 +218,16 @@ class Authz:
 			return []
 
 		if member is None:
-			return self.parser.items(path)
+			return self.permissionDicts(path)
 
 		return self.parser.get(path, member)
 
-	def setPermission(self, repository, path, member, permission=''):
+	def setPermission(self, repository, path, member, type, permission=''):
 		"""Sets the permisson on repository:path for member.
-		If member starts with a '@' it is a group, if member == '*' then
+		The type argument can be 'user' or 'group', if member == '*' then
 		it matches all members."""
+		if type == 'group':
+			member = '@' + member
 
 		section = self.createSectionName(repository, path)
 		if not self.parser.has_section(section):
@@ -218,12 +235,15 @@ class Authz:
 		self.parser.set(section, member, permission)
 		self.save()
 
-	def removePermission(self, repository, path, member):
+	def removePermission(self, repository, path, member, type):
 		"""Removes the members permission from the repository:path"""
+		if type == 'group':
+			member = '@' + member
+
 		section = self.createSectionName(repository, path)
 		retval = self.parser.remove_option(section, member)
 		if not retval:
-			raise UnknownMemberError(section, member)
+			raise UnknownPermissionError(section, member)
 
 		if len(self.parser.items(section)) == 0:
 			self.parser.remove_section(section)

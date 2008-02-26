@@ -101,7 +101,7 @@ class Repositories(View):
 		path = req.post['path'].value
 
 		# add member with no permissions (let the user select that)
-		config.authz.setPermission(repository.name, path, name)
+		config.authz.setPermission(repository.name, path, name, type)
 		config.authz.save()
 		return XMLStatusResponse(True, ('User', 'Group')[type == 'group'] + ' %s added to path %s' % (name, path))
 
@@ -112,7 +112,7 @@ class Repositories(View):
 		type = req.post['type'].value
 		path = req.post['path'].value
 
-		config.authz.removePermission(repository.name, path, name)
+		config.authz.removePermission(repository.name, path, name, type)
 		config.authz.save()
 		return XMLStatusResponse(True, ('User', 'Group')[type == 'group'] + ' %s removed from path %s' % (name, path))
 

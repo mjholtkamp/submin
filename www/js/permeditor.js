@@ -39,6 +39,19 @@ PermissionsEditor.prototype.reInit = function() {
 	this.init();
 }
 
+function permissionSort(a, b)
+{
+	if (a.type == b.type) {
+		if (a.name < b.name)
+			return -1;
+		return 1;
+	}
+
+	if (a.type > b.type)
+		return 1;
+	return -1;
+}
+
 PermissionsEditor.prototype.init = function() {
 	var callbackValue = this.options.initCallback(this.options.path);
 
@@ -47,11 +60,13 @@ PermissionsEditor.prototype.init = function() {
 
 	// The li-items
 	var added = callbackValue["added"];
+	added.sort(permissionSort);
 	for (var added_idx=0; added_idx < added.length; ++added_idx)
 		this.setupAddedItem(added[added_idx]);
 
 	// The dropdown
 	var addable = callbackValue["addable"];
+	addable.sort(permissionSort);
 	this.setupSelect();
 	for (var addable_idx=0; addable_idx < addable.length; ++addable_idx)
 		this.addOption(addable[addable_idx]);
@@ -60,22 +75,23 @@ PermissionsEditor.prototype.init = function() {
 }
 
 PermissionsEditor.prototype.setupAddedItem = function(added) {
-		var item = $c("li");
-		item.name = added['name'];
+		var item = $c("li", {'name': added['name']});
 		var permissions = added['permissions'];
 		if (permissions == '')
 			permissions = 'none';
 
-		item.appendChild($c("label", {"innerHTML": added['name']}));
+		var displayname = '[' + added['type'] + '] ' + added['name'];
+		item.appendChild($c("label", {"innerHTML": displayname}));
 		item.appendChild($c("span", {"innerHTML": permissions}));
 
 		var remover = this.makeButton("remover");
 		item.appendChild(remover);
 
 		var _this = this; // this is out of scope in onclick below!
+		var _type = added['type'];
 		remover.onclick = function() {
 			var name = this.parentNode.name;
-			_this.options.removeCallback(name, _this.options.path);
+			_this.options.removeCallback(name, _type, _this.options.path);
 			_this.reInit();
 			return false;
 		};
@@ -102,36 +118,36 @@ PermissionsEditor.prototype.setupSelect = function() {
 
 	adder.onclick = function() {
 		var select = _this.select
-		var groupname = select.options[select.selectedIndex].innerHTML;
+		var groupname = select.options[select.selectedIndex].getAttribute('value');
+		var displayname = select.options[select.selectedIndex].innerHTML;
 
 		if (groupname == "---") {
 			Log('Please select an item first', false)
 			return false;
 		}
 
-		groupname = groupname.replace('[User] ', '');
-		groupname = groupname.replace('[Group] ', '@');
+		var type = 'user';
+		if (displayname.indexOf('[Group] ') != -1)
+			type = 'group';
 
-		_this.options.addCallback(groupname, _this.options.path);
+		_this.options.addCallback(groupname, type, _this.options.path);
 		_this.reInit();
 		return false;
 	}
 	item.appendChild(adder);
 	this.list.appendChild(item);
-	this.addOption("---");
+	this.addOption({'type': '', 'name': "---"});
 }
 
-PermissionsEditor.prototype.addOption = function(name) {
-	var option = $c("option");
+PermissionsEditor.prototype.addOption = function(dict) {
+	var option = $c("option", {'value': dict.name});
 	var displayname;
-	if (name[0] == '@') {
-		displayname = '[Group] ' + name.substring(1, name.length);
+	if (dict.type == 'group') {
+		displayname = '[Group] ' + dict.name.substring(0, dict.name.length);
+	} else if (dict.type == "user") {
+			displayname = '[User] ' + dict.name;
 	} else {
-		if (name != "---") {
-			displayname = '[User] ' + name;
-		} else {
-			displayname = name;
-		}
+		displayname = dict.name;
 	}
 
 	option.appendChild(document.createTextNode(displayname));

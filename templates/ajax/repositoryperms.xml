@@ -1,7 +1,7 @@
 <response>
 	<success>True</success>
 	<permissions repository="[val repository]" path="[val path]">
-		[iter:perms <member name="[ival.0]" permission="[ival.1]"/>
+		[iter:perms <member name="[ival.name]" permission="[ival.permission]" type="[ival.type]"/>
 		]
 	</permissions>
 </response>
