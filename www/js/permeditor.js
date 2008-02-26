@@ -74,6 +74,17 @@ PermissionsEditor.prototype.init = function() {
 		this.disableSelect();
 }
 
+PermissionsEditor.prototype.permissionsSelect = function(permission) {
+	var select = $c("select");
+	var values = ['', 'r', 'rw'];
+	for (var idx = 0; idx < values.length; ++idx) {
+		select.appendChild($c("option", {'value': values[idx], 'innerHTML': values[idx]}));
+		if (values[idx] == permission)
+			select.selectedIndex = idx;
+	}
+	return select;
+}
+
 PermissionsEditor.prototype.setupAddedItem = function(added) {
 		var item = $c("li", {'name': added['name']});
 		var permissions = added['permissions'];
@@ -82,7 +93,7 @@ PermissionsEditor.prototype.setupAddedItem = function(added) {
 
 		var displayname = '[' + added['type'] + '] ' + added['name'];
 		item.appendChild($c("label", {"innerHTML": displayname}));
-		item.appendChild($c("span", {"innerHTML": permissions}));
+		item.appendChild(this.permissionsSelect(permissions));
 
 		var remover = this.makeButton("remover");
 		item.appendChild(remover);
