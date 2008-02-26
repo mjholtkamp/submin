@@ -15,7 +15,7 @@ window.onload = function() {
 }
 
 function sendEmail() {
-	AjaxSyncPostLog(document.location, "email=" + $('email').value);
+	AjaxAsyncPostLog(document.location, "email=" + $('email').value);
 }
 
 // global variable to temporarily store the password to be verified
@@ -63,7 +63,7 @@ function checkPasswords() {
 }
 
 function sendPassword(password) {
-	AjaxSyncPostLog(document.location, "password=" + password)
+	AjaxAsyncPostLog(document.location, "password=" + password)
 }
 
 
@@ -71,11 +71,11 @@ function sendPassword(password) {
  * Adding users to groups and removing them from groups
  */
 function addMemberToGroupAjax(group) {
-	return AjaxSyncPostLog(document.location, "addToGroup=" + group);
+	return AjaxAsyncPostLog(document.location, "addToGroup=" + group);
 }
 
 function removeMemberFromGroupAjax(group) {
-	return AjaxSyncPostLog(document.location, "removeFromGroup=" + group);
+	return AjaxAsyncPostLog(document.location, "removeFromGroup=" + group);
 }
 
 /* Requests the groups via ajax, and forms two lists to be used by Selector */

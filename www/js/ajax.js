@@ -47,3 +47,24 @@ function AjaxSyncPostLog(url, params) {
 	return response.success
 }
 
+function AjaxAsyncPostRequest(url, params, callback) {
+	transport = new XMLHttpRequest();
+	transport.open('post', url, false);
+	transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	transport.setRequestHeader("Connection", "close");
+	transport.onreadystatechange = function() { callback(transport); };
+	transport.send('ajax&' + params);
+
+}
+
+function AjaxLog(transport) {
+	if (transport.readyState == 4) {
+		var response = Response(transport);
+		Log(response.text, response.success);
+	}
+}
+
+function AjaxAsyncPostLog(url, params) {
+	AjaxAsyncPostRequest(url, params, AjaxLog);
+}
+

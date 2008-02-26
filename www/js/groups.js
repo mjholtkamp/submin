@@ -2,11 +2,11 @@ load('dom')
 load("selector")
 
 function removeMemberAjax(member) {
-	return AjaxSyncPostLog(document.location, "removeMember=" + member);
+	AjaxAsyncPostLog(document.location, "removeMember=" + member);
 }
 
 function addMemberAjax(member) {
-	return AjaxSyncPostLog(document.location, "addMember=" + member);
+	AjaxAsyncPostLog(document.location, "addMember=" + member);
 }
 
 var old_load = window.onload;
