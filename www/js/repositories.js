@@ -15,6 +15,9 @@ window.onload = function() {
 	resize_content_div();
 	setupCollapsables(document.getElementById('content'), 'repostree', repostree_collapseCB, repostree_expandCB);
 	repository_tree.attach('repostree_/');
+	document.getElementById('repostree_root_text').onclick = function() {
+		reloadPermissions(this);
+	};
 
 	repostree_getpaths();
 	repostree_expandCB(repository_tree.trigger);
