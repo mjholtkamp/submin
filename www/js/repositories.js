@@ -100,7 +100,9 @@ function repostree_markPermissions(reposnode)
 	}
 
 	var node;
-	if (reposnode.has_subdirs) {
+	if (path == '/') {
+		node = document.getElementById('repostree_root_text');
+	} else if (reposnode.has_subdirs) {
 		node = reposnode.root.childNodes[1];
 	} else {
 		node = reposnode.root.childNodes[0];
