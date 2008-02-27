@@ -47,11 +47,6 @@ def evaluate_main(templatename, templatevariables={}, request=None):
 
 	repositories = []
 	repository_names = config.repositories()
-	authz_repos = config.authz.paths()
-	authz_repos.sort()
-#	for repos in authz_repos:
-#		if repos[0] and repos[0] not in repository_names:
-#			repository_names.append(repos[0])
 
 	for repos in repository_names:
 		repositories.append(Repository(repos))
