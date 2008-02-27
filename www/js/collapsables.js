@@ -22,24 +22,26 @@ function setupCollapsables(docroot, prefix, collapseFun, expandFun) {
 	collapsables_arrow_halfway.src = media_url + '/img/arrow-halfway.png';
 	collapsables_arrow_expanded.src = media_url + '/img/arrow-expanded.png';
 
-	for (var idx = 0; idx < collapsables.length; ++idx) {
-		image = collapsables_getImage(prefix, collapsables[idx]);
+	var collapsables_length = collapsables.length;
+	for (var idx = 0; idx < collapsables_length; ++idx) {
+		var collapsable = collapsables[idx];
+		var image = collapsables_getImage(prefix, collapsable);
 
 		// if no image, assume not collapsable (sometimes needed for bootstrap)
 		if (image && image.src) {
 			if (image.src == collapsables_arrow_expanded.src) {
-				collapsables[idx].onclick =
+				collapsable.onclick =
 					function() { arrowCollapse(prefix, this, collapseFun, expandFun); }
-				collapsables_collapse(prefix, collapsables[idx], false);
+				collapsables_collapse(prefix, collapsable, false);
 			} else {
-				collapsables[idx].onclick =
+				collapsable.onclick =
 					function() { arrowExpand(prefix, this, collapseFun, expandFun); }
-				collapsables_collapse(prefix, collapsables[idx], true);
+				collapsables_collapse(prefix, collapsable, true);
 			}
 
 			// prevent selecting trigger (looks ugly)
-			collapsables[idx].onmousedown = function() { return false; }
-			collapsables[idx].onselectstart = function() { return false; } // ie
+			collapsable.onmousedown = function() { return false; }
+			collapsable.onselectstart = function() { return false; } // ie
 		}
 	}
 }
@@ -47,11 +49,13 @@ function setupCollapsables(docroot, prefix, collapseFun, expandFun) {
 function collapsables_findClassNames(node, classname)
 {
 	var classNodes = [];
-	for (var idx = 0; idx < node.childNodes.length; ++idx) {
-		if (node.childNodes[idx].className == classname)
-			classNodes.push(node.childNodes[idx]);
+	var childNodes = node.childNodes;
+	var childNodes_length = childNodes.length;
+	for (var idx = 0; idx < childNodes_length; ++idx) {
+		if (childNodes[idx].className == classname)
+			classNodes.push(childNodes[idx]);
 
-		var nodes = collapsables_findClassNames(node.childNodes[idx], classname);
+		var nodes = collapsables_findClassNames(childNodes[idx], classname);
 		classNodes = classNodes.concat(nodes);
 	}
 
@@ -60,7 +64,7 @@ function collapsables_findClassNames(node, classname)
 
 function collapsables_findFirstClassName(node, classname)
 {
-	classNodes = collapsables_findClassNames(node, classname);
+	var classNodes = collapsables_findClassNames(node, classname);
 	return classNodes[0];
 }
 
@@ -152,7 +156,7 @@ function collapsables_collapse(prefix, triggered, collapse)
 	}
 
 	// force refresh on certain browsers
-	root = collapsables_getRoot(prefix, triggered);
+	var root = collapsables_getRoot(prefix, triggered);
 	root.style.display = 'none';
 	root.style.display = '';
 }
