@@ -23,12 +23,10 @@ function PermissionsEditor(options) {
 
 /* Creates the add/remove button for each item */
 PermissionsEditor.prototype.makeButton = function(className) {
-	var link = $c("a", {"href": "#", "className": className});
 	var imgSrc = media_url + "/img/" +
 		(className == "remover" ? "min.gif" : "plus.gif");
 	var img = $c("img", {"src": imgSrc, "className": className});
-	link.appendChild(img);
-	return link;
+	return img;
 }
 
 /* Reinitializes the list after a change. */
@@ -77,7 +75,7 @@ PermissionsEditor.prototype.init = function() {
 PermissionsEditor.prototype.permissionsSelect = function(name, type, permissions) {
 	var select = $c("select");
 	var values = ['', 'r', 'rw'];
-	var inner = ['none', 'r', 'rw'];
+	var inner = ['-', 'r', 'rw'];
 	for (var idx = 0; idx < values.length; ++idx) {
 		select.appendChild($c("option", {'value': values[idx], 'innerHTML': inner[idx]}));
 		if (values[idx] == permissions)
@@ -102,11 +100,12 @@ PermissionsEditor.prototype.setupAddedItem = function(added) {
 		var name = added['name'];
 
 		var displayname = '[' + type + '] ' + name;
-		item.appendChild($c("label", {"innerHTML": displayname}));
-		item.appendChild(this.permissionsSelect(name, type, permissions));
+		item.appendChild($c("span", {"innerHTML": displayname}));
 
 		var remover = this.makeButton("remover");
 		item.appendChild(remover);
+
+		item.appendChild(this.permissionsSelect(name, type, permissions));
 
 		var _this = this; // this is out of scope in onclick below!
 		remover.onclick = function() {
@@ -130,7 +129,7 @@ PermissionsEditor.prototype.disableSelect = function() {
 }
 
 PermissionsEditor.prototype.setupSelect = function() {
-	this.select = $c("select");
+	this.select = $c("select", {'className': 'adder'});
 	var item = $c("li");
 	item.appendChild(this.select);
 	var adder = this.makeButton("adder");

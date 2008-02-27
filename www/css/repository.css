@@ -29,23 +29,57 @@ div#repostree {
 	float: left;
 	white-space: nowrap;
 	overflow: auto;
-	width: 49%; /* overwritten by www/js/repostree.js: resize_content_div() */
+	width: 40%; /* overwritten by www/js/repostree.js: resize_content_div() */
 }
 
 div#permissions-editor {
 	float: right;
-	width: 49%; /* overwritten by www/js/repostree.js: resize_content_div() */
-	border: 1px solid black;
+	width: 40%; /* overwritten by www/js/repostree.js: resize_content_div() */
+	border: 1px solid #C0CDED;
 	overflow: auto;
+	margin: 10px;
+	padding-bottom: 1.5em;
+	padding-right: 1.5em;
+}
+
+div#permissions-editor h3 {
+	margin: 1.5em;
 }
 
 div#permissions-editor li {
+	float: left;
+	margin-left: 0;
+	padding-left: 0;
+	margin-top: 0.2em;
+	margin-bottom: 0.2em;
 	white-space: nowrap;
+	min-width: 300px;
+	width: 100%;
 }
 
-div#permissions-editor label {
-	width: 60%;
+div#permissions-editor span {
+	float: left;
 	white-space: nowrap;
+	padding-left: 1.5em;
 }
 
+div#permissions-editor select {
+	float: right;
+	margin: -2px 5px 0px 2px;
+}
+div#permissions-editor select.adder {
+	float: left;
+	margin-left: 1.5em;
+	margin-top: 1.5em;
+}
 
+div#permissions-editor img.remover {
+	float: right;
+	margin-right: 0.5em;
+	margin-left: 2.0em;
+}
+div#permissions-editor img.adder {
+	float: left;
+	margin-left: 0.2em;
+	margin-top: 1.5em;
+}

@@ -39,7 +39,7 @@ function resize_content_div()
 	var repostree = document.getElementById('repostree');
 	var permissions_editor = document.getElementById('permissions-editor');
 
-	width = width / 2 - 4;
+	width = width / 2 - 24;
 
 	repostree.style.width = width + 'px';
 	permissions_editor.style.width = width + 'px';
