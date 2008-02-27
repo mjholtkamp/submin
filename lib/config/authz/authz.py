@@ -85,7 +85,6 @@ class Authz:
 				else:
 					# Normalize paths
 					s = section.split(':', 1)
-					sections = self.authzParser.sections()
 					s[1] = str(Path(s[1], absolute=True))
 					sections.append(s)
 		return sections
