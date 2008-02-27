@@ -1,9 +1,16 @@
+function Submin_config() {
+	this.debug = false;
+}
+submin = new Submin_config();
+
 function Response(transport) {
 	doc = transport.responseXML;
 	response = {};
 	// DEBUG
-	//var string = (new XMLSerializer()).serializeToString(doc);
-	//alert(string);
+	if (submin.debug) {
+		var string = (new XMLSerializer()).serializeToString(doc);
+		alert(string);
+	}
 	success = doc.getElementsByTagName('success')[0].childNodes[0].nodeValue;
 	var text = doc.getElementsByTagName('text');
 	if (text)
@@ -33,6 +40,8 @@ function AjaxSyncGetRequest(url, params) {
 }
 
 function AjaxSyncPostRequest(url, params) {
+	if (submin.debug)
+		alert(url + "?ajax&" + params);
 	transport = new XMLHttpRequest();
 	transport.open('post', url, false);
 	transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -48,6 +57,8 @@ function AjaxSyncPostLog(url, params) {
 }
 
 function AjaxAsyncPostRequest(url, params, callback) {
+	if (submin.debug)
+		alert(url + "?ajax&" + params);
 	transport = new XMLHttpRequest();
 	transport.open('post', url, false);
 	transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
