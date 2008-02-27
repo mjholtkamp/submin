@@ -64,8 +64,21 @@ function collapsables_findClassNames(node, classname)
 
 function collapsables_findFirstClassName(node, classname)
 {
-	var classNodes = collapsables_findClassNames(node, classname);
-	return classNodes[0];
+	var childNodes = node.childNodes;
+	var childNodes_length = childNodes.length;
+	for (var idx = 0; idx < childNodes_length; ++idx) {
+		if (childNodes[idx].className == classname)
+			return childNodes[idx];
+	}
+
+	for (var idx = 0; idx < childNodes_length; ++idx) {
+		var firstNode = collapsables_findFirstClassName(childNodes[idx],
+				classname);
+		if (firstNode)
+			return firstNode;
+	}
+
+	return null;
 }
 
 function collapsables_getRoot(prefix, node)
