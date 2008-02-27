@@ -59,6 +59,7 @@ class SubminAdmin:
 
 		vars = self.replacedvars()
 		self.authz_file = vars['submin root'] + 'svn.authz'
+		self.userprop_file = vars['submin root'] + 'userproperties.conf'
 		self.access_file = vars['submin root'] + 'htpasswd'
 		self.repositories = vars['svn dir']
 		session_salt = self.generate_session_salt()
@@ -68,6 +69,8 @@ class SubminAdmin:
 			return False
 		if os.path.exists(self.authz_file):
 			return False
+		if os.path.exists(self.userprop_file):
+			return False
 		if os.path.exists(self.access_file):
 			return False
 		if os.path.exists(self.repositories):
@@ -75,6 +78,7 @@ class SubminAdmin:
 
 		submin_conf = '''[svn]
 authz_file = %s
+userprop_file = %s
 access_file = %s
 repositories = %s
 
@@ -83,7 +87,8 @@ media_url = /submin
 
 [generated]
 session_salt = %s
-''' % (self.authz_file, self.access_file, self.repositories, session_salt)
+''' % (self.authz_file, self.userprop_file, self.access_file,
+			self.repositories, session_salt)
 
 		out = open(submin_conf_file, 'w')
 		out.write(submin_conf)
@@ -150,9 +155,10 @@ create <name> [<submin-root> [<svn-dir> [<trac-dir>]]]
 
 	<name>\t\t- project name, defines some file names
 	<submin-root>\t- submin data dir (default: %(submin root)s)
-	\t\t  holds the files: htpasswd, authz, submin.conf
-	<svn-dir>\t- svn repository dir (default: %(svn dir)s)
-	<trac-dir>\t- trac projects dir (default: %(trac dir)s)
+	\t\t  holds the files: htpasswd, authz,
+	\t\t  userproperties.conf, submin.conf
+	<svn-dir>\t- svn repository dir (default: <submin-root>/%(svn dir)s)
+	<trac-dir>\t- trac projects dir (default: <submin-root>/%(trac dir)s)
 """
 		if len(argv) < 3:
 			self.c_help([argv[0], 'help', 'create'])
@@ -162,7 +168,7 @@ create <name> [<submin-root> [<svn-dir> [<trac-dir>]]]
 		if len(argv) > 3:
 			self._setpath('submin root', argv[3])
 		if len(argv) > 4:
-			self._setpath('svn dir', argv[3])
+			self._setpath('svn dir', argv[4])
 		if len(argv) < 5:
 			self.vars['trac dir'] = ''
 
@@ -206,6 +212,7 @@ create <name> [<submin-root> [<svn-dir> [<trac-dir>]]]
 			os.chown(self.vars['submin root'], apache.pw_uid, apache.pw_gid)
 			os.chown(self.repositories, apache.pw_uid, apache.pw_gid)
 			os.chown(self.authz_file, apache.pw_uid, apache.pw_gid)
+			os.chown(self.userprop_file, apache.pw_uid, apache.pw_gid)
 			os.chown(self.access_file, apache.pw_uid, apache.pw_gid)
 		except OSError:
 			print '''
@@ -227,8 +234,7 @@ help <command>"""
 
 		try:
 			doc = self.getlongdescription('c_' + argv[2])
-			vars = self.replacedvars()
-			print "Usage: %s %s " % (argv[0], doc % vars)
+			print "Usage: %s %s " % (argv[0], doc % self.vars)
 		except:
 			raise
 

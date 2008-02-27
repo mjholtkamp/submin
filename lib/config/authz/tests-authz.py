@@ -11,8 +11,9 @@ class InitTest(unittest.TestCase):
 	def setUp(self):
 		tempdir = tempfile.gettempdir()
 		self.filename = os.path.join(tempdir, 'authz')
+		self.userpropfilename = os.path.join(tempdir, 'userprops')
 		# Easier than using tempfile.mkstemp() because I only need a filename.
-		self.authz = Authz(self.filename)
+		self.authz = Authz(self.filename, self.userpropfilename)
 
 	def tearDown(self):
 		os.unlink(self.filename)
@@ -22,7 +23,7 @@ class InitTest(unittest.TestCase):
 				'File %s does not exist' % self.filename)
 
 	def testCreateGroupsSection(self):
-		self.assert_(self.authz.parser.has_section('groups'),
+		self.assert_(self.authz.authzParser.has_section('groups'),
 				'[groups] section not created')
 
 class SaveTest(unittest.TestCase):
@@ -31,7 +32,8 @@ class SaveTest(unittest.TestCase):
 	def testModificationTime(self):
 		tempdir = tempfile.gettempdir()
 		filename = os.path.join(tempdir, 'authz')
-		authz = Authz(filename)
+		userpropfilename = os.path.join(tempdir, 'userprops')
+		authz = Authz(filename, userpropfilename)
 		begin = os.path.getmtime(filename)
 
 		print '\nTesting modification time. This takes at least 1.1 seconds'

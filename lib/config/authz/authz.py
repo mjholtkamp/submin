@@ -42,69 +42,79 @@ class UnknownPermissionError(Exception):
 		Exception.args = 'Permission for %s does not exist in path %s' % (name, path)
 
 class Authz:
-	def __init__(self, authz_file):
+	def __init__(self, authz_file, userprop_file):
 		self.authz_file = authz_file
-		self.parser = ConfigParser.ConfigParser()
+		self.userprop_file = userprop_file
+		self.authzParser = ConfigParser.ConfigParser()
+		self.userPropParser = ConfigParser.ConfigParser()
 		try:
-			self.parser.readfp(open(self.authz_file))
+			self.authzParser.readfp(open(self.authz_file))
 		except IOError:
 			# make a new file
 			open(self.authz_file, 'a')
 
+		try:
+			self.userPropParser.readfp(open(self.userprop_file))
+		except IOError:
+			# make a new file
+			open(self.userprop_file, 'a')
+
 		# Silently create groups section if it does not exist:
-		if not self.parser.has_section('groups'):
-			self.parser.add_section('groups')
+		if not self.authzParser.has_section('groups'):
+			self.authzParser.add_section('groups')
 
 	def save(self):
 		"""Saves current authz configuration"""
-		self.parser.write(open(self.authz_file, 'w+'))
+		self.authzParser.write(open(self.authz_file, 'w+'))
+		self.userPropParser.write(open(self.userprop_file, 'w+'))
 
 	def paths(self, repository=None):
 		"""Returns all the repository:path entries in the authz-file
 		   if repository is given, returns only paths that belong to it."""
 		from path.path import Path
 		sections = []
-		for section in self.parser.sections():
+		for section in self.authzParser.sections():
 			if section != 'groups':
 				if repository and not section.startswith(repository + ':'):
 					pass
 				elif section == '/':
 					sections.append([None, '/'])
 				elif section.startswith('user.'):
+					# Legacy form of user.username in authz-file. Skip this.
 					pass
 				else:
+					# Normalize paths
 					s = section.split(':', 1)
+					sections = self.authzParser.sections()
 					s[1] = str(Path(s[1], absolute=True))
 					sections.append(s)
 		return sections
 
 	def users(self):
 		users = {}
-		for section in self.parser.sections():
-			if section.startswith('user.'):
-				name = section[5:]
-				properties = {}
-				for option in self.parser.options(section):
-					properties[option] = self.parser.get(section, option)
-				users[name] = properties
+		for name in self.userPropParser.sections():
+			properties = {}
+			for option in self.userPropParser.options(name):
+				properties[option] = self.userPropParser.get(name, option)
+			users[name] = properties
 
 		return users
 
 	def userProp(self, user, property):
-		if not self.parser.has_section('user.' + user):
+		if not self.userPropParser.has_section(user):
 			raise UnknownUserError(user)
 
-		return self.parser.get('user.' + user, property)
+		return self.userPropParser.get(user, property)
 
 	def setUserProp(self, user, property, value):
-		if not self.parser.has_section('user.' + user):
-			self.parser.add_section('user.' + user)
+		if not self.userPropParser.has_section(user):
+			self.userPropParser.add_section(user)
 
-		self.parser.set('user.' + user, property, value)
+		self.userPropParser.set(user, property, value)
 		self.save()
 
 	def removeUserProps(self, user):
-		self.parser.remove_section('user.' + user)
+		self.userPropParser.remove_section(user)
 		self.save()
 
 	def createSectionName(self, repository, path):
@@ -117,28 +127,28 @@ class Authz:
 
 	def removePath(self, repository, path):
 		section = self.createSectionName(repository, path)
-		self.parser.remove_section(section)
+		self.authzParser.remove_section(section)
 		self.save()
 
 	def addPath(self, repository, path):
 		section = self.createSectionName(repository, path)
-		if section in self.parser.sections():
+		if section in self.authzParser.sections():
 			raise PathExistsError(repository, path)
-		self.parser.add_section(section)
+		self.authzParser.add_section(section)
 		self.save()
 
 	# Group methods
 	def groups(self):
 		"""Returns all the groups"""
 		try:
-			return self.parser.options('groups')
+			return self.authzParser.options('groups')
 		except ConfigParser.NoSectionError:
 			return []
 
 	def members(self, group):
 		"""Returns all the members for a group"""
 		try:
-			members = self.parser.get('groups', group).split(',')
+			members = self.authzParser.get('groups', group).split(',')
 			return [m.strip() for m in members if m.strip()]
 		except ConfigParser.NoOptionError:
 			raise UnknownGroupError(group)
@@ -158,14 +168,14 @@ class Authz:
 			raise InvalidUserError(member)
 		if group in self.groups():
 			raise GroupExistsError(group)
-		self.parser.set('groups', group, ', '.join(members))
+		self.authzParser.set('groups', group, ', '.join(members))
 		self.save()
 
 	def removeGroup(self, group):
 		"""Removes a group"""
 		if group not in self.groups():
 			raise UnknownGroupError(group)
-		self.parser.remove_option('groups', group)
+		self.authzParser.remove_option('groups', group)
 		self.save()
 
 	def addMember(self, group, member):
@@ -176,7 +186,7 @@ class Authz:
 		if member in members:
 			raise MemberExistsError(member, group)
 		members.append(member)
-		self.parser.set('groups', group, ', '.join(members))
+		self.authzParser.set('groups', group, ', '.join(members))
 		self.save()
 
 	def removeMember(self, group, member):
@@ -187,19 +197,19 @@ class Authz:
 		if member not in members:
 			raise UnknownMemberError(member, group)
 		members.remove(member)
-		self.parser.set('groups', group, ', '.join(members))
+		self.authzParser.set('groups', group, ', '.join(members))
 		self.save()
 
 	def removeAllMembers(self, group):
 		"""Removes a member from a group"""
 		if group not in self.groups():
 			raise UnknownGroupError(group)
-		self.parser.set('groups', group, '')
+		self.authzParser.set('groups', group, '')
 		self.save()
 
 	def permissionDicts(self, path):
 		dicts = []
-		for tuple in self.parser.items(path):
+		for tuple in self.authzParser.items(path):
 			type = 'user'
 			if tuple[0][0] == '@':
 				type = 'group'
@@ -220,7 +230,7 @@ class Authz:
 		if member is None:
 			return self.permissionDicts(path)
 
-		return self.parser.get(path, member)
+		return self.authzParser.get(path, member)
 
 	def setPermission(self, repository, path, member, type, permission=''):
 		"""Sets the permisson on repository:path for member.
@@ -230,9 +240,9 @@ class Authz:
 			member = '@' + member
 
 		section = self.createSectionName(repository, path)
-		if not self.parser.has_section(section):
-			self.parser.add_section(section)
-		self.parser.set(section, member, permission)
+		if not self.authzParser.has_section(section):
+			self.authzParser.add_section(section)
+		self.authzParser.set(section, member, permission)
 		self.save()
 
 	def removePermission(self, repository, path, member, type):
@@ -241,12 +251,12 @@ class Authz:
 			member = '@' + member
 
 		section = self.createSectionName(repository, path)
-		retval = self.parser.remove_option(section, member)
+		retval = self.authzParser.remove_option(section, member)
 		if not retval:
 			raise UnknownPermissionError(section, member)
 
-		if len(self.parser.items(section)) == 0:
-			self.parser.remove_section(section)
+		if len(self.authzParser.items(section)) == 0:
+			self.authzParser.remove_section(section)
 
 		self.save()
 

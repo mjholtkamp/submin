@@ -22,6 +22,7 @@ class Config:
 
 		if not self.authz:
 			authz_file = ''
+			userprop_file = ''
 			try:
 				authz_file = self.get('svn', 'authz_file')
 			except ConfigParser.NoSectionError, e:
@@ -31,7 +32,17 @@ class Config:
 				raise Exception(
 					"Missing config option 'authz_file' in file %s" % filename)
 
-			self.authz = Authz(authz_file)
+			try:
+				userprop_file = self.get('svn', 'userprop_file')
+			except ConfigParser.NoSectionError, e:
+				raise Exception(
+					"Missing config section 'svn' in file %s" % filename)
+			except ConfigParser.NoOptionError, e:
+				raise Exception(
+					"Missing config option 'userprop_file' in file %s" % \
+							filename)
+			self.authz = Authz(authz_file, userprop_file)
+
 		if not self.htpasswd:
 			self.htpasswd = HTPasswd(self.get('svn', 'access_file'))
 
