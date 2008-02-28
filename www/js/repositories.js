@@ -8,6 +8,12 @@ var repository_tree = new ReposNode('repostree');
 var repository_paths = new Array();
 var permissionsEditor = null;
 
+// do this before window.onload
+function beforeLoad() {
+	repostree_getpaths();
+}
+beforeLoad();
+
 // Using window.onload because an onclick="..." handler doesn't give the
 // handler a this-variable
 var repos_old_load = window.onload;
@@ -20,7 +26,6 @@ window.onload = function() {
 		reloadPermissions(this);
 	};
 
-	repostree_getpaths();
 	repostree_expandCB(repository_tree.trigger);
 	initPermissionsEditor('/');
 }
@@ -131,8 +136,6 @@ function repostree_getpaths()
 	// log in case there is a problem
 	Log(response.text, response.success);
 
-	var permpaths = document.getElementById('permissions-paths');
-
 	// first empty array
 	repository_paths.splice(0, repository_paths.length);
 	var paths = response.xml.getElementsByTagName('path');
@@ -184,7 +187,7 @@ function loadPermissions(path)
 	// get users
 	var userresponse = AjaxSyncPostRequest(media_url + '/users/', 'list');
 	Log(userresponse.text, userresponse.success);
-	var addable = new Array()
+	var addable = new Array();
 	var users = userresponse.xml.getElementsByTagName('user');
 	var users_length = users.length;
 	for (var idx = 0; idx < users_length; ++idx) {
