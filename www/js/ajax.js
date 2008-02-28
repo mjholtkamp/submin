@@ -4,14 +4,15 @@ function Submin_config() {
 submin = new Submin_config();
 
 function Response(transport) {
-	doc = transport.responseXML;
-	response = {};
+	var doc = transport.responseXML;
+	var response = {};
 	// DEBUG
 	if (submin.debug) {
 		var string = (new XMLSerializer()).serializeToString(doc);
 		alert(string);
 	}
-	success = doc.getElementsByTagName('success')[0].childNodes[0].nodeValue;
+	var success =
+		doc.getElementsByTagName('success')[0].childNodes[0].nodeValue;
 	var text = doc.getElementsByTagName('text');
 	if (text)
 		text = text[0];
@@ -25,15 +26,15 @@ function Response(transport) {
 	response['xml'] = doc;
 
 	if (success.toLowerCase() == 'true') {
-		response['success'] = true
+		response['success'] = true;
 	} else {
-		response['success'] = false
+		response['success'] = false;
 	}
-	return response
+	return response;
 }
 
 function AjaxSyncGetRequest(url, params) {
-	transport = new XMLHttpRequest();
+	var transport = new XMLHttpRequest();
 	transport.open('get', url + '?ajax&' + params, false);
 	transport.send(null);
 	return Response(transport)
@@ -42,7 +43,7 @@ function AjaxSyncGetRequest(url, params) {
 function AjaxSyncPostRequest(url, params) {
 	if (submin.debug)
 		alert(url + "?ajax&" + params);
-	transport = new XMLHttpRequest();
+	var transport = new XMLHttpRequest();
 	transport.open('post', url, false);
 	transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	transport.setRequestHeader("Connection", "close");
@@ -59,7 +60,7 @@ function AjaxSyncPostLog(url, params) {
 function AjaxAsyncPostRequest(url, params, callback) {
 	if (submin.debug)
 		alert(url + "?ajax&" + params);
-	transport = new XMLHttpRequest();
+	var transport = new XMLHttpRequest();
 	transport.open('post', url, false);
 	transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	transport.setRequestHeader("Connection", "close");
