@@ -50,15 +50,30 @@ function collapsables_findClassNames(node, classname)
 {
 	var classNodes = [];
 	var childNodes = node.childNodes;
-	var childNodes_length = childNodes.length;
-	for (var idx = 0; idx < childNodes_length; ++idx) {
-		var childNode = childNodes[idx];
-		if (childNode.className == classname)
-			classNodes.push(childNode);
+	var current = node;
+	do {
+		if (current.className == classname)
+			classNodes.push(current);
 
-		var nodes = collapsables_findClassNames(childNode, classname);
-		classNodes = classNodes.concat(nodes);
-	}
+		if (current.firstChild) {
+			current = current.firstChild;
+			continue;
+		}
+
+		if (current.nextSibling) {
+			current = current.nextSibling;
+			continue;
+		}
+
+		do {
+			current = current.parentNode;
+			if (current == node)
+				break;
+		} while (!current.nextSibling);
+		if (current == node)
+			break;
+		current = current.nextSibling;
+	} while (current != node);
 
 	return classNodes;
 }
