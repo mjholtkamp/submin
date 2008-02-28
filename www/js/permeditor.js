@@ -131,7 +131,6 @@ PermissionsEditor.prototype.setupSelect = function(addable) {
 	var item = $c("li");
 	item.appendChild(this.select);
 	var adder = this.makeButton("adder");
-	this.select.adder = adder;
 	var _this = this; // this is out of scope in onclick below!
 
 	adder.onclick = function() { _this.adderOnclick(); }
