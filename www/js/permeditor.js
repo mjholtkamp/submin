@@ -136,34 +136,37 @@ PermissionsEditor.prototype.setupSelect = function() {
 	this.select.adder = adder;
 	var _this = this; // this is out of scope in onclick below!
 
-	adder.onclick = function() {
-		var select = _this.select
-		var groupname = select.options[select.selectedIndex].getAttribute('value');
-		var displayname = select.options[select.selectedIndex].innerHTML;
-
-		if (groupname == "---") {
-			Log('Please select an item first', false)
-			return false;
-		}
-
-		var type = 'user';
-		if (displayname.indexOf('[Group] ') != -1)
-			type = 'group';
-
-		_this.options.addCallback(groupname, type, _this.options.path);
-		_this.reInit();
-		return false;
-	}
+	adder.onclick = function() { _this.adderOnclick(); }
 	item.appendChild(adder);
 	this.list.appendChild(item);
 	this.addOption({'type': '', 'name': "---"});
 }
 
+PermissionsEditor.prototype.adderOnclick = function() {
+	var select = this.select;
+	var groupname = select.options[select.selectedIndex].getAttribute('value');
+	var displayname = select.options[select.selectedIndex].innerHTML;
+
+	if (groupname == "---") {
+		Log('Please select an item first', false)
+		return false;
+	}
+
+	var type = 'user';
+	if (displayname.indexOf('[Group] ') != -1)
+		type = 'group';
+
+	this.options.addCallback(groupname, type, this.options.path);
+	this.reInit();
+	return false;
+}
+
 PermissionsEditor.prototype.addOption = function(dict) {
-	var option = $c("option", {'value': dict.name});
+	var option = document.createElement('option');
+	option.value = dict.name;
 	var displayname;
 	if (dict.type == 'group') {
-		displayname = '[Group] ' + dict.name.substring(0, dict.name.length);
+		displayname = '[Group] ' + dict.name;
 	} else if (dict.type == "user") {
 			displayname = '[User] ' + dict.name;
 	} else {
