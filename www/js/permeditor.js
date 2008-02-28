@@ -177,21 +177,32 @@ PermissionsEditor.prototype.addOption = function(dict) {
 	this.select.appendChild(option);
 }
 
+// remove hooks to avoid memory leaks
+// implemented depth-first iterative for performance reasons
 PermissionsEditor.prototype.destroy = function() {
-	this.removeHooks(this.list);
-}
+	var current = this.list;
+	for (;;) {
+		if (current.onclick)
+			current.onclick = null;
+		if (current.onchange)
+			current.onchange = null;
 
-// removing hooks prevents some memory leaks
-PermissionsEditor.prototype.removeHooks = function(elem) {
-	if (elem.onclick)
-		elem.onclick = null;
+		if (current.firstChild) {
+			current = current.firstChild;
+			continue;
+		}
 
-	if (elem.onchange)
-		elem.onchange = null;
+		if (current.nextSibling) {
+			current = current.nextSibling;
+			continue;
+		}
 
-	var childNodes = elem.childNodes;
-	var length = childNodes.length;
-	for (var idx = 0; idx < length; ++idx)
-		this.removeHooks(childNodes[idx]);
+		do {
+			current = current.parentNode;
+			if (current == this.list)
+				return;
+		} while (!current.nextSibling);
+		current = current.nextSibling;
+	}
 }
 
