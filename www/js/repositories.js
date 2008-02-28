@@ -4,8 +4,9 @@ load('window');
 load('permeditor');
 
 // for ReposNode object, see below
-repository_tree = new ReposNode('repostree');
-repository_paths = new Array();
+var repository_tree = new ReposNode('repostree');
+var repository_paths = new Array();
+var permissionsEditor = null;
 
 // Using window.onload because an onclick="..." handler doesn't give the
 // handler a this-variable
@@ -252,7 +253,10 @@ function changePathPermission(id, type, permission, path) {
 }
 
 function initPermissionsEditor(path) {
-	var permissionsEditor = new PermissionsEditor({
+	if (permissionsEditor)
+		permissionsEditor.destroy();
+
+	permissionsEditor = new PermissionsEditor({
 		"editorId": "permissions-list",
 		"initCallback": loadPermissions,
 		"addCallback": addPermissionToPath,

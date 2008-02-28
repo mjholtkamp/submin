@@ -123,7 +123,7 @@ PermissionsEditor.prototype.disableSelect = function() {
 
 	// Disable the add-button and change the cursor-style. Maybe hide?
 	this.select.adder.disabled_onclick = this.select.adder.onclick;
-	this.select.adder.firstChild.src = media_url + "/img/plus-greyed.png";
+	this.select.adder.src = media_url + "/img/plus-greyed.png";
 	this.select.adder.onclick = function() { return false; }
 	this.select.adder.style.cursor = 'default';
 }
@@ -176,3 +176,22 @@ PermissionsEditor.prototype.addOption = function(dict) {
 	option.appendChild(document.createTextNode(displayname));
 	this.select.appendChild(option);
 }
+
+PermissionsEditor.prototype.destroy = function() {
+	this.removeHooks(this.list);
+}
+
+// removing hooks prevents some memory leaks
+PermissionsEditor.prototype.removeHooks = function(elem) {
+	if (elem.onclick)
+		elem.onclick = null;
+
+	if (elem.onchange)
+		elem.onchange = null;
+
+	var childNodes = elem.childNodes;
+	var length = childNodes.length;
+	for (var idx = 0; idx < length; ++idx)
+		this.removeHooks(childNodes[idx]);
+}
+
