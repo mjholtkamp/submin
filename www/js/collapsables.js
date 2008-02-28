@@ -52,10 +52,11 @@ function collapsables_findClassNames(node, classname)
 	var childNodes = node.childNodes;
 	var childNodes_length = childNodes.length;
 	for (var idx = 0; idx < childNodes_length; ++idx) {
-		if (childNodes[idx].className == classname)
-			classNodes.push(childNodes[idx]);
+		var childNode = childNodes[idx];
+		if (childNode.className == classname)
+			classNodes.push(childNode);
 
-		var nodes = collapsables_findClassNames(childNodes[idx], classname);
+		var nodes = collapsables_findClassNames(childNode, classname);
 		classNodes = classNodes.concat(nodes);
 	}
 
