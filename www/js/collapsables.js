@@ -51,7 +51,7 @@ function collapsables_findClassNames(node, classname)
 	var classNodes = [];
 	var childNodes = node.childNodes;
 	var current = node;
-	do {
+	for (;;) {
 		if (current.className == classname)
 			classNodes.push(current);
 
@@ -68,14 +68,10 @@ function collapsables_findClassNames(node, classname)
 		do {
 			current = current.parentNode;
 			if (current == node)
-				break;
+				return classNodes;
 		} while (!current.nextSibling);
-		if (current == node)
-			break;
 		current = current.nextSibling;
-	} while (current != node);
-
-	return classNodes;
+	}
 }
 
 function collapsables_findFirstClassName(node, classname)
