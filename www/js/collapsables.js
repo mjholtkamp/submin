@@ -49,7 +49,6 @@ function setupCollapsables(docroot, prefix, collapseFun, expandFun) {
 function collapsables_findClassNames(node, classname)
 {
 	var classNodes = [];
-	var childNodes = node.childNodes;
 	var current = node;
 	for (;;) {
 		if (current.className == classname)
