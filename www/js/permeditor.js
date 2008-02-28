@@ -65,9 +65,7 @@ PermissionsEditor.prototype.init = function() {
 	// The dropdown
 	var addable = callbackValue["addable"];
 	addable.sort(permissionSort);
-	this.setupSelect();
-	for (var addable_idx=0; addable_idx < addable.length; ++addable_idx)
-		this.addOption(addable[addable_idx]);
+	this.setupSelect(addable);
 	if (!addable.length)
 		this.disableSelect();
 }
@@ -128,7 +126,7 @@ PermissionsEditor.prototype.disableSelect = function() {
 	this.select.adder.style.cursor = 'default';
 }
 
-PermissionsEditor.prototype.setupSelect = function() {
+PermissionsEditor.prototype.setupSelect = function(addable) {
 	this.select = $c("select", {'className': 'adder'});
 	var item = $c("li");
 	item.appendChild(this.select);
@@ -138,8 +136,12 @@ PermissionsEditor.prototype.setupSelect = function() {
 
 	adder.onclick = function() { _this.adderOnclick(); }
 	item.appendChild(adder);
-	this.list.appendChild(item);
 	this.addOption({'type': '', 'name': "---"});
+
+	for (var addable_idx=0; addable_idx < addable.length; ++addable_idx)
+		this.addOption(addable[addable_idx]);
+
+	this.list.appendChild(item);
 }
 
 PermissionsEditor.prototype.adderOnclick = function() {
