@@ -184,21 +184,21 @@ function loadPermissions(path)
 	var h3 = permview.getElementsByTagName('h3')[0];
 	h3.innerHTML = path;
 
-	// get users
-	var userresponse = AjaxSyncPostRequest(media_url + '/users/', 'list');
-	Log(userresponse.text, userresponse.success);
+	// get permissions, users and groups in one call
+	var response = AjaxSyncPostRequest(document.location, 'getpermissions=' + path + '&userlist&grouplist');
+	Log(response.text, response.success);
+
+	// process users
 	var addable = new Array();
-	var users = userresponse.xml.getElementsByTagName('user');
+	var users = response.xml.getElementsByTagName('user');
 	var users_length = users.length;
 	for (var idx = 0; idx < users_length; ++idx) {
 		addable[addable.length] =
 			{'type': 'user', 'name': users[idx].getAttribute('name')};
 	}
 
-	// get groups as well
-	var groupresponse = AjaxSyncPostRequest(media_url + '/groups/', 'list');
-	Log(groupresponse.text, groupresponse.success);
-	var groups = groupresponse.xml.getElementsByTagName('group');
+	// process groups
+	var groups = response.xml.getElementsByTagName('group');
 	var groups_length = groups.length;
 	for (var idx = 0; idx < groups_length; ++idx) {
 		addable[addable.length] =
@@ -207,8 +207,7 @@ function loadPermissions(path)
 
 	addable[addable.length] = {'type': 'user', 'name': '*'}; // for all users
 
-	var response = AjaxSyncPostRequest(document.location, 'getpermissions=' + path);
-	Log(response.text, response.success);
+	// process permissions
 	var perms = response.xml.getElementsByTagName('member');
 	var perms_length = perms.length;
 	var added = [];

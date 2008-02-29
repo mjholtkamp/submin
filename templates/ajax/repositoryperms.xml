@@ -4,4 +4,10 @@
 		[iter:perms <member name="[ival.name]" permission="[ival.permission]" type="[ival.type]"/>
 		]
 	</permissions>
+	<users>
+		[iter:users <user name="[ival]" />]
+	</users>
+	<groups>
+		[iter:groups <group name="[ival]" />]
+	</groups>
 </response>

@@ -84,7 +84,16 @@ class Repositories(View):
 		if str(svn_path) in authz_paths:
 			perms = config.authz.permissions(repository.name, svn_path)
 
-		templatevars = {'perms': perms, 'repository': repository.name, 'path': svn_path}
+		users = []
+		if 'userlist' in req.post:
+			users = config.htpasswd.users()
+
+		groups = []
+		if 'grouplist' in req.post:
+			groups = config.authz.groups()
+
+		templatevars = {'perms': perms, 'repository': repository.name,
+			'path': svn_path, 'users': users, 'groups': groups}
 		return XMLTemplateResponse('ajax/repositoryperms.xml', templatevars)
 
 	@admin_required
