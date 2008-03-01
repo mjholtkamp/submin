@@ -120,21 +120,20 @@ PermissionsEditor.prototype.disableSelect = function() {
 	this.select.disabled = true;
 
 	// Disable the add-button and change the cursor-style. Maybe hide?
-	this.select.adder.disabled_onclick = this.select.adder.onclick;
-	this.select.adder.src = media_url + "/img/plus-greyed.png";
-	this.select.adder.onclick = function() { return false; }
-	this.select.adder.style.cursor = 'default';
+	this.adder.src = media_url + "/img/plus-greyed.png";
+	this.adder.onclick = function() { return false; }
+	this.adder.style.cursor = 'default';
 }
 
 PermissionsEditor.prototype.setupSelect = function(addable) {
 	this.select = $c("select", {'className': 'adder'});
 	var item = $c("li");
 	item.appendChild(this.select);
-	var adder = this.makeButton("adder");
+	this.adder = this.makeButton("adder");
 	var _this = this; // this is out of scope in onclick below!
 
-	adder.onclick = function() { _this.adderOnclick(); }
-	item.appendChild(adder);
+	this.adder.onclick = function() { _this.adderOnclick(); }
+	item.appendChild(this.adder);
 	this.addOption({'type': '', 'name': "---"});
 
 	for (var addable_idx=0; addable_idx < addable.length; ++addable_idx)
