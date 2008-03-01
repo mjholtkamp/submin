@@ -200,9 +200,10 @@ PermissionsEditor.prototype.destroy = function() {
 		do {
 			current = current.parentNode;
 			if (current == this.list)
-				return;
+				return; /* function will exit here, always */
 		} while (!current.nextSibling);
 		current = current.nextSibling;
 	}
+	/* not reached, see return above */
 }
 
