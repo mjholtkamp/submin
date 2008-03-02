@@ -46,9 +46,9 @@ class Config:
 		if not self.htpasswd:
 			self.htpasswd = HTPasswd(self.get('svn', 'access_file'))
 
-		# make sure media_url has a sane value
-		if self.get('www', 'media_url') == '':
-			self.set('www', 'media_url', '/')
+		# make sure base_url has a sane value
+		if self.get('www', 'base_url') == '':
+			self.set('www', 'base_url', '/')
 
 		import os
 		if os.environ.has_key('SCRIPT_FILENAME'):

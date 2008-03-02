@@ -36,7 +36,7 @@ function initUsers() {
 function groupSelectorInit() {
 	var selector = new Selector({
 			"selectorId": "members",
-			"urlPrefix": media_url + "/users/show/",
+			"urlPrefix": base_url + "/users/show/",
 			"init": initUsers,
 			"addCallback": addMemberAjax,
 			"removeCallback": removeMemberAjax,

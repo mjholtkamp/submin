@@ -52,7 +52,7 @@ class Users(View):
 	@admin_required
 	def add(self, req, path, localvars):
 		config = Config()
-		media_url = config.get('www', 'media_url').rstrip('/')
+		base_url = config.get('www', 'base_url').rstrip('/')
 
 		if req.post and req.post['username']:
 			import re
@@ -60,7 +60,7 @@ class Users(View):
 			username = req.post['username'].value.strip()
 			if re.findall('[^a-zA-Z0-9_-]', username):
 				return ErrorResponse('Invalid characters in username', request=req)
-			url = media_url + '/users/show/' + username
+			url = base_url + '/users/show/' + username
 			try:
 				addUser(username)
 			except IOError:

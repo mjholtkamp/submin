@@ -41,22 +41,22 @@ function setupSidebarImages() {
 
 	// if image is not found (for example if not an admin), don't do anything
 	if (img_user) {
-		sidebar_img_add_user.src = media_url + '/img/add-user.png';
-		sidebar_img_add_user_pressed.src = media_url + '/img/add-user-pressed.png';
+		sidebar_img_add_user.src = base_url + '/img/add-user.png';
+		sidebar_img_add_user_pressed.src = base_url + '/img/add-user-pressed.png';
 		img_user.onmousedown = function() { this.src = sidebar_img_add_user_pressed.src; return false; };
 		img_user.onmouseup = function() { this.src = sidebar_img_add_user.src; };
 		img_user.onmouseout = function() { this.src = sidebar_img_add_user.src; };
 	}
 	if (img_group) {
-		sidebar_img_add_group.src = media_url + '/img/add-group.png';
-		sidebar_img_add_group_pressed.src = media_url + '/img/add-group-pressed.png';
+		sidebar_img_add_group.src = base_url + '/img/add-group.png';
+		sidebar_img_add_group_pressed.src = base_url + '/img/add-group-pressed.png';
 		img_group.onmousedown = function() { this.src = sidebar_img_add_group_pressed.src; return false; };
 		img_group.onmouseup = function() { this.src = sidebar_img_add_group.src; };
 		img_group.onmouseout = function() { this.src = sidebar_img_add_group.src; };
 	}
 	if (img_repository) {
-		sidebar_img_add_repository.src = media_url + '/img/add-repository.png';
-		sidebar_img_add_repository_pressed.src = media_url + '/img/add-repository-pressed.png';
+		sidebar_img_add_repository.src = base_url + '/img/add-repository.png';
+		sidebar_img_add_repository_pressed.src = base_url + '/img/add-repository-pressed.png';
 		img_repository.onmousedown = function() { this.src = sidebar_img_add_repository_pressed.src; return false; };
 		img_repository.onmouseup = function() { this.src = sidebar_img_add_repository.src; };
 		img_repository.onmouseout = function() { this.src = sidebar_img_add_repository.src; };
@@ -77,7 +77,7 @@ function deleteObject()
 			break
 	}
 	var name = this.parentNode.firstChild.firstChild.nodeValue;
-	var url = media_url + '/' + type + '/delete/' + name
+	var url = base_url + '/' + type + '/delete/' + name
 
 	var answer = confirm('Really delete ' + name + '? There is no undo')
 	if (!answer)
@@ -89,5 +89,5 @@ function deleteObject()
 		this.parentNode.parentNode.removeChild(this.parentNode)
 
 	if (selected_type == div.id && name == selected_object)
-		window.location = media_url + '/';
+		window.location = base_url + '/';
 }

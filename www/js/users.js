@@ -99,7 +99,7 @@ function initGroups() {
 function userSelectorInit() {
 	var selector = new Selector({
 			"selectorId": "memberof",
-			"urlPrefix": media_url + "/groups/show/",
+			"urlPrefix": base_url + "/groups/show/",
 			"init": initGroups,
 			"addCallback": addMemberToGroupAjax,
 			"removeCallback": removeMemberFromGroupAjax,

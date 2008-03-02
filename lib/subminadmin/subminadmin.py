@@ -66,7 +66,7 @@ access_file = %(htpasswd)s
 repositories = %(svn dir)s
 
 [www]
-media_url = /submin
+base_url = /submin
 
 [generated]
 session_salt = %(session salt)s

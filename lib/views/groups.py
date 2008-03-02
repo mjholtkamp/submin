@@ -54,7 +54,7 @@ class Groups(View):
 	@admin_required
 	def add(self, req, path, localvars):
 		config = Config()
-		media_url = config.get('www', 'media_url').rstrip('/')
+		base_url = config.get('www', 'base_url').rstrip('/')
 
 		if req.post and req.post['groupname']:
 			import re
@@ -63,7 +63,7 @@ class Groups(View):
 			if re.findall('[^a-zA-Z0-9_-]', groupname):
 				return ErrorResponse('Invalid characters in groupname', request=req)
 
-			url = media_url + '/groups/show/' + groupname
+			url = base_url + '/groups/show/' + groupname
 
 			try:
 				addGroup(groupname)
