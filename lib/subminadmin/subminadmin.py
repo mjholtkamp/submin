@@ -266,7 +266,7 @@ help <command>"""
 
 	def usage(self, argv):
 		commands = [x for x in dir(self) if x.startswith('c_')]
-		commandstr = '<' + '|'.join(x[2:] for x in commands) + '>'
+		commandstr = '<' + '|'.join([x[2:] for x in commands]) + '>'
 		print "Usage: %s %s" % (argv[0], commandstr)
 		print
 		for command in commands:
