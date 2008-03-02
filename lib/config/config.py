@@ -52,7 +52,7 @@ class Config:
 
 		import os
 		if os.environ.has_key('SCRIPT_FILENAME'):
-			self.base_path = os.path.dirname(os.environ['SCRIPT_FILENAME'])
+			self.base_path = os.path.dirname(os.path.realpath(os.environ['SCRIPT_FILENAME']))
 			self.base_path = os.path.dirname(self.base_path.rstrip('/'))
 		else:
 			# no cgi script
