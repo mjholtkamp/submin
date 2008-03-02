@@ -23,9 +23,8 @@ class SubminAdmin:
 		try:
 			command = getattr(self, 'c_' + argv[1])
 			command(argv)
-		except:
+		except AttributeError:
 			print "Sorry, don't know command `%s', try help" % argv[1]
-			raise
 
 	def generate_session_salt(self):
 		import random
@@ -236,9 +235,15 @@ the `--apache-user <username>' option
 
 		# add an admin user and submin-admin group
 		from config.config import Config
+		from config.authz.authz import UnknownGroupError
+
 		conf = Config(vars['submin conf'])
 		conf.htpasswd.add('admin', 'admin')
-		conf.authz.removeGroup('submin-admins') # on overwrite
+		try:
+			conf.authz.removeGroup('submin-admins') # on overwrite
+		except UnknownGroupError:
+			pass # ignore
+
 		conf.authz.addGroup('submin-admins', ['admin'])
 
 		# fix permissions
