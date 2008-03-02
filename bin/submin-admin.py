@@ -10,7 +10,7 @@ def main():
 
 	try:
 		from subminadmin.subminadmin import SubminAdmin
-	except Exception, e:
+	except ImportError, e:
 		print e
 		print "is environment %s set?" % env
 		return
