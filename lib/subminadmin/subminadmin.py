@@ -8,6 +8,9 @@ class SubminAdmin:
 		self.vars['submin root'] = Path('/var/lib/submin/')
 		self.vars['svn dir'] = Path('svn', absolute=False)
 		self.vars['trac dir'] = Path('trac', absolute=False)
+		self.vars['overwrite'] = False
+		self.vars['etc'] = Path('/etc/submin')
+		self.vars['apache user'] = ''
 
 	def _path(self, path):
 		if path.absolute:
@@ -147,9 +150,6 @@ options:
 """
 		from getopt import gnu_getopt, GetoptError
 		import os
-		self.vars['overwrite'] = False
-		self.vars['etc'] = Path('/etc/submin')
-		self.vars['apache user'] = ''
 
 		shortopts = 'fr:s:t:e:a:'
 		longopts = ['submin-root=', 'svn-dir=', 'trac-dir=', 'etc-dir=',
