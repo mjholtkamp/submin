@@ -1,22 +1,19 @@
 #!/usr/bin/python
 
+from path.path import Path
+
 class SubminAdmin:
 	def __init__(self):
 		self.vars = {}
-		self.vars['submin root'] = '/var/lib/submin/'
-		self.vars['svn dir'] = 'svn'
-		self.vars['trac dir'] = 'trac'
+		self.vars['submin root'] = Path('/var/lib/submin/')
+		self.vars['svn dir'] = Path('svn', absolute=False)
+		self.vars['trac dir'] = Path('trac', absolute=False)
 
 	def _path(self, path):
-		if len(path) == 0 or path[0] == '/':
+		if path.absolute:
 			return path
 
 		return self.vars['submin root'] + path
-
-	def _setpath(self, name, path):
-		if path[-1:] != '/':
-			path += '/'
-		self.vars[name] = path
 
 	def run(self, argv):
 		if len(argv) < 2:
@@ -40,76 +37,58 @@ class SubminAdmin:
 
 		return salt
 
-	def get_apache_users(self):
+	def get_apache_user(self, preferred):
 		from pwd import getpwnam
 		users = []
-		for user in ['www-data', 'httpd', 'apache']:
+		for user in [preferred, 'www-data', 'httpd', 'apache']:
 			pwd = ()
 			try:
 				pwd = getpwnam(user)
 			except KeyError, e:
 				pass
 			else:
-				users.append(pwd)
+				return pwd
 
-		return users
+		return
 
-	def create_subminconf_from_template(self, submin_conf_file):
+	def create_submin_conf_from_template(self):
 		import os
 
 		vars = self.replacedvars()
-		self.authz_file = vars['submin root'] + 'svn.authz'
-		self.userprop_file = vars['submin root'] + 'userproperties.conf'
-		self.access_file = vars['submin root'] + 'htpasswd'
-		self.repositories = vars['svn dir']
-		session_salt = self.generate_session_salt()
-
-		# bail if one of these things exists
-		if os.path.exists(submin_conf_file):
-			return False
-		if os.path.exists(self.authz_file):
-			return False
-		if os.path.exists(self.userprop_file):
-			return False
-		if os.path.exists(self.access_file):
-			return False
-		if os.path.exists(self.repositories):
-			return False
+		vars['session salt'] = self.generate_session_salt()
 
 		submin_conf = '''[svn]
-authz_file = %s
-userprop_file = %s
-access_file = %s
-repositories = %s
+authz_file = %(authz)s
+userprop_file = %(userprop)s
+access_file = %(htpasswd)s
+repositories = %(svn dir)s
 
 [www]
 media_url = /submin
 
 [generated]
-session_salt = %s
-''' % (self.authz_file, self.userprop_file, self.access_file,
-			self.repositories, session_salt)
+session_salt = %(session salt)s
+''' % vars
 
-		out = open(submin_conf_file, 'w')
-		out.write(submin_conf)
-		out.close()
+		file(vars['submin conf'], 'w').write(submin_conf)
 
 		return True
 
-	def create_apache_conf(self, submin_conf_file):
-		vars = {'submin_config': submin_conf_file,
-				'REQ_FILENAME': '%{REQUEST_FILENAME}',
-				'www dir': '/usr/share/submin/www/',
-				'htpasswd file': self.access_file,
-				'authz file': self.authz_file,
-				'svn dir': self.repositories}
+	def create_apache_conf(self):
+		# http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/496889
+		import sys, inspect, os
+		vars = self.replacedvars()
+		www_dir = os.path.dirname(inspect.getfile(sys._getframe(1)))
+		www_dir = os.path.realpath(os.path.join(www_dir, '../../www'))
+		vars['www dir'] = www_dir
+		vars['REQ_FILENAME'] = '%{REQUEST_FILENAME}'; # hack :)
 
 		apache_conf = '''
     Alias /submin/ %(www dir)s
     <Directory %(www dir)s>
         Options ExecCGI FollowSymLinks
         AddHandler cgi-script py cgi pl
-        SetEnv SUBMIN_CONF %(submin_config)s
+        SetEnv SUBMIN_CONF %(submin conf)s
 
         RewriteEngine on
         RewriteBase /submin/
@@ -127,8 +106,8 @@ session_salt = %s
         AuthType Basic
         AuthName "Subversion repository"
 
-        AuthUserFile %(htpasswd file)s
-        AuthzSVNAccessFile %(authz file)s
+        AuthUserFile %(htpasswd)s
+        AuthzSVNAccessFile %(authz)s
 
         Satisfy Any
         Require valid-user
@@ -136,93 +115,144 @@ session_salt = %s
 
 ''' % vars
 
-		apache_conf_file = submin_conf_file.replace('.conf', '-apache.conf')
-
-		import os
-		if (os.path.exists(apache_conf_file)):
-			backup = apache_conf_file + '.submin-backup'
-			os.rename(apache_conf_file, backup)
-			print 'Apache config file found, renamed to %s' % backup
-
-		file(apache_conf_file, 'w').write(apache_conf)
-		print 'Apache file %s created, please include it in your apache.conf' \
-			% apache_conf_file
+		file(vars['apache conf'], 'w').write(apache_conf)
+		print '''
+Apache file %s created.
+Please include it in your apache.conf
+''' % vars['apache conf']
 
 
 	def c_create(self, argv):
 		"""Create a new submin environment
-create <name> [<submin-root> [<svn-dir> [<trac-dir>]]]
+create <name> [options]
 
-	<name>\t\t- project name, defines some file names
-	<submin-root>\t- submin data dir (default: %(submin root)s)
-	\t\t  holds the files: htpasswd, authz,
-	\t\t  userproperties.conf, submin.conf
-	<svn-dir>\t- svn repository dir (default: <submin-root>/%(svn dir)s)
-	<trac-dir>\t- trac projects dir (default: <submin-root>/%(trac dir)s)
+	<name> = project name, used for some file names
+
+options:
+	-r, --submin-root <submin-root>
+		Submin data dir (default: %(submin root)s)
+		holds the files: htpasswd, authz, userproperties.conf
+	-s, --svn-dir <svn-dir>
+		Subversion repository dir (default: <submin-root>/%(svn dir)s)
+	-t, --trac-dir <trac-dir>
+		Trac projects dir (default: <submin-root>/%(trac dir)s)
+		*** trac is not actually integrated yet! ***
+	-e, --etc-dir <etc-dir>
+		Submin configuarion dir for static config (default: %(etc)s)
+		holds the files <name>.conf and <name>-apache.conf
+	-a, --apache-user <username>
+		Use this if submin-admin is unable to guess which user runs the
+		webserver.
+	-f, --force-overwrite
+		if this is specified, existing installation is overwritten
 """
+		from getopt import gnu_getopt, GetoptError
+		import os
+		self.vars['overwrite'] = False
+		self.vars['etc'] = Path('/etc/submin')
+		self.vars['apache user'] = ''
+
+		shortopts = 'fr:s:t:e:a:'
+		longopts = ['submin-root=', 'svn-dir=', 'trac-dir=', 'etc-dir=',
+					'apache-user=', 'force-overwrite']
+
+		options = []
+		try:
+			options, arguments = gnu_getopt(argv[2:], shortopts, longopts)
+		except GetoptError, e:
+			print e
+			return
+
+		for option, optarg in options:
+			if option in ['--submin-root', '-r']:
+				self.vars['submin root'] = Path(optarg)
+			elif option in ['--svn-dir', '-s']:
+				absolute = False
+				if optarg[0] == '/':
+					absolute = True
+				self.vars['svn dir'] = Path(optarg, absolute=absolute)
+			elif option in ['--trac-dir', '-t']:
+				self.vars['trac dir'] = Path(optarg)
+			elif option in ['--force-overwrite', '-f']:
+				self.vars['overwrite'] = True
+			elif option in ['--etc-dir', '-e']:
+				self.vars['etc'] = Path(optarg)
+			elif option in ['--apache-user', '-a']:
+				self.vars['apache user'] = optarg
+
 		if len(argv) < 3:
 			self.c_help([argv[0], 'help', 'create'])
 			return
 
-		self.name = argv[2]
-		if len(argv) > 3:
-			self._setpath('submin root', argv[3])
-		if len(argv) > 4:
-			self._setpath('svn dir', argv[4])
-		if len(argv) < 5:
-			self.vars['trac dir'] = ''
+		self.name = arguments[0]
 
+		# See if we can guess who the apache user is
+		apache = self.get_apache_user(self.vars['apache user'])
+		if not apache:
+			print '''
+Unable to guess the username of the webserver, please provide the username with
+the `--apache-user <username>' option
+'''
+			return
+
+		self.vars['submin conf'] = self.vars['etc'] + self.name + '.conf'
+		self.vars['apache conf'] = self.vars['etc'] + self.name + '-apache.conf'
+		self.vars['htpasswd'] = self.vars['submin root'] + 'htpasswd'
+		self.vars['authz'] = self.vars['submin root'] + 'svn.authz'
+		self.vars['userprop'] = self.vars['submin root'] + 'userproperties.conf'
 		vars = self.replacedvars()
-		submin_conf_file = '/etc/submin/' + self.name + '.conf'
 
-		# create dir
-		import os
-		conf_dir = os.path.dirname(submin_conf_file)
-		if not os.path.isdir(conf_dir):
-			try:
-				os.mkdir(conf_dir)
-			except OSError:
-				print 'making config dir failed, are you root?'
-				return
+		# don't bother checking if we force anyway
+		if not vars['overwrite']:
+			existing_installation = False
+			for var in ['submin root', 'htpasswd', 'authz', 'userprop',
+						'submin conf', 'apache conf']:
+				if os.path.exists(str(vars[var])):
+					print '%s already exists' % vars[var]
+					existing_installation = True
 
-		root_dir = vars['submin root']
-		if not os.path.isdir(root_dir):
-			try:
-				os.mkdir(root_dir)
-			except OSError:
-				print 'Failed making submin root dir, do you have permissions?'
-				return
+			if existing_installation:
+				if not vars['overwrite']:
+					print
+					print 'Existing installation found, aborting.'
+					print 'Use --force-overwrite to install anyway.'
+					return
+
+		# create dirs
+		for key in ['submin root', 'etc', 'svn dir']:
+			dir = str(vars[key])
+			if not os.path.exists(dir):
+				try:
+					os.makedirs(dir)
+				except OSError:
+					print 'making dir %s failed, do you have permissions?' % dir
+					return
 
 		# make submin.conf
-		if not self.create_subminconf_from_template(submin_conf_file):
-			print 'previous installation (partly) available, aborting'
-			return False
+		self.create_submin_conf_from_template()
+
+		# create apache.conf
+		self.create_apache_conf()
 
 		# add an admin user and submin-admin group
 		from config.config import Config
-		conf = Config(submin_conf_file)
+		conf = Config(vars['submin conf'])
 		conf.htpasswd.add('admin', 'admin')
+		conf.authz.removeGroup('submin-admins') # on overwrite
 		conf.authz.addGroup('submin-admins', ['admin'])
 
-		os.mkdir(self.repositories)
-
 		# fix permissions
-		apache = self.get_apache_users()[0]
-		try:
-			os.chown(self.vars['submin root'], apache.pw_uid, apache.pw_gid)
-			os.chown(self.repositories, apache.pw_uid, apache.pw_gid)
-			os.chown(self.authz_file, apache.pw_uid, apache.pw_gid)
-			os.chown(self.userprop_file, apache.pw_uid, apache.pw_gid)
-			os.chown(self.access_file, apache.pw_uid, apache.pw_gid)
-		except OSError:
-			print '''
- *** Failed to change permissions to apache user, are you root?
-'''
+		for item in ['submin root', 'svn dir', 'authz', 'htpasswd', 'userprop']:
+			s = str(vars[item])
+			try:
+				os.chown(s, apache.pw_uid, apache.pw_gid)
 
-		# create apache.conf
-		self.create_apache_conf(submin_conf_file)
+			except OSError:
+				print ' *** Failed to change permissions of %s' % s
+				print '     to apache user. Are you root?'
 
-		print 'created submin configuration with default user admin (password: admin)'
+
+		print 'Created submin configuration with default user admin (password: admin)'
 
 	def c_help(self, argv):
 		"""This help (supply a command for more information)
