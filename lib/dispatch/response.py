@@ -26,7 +26,7 @@ class XMLResponse(Response):
 	def __init__(self, content):
 		content = \
 			'''<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
-			''' + \
+''' + \
 			content
 
 		Response.__init__(self, content)
