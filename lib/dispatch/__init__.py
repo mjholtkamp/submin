@@ -51,5 +51,5 @@ def dispatcher(request):
 	request.status(response.status_code)
 	request.setHeaders(response.headers)
 	request.writeHeaders()
-	request.write(response.content)
+	return response.content
 
