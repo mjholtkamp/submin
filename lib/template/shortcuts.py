@@ -1,6 +1,7 @@
 from config.config import Config
 from __init__ import evaluate
 from models.user import User
+from config.authz.authz import UnknownUserError
 from models.group import Group
 from models.repository import Repository
 
@@ -15,7 +16,7 @@ def evaluate_main(templatename, templatevariables={}, request=None):
 		try:
 			session_user = request.session['user']
 			is_admin = session_user.is_admin
-		except User.DoesNotExist:
+		except UnknownUserError:
 			pass
 
 	users = []
@@ -25,7 +26,7 @@ def evaluate_main(templatename, templatevariables={}, request=None):
 		for user in htpasswd_users:
 			try:
 				users.append(User(user))
-			except User.DoesNotExist:
+			except UnknownUserError:
 				pass
 	else:
 		users.append(session_user)
