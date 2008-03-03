@@ -19,7 +19,6 @@ beforeLoad();
 var repos_old_load = window.onload;
 window.onload = function() {
 	if (repos_old_load) repos_old_load();
-	resize_content_div();
 	setupCollapsables(document.getElementById('content'), 'repostree', repostree_collapseCB, repostree_expandCB);
 	repository_tree.attach('repostree_/');
 	document.getElementById('repostree_root_text').onclick = function() {
