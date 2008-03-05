@@ -31,6 +31,7 @@ class Groups(View):
 
 		return ErrorResponse('Unknown path', request=req)
 
+	@admin_required
 	def show(self, req, path, localvars):
 		if len(path) < 1:
 			return ErrorResponse('Invalid path', request=req)

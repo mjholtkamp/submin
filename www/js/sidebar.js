@@ -3,6 +3,9 @@ load('collapsables');
 var sidebar_old_load = window.onload;
 window.onload = function() {
 	if (sidebar_old_load) sidebar_old_load()
+	if (!is_admin)
+		return;
+
 	var users = document.getElementById('users')
 	var groups = document.getElementById('groups')
 	var deleters = users.getElementsByTagName('span')
