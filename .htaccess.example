@@ -1,5 +1,5 @@
 #Options ExecCGI FollowSymLinks
-#AddHandler cgi-script py cgi pl
+#AddHandler cgi-script cgi
 
 ###
 ### Mod_python-mode:
@@ -16,6 +16,6 @@ RewriteEngine on
 RewriteBase /submin
 
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$ www/submin.py/$1
+RewriteRule ^(.*)$ www/submin.cgi/$1
 
-RewriteRule ^/?$ www/submin.py/
+RewriteRule ^/?$ www/submin.cgi/
