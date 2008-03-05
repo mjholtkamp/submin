@@ -4,6 +4,13 @@ class Response(object):
 		self.status_code = 200
 		self.headers = {'Content-Type': 'text/html'}
 
+	def status(self):
+		# XXX provide a real status message
+		return str(self.status_code) + ' status'
+
+	def setCookieHeaders(self, cookies):
+		self.headers['Set-Cookie'] = cookies
+
 class Redirect(Response):
 	def __init__(self, url):
 		Response.__init__(self)

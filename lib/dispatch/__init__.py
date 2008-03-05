@@ -55,8 +55,7 @@ def dispatcher(request):
 	else:
 		response = HTTP404('/'.join(path))
 
-	request.status(response.status_code)
-	request.setHeaders(response.headers)
-	request.writeHeaders()
-	return response.content
+	response.setCookieHeaders(request.cookieHeaders())
+
+	return response
 

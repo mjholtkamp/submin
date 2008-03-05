@@ -23,7 +23,7 @@ class Request(object):
 		for header, value in headers.iteritems():
 			self.setHeader(header, value)
 
-	def setCookieHeaders(self):
+	def cookieHeaders(self):
 		for name in self._outcookies.keys():
 			path = self._outcookies[name].get('path')
 			if path:
@@ -35,18 +35,19 @@ class Request(object):
 		cookies = self._outcookies.output(header='')
 		for cookie in cookies.splitlines():
 			self.setHeader('Set-Cookie', cookie.strip())
+		# XXX overwrite header 'Set-Cookie' :S
+
+		return self.headers['Set-Cookie']
 
 	def write(self, content):
 		raise NotImplementedError
 
-	def status(self, statusCode=200):
-		self.write('Status: %d\r\n' % statusCode)
-
-	def writeHeaders(self):
-		self.setCookieHeaders()
-		for header, value in self.headers.iteritems():
+	def writeResponse(self, response):
+		self.write('Status: %d\r\n' % response.status_code)
+		for header, value in response.headers.iteritems():
 			self.write('%s: %s\r\n' % (header, value))
-		self.write('\r\n');
+		self.write('\r\n')
+		self.write(response.content)
 
 	def setCookie(self, key, value, path='/', expires=None):
 		self._outcookies[key] = value

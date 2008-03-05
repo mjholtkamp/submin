@@ -6,6 +6,6 @@ from dispatch.cgirequest import CGIRequest
 from dispatch import dispatcher
 
 req = CGIRequest()
-content = dispatcher(req)
-req.write(content)
+response = dispatcher(req)
+req.writeResponse(response)
 
