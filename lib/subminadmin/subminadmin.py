@@ -96,9 +96,9 @@ session_salt = %(session salt)s
         RewriteBase /submin/
 
         RewriteCond %(REQ_FILENAME)s !-f
-        RewriteRule ^(.+)$ submin.py/$1
+        RewriteRule ^(.+)$ submin.cgi/$1
 
-        RewriteRule ^/?$ submin.py/
+        RewriteRule ^/?$ submin.cgi/
     </Directory>
 
     <Location /svn>
