@@ -3,7 +3,7 @@ import ConfigParser
 from authz.authz import Authz
 from authz.htpasswd import HTPasswd
 
-class Config:
+class ConfigData:
 	"""Upon construction, it should be checked if files need to be read."""
 	cp = None
 	authz = None
@@ -71,3 +71,29 @@ class Config:
 
 	def get(self, section, variable):
 		return self.cp.get(section, variable)
+
+	def _this(self):
+		"""Method used for unittesting"""
+		return self
+
+
+class Config(object):
+	"""Wrapper around ConfigData, so this is actually a Singleton.
+
+	This is a subclass of object, for __getattribute__ to work."""
+
+	instance = None # Class member, or "static"
+	def __init__(self, filename=''):
+		if not Config.instance:
+			Config.instance = ConfigData(filename)
+
+	def __getattribute__(self, attribute):
+		if attribute == "_configdata_instance":
+			# This is for the unittests, to see if our instance is really a
+			# shared instance.
+			return object.__getattribute__(self, "instance")
+		return getattr(Config.instance, attribute)
+
+	def __setattribute__(self, attribute, value):
+		return setattr(Config.instance, attribute, value)
+
