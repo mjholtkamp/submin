@@ -10,7 +10,7 @@ userprop_file = /var/www/ilaro.nl/dev/submin/conf/userproperties.ini
 repositories = /var/lib/submin/svn/
 
 [www]
-media_url = /
+base_url = /
 
 [generated]
 session_salt = 1984500a.cjctec.8"""

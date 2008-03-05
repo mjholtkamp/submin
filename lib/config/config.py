@@ -72,11 +72,6 @@ class ConfigData:
 	def get(self, section, variable):
 		return self.cp.get(section, variable)
 
-	def _this(self):
-		"""Method used for unittesting"""
-		return self
-
-
 class Config(object):
 	"""Wrapper around ConfigData, so this is actually a Singleton.
 
