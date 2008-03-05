@@ -103,6 +103,6 @@ function userSelectorInit() {
 			"init": initGroups,
 			"addCallback": addMemberToGroupAjax,
 			"removeCallback": removeMemberFromGroupAjax,
-			"canLink": function(user) { return false; }
+			"canLink": function(user) { return is_admin; }
 	});
 }
