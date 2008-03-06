@@ -15,6 +15,11 @@ def application(environ, start_response):
 		from dispatch.wsgirequest import WSGIRequest
 		from dispatch import dispatcher
 
+		""" Hack to disable config module caches between requests (see
+		   bug #100). """
+		from config.config import Config
+		Config.instance = None
+
 		req = WSGIRequest(environ)
 		response = dispatcher(req)
 		start_response(response.status(), response.headers.items())
