@@ -86,7 +86,7 @@ session_salt = %(session salt)s
 		vars['REQ_FILENAME'] = '%{REQUEST_FILENAME}'; # hack :)
 
 		apache_conf = '''
-    Alias /submin/ %(www dir)s
+    Alias /submin %(www dir)s
     <Directory %(www dir)s>
         Options ExecCGI FollowSymLinks
         AddHandler cgi-script py cgi pl
