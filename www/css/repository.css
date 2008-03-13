@@ -77,8 +77,10 @@ div#permissions-editor img.remover {
 	float: right;
 	margin-right: 0.5em;
 	margin-left: 2.0em;
+	cursor: pointer;
 }
 div#permissions-editor img.adder {
 	float: left;
 	margin-left: 0.2em;
+	cursor: pointer;
 }

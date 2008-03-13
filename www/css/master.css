@@ -73,6 +73,7 @@ ul.selector li select.adder {
 ul.selector li .remover, ul.selector li .adder {
 	float: left;
 	width: 13px;
+	cursor: pointer;
 }
 
 ul.selector li .adder {
