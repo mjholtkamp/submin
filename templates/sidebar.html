@@ -1,45 +1,45 @@
-		<script type="text/javascript" src="[val main_base_url]/js/sidebar.js"></script>
-		<link rel="stylesheet" href="[val main_base_url]/css/sidebar.css">
+		<script type="text/javascript" src="[val main_base_url]js/sidebar.js"></script>
+		<link rel="stylesheet" href="[val main_base_url]css/sidebar.css">
 		<script type="text/javascript">
 			var selected_object = "[val selected_object]";
 			var selected_type = "[val selected_type]";
 		</script>
 
 <div id="sidebar">
-	<h1>Submin</h1>
+	<h1><a href="[val main_base_url]">Submin</a></h1>
 	<p>
-	<ul><li><a href="[val main_base_url]/logout">Logout ([val main_user.name])</a></li></ul>
+	<ul><li><a href="[val main_base_url]logout">Logout ([val main_user.name])</a></li></ul>
 	</p>
 	[test:is_admin
 	<div class="showhide">
 	[set:type users]
-	<h2 class="showhide-trigger"><img class="showhide-icon" src="[val main_base_url]/img/arrow-[equals:selected_type:type expanded][else collapsed].png" />Users</h2>
+	<h2 class="showhide-trigger"><img class="showhide-icon" src="[val main_base_url]img/arrow-[equals:selected_type:type expanded][else collapsed].png" />Users</h2>
 	<ul class="showhide-object" id="users">[iter:main_users
 		[set:selected [equals:selected_type:type [equals:selected_object:ival.name  class="selected"]]]
-		<li[val selected]><a href="[val main_base_url]/users/show/[ival.name]">[ival.name]</a>[test:is_admin <span class="deleteuser"><img class="remover" src="[val main_base_url]/img/min.gif" /></span>]</li>]
+		<li[val selected]><a href="[val main_base_url]users/show/[ival.name]">[ival.name]</a>[test:is_admin <span class="deleteuser"><img class="remover" src="[val main_base_url]img/min.gif" /></span>]</li>]
 	</ul>
 	</div>
 	<div class="showhide">
 	[set:type groups]
 	[set:special_group submin-admins]
-	<h2 class="showhide-trigger"><img class="showhide-icon" src="[val main_base_url]/img/arrow-[equals:selected_type:type expanded][else collapsed].png" />Groups</h2>
+	<h2 class="showhide-trigger"><img class="showhide-icon" src="[val main_base_url]img/arrow-[equals:selected_type:type expanded][else collapsed].png" />Groups</h2>
 	<ul class="showhide-object" id="groups">[iter:main_groups 
 		[set:selected [equals:selected_type:type [equals:selected_object:ival.name  class="selected"]]]
-		<li[val selected]><a href="[val main_base_url]/groups/show/[ival.name]">[ival.name]</a>[test:is_admin [equals:ival.name:special_group ][else <span class="deletegroup"><img class="remover" src="[val main_base_url]/img/min.gif" /></span>]]</li>]
+		<li[val selected]><a href="[val main_base_url]groups/show/[ival.name]">[ival.name]</a>[test:is_admin [equals:ival.name:special_group ][else <span class="deletegroup"><img class="remover" src="[val main_base_url]img/min.gif" /></span>]]</li>]
 	</ul>
 	</div>
 	<div class="showhide">
 	[set:type repositories]
-	<h2 class="showhide-trigger"><img class="showhide-icon" src="[val main_base_url]/img/arrow-[equals:selected_type:type expanded][else collapsed].png" />Repositories</h2>
+	<h2 class="showhide-trigger"><img class="showhide-icon" src="[val main_base_url]img/arrow-[equals:selected_type:type expanded][else collapsed].png" />Repositories</h2>
 	<ul class="showhide-object" id="repositories">[iter:main_repositories 
 		[set:selected [equals:selected_type:type [equals:selected_object:ival.name  class="selected"]]]
-		<li[val selected]><a href="[val main_base_url]/repositories/show/[ival]">[ival]</a></li>]
+		<li[val selected]><a href="[val main_base_url]repositories/show/[ival]">[ival]</a></li>]
 	</ul>
 	</div>
 	<ul id="addicons">
-		<li><a href="[val main_base_url]/users/add/" title="Add a user"><img src="[val main_base_url]/img/add-user.png" id="sidebar_add_user_img"/></a></li>
-		<li><a href="[val main_base_url]/groups/add/" title="Add a group"><img src="[val main_base_url]/img/add-group.png" id="sidebar_add_group_img"/></a></li>
-		<li><a href="[val main_base_url]/repositories/add/" title="Add a repository"><img src="[val main_base_url]/img/add-repository.png" id="sidebar_add_repository_img"/></a></li>
+		<li><a href="[val main_base_url]users/add/" title="Add a user"><img src="[val main_base_url]img/add-user.png" id="sidebar_add_user_img"/></a></li>
+		<li><a href="[val main_base_url]groups/add/" title="Add a group"><img src="[val main_base_url]img/add-group.png" id="sidebar_add_group_img"/></a></li>
+		<li><a href="[val main_base_url]repositories/add/" title="Add a repository"><img src="[val main_base_url]img/add-repository.png" id="sidebar_add_repository_img"/></a></li>
 	</ul>
 	]
 </div>

@@ -24,7 +24,7 @@ function Selector(options) {
 
 /* Creates the add/remove button for each item */
 Selector.prototype.makeButton = function(className) {
-	var imgSrc = base_url + "/img/" +
+	var imgSrc = base_url + "img/" +
 		(className == "remover" ? "min.gif" : "plus.gif");
 	var img = $c("img", {"src": imgSrc, "className": className});
 	return img;
@@ -165,7 +165,7 @@ Selector.prototype.disableSelect = function() {
 	this.select.disabled = true;
 
 	// Disable the add-button and change the cursor-style. Maybe hide?
-	this.adder.src = base_url + "/img/plus-greyed.png";
+	this.adder.src = base_url + "img/plus-greyed.png";
 	this.adder.onclick = function() { return false; }
 	this.adder.style.cursor = 'default';
 }

@@ -56,7 +56,7 @@ def evaluate_main(templatename, templatevariables={}, request=None):
 	templatevariables['main_groups'] = groups
 	templatevariables['main_repositories'] = repositories
 
-	templatevariables['main_base_url'] = config.get('www', 'base_url').rstrip('/')
+	templatevariables['main_base_url'] = config.base_url
 
 	if request:
 		templatevariables['request'] = request

@@ -27,7 +27,7 @@ body {
 	margin: 0;
 }
 
-#sidebar h1 {
+#sidebar h1, #sidebar h1 a {
 	color: #505D6D;
 	margin: 0;
 }

@@ -327,7 +327,7 @@ ReposNode.prototype.createChild = function(dir, has_subdirs)
 	if (newnode.has_subdirs) {
 		var img = document.createElement('img');
 		img.className = prefix + '-icon';
-		img.src = base_url + '/img/arrow-collapsed.png';
+		img.src = base_url + 'img/arrow-collapsed.png';
 
 		var span = document.createElement('span');
 		span.className = prefix + '-trigger';
@@ -337,7 +337,7 @@ ReposNode.prototype.createChild = function(dir, has_subdirs)
 		ul.className = prefix + '-object';
 
 		var folder_img = document.createElement('img');
-		folder_img.src = base_url + '/img/repostree-folder.png';
+		folder_img.src = base_url + 'img/repostree-folder.png';
 		folder_img.className = "repostree-folder";
 
 		var span2 = document.createElement('span');
@@ -350,7 +350,7 @@ ReposNode.prototype.createChild = function(dir, has_subdirs)
 		li.appendChild(ul);
 	} else {
 		var folder_img = document.createElement('img');
-		folder_img.src = base_url + '/img/repostree-folder.png';
+		folder_img.src = base_url + 'img/repostree-folder.png';
 		folder_img.className = "repostree-folder";
 
 		var span = document.createElement('span');

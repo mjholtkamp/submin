@@ -18,9 +18,9 @@ var collapsables_arrow_expanded = new Image();
 function setupCollapsables(docroot, prefix, collapseFun, expandFun) {
 	var collapsables = collapsables_findClassNames(docroot, prefix + '-trigger');
 
-	collapsables_arrow_collapsed.src = base_url + '/img/arrow-collapsed.png';
-	collapsables_arrow_halfway.src = base_url + '/img/arrow-halfway.png';
-	collapsables_arrow_expanded.src = base_url + '/img/arrow-expanded.png';
+	collapsables_arrow_collapsed.src = base_url + 'img/arrow-collapsed.png';
+	collapsables_arrow_halfway.src = base_url + 'img/arrow-halfway.png';
+	collapsables_arrow_expanded.src = base_url + 'img/arrow-expanded.png';
 
 	var collapsables_length = collapsables.length;
 	for (var idx = 0; idx < collapsables_length; ++idx) {

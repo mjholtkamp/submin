@@ -3,6 +3,8 @@ import ConfigParser
 from authz.authz import Authz
 from authz.htpasswd import HTPasswd
 
+from path.path import Path
+
 class ConfigData:
 	"""Upon construction, it should be checked if files need to be read."""
 	cp = None
@@ -49,6 +51,7 @@ class ConfigData:
 		# make sure base_url has a sane value
 		if self.get('www', 'base_url') == '':
 			self.set('www', 'base_url', '/')
+		self.base_url = Path(self.get("www", "base_url"))
 
 		import os
 		if os.environ.has_key('SCRIPT_FILENAME'):
