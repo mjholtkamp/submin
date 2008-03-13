@@ -1,0 +1,16 @@
+#intro li {
+	list-style: disc;
+	padding: 0;
+	margin-left: 1.5em;
+}
+
+#intro {
+	width: 50em;
+}
+
+#intro p {
+	/*
+	margin: 3px;
+	text-indent: 1em;
+	*/
+}
