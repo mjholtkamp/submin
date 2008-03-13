@@ -68,17 +68,6 @@ Selector.prototype.init = function() {
 	} else {
 		callbackValue = this.options.initCallback();
 	}
-
-	// The li-items
-	var added = callbackValue["added"];
-	if (this.options.type == "permissions") {
-		added.sort(permissionSort);
-	} else {
-		added.sort(stringSort);
-	}
-	for (var added_idx=0; added_idx < added.length; ++added_idx)
-		this.setupAddedItem(added[added_idx]);
-
 	// The dropdown
 
 	// Don't show it to non-admins!
@@ -92,6 +81,16 @@ Selector.prototype.init = function() {
 		addable.sort(stringSort);
 	}
 	this.setupSelect(addable);
+
+	// The li-items
+	var added = callbackValue["added"];
+	if (this.options.type == "permissions") {
+		added.sort(permissionSort);
+	} else {
+		added.sort(stringSort);
+	}
+	for (var added_idx=0; added_idx < added.length; ++added_idx)
+		this.setupAddedItem(added[added_idx]);
 }
 
 Selector.prototype.permissionsSelect = function(name, type, permissions) {
@@ -141,7 +140,7 @@ Selector.prototype.setupAddedItem = function(added) {
 			var _name = item.name;
 			if (this.options.type == "permissions") {
 				var _type = added["type"];
-				var _perm = added["permission"];
+				var _perm = added["permissions"];
 
 				item.appendChild(this.permissionsSelect(_name, _type, _perm));
 				remover.onclick = function() {
