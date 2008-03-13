@@ -1,7 +1,7 @@
 load('dom');
 load('array');
 load('window');
-load('permeditor');
+load('selector');
 
 // for ReposNode object, see below
 var repository_tree = new ReposNode('repostree');
@@ -257,8 +257,9 @@ function initPermissionsEditor(path) {
 	if (permissionsEditor)
 		permissionsEditor.destroy();
 
-	permissionsEditor = new PermissionsEditor({
-		"editorId": "permissions-list",
+	permissionsEditor = new Selector({
+		"type": "permissions",
+		"selectorId": "permissions-list",
 		"initCallback": loadPermissions,
 		"addCallback": addPermissionToPath,
 		"removeCallback": removePermissionFromPath,

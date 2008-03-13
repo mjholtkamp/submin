@@ -37,7 +37,7 @@ function groupSelectorInit() {
 	var selector = new Selector({
 			"selectorId": "members",
 			"urlPrefix": base_url + "/users/show/",
-			"init": initUsers,
+			"initCallback": initUsers,
 			"addCallback": addMemberAjax,
 			"removeCallback": removeMemberAjax,
 			"canLink": function(user) { return is_admin || user == me; }

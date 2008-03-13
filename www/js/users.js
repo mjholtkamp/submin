@@ -100,7 +100,7 @@ function userSelectorInit() {
 	var selector = new Selector({
 			"selectorId": "memberof",
 			"urlPrefix": base_url + "/groups/show/",
-			"init": initGroups,
+			"initCallback": initGroups,
 			"addCallback": addMemberToGroupAjax,
 			"removeCallback": removeMemberFromGroupAjax,
 			"canLink": function(user) { return is_admin; }
