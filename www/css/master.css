@@ -63,9 +63,10 @@ ul.selector li a {
 	float: left;
 }
 
-ul.selector li select {
+ul.selector li select.adder {
 	width: 190px;
 	margin-right: 10px;
+	margin-bottom: 1.5em;
 	float: left;
 }
 
