@@ -1,2 +1,64 @@
+<link rel="stylesheet" href="[val main_base_url]/css/intro.css">
 <div id="content">
+	<div id="intro">
+	<h1>Welcome to submin!</h1>
+
+	<p>You see this page because you are an admin-user</p>
+
+	<h2 id="admin-user">What is an admin-user?</h2>
+	<p>An admin-user is technically a user in the group
+	&ldquo;submin-admins&rdquo;.</p>
+	<p>Users in this group have special powers: they can manage
+	users and groups; add repositories and
+	manage permissions for directories in repositories and &mdash; of course &mdash; they can fly!</p>
+	<p>Regular users can only view their own profile-page in which they can
+	change their own password and e-mail address, but admin-users can change
+	this information for every user.</p>
+
+	<h3>The sidebar</h3>
+	<p>The access for all this wealth is on the left of this text, in the
+	sidebar.</p>
+	<p>At the top you can see three sections: users, groups and repositories.
+	Click on any of these groups and a submenu will fold out.</p>
+	<p>At the bottom you can see three buttons. The first adds a new user,
+	the second a new group and the last button adds a new repository. These are
+	also only visible for (and accessible to) admin-users.</p>
+
+	<p>If you move your mouse-pointer over a user or group, that user or group
+	is highlighted and gets a
+	<img src="[val main_base_url]/img/min.gif" class="remover" alt="(-)" />
+	button. Clicking this button deletes that user or group.</p>
+
+	<p>There is one exception: the submin-admins group. You cannot remove this
+	group because submin defines admin-users as users in the group
+	submin-admin. Removing this group would render submin virtually
+	useless.</p>
+
+	<h2>Managing users and groups</h2>
+	<p>To manage a user or group, you just click on it's name in the sidebar.
+	This opens a window with a few options.</p>
+	<p>For a user, you can set it's e-mail address, password and
+	memberships. For a group, you can only set it's members.</p>
+	<p>To add a user to a group, select the group from the dropdown in the
+	users' profile page (or the user in the group-page) and click the
+	<img src="[val main_base_url]/img/plus.gif" class="adder" alt="(+)" />
+	button. That's it!</p>
+
+	<h2>Repositories and permissions</h2>
+	<p>If you click on a repository-name, you are confronted with two elements:
+	the folder-tree and the info-box.</p>
+	<p>The folder-tree displays the structure of your repository and highlights
+	the folders with permissions.</p>
+	<p>Clicking on a folder will change the info-box to reflect the current
+	selected folder. You can edit it's permissions here.</p>
+	<p>To add a permission, you must first select the user or group to restrict
+	(or give access) and use the 
+	<img src="[val main_base_url]/img/plus.gif" class="adder" alt="(+)" />
+	button. After that you can select the appropriate permission from the
+	dropdown next to it's name. The permission is automatically saved when
+	selecting it.</p>
+	<p>To remove this user or group from the permission-list, click the
+	<img src="[val main_base_url]/img/min.gif" class="remover" alt="(-)" />
+	next to the permission-dropdown.</p>
+	</div>
 </div>
