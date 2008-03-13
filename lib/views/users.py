@@ -52,7 +52,7 @@ class Users(View):
 	@admin_required
 	def add(self, req, path, localvars):
 		config = Config()
-		base_url = config.get('www', 'base_url').rstrip('/')
+		base_url = config.base_url
 
 		if req.post and req.post['username']:
 			import re

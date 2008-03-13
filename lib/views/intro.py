@@ -11,7 +11,7 @@ class Intro(View):
 
 		if not req.session['user'].is_admin:
 			config = Config()
-			base_url = config.get('www', 'base_url').rstrip('/')
+			base_url = config.base_url
 			username = req.session['user'].name
 			return Redirect(base_url + '/users/show/' + username)
 

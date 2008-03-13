@@ -32,8 +32,7 @@ class Login(View):
 	def evaluate_form(self, config, msg=''):
 		localvalues = {}
 		localvalues['msg'] = msg
-		localvalues['base_url'] = config.get('www',
-				'base_url').rstrip('/')
+		localvalues['base_url'] = config.base_url
 		return Response(evaluate('login.html', localvalues))
 
 

@@ -51,6 +51,8 @@ class ConfigData:
 		# make sure base_url has a sane value
 		if self.get('www', 'base_url') == '':
 			self.set('www', 'base_url', '/')
+
+		# Normalize base_url and make it a member for easy access
 		self.base_url = Path(self.get("www", "base_url"))
 
 		import os
