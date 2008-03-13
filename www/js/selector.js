@@ -4,7 +4,7 @@
  *   	dropdown with all the remaining groups to.
  * - urlPrefix: The name of the current item is added to this prefix to link
  *   	to f.i. a group
- * - init: callback-function which returns two lists in a dictionary:
+ * - initCallback: callback-function which returns two lists in a dictionary:
  *   	added and addable. The first being the list with the items which are
  *   	already part of the Selector, and addable items which can be added.
  *   	This method is also called when re-initializing after a change.
@@ -14,6 +14,7 @@
  *   	the name of the item to be removed.
  * - canLink: is a user allowed to see a link to the other object? This is a
  *   	function, expecting the name of the current object.
+ * - type: "permissions" if permission selector, users/groups otherwise
  */
 function Selector(options) {
 	this.options = options;
