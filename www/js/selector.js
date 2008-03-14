@@ -170,6 +170,7 @@ Selector.prototype.removerOnClick = function(name, type) {
 
 Selector.prototype.setupSelect = function(addable) {
 	this.select = $c("select", {"className": "adder"});
+
 	var item = $c("li");
 	var span = $c("span", {"innerHTML": "Add: "});
 	item.appendChild(span);
@@ -183,6 +184,17 @@ Selector.prototype.setupSelect = function(addable) {
 	} else {
 		this.addOption("---");
 	}
+
+	if (this.options.type == "permissions") {
+		this.groupOptions = $c("optgroup");
+		this.groupOptions.setAttribute("label", "Groups");
+		this.userOptions = $c("optgroup");
+		this.userOptions.setAttribute("label", "Users");
+		this.select.appendChild(this.groupOptions);
+		this.select.appendChild(this.userOptions);
+	}
+
+
 	for (var addable_idx = 0; addable_idx < addable.length; ++addable_idx)
 		this.addOption(addable[addable_idx]);
 
@@ -222,19 +234,24 @@ Selector.prototype.addOption = function(_option) {
 	if (this.options.type == "permissions") {
 		option.value = _option.name;
 		if (_option.type == "group") {
-			displayname = "[Group] " + _option.name;
+			option.appendChild(document.createTextNode(_option.name));
+			this.groupOptions.appendChild(option);
 		} else if (_option.type == "user") {
-			displayname = "[User] " + _option.name;
+			option.appendChild(document.createTextNode(_option.name));
+			this.userOptions.appendChild(option);
 		} else {
 			displayname = _option.name;
+			option.appendChild(document.createTextNode(displayname));
+			this.select.appendChild(option);
 		}
 	} else {
 		option.value = _option;
 		displayname = _option;
+
+		option.appendChild(document.createTextNode(displayname));
+		this.select.appendChild(option);
 	}
 
-	option.appendChild(document.createTextNode(displayname));
-	this.select.appendChild(option);
 }
 
 // remove hooks to avoid memory leaks
