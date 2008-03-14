@@ -8,7 +8,7 @@ class Unauthorized(Exception):
 
 def login_required(fun):
 	config = Config()
-	login_url = os.path.join(config.get('www', 'base_url'), 'login')
+	login_url = os.path.join(str(config.base_url), 'login')
 
 	def _decorator(self, *args, **kwargs):
 		if not self.request.is_ajax():

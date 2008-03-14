@@ -48,12 +48,8 @@ class ConfigData:
 		if not self.htpasswd:
 			self.htpasswd = HTPasswd(self.get('svn', 'access_file'))
 
-		# make sure base_url has a sane value
-		if self.get('www', 'base_url') == '':
-			self.set('www', 'base_url', '/')
-
 		# Normalize base_url and make it a member for easy access
-		self.base_url = Path(self.get("www", "base_url"))
+		self.base_url = Path(self.get("www", "base_url"), append_slash=True)
 
 		import os
 		if os.environ.has_key('SCRIPT_FILENAME'):
