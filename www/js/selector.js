@@ -214,13 +214,9 @@ Selector.prototype.selectOnChange = function() {
 	}
 
 	if (this.options.type == "permissions") {
-		var type = "user";
-		if (displayname.indexOf("[Group] ") != -1)
-			type = "group";
-
-		this.options.addCallback(groupname, type, this.options.path);
+		this.options.addCallback(displayname, groupname, this.options.path);
 	} else {
-		this.options.addCallback(groupname);
+		this.options.addCallback(displayname);
 	}
 
 	this.reInit();
@@ -229,18 +225,14 @@ Selector.prototype.selectOnChange = function() {
 
 Selector.prototype.addOption = function(_option) {
 	var option = $c("option");
-	var displayname;
 	if (this.options.type == "permissions") {
-		option.value = _option.name;
+		option.value = _option.type;
+		option.appendChild(document.createTextNode(_option.name));
 		if (_option.type == "group") {
-			option.appendChild(document.createTextNode(_option.name));
 			this.groupOptions.appendChild(option);
 		} else if (_option.type == "user") {
-			option.appendChild(document.createTextNode(_option.name));
 			this.userOptions.appendChild(option);
 		} else {
-			displayname = _option.name;
-			option.appendChild(document.createTextNode(displayname));
 			this.select.appendChild(option);
 		}
 	} else {
