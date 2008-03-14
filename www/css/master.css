@@ -54,6 +54,10 @@ li form {
 	margin: 0.1em;
 }
 
+ul.selector span {
+	float: left;
+}
+
 ul.selector li {
 	clear: both;
 }
@@ -64,9 +68,11 @@ ul.selector li a {
 }
 
 ul.selector li select.adder {
-	width: 190px;
+	width: 180px;
 	margin-right: 10px;
 	margin-bottom: 1.5em;
+	margin-left: 0.5em;
+	margin-top: -0.2em;
 	float: left;
 }
 

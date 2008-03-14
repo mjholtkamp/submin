@@ -155,31 +155,21 @@ Selector.prototype.setupAddedItem = function(added) {
 		this.list.appendChild(item);
 }
 
-Selector.prototype.removerOnClick = function(name) {
-	this.options.removeCallback(name);
+Selector.prototype.removerOnClick = function(name, type) {
+	this.options.removeCallback(name, type, this.options.path);
 	this.reInit();
 	return false;
 };
 
-Selector.prototype.disableSelect = function() {
-	this.select.disabled = true;
-
-	// Disable the add-button and change the cursor-style. Maybe hide?
-	this.adder.src = base_url + "img/plus-greyed.png";
-	this.adder.onclick = function() { return false; }
-	this.adder.style.cursor = 'default';
-}
-
 Selector.prototype.setupSelect = function(addable) {
 	this.select = $c("select", {"className": "adder"});
 	var item = $c("li");
+	var span = $c("span", {"innerHTML": "Add: "});
+	item.appendChild(span);
 	item.appendChild(this.select);
-	this.adder = this.makeButton("adder");
 	var _this = this; // this is out of scope in onclick below!
 
-	this.adder.onclick = function() { _this.adderOnClick(); };
-
-	item.appendChild(this.adder);
+	this.select.onchange = function() { _this.selectOnChange(); };
 
 	if (this.options.type == "permissions") {
 		this.addOption({"type": "", "name": "---"});
@@ -192,10 +182,10 @@ Selector.prototype.setupSelect = function(addable) {
 	this.list.appendChild(item);
 
 	if (!addable.length)
-		this.disableSelect();
+		this.select.disabled = true;
 }
 
-Selector.prototype.adderOnClick = function() {
+Selector.prototype.selectOnChange = function() {
 	var select = this.select;
 	var groupname = select.options[select.selectedIndex].getAttribute("value");
 	var displayname = select.options[select.selectedIndex].innerHTML;
