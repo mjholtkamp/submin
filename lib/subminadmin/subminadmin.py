@@ -25,9 +25,11 @@ class SubminAdmin:
 
 		try:
 			command = getattr(self, 'c_' + argv[1])
-			command(argv)
-		except AttributeError:
+		except AttributeError, e:
 			print "Sorry, don't know command `%s', try help" % argv[1]
+			return
+
+		command(argv)
 
 	def generate_session_salt(self):
 		import random
@@ -72,7 +74,7 @@ base_url = /submin
 session_salt = %(session salt)s
 ''' % vars
 
-		file(vars['submin conf'], 'w').write(submin_conf)
+		file(str(vars['submin conf']), 'w').write(submin_conf)
 
 		return True
 
@@ -117,7 +119,7 @@ session_salt = %(session salt)s
 
 ''' % vars
 
-		file(vars['apache conf'], 'w').write(apache_conf)
+		file(str(vars['apache conf']), 'w').write(apache_conf)
 		print '''
 Apache file %s created.
 Please include it in your apache.conf
@@ -194,8 +196,8 @@ the `--apache-user <username>' option
 '''
 			return
 
-		self.vars['submin conf'] = self.vars['etc'] + self.name + '.conf'
-		self.vars['apache conf'] = self.vars['etc'] + self.name + '-apache.conf'
+		self.vars['submin conf'] = self.vars['etc'] + (self.name + '.conf')
+		self.vars['apache conf'] = self.vars['etc'] + (self.name + '-apache.conf')
 		self.vars['htpasswd'] = self.vars['submin root'] + 'htpasswd'
 		self.vars['authz'] = self.vars['submin root'] + 'svn.authz'
 		self.vars['userprop'] = self.vars['submin root'] + 'userproperties.conf'
@@ -237,7 +239,7 @@ the `--apache-user <username>' option
 		from config.config import Config
 		from config.authz.authz import UnknownGroupError
 
-		conf = Config(vars['submin conf'])
+		conf = Config(str(vars['submin conf']))
 		conf.htpasswd.add('admin', 'admin')
 		try:
 			conf.authz.removeGroup('submin-admins') # on overwrite
