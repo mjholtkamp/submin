@@ -84,3 +84,6 @@ div#permissions-editor img.adder {
 	margin-left: 0.2em;
 	cursor: pointer;
 }
+div#permissions-editor li span img {
+	margin-right: 0.25em;
+}

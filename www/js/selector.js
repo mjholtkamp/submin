@@ -119,8 +119,15 @@ Selector.prototype.setupAddedItem = function(added) {
 			var permissions = added['permissions'];
 			if (permissions == "")
 				permissions = "none";
-			var displayname = "[" + added["type"] + "] " + added["name"];
-			item.appendChild($c("span", {"innerHTML": displayname}));
+			var icons = {"user": "UserIconScaled.png",
+				"group": "GroupIconScaled.png"}
+			var img = $c("img",
+					{"src": base_url + "img/" + icons[added["type"]]});
+			var displayname = added["name"];
+			var span = $c("span");
+			span.appendChild(img);
+			span.appendChild(document.createTextNode(displayname));
+			item.appendChild(span);
 		} else {
 			item.name = added;
 			if (!this.options.canLink(added)) {
