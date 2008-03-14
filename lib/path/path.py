@@ -12,13 +12,23 @@ class Path(object):
 	def dirname(self):
 		return os.path.dirname(self.path)
 
+	def copy(self, path=None):
+		if path is None:
+			path = self.path
+
+		p = Path(path, append_slash=self.append_slash, absolute=self.absolute)
+		return p
+
 	def join(self, other):
 		if isinstance(other, Path):
 			other = other.path.lstrip('/')
+		else:
+			other = other.lstrip('/')
 
-		other = os.path.join(self.path, other)
+		joined = os.path.join(self.path, other)
+		path = self.canonicalize(joined)
 
-		return self.canonicalize(other)
+		return self.copy(path)
 
 	def canonicalize(self, path):
 		'''Return canonical form of path, depending on options'''
