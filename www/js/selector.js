@@ -71,16 +71,15 @@ Selector.prototype.init = function() {
 	// The dropdown
 
 	// Don't show it to non-admins!
-	if (!is_admin)
-		return;
-
-	var addable = callbackValue["addable"];
-	if (this.options.type == "permissions") {
-		addable.sort(permissionSort);
-	} else {
-		addable.sort(stringSort);
+	if (is_admin) {
+		var addable = callbackValue["addable"];
+		if (this.options.type == "permissions") {
+			addable.sort(permissionSort);
+		} else {
+			addable.sort(stringSort);
+		}
+		this.setupSelect(addable);
 	}
-	this.setupSelect(addable);
 
 	// The li-items
 	var added = callbackValue["added"];
