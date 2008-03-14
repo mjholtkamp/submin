@@ -54,6 +54,10 @@ li form {
 	margin: 0.1em;
 }
 
+ul.selector {
+	padding-bottom: 1.5em;
+}
+
 ul.selector span {
 	float: left;
 }
