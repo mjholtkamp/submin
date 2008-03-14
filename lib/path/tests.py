@@ -55,5 +55,9 @@ class PathTests(unittest.TestCase):
 		p = Path("/")
 		self.assertEquals(str(p), "/")
 
+	def testRootAppendSlash(self):
+		p = Path("/", append_slash=True)
+		self.assertEquals(str(p), "/")
+
 if __name__ == "__main__":
 	unittest.main()

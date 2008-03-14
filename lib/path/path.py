@@ -30,7 +30,7 @@ class Path(object):
 			if path == '' or path[0] != '/':
 				path = '/' + path
 
-		if self.append_slash:
+		if self.append_slash and path != '/':
 			return path + '/'
 
 		return path
