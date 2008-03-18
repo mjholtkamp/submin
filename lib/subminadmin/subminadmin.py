@@ -130,26 +130,29 @@ Please include it in your apache.conf
 		"""Create a new submin environment
 create <name> [options]
 
-	<name> = project name, used for some file names
+Setup config files and create apache config. Also create password and user 
+files and svn repository dir if not already present.
+
+    <name> = Used for filenames in the static config dir (for example 'default')
 
 options:
-	-r, --submin-root <submin-root>
-		Submin data dir (default: %(submin root)s)
-		holds the files: htpasswd, authz, userproperties.conf
-	-s, --svn-dir <svn-dir>
-		Subversion repository dir (default: <submin-root>/%(svn dir)s)
-	-t, --trac-dir <trac-dir>
-		Trac projects dir (default: <submin-root>/%(trac dir)s)
-		*** trac is not actually integrated yet! ***
-	-e, --etc-dir <etc-dir>
-		Submin configuarion dir for static config (default: %(etc)s)
-		holds the files <name>.conf and <name>-apache.conf
-	-a, --apache-user <username>
-		Use this if submin-admin is unable to guess which user runs the
-		webserver.
-	-f, --force-overwrite
-		if this is specified, existing installation is overwritten
+    -r, --submin-root <submin-root>
+        Override dynamic data dir (default: %(submin root)s), contains writable 
+        files: htpasswd, svn.authz, userproperties.conf and svn repository.
+    -e, --etc-dir <etc-dir>
+        Override static config dir (default: %(etc)s).
+    -s, --svn-dir <svn-dir>
+        Override svn repository dir (default: <submin-root>/%(svn dir)s).
+    -a, --apache-user <username>
+        Use this if submin-admin is unable to guess which user runs the
+        webserver.
+    -f, --force-overwrite
+        If this is specified, no check is done on existing installations.
 """
+# -t, --trac-dir <trac-dir>
+#		Trac projects dir (default: <submin-root>/%(trac dir)s)
+#		*** trac is not actually integrated yet! ***
+
 		from getopt import gnu_getopt, GetoptError
 		import os
 
