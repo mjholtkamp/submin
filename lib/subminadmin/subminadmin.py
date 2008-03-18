@@ -251,10 +251,15 @@ the `--apache-user <username>' option
 
 		conf.authz.addGroup('submin-admins', ['admin'])
 
-		# fix permissions
+		# fix permissions/ownerships
 		for item in ['submin root', 'svn dir', 'authz', 'htpasswd', 'userprop']:
 			s = str(vars[item])
 			try:
+				if os.path.isdir(s):
+					os.chmod(s, 0750)
+				else:
+					os.chmod(s, 0640)
+
 				os.chown(s, apache.pw_uid, apache.pw_gid)
 
 			except OSError:
