@@ -35,7 +35,7 @@ cd `dirname $0`/..
 # install submin-admin
 install -g root -o root -m 755 bin/submin-admin.py ${SUBMIN_ADMIN}
 # fix path
-sed -ie "s@_SUBMIN_LIB_DIR_@${FINAL_PREFIX}/share/submin/lib@" ${PREFIX}/bin/submin-admin
+sed -i -e "s@_SUBMIN_LIB_DIR_@${FINAL_PREFIX}/share/submin/lib@" ${PREFIX}/bin/submin-admin
 
 rm -rf "${SHARE}"
 mkdir -p ${SHARE}
