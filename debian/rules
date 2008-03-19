@@ -20,6 +20,7 @@ install: build
 binary-indep:
 	dh_testdir
 	dh_testroot
+	dh_installman man/submin-admin.1
 	dh_compress
 	dh_fixperms
 	dh_installdeb
