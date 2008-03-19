@@ -7,11 +7,14 @@ body {
 	background: #fff url(../img/sidebar.png) top left repeat-y;
 }
 #sidebar {
-	width: 150px;
-	padding: 5px;
+	width: 161px;
+	padding: 0px;
+	margin: 0px;
 	float: left;
 	color: #000;
-	padding-bottom: 35px;
+	padding-bottom: 45px;
+	overflow: hidden;
+	white-space: nowrap;
 }
 #sidebar h2 {
 	text-transform: uppercase;
@@ -20,6 +23,7 @@ body {
 	margin-bottom: 0;
 	margin-top: 0;
 	padding-top: 1em;
+	margin-left: 0.5em;
 	clear: both;
 	cursor: pointer;
 }
@@ -29,11 +33,11 @@ body {
 
 #sidebar h1, #sidebar h1 a {
 	color: #505D6D;
-	margin: 0;
+	margin-left: 0.5em;
 }
 #sidebar li {
 	float: left;
-	width: 90%;
+	width: 100%;
 }
 #sidebar li:hover, li.selected {
 	background: #C0CDED;
@@ -47,7 +51,8 @@ body {
 #sidebar li a {
 	display: block;
 	float: left;
-	width: 80%;
+	width: 75%;
+	margin-left: 0.5em;
 	text-decoration: none;
 	color: black;
 }
@@ -66,7 +71,7 @@ ul#addicons {
 	bottom: 0;
 	background: url(../img/sidebar-add.png);
 	height: 30px;
-	margin: 0 -5px;
+	margin: 0;
 	padding: 0;
 	width: 161px; /* not 162px, let the border show! */
 	border-top: 1px solid #515151;
