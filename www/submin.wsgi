@@ -15,10 +15,10 @@ def application(environ, start_response):
 		from dispatch.wsgirequest import WSGIRequest
 		from dispatch import dispatcher
 
-		""" Hack to disable config module caches between requests (see
-		   bug #100). """
+		""" Call reinit, to see if files are changed. (bug #100). """
 		from config.config import Config
-		Config.instance = None
+		config = Config()
+		config.reinit()
 
 		req = WSGIRequest(environ)
 		response = dispatcher(req)

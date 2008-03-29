@@ -16,37 +16,60 @@ class ConfigData:
 			import os
 			if not os.environ.has_key('SUBMIN_CONF'):
 				raise Exception('SUBMIN_CONF environment not found')
-			filename = os.environ['SUBMIN_CONF']
+			self.filename = os.environ['SUBMIN_CONF']
 
-		if not self.cp:
+		self.ctimes = {}
+		self.ctimes["config"] = 0;
+		self.ctimes["authz"] = 0;
+		self.ctimes["userprop"] = 0;
+		self.ctimes["htpasswd"] = 0;
+
+		self.reinit()
+
+	def reinit(self):
+		import os
+		s_c = os.stat(self.filename)
+		if not self.cp or s_c.st_ctime > self.ctimes["config"]:
 			self.cp = ConfigParser.ConfigParser()
-			self.cp.read(filename)
+			self.cp.read(self.filename)
+			self.ctimes["config"] = s_c.st_ctime
 
-		if not self.authz:
-			authz_file = ''
-			userprop_file = ''
-			try:
-				authz_file = self.get('svn', 'authz_file')
-			except ConfigParser.NoSectionError, e:
-				raise Exception(
-					"Missing config section 'svn' in file %s" % filename)
-			except ConfigParser.NoOptionError, e:
-				raise Exception(
-					"Missing config option 'authz_file' in file %s" % filename)
+		# authz/userprop preparation
+		authz_file = ''
+		userprop_file = ''
+		try:
+			authz_file = self.get('svn', 'authz_file')
+		except ConfigParser.NoSectionError, e:
+			raise Exception(
+				"Missing config section 'svn' in file %s" % filename)
+		except ConfigParser.NoOptionError, e:
+			raise Exception(
+				"Missing config option 'authz_file' in file %s" % filename)
 
-			try:
-				userprop_file = self.get('svn', 'userprop_file')
-			except ConfigParser.NoSectionError, e:
-				raise Exception(
-					"Missing config section 'svn' in file %s" % filename)
-			except ConfigParser.NoOptionError, e:
-				raise Exception(
-					"Missing config option 'userprop_file' in file %s" % \
-							filename)
+		try:
+			userprop_file = self.get('svn', 'userprop_file')
+		except ConfigParser.NoSectionError, e:
+			raise Exception(
+				"Missing config section 'svn' in file %s" % filename)
+		except ConfigParser.NoOptionError, e:
+			raise Exception(
+				"Missing config option 'userprop_file' in file %s" % \
+						filename)
+
+		s_a = os.stat(authz_file)
+		s_u = os.stat(userprop_file)
+		refresh_authz = s_a.st_ctime > self.ctimes["authz"]
+		refresh_userprop = s_u.st_ctime > self.ctimes["userprop"]
+		if not self.authz or refresh_authz or refresh_userprop:
 			self.authz = Authz(authz_file, userprop_file)
+			self.ctimes["authz"] = s_a.st_ctime
+			self.ctimes["userprop"] = s_u.st_ctime
 
-		if not self.htpasswd:
-			self.htpasswd = HTPasswd(self.get('svn', 'access_file'))
+		htpasswd_file = self.get('svn', 'access_file')
+		s_h = os.stat(htpasswd_file)
+		if not self.htpasswd or s_h.st_ctime > self.ctimes["htpasswd"]:
+			self.htpasswd = HTPasswd(htpasswd_file)
+			self.ctimes["htpasswd"] = s_h.st_ctime
 
 		# Normalize base_url and make it a member for easy access
 		self.base_url = Path(self.get("www", "base_url"), append_slash=True)
@@ -92,4 +115,7 @@ class Config(object):
 
 	def __setattribute__(self, attribute, value):
 		return setattr(Config.instance, attribute, value)
+
+	def reinit(self):
+		Config.instance.reinit()
 
