@@ -4,7 +4,8 @@ def application(environ, start_response):
 	import os
 	import sys
 	if not environ.has_key('SUBMIN_CONF'):
-		return 'Please set SUBMIN_CONF via SetEnv'
+		start_response('200 ok', [])
+		return 'Please set SUBMIN_CONF in your apache config (ie. via SetEnv)'
 
 	try:
 		os.environ['SUBMIN_CONF'] = environ['SUBMIN_CONF']
