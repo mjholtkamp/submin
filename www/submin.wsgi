@@ -9,9 +9,9 @@ def application(environ, start_response):
 
 	try:
 		os.environ['SUBMIN_CONF'] = environ['SUBMIN_CONF']
-		cwd = environ['DOCUMENT_ROOT']
+		os.environ['SCRIPT_FILENAME'] = environ['SCRIPT_FILENAME']
+		cwd = os.path.dirname(environ['SCRIPT_FILENAME'])
 		libdir = os.path.realpath(os.path.join(cwd, '../lib/'))
-		os.environ['SCRIPT_FILENAME'] = os.path.join(cwd, 'submin.wsgi')
 		sys.path.append(libdir)
 		from dispatch.wsgirequest import WSGIRequest
 		from dispatch import dispatcher
