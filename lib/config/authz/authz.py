@@ -3,43 +3,43 @@ import ConfigParser
 # Exceptions
 class GroupExistsError(Exception):
 	def __init__(self, group):
-		Exception.args = 'Group %s already exists' % group
+		Exception.__init__(self, 'Group %s already exists' % group)
 
 class UnknownGroupError(Exception):
 	def __init__(self, group):
-		Exception.args = 'Group %s does not exist' % group
+		Exception.__init__(self, 'Group %s does not exist' % group)
 
 class UnknownUserError(Exception):
 	def __init__(self, user):
-		Exception.args = 'User %s does not exist' % user
+		Exception.__init__(self, 'User %s does not exist' % user)
 
 class MemberExistsError(Exception):
 	def __init__(self, user, group):
-		Exception.args = 'User %s already exists in group %s' % (user, group)
+		Exception.__init__(self, 'User %s already exists in group %s' % (user, group))
 
 class UnknownMemberError(Exception):
 	def __init__(self, user, group):
-		Exception.args = 'User %s is not member of group %s' % (user, group)
+		Exception.__init__(self, 'User %s is not member of group %s' % (user, group))
 
 class InvalidUserError(Exception):
 	def __init__(self, user):
-		Exception.args = 'User `%s\' is invalid' % user
+		Exception.__init__(self, 'User `%s\' is invalid' % user)
 
 class InvalidGroupError(Exception):
 	def __init__(self, group):
-		Exception.args = 'Group `%s\' is invalid' % group
+		Exception.__init__(self, 'Group `%s\' is invalid' % group)
 
 class InvalidRepositoryError(Exception):
 	def __init__(self, repos, path):
-		Exception.args = 'Repository %s does not exist (path: %s)' % (repos, path)
+		Exception.__init__(self, 'Repository %s does not exist (path: %s)' % (repos, path))
 
 class PathExistsError(Exception):
 	def __init__(self, repos, path):
-		Exception.args = 'Path %s already exists in repository %s' % (path, repos)
+		Exception.__init__(self, 'Path %s already exists in repository %s' % (path, repos))
 
 class UnknownPermissionError(Exception):
 	def __init__(self, path, name):
-		Exception.args = 'Permission for %s does not exist in path %s' % (name, path)
+		Exception.__init__(self, 'Permission for %s does not exist in path %s' % (name, path))
 
 class Authz:
 	def __init__(self, authz_file, userprop_file):
