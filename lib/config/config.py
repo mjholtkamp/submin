@@ -12,6 +12,7 @@ class ConfigData:
 	htpasswd = None
 
 	def __init__(self, filename=''):
+		self.filename = filename
 		if not filename:
 			import os
 			if not os.environ.has_key('SUBMIN_CONF'):
