@@ -30,7 +30,7 @@ class ConfigData:
 	def _ctime(self, filename):
 		try:
 			s = os.stat(filename)
-			return s.ctime
+			return s.st_ctime
 		except OSError:
 			return 0
 
