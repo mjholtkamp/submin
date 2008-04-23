@@ -15,6 +15,7 @@
 	</head>
 
 	<body>
+		<form action="." method="post">
 			[iter:sections
 				<table>
 					<tr>[iter:ival.heading <th>[ival]</th>]
@@ -22,11 +23,17 @@
 					</tr>
 
 					[iter:ival.options <tr>
-						[iter:ival <td>[ival]</td>]
-						[iter:browsers <td><input type="checkbox" /></td>]
+						[iter:ival.texts <td>[ival]</td>]
+						[set:hash [val ival.hash]]
+						[iter:ival.flags
+						<td>
+							<input type="checkbox" name="[val hash]" value="[val iindex.__str__]" [test:ival checked="checked"]>
+						</td>]
 					</tr>]
 
 				</table>
 			]
+			<input type="submit" value="Save state" />
+		</form>
 	</body>
 </html>
