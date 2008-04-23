@@ -1,4 +1,5 @@
 import ConfigParser
+import os
 
 from authz.authz import Authz
 from authz.htpasswd import HTPasswd
@@ -14,7 +15,6 @@ class ConfigData:
 	def __init__(self, filename=''):
 		self.filename = filename
 		if not filename:
-			import os
 			if not os.environ.has_key('SUBMIN_CONF'):
 				raise Exception('SUBMIN_CONF environment not found')
 			self.filename = os.environ['SUBMIN_CONF']
@@ -27,8 +27,14 @@ class ConfigData:
 
 		self.reinit()
 
+	def _ctime(self, filename):
+		try:
+			s = os.stat(filename)
+			return s.ctime
+		except OSError:
+			return 0
+
 	def reinit(self):
-		import os
 		s_c = os.stat(self.filename)
 		if not self.cp or s_c.st_ctime > self.ctimes["config"]:
 			self.cp = ConfigParser.ConfigParser()
@@ -57,25 +63,26 @@ class ConfigData:
 				"Missing config option 'userprop_file' in file %s" % \
 						filename)
 
-		s_a = os.stat(authz_file)
-		s_u = os.stat(userprop_file)
-		refresh_authz = s_a.st_ctime > self.ctimes["authz"]
-		refresh_userprop = s_u.st_ctime > self.ctimes["userprop"]
+		authz_ctime = self._ctime(authz_file)
+		refresh_authz = authz_ctime > self.ctimes["authz"]
+
+		userprop_ctime = self._ctime(userprop_file)
+		refresh_userprop = userprop_ctime > self.ctimes["userprop"]
+
 		if not self.authz or refresh_authz or refresh_userprop:
 			self.authz = Authz(authz_file, userprop_file)
-			self.ctimes["authz"] = s_a.st_ctime
-			self.ctimes["userprop"] = s_u.st_ctime
+			self.ctimes["authz"] = authz_ctime
+			self.ctimes["userprop"] = userprop_ctime
 
 		htpasswd_file = self.get('svn', 'access_file')
-		s_h = os.stat(htpasswd_file)
-		if not self.htpasswd or s_h.st_ctime > self.ctimes["htpasswd"]:
+		htpasswd_ctime = self._ctime(htpasswd_file)
+		if not self.htpasswd or htpasswd_ctime > self.ctimes["htpasswd"]:
 			self.htpasswd = HTPasswd(htpasswd_file)
-			self.ctimes["htpasswd"] = s_h.st_ctime
+			self.ctimes["htpasswd"] = htpasswd_ctime
 
 		# Normalize base_url and make it a member for easy access
 		self.base_url = Path(self.get("www", "base_url"), append_slash=True)
 
-		import os
 		if os.environ.has_key('SCRIPT_FILENAME'):
 			self.base_path = os.path.dirname(os.path.realpath(os.environ['SCRIPT_FILENAME']))
 			self.base_path = os.path.dirname(self.base_path.rstrip('/'))
