@@ -139,6 +139,10 @@ options:
     -r, --submin-root <submin-root>
         Override dynamic data dir (default: %(submin root)s), contains writable 
         files: htpasswd, svn.authz, userproperties.conf and svn repository.
+    --authz-file <file>
+        Override authz path (default: <submin-root>/svn.authz)
+    --htpasswd-file <file>
+        Override htpasswd path (default: <submin-root>/htpasswd)
     -e, --etc-dir <etc-dir>
         Override static config dir (default: %(etc)s).
     -s, --svn-dir <svn-dir>
@@ -157,8 +161,9 @@ options:
 		import os
 
 		shortopts = 'fr:s:t:e:a:'
-		longopts = ['submin-root=', 'svn-dir=', 'trac-dir=', 'etc-dir=',
-					'apache-user=', 'force-overwrite']
+		longopts = ['submin-root=', 'authz-file=', 'htpasswd-file=',
+					'svn-dir=', 'trac-dir=', 'etc-dir=', 'apache-user=',
+					'force-overwrite']
 
 		options = []
 		try:
@@ -183,6 +188,10 @@ options:
 				self.vars['etc'] = Path(optarg)
 			elif option in ['--apache-user', '-a']:
 				self.vars['apache user'] = optarg
+			elif option in ['--authz-file']:
+				self.vars['authz'] = optarg
+			elif option in ['--htpasswd-file']:
+				self.vars['htpasswd'] = optarg
 
 		if len(argv) < 3:
 			self.c_help([argv[0], 'help', 'create'])
@@ -201,8 +210,11 @@ the `--apache-user <username>' option
 
 		self.vars['submin conf'] = self.vars['etc'] + (self.name + '.conf')
 		self.vars['apache conf'] = self.vars['etc'] + (self.name + '-apache.conf')
-		self.vars['htpasswd'] = self.vars['submin root'] + 'htpasswd'
-		self.vars['authz'] = self.vars['submin root'] + 'svn.authz'
+		if 'htpasswd' not in self.vars:
+			self.vars['htpasswd'] = self.vars['submin root'] + 'htpasswd'
+		if 'authz' not in self.vars:
+			self.vars['authz'] = self.vars['submin root'] + 'svn.authz'
+
 		self.vars['userprop'] = self.vars['submin root'] + 'userproperties.conf'
 		vars = self.replacedvars()
 
