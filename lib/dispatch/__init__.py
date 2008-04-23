@@ -1,5 +1,7 @@
 from dispatch.response import Response, HTTP404, XMLStatusResponse
 
+from config.config import Config
+
 from views.error import ErrorResponse
 from views.test import Test
 from views.users import Users
@@ -19,6 +21,18 @@ classes = {
 	'repositories': Repositories,
 	'': Intro,
 }
+
+def init_tests():
+	"""Initialize url-coupling to test-views
+	Only loaded if config-options in section "tests" are present
+	"""
+	config = Config()
+	if not config.cp.has_section("tests"):
+		return
+	from views.uiscenarios import UIScenarios
+	classes["uiscenarios"] = UIScenarios
+
+init_tests()
 
 def dispatcher(request):
 	# Add session information to request
@@ -47,6 +61,7 @@ def dispatcher(request):
 			#list.append(str(e))
 			#list = '\n'.join(list)
 
+			raise
 			if not request.is_ajax():
 				response = ErrorResponse(str(e), request=request)
 			else:

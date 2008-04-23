@@ -1,0 +1,34 @@
+=Page	Scenario	Desired result as normal user
+Login	 Input valid user/password	 login, redirect to profile page
+Profile	 Fill in email, press 'change'	 Log message: email changed
+Profile	 Change password	 asked to verify password
+Profile	 Verify password	 Log message: password changed
+
+=Page	Scenario	Desired result as admin
+Login	 Input valid user/password	 login, redirect to previous page/intro page
+Any but Login	 Click on user/group/repos triangle	 user/group/repos list expands/collaps
+Any but Login	 Click on user	 Go to user page
+Any but Login	 Click on group	 Go to group page
+Any but Login	 Click on repository	 Go to repository page
+Any but Login	 Click on add user	 Go to add user page
+Add user	 Fill in name, click on 'create'	 User created, redirected to new user
+Any but Login	 Click on add group	 Go to add group page
+Add group	 Fill in name, click on 'create'	 Group created, redirected to new group
+Any but Login	 Click on add repository	 Go to add repository page
+Add repository	 Fill in name, click on 'create'	 Repository created, redirected to new repository
+User	 Fill in email, press 'change'	 Log message: email changed
+User	 Change password	 asked to verify password
+User	 Verify password	 Log message: password changed
+User	 Select group in select-bar	 Log message: user added to group
+User	 Click minus sign right of group	 Log message: user removed from group
+User	 Click group in group-list	 redirected to group page
+Group	 Select user in select-bar on group page	 Log message: user is added to group
+Group	 Click on minus sign right of user	 Log message: user is removed from group
+Group	 Click on user in userlist	 redirected to user page
+Repository	 Click on any directory triangle	 subdirectories expanded/collapsed (*1)
+Repository	 Click on any directory	 permission list is updated.
+Repository	 Select user from select bar in permission list	 Log message: user is added to list (*2)
+Repository	 Select group from select bar in permission list	 Log message: group is added to list (*2)
+Repository	 Click minus next to user in permission list	 Log message: user is removed from list (*3)
+Repository	 Click minus next to group in permission list	 Log message: group is removed from list (*3)
+Repository	 Select permission next to user/group in permission list	 Log message: permission changed

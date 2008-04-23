@@ -1,0 +1,32 @@
+<html>
+	<head>
+		<title>Scenarios</title>
+		<style type="text/css" media="screen">
+			table {
+				border-collapse: collapse;
+				margin-bottom: 2em;
+			}
+			td,th {
+				border: 1px solid #000;
+				padding: 0.2em;
+			}
+
+		</style>
+	</head>
+
+	<body>
+			[iter:sections
+				<table>
+					<tr>[iter:ival.heading <th>[ival]</th>]
+						[iter:browsers <th>[ival]</th>]
+					</tr>
+
+					[iter:ival.options <tr>
+						[iter:ival <td>[ival]</td>]
+						[iter:browsers <td><input type="checkbox" /></td>]
+					</tr>]
+
+				</table>
+			]
+	</body>
+</html>
