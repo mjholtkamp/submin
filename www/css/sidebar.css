@@ -69,6 +69,7 @@ body {
 ul#addicons {
 	position: fixed;
 	bottom: 0;
+	left: 0;
 	background: url(../img/sidebar-add.png);
 	height: 30px;
 	margin: 0;
