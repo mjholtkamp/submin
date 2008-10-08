@@ -7,6 +7,7 @@ from models.group import Group
 from models.repository import Repository
 from auth.decorators import *
 from path.path import Path
+from ConfigParser import NoOptionError
 
 class Repositories(View):
 	@login_required
@@ -39,6 +40,15 @@ class Repositories(View):
 		except (IndexError, Repository.DoesNotExist):
 			return ErrorResponse('This repository does not exist.', request=req)
 
+		config = Config()
+		try:
+			import os.path
+			http_base_url = config.get('svn', 'http_base_url')
+			http_url = os.path.join(http_base_url, repository.name)
+		except NoOptionError:
+			http_url = ''
+
+		localvars['http_url'] = http_url
 		localvars['repository'] = repository
 		formatted = evaluate_main('repositories.html', localvars, request=req)
 		return Response(formatted)
