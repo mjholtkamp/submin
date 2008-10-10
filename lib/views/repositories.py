@@ -35,6 +35,7 @@ class Repositories(View):
 
 	@admin_required
 	def show(self, req, path, localvars):
+		import os.path
 		try:
 			repository = Repository(path[0])
 		except (IndexError, Repository.DoesNotExist):
@@ -42,13 +43,19 @@ class Repositories(View):
 
 		config = Config()
 		try:
-			import os.path
-			http_base_url = config.get('svn', 'http_base_url')
-			http_url = os.path.join(http_base_url, repository.name)
+			svn_base_url = config.get('www', 'svn_base_url')
+			svn_http_url = os.path.join(svn_base_url, repository.name)
 		except NoOptionError:
-			http_url = ''
+			svn_http_url = ''
 
-		localvars['http_url'] = http_url
+		try:
+			trac_base_url = config.get('www', 'trac_base_url')
+			trac_http_url = os.path.join(trac_base_url, repository.name)
+		except NoOptionError:
+			trac_http_url = ''
+
+		localvars['svn_http_url'] = svn_http_url
+		localvars['trac_http_url'] = trac_http_url
 		localvars['repository'] = repository
 		formatted = evaluate_main('repositories.html', localvars, request=req)
 		return Response(formatted)

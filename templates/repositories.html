@@ -2,7 +2,12 @@
 		<link rel="stylesheet" href="[val main_base_url]css/repository.css">
 
 <div id="content">
-	<h1 class="content">Repository [test:http_url <a href="[val http_url]" title="[val http_url]">[val repository.name]</a>][else [val repository.name]<sup title="http_base_url not set in config">(!)</sup>]</h1>
+	<h1 class="content">Repository [val repository.name]
+		<span class="link">
+([test:svn_http_url <a class="external" href="[val svn_http_url]" title="[val svn_http_url]">svn</a>][else <span title="svn_base_url not set in config">svn</span>])
+([test:trac_http_url <a class="external" href="[val trac_http_url]" title="[val trac_http_url]">trac</a>][else <span title="trac_base_url not set in config">trac</span>])
+		</span>
+		</h1>
 		<div id="repostree">
 			<ul>
 				<li class="repostree" id="repostree_/">

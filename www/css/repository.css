@@ -1,3 +1,16 @@
+span.link {
+	font-size: small;
+	font-weight: normal;
+}
+
+span.link a {
+	color: black;
+}
+
+span.link a:hover {
+	text-decoration: underline;
+}
+
 img.repostree-icon {
 	height: 1em;
 	width: 1em;
