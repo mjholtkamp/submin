@@ -26,6 +26,10 @@ a img { border: 0; }
 
 a { text-decoration: none; }
 
+a.external {
+	background:url(../img/external.png) 99% 40% no-repeat; padding-right: 15px;
+}
+
 h1.content {
 	background: #ddd;
 	padding: 0.3em;
