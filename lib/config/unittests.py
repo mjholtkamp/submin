@@ -3,10 +3,11 @@ from config import Config, ConfigData
 import os
 import tempfile
 
-authz_file = "/tmp/submin-unittest/conf/svn.authz"
-access_file = "/tmp/submin-unittest/conf/htpasswd"
-userprop_file = "/tmp/submin-unittest/conf/userproperties.ini"
-repositories = "/tmp/submin-unittest/svn/"
+base = "/tmp/submin-unittest"
+authz_file = "%s/conf/svn.authz" % base
+access_file = "%s/conf/htpasswd" % base
+userprop_file = "%s/conf/userproperties.ini" % base
+repositories = "%s/svn/" % base
 
 conf_data = """[svn]
 authz_file = %s
@@ -48,6 +49,7 @@ class SingletonTest(unittest.TestCase):
 
 	def tearDown(self):
 		os.unlink(self.filename)
+		os.system('rm -rf %s' % base)
 
 	def testInstanceEqual(self):
 		config_instance = Config()
