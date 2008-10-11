@@ -19,6 +19,11 @@ PREFIX=$1
 FINAL_PREFIX=${PREFIX}
 SHARE=${PREFIX}/share/submin
 SUBMIN_ADMIN=${PREFIX}/bin/submin-admin
+if [ "`id -u`" == "0" ]; then
+	ROOT=1
+else
+	ROOT=0
+fi
 
 if [ $# -gt 1 ]; then
 	FINAL_PREFIX=$2
@@ -33,13 +38,23 @@ fi
 
 cd `dirname $0`/..
 # install submin-admin
-install -g root -o root -m 755 bin/submin-admin.py ${SUBMIN_ADMIN}
+mkdir -p `dirname ${SUBMIN_ADMIN}`
+if [ "$ROOT" == "1" ]; then
+	install -g root -o root -m 755 bin/submin-admin.py ${SUBMIN_ADMIN}
+else
+	install -m 755 bin/submin-admin.py ${SUBMIN_ADMIN}
+fi
+
 # fix path
-sed -i -e "s@_SUBMIN_LIB_DIR_@${FINAL_PREFIX}/share/submin/lib@" ${PREFIX}/bin/submin-admin
+sed -i "" -e "s@_SUBMIN_LIB_DIR_@${FINAL_PREFIX}/share/submin/lib@" ${PREFIX}/bin/submin-admin
 
 rm -rf "${SHARE}"
-mkdir -p ${SHARE}
-cp -r www/{css,img,js} lib templates ${SHARE}
-chown root:root ${SHARE}/www/submin.{ws,c}gi
-chmod 755 ${SHARE}/www/submin.{ws,c}gi
+mkdir -p ${SHARE}/www # make share and share/www
+cp -r www/{css,img,js} ${SHARE}/www
+cp -r lib templates ${SHARE}
+if [ "$ROOT" == "1" ]; then
+	install -g root -o root -m 755 www/submin.{ws,c}gi ${SHARE}/www/
+else
+	install -m 755 www/submin.{ws,c}gi ${SHARE}/www/
+fi
 find ${SHARE} -type d -name .svn -exec rm -rf \{} \; -prune
