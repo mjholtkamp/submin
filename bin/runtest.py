@@ -5,6 +5,7 @@ def main():
 	cmd = "find lib -name unittests.py"
 	(exitstatus, outtext) = commands.getstatusoutput(cmd)
 	for file in outtext.split('\n'):
+		print("running %s" % file)
 		os.system("PYTHONPATH=lib python %s" % file)
 
 if __name__ == "__main__":
