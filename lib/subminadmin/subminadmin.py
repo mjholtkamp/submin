@@ -78,7 +78,7 @@ session_salt = %(session salt)s
 
 		return True
 
-	def create_apache_conf(self):
+	def create_apache_confs(self):
 		# http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/496889
 		import sys, inspect, os
 		vars = self.replacedvars()
@@ -87,7 +87,7 @@ session_salt = %(session salt)s
 		vars['www dir'] = www_dir
 		vars['REQ_FILENAME'] = '%{REQUEST_FILENAME}'; # hack :)
 
-		apache_conf = '''
+		apache_conf_cgi = '''
     Alias /submin %(www dir)s
     <Directory %(www dir)s>
         Options ExecCGI FollowSymLinks
@@ -119,11 +119,38 @@ session_salt = %(session salt)s
 
 ''' % vars
 
-		file(str(vars['apache conf']), 'w').write(apache_conf)
+		apache_conf_wsgi = '''
+	WSGIScriptAlias /submin %(www dir)s/submin.wsgi
+    AliasMatch /css/(.*) %(www dir)s/css/$1
+    AliasMatch /img/(.*) %(www dir)s/img/$1
+    AliasMatch /js/(.*) %(www dir)s/js/$1
+
+    <Directory %(www dir)s>
+        SetEnv SUBMIN_CONF %(submin conf)s
+    </Directory>
+
+    <Location /svn>
+        DAV svn
+        SVNParentPath %(svn dir)s
+
+        AuthType Basic
+        AuthName "Subversion repository"
+
+        AuthUserFile %(htpasswd)s
+        AuthzSVNAccessFile %(authz)s
+
+        Satisfy Any
+        Require valid-user
+    </Location>
+
+''' % vars
+
+		file(str(vars['apache conf cgi']), 'w').write(apache_conf_cgi)
+		file(str(vars['apache conf wsgi']), 'w').write(apache_conf_wsgi)
 		print '''
-Apache file %s created.
-Please include it in your apache.conf
-''' % vars['apache conf']
+Apache files %(apache conf wsgi)s and %(apache conf cgi)s created.
+Please include one in your apache.conf
+''' % vars
 
 
 	def c_create(self, argv):
@@ -209,7 +236,8 @@ the `--apache-user <username>' option
 			return
 
 		self.vars['submin conf'] = self.vars['etc'] + (self.name + '.conf')
-		self.vars['apache conf'] = self.vars['etc'] + (self.name + '-apache.conf')
+		self.vars['apache conf cgi'] = self.vars['etc'] + (self.name + '-apache-cgi.conf')
+		self.vars['apache conf wsgi'] = self.vars['etc'] + (self.name + '-apache-wsgi.conf')
 		if 'htpasswd' not in self.vars:
 			self.vars['htpasswd'] = self.vars['submin root'] + 'htpasswd'
 		if 'authz' not in self.vars:
@@ -222,7 +250,7 @@ the `--apache-user <username>' option
 		if not vars['overwrite']:
 			existing_installation = False
 			for var in ['submin root', 'htpasswd', 'authz', 'userprop',
-						'submin conf', 'apache conf']:
+						'submin conf', 'apache conf cgi', 'apache conf wsgi']:
 				if os.path.exists(str(vars[var])):
 					print '%s already exists' % vars[var]
 					existing_installation = True
@@ -248,7 +276,7 @@ the `--apache-user <username>' option
 		self.create_submin_conf_from_template()
 
 		# create apache.conf
-		self.create_apache_conf()
+		self.create_apache_confs()
 
 		# add an admin user and submin-admin group
 		from config.config import Config
