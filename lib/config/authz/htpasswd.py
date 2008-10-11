@@ -5,6 +5,10 @@ import fcntl
 from fcntl import LOCK_EX
 from os import rename, unlink
 
+class NoMD5PasswordError(Exception):
+	def __init__(self):
+		Exception.__init__(self, "Password is not encrypted with MD5")
+
 class HTPasswd:
 	def __init__(self, file):
 		self.passwords = dict()
@@ -53,7 +57,11 @@ class HTPasswd:
 		if not self.passwords.has_key(user):
 			return False
 
-		magic, salt, encrypted = self.passwords[user][1:].split('$')
+		vals = self.passwords[user][1:].split('$')
+		if not len(vals) == 3:
+			raise NoMD5PasswordError()
+
+		magic, salt, encrypted = vals
 
 		hash = md5crypt.md5crypt(password, salt, '$' + magic + '$')
 
