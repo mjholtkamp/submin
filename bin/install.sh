@@ -39,7 +39,7 @@ sed -i -e "s@_SUBMIN_LIB_DIR_@${FINAL_PREFIX}/share/submin/lib@" ${PREFIX}/bin/s
 
 rm -rf "${SHARE}"
 mkdir -p ${SHARE}
-cp -r www lib templates ${SHARE}
+cp -r www/{css,img,js} lib templates ${SHARE}
 chown root:root ${SHARE}/www/submin.{ws,c}gi
 chmod 755 ${SHARE}/www/submin.{ws,c}gi
 find ${SHARE} -type d -name .svn -exec rm -rf \{} \; -prune
