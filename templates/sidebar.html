@@ -16,7 +16,7 @@
 	<h2 class="showhide-trigger"><img class="showhide-icon" src="[val main_base_url]img/arrow-[equals:selected_type:type expanded][else collapsed].png" />Users</h2>
 	<ul class="showhide-object" id="users">[iter:main_users
 		[set:selected [equals:selected_type:type [equals:selected_object:ival.name  class="selected"]]]
-		<li[val selected]><a href="[val main_base_url]users/show/[ival.name]">[ival.name]</a>[test:is_admin <span class="deleteuser"><img class="remover" src="[val main_base_url]img/min.gif" /></span>]</li>]
+		<li[val selected]><a href="[val main_base_url]users/show/[ival.name]" title="[ival.name]">[ival.name]</a>[test:is_admin <span class="deleteuser"><img class="remover" src="[val main_base_url]img/min.gif" /></span>]</li>]
 	</ul>
 	</div>
 	<div class="showhide">
@@ -25,7 +25,7 @@
 	<h2 class="showhide-trigger"><img class="showhide-icon" src="[val main_base_url]img/arrow-[equals:selected_type:type expanded][else collapsed].png" />Groups</h2>
 	<ul class="showhide-object" id="groups">[iter:main_groups 
 		[set:selected [equals:selected_type:type [equals:selected_object:ival.name  class="selected"]]]
-		<li[val selected]><a href="[val main_base_url]groups/show/[ival.name]">[equals:ival.name:special_group <em>][ival.name][equals:ival.name:special_group </em>]</a>[test:is_admin [equals:ival.name:special_group ][else <span class="deletegroup"><img class="remover" src="[val main_base_url]img/min.gif" /></span>]]</li>]
+		<li[val selected]><a href="[val main_base_url]groups/show/[ival.name]" title="[ival.name]">[equals:ival.name:special_group <em>][ival.name][equals:ival.name:special_group </em>]</a>[test:is_admin [equals:ival.name:special_group ][else <span class="deletegroup"><img class="remover" src="[val main_base_url]img/min.gif" /></span>]]</li>]
 	</ul>
 	</div>
 	<div class="showhide">
@@ -33,7 +33,7 @@
 	<h2 class="showhide-trigger"><img class="showhide-icon" src="[val main_base_url]img/arrow-[equals:selected_type:type expanded][else collapsed].png" />Repositories</h2>
 	<ul class="showhide-object" id="repositories">[iter:main_repositories 
 		[set:selected [equals:selected_type:type [equals:selected_object:ival.name  class="selected"]]]
-		<li[val selected]><a href="[val main_base_url]repositories/show/[ival]">[ival]</a></li>]
+		<li[val selected]><a href="[val main_base_url]repositories/show/[ival]" title="[ival.name]">[ival]</a></li>]
 	</ul>
 	</div>
 	<ul id="addicons">
