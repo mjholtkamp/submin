@@ -46,7 +46,9 @@ else
 fi
 
 # fix path
-sed -i "" -e "s@_SUBMIN_LIB_DIR_@${FINAL_PREFIX}/share/submin/lib@" ${PREFIX}/bin/submin-admin
+## use .bak extension, because OSX and Linux sed versions differ in handling -i
+sed -i".bak" -e "s@_SUBMIN_LIB_DIR_@${FINAL_PREFIX}/share/submin/lib@" ${PREFIX}/bin/submin-admin
+rm -f ${PREFIX}/bin/submin-admin.bak
 
 rm -rf "${SHARE}"
 mkdir -p ${SHARE}/www # make share and share/www
