@@ -121,9 +121,9 @@ session_salt = %(session salt)s
 
 		apache_conf_wsgi = '''
 	WSGIScriptAlias /submin %(www dir)s/submin.wsgi
-    AliasMatch /css/(.*) %(www dir)s/css/$1
-    AliasMatch /img/(.*) %(www dir)s/img/$1
-    AliasMatch /js/(.*) %(www dir)s/js/$1
+    AliasMatch ^/submin/css/(.*) %(www dir)s/css/$1
+    AliasMatch ^/submin/img/(.*) %(www dir)s/img/$1
+    AliasMatch ^/submin/js/(.*) %(www dir)s/js/$1
 
     <Directory %(www dir)s>
         SetEnv SUBMIN_CONF %(submin conf)s
