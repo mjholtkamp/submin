@@ -1,0 +1,20 @@
+Submin Installation
+-------------------
+
+When installing from tarball, please run:
+
+  sh bin/install.sh /usr/local
+
+to install submin in /usr/local. You can then run /usr/local/bin/submin-admin
+to create your submin project (multiple seperate projects are possible). This
+program will show some help, but for a quick start, just run:
+
+  /usr/local/bin/submin-admin create default
+
+and it will create files in /etc/submin, /var/lib/submin. Please note that
+you have to include one of the generated apache files in /etc/submin/ to your
+apache2 config.
+
+If any instructions are not clear, please file a bug (see 'development' on the
+website).
+
