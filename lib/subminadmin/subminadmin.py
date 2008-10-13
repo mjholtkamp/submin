@@ -11,6 +11,7 @@ class SubminAdmin:
 		self.vars['overwrite'] = False
 		self.vars['etc'] = Path('/etc/submin')
 		self.vars['apache user'] = ''
+		self.vars['http base'] = ''
 
 	def _path(self, path):
 		if path.absolute:
@@ -68,7 +69,7 @@ access_file = %(htpasswd)s
 repositories = %(svn dir)s
 
 [www]
-base_url = /submin
+base_url = %(http base)s/submin
 
 [generated]
 session_salt = %(session salt)s
@@ -88,14 +89,14 @@ session_salt = %(session salt)s
 		vars['REQ_FILENAME'] = '%{REQUEST_FILENAME}'; # hack :)
 
 		apache_conf_cgi = '''
-    Alias /submin %(www dir)s
+    Alias %(http base)s/submin %(www dir)s
     <Directory %(www dir)s>
         Options ExecCGI FollowSymLinks
         AddHandler cgi-script py cgi pl
         SetEnv SUBMIN_CONF %(submin conf)s
 
         RewriteEngine on
-        RewriteBase /submin/
+        RewriteBase %(http base)s/submin
 
         RewriteCond %(REQ_FILENAME)s !-f
         RewriteRule ^(.+)$ submin.cgi/$1
@@ -103,7 +104,7 @@ session_salt = %(session salt)s
         RewriteRule ^/?$ submin.cgi/
     </Directory>
 
-    <Location /svn>
+    <Location %(http base)s/svn>
         DAV svn
         SVNParentPath %(svn dir)s
 
@@ -120,16 +121,16 @@ session_salt = %(session salt)s
 ''' % vars
 
 		apache_conf_wsgi = '''
-	WSGIScriptAlias /submin %(www dir)s/submin.wsgi
-    AliasMatch ^/submin/css/(.*) %(www dir)s/css/$1
-    AliasMatch ^/submin/img/(.*) %(www dir)s/img/$1
-    AliasMatch ^/submin/js/(.*) %(www dir)s/js/$1
+    WSGIScriptAlias %(http base)s/submin %(www dir)s/submin.wsgi
+    AliasMatch ^%(http base)s/submin/css/(.*) %(www dir)s/css/$1
+    AliasMatch ^%(http base)s/submin/img/(.*) %(www dir)s/img/$1
+    AliasMatch ^%(http base)s/submin/js/(.*) %(www dir)s/js/$1
 
-    <Directory %(www dir)s>
+    <Location %(http base)s/submin>
         SetEnv SUBMIN_CONF %(submin conf)s
-    </Directory>
+    </Location>
 
-    <Location /svn>
+    <Location %(http base)s/svn>
         DAV svn
         SVNParentPath %(svn dir)s
 
@@ -148,8 +149,11 @@ session_salt = %(session salt)s
 		file(str(vars['apache conf cgi']), 'w').write(apache_conf_cgi)
 		file(str(vars['apache conf wsgi']), 'w').write(apache_conf_wsgi)
 		print '''
-Apache files %(apache conf wsgi)s and %(apache conf cgi)s created.
-Please include one in your apache.conf
+Apache files created:
+   %(apache conf wsgi)s
+   %(apache conf cgi)s
+
+   Please include one of these in your apache.conf
 ''' % vars
 
 
@@ -164,21 +168,23 @@ files and svn repository dir if not already present.
 
 options:
     -r, --submin-root <submin-root>
-        Override dynamic data dir (default: %(submin root)s), contains writable 
-        files: htpasswd, svn.authz, userproperties.conf and svn repository.
+        Dynamic data dir (default: %(submin root)s), contains writable 
+        files: htpasswd, authz, userproperties.conf and svn repository.
     --authz-file <file>
-        Override authz path (default: <submin-root>/svn.authz)
+        Authz path (default: <submin-root>/authz).
     --htpasswd-file <file>
-        Override htpasswd path (default: <submin-root>/htpasswd)
+        Htpasswd path (default: <submin-root>/htpasswd).
     -e, --etc-dir <etc-dir>
-        Override static config dir (default: %(etc)s).
+        Static config dir (default: %(etc)s).
     -s, --svn-dir <svn-dir>
-        Override svn repository dir (default: <submin-root>/%(svn dir)s).
+        Svn repository dir (default: <submin-root>/%(svn dir)s).
     -a, --apache-user <username>
-        Use this if submin-admin is unable to guess which user runs the
-        webserver.
+        Specify which (http) user will own the dynamic data (default: guess).
+    --http-base <base-path>
+        Base path of the url for web access (default: '%(http base)s'). Submin and svn
+        can be reached at: <base-path>/submin and <base-path>/svn.
     -f, --force-overwrite
-        If this is specified, no check is done on existing installations.
+        Overwrite existing installations without asking.
 """
 # -t, --trac-dir <trac-dir>
 #		Trac projects dir (default: <submin-root>/%(trac dir)s)
@@ -190,7 +196,7 @@ options:
 		shortopts = 'fr:s:t:e:a:'
 		longopts = ['submin-root=', 'authz-file=', 'htpasswd-file=',
 					'svn-dir=', 'trac-dir=', 'etc-dir=', 'apache-user=',
-					'force-overwrite']
+					'http-base=', 'force-overwrite']
 
 		options = []
 		try:
@@ -219,9 +225,15 @@ options:
 				self.vars['authz'] = optarg
 			elif option in ['--htpasswd-file']:
 				self.vars['htpasswd'] = optarg
+			elif option in ['--http-base']:
+				self.vars['http base'] = optarg
 
 		if len(argv) < 3:
 			self.c_help([argv[0], 'help', 'create'])
+			return
+
+		if len(arguments) != 1:
+			print "\nError: Please provide a project name as well\n"
 			return
 
 		self.name = arguments[0]
@@ -241,7 +253,7 @@ the `--apache-user <username>' option
 		if 'htpasswd' not in self.vars:
 			self.vars['htpasswd'] = self.vars['submin root'] + 'htpasswd'
 		if 'authz' not in self.vars:
-			self.vars['authz'] = self.vars['submin root'] + 'svn.authz'
+			self.vars['authz'] = self.vars['submin root'] + 'authz'
 
 		self.vars['userprop'] = self.vars['submin root'] + 'userproperties.conf'
 		vars = self.replacedvars()
