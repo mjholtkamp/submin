@@ -32,7 +32,7 @@ body {
 }
 
 #sidebar ul.showhide-object {
-	display-none;
+	display: none;
 }
 
 #sidebar h1, #sidebar h1 a {
