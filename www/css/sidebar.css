@@ -29,6 +29,7 @@ body {
 }
 #sidebar ul {
 	margin: 0;
+	display: none;
 }
 
 #sidebar h1, #sidebar h1 a {

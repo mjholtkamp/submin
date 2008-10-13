@@ -176,12 +176,12 @@ function collapsables_collapse(prefix, triggered, collapse)
 	if (collapse) {
 		collapsee.style.display = 'none';
 	} else {
-		collapsee.style.display = '';
+		collapsee.style.display = 'compact';
 	}
 
 	// force refresh on certain browsers
 	var root = collapsables_getRoot(prefix, triggered);
 	root.style.display = 'none';
-	root.style.display = '';
+	root.style.display = 'compact';
 }
 
