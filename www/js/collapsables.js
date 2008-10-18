@@ -29,6 +29,12 @@ function setupCollapsables(docroot, prefix, collapseFun, expandFun) {
 
 		// if no image, assume not collapsable (sometimes needed for bootstrap)
 		if (image && image.src) {
+			// Set the overflow to 'hidden', this is a workaround to make
+			// sure the elements are rerendered everytime it is hidden/shown.
+			// This is needed for example in Opera.
+			var root = collapsables_getRoot(prefix, image);
+			root.style.overflow = 'hidden';
+			
 			if (image.src == collapsables_arrow_expanded.src) {
 				collapsable.onclick =
 					function() { arrowCollapse(prefix, this, collapseFun, expandFun); }
@@ -178,10 +184,5 @@ function collapsables_collapse(prefix, triggered, collapse)
 	} else {
 		collapsee.style.display = 'block';
 	}
-
-	// force refresh on certain browsers
-	var root = collapsables_getRoot(prefix, triggered);
-	root.style.display = 'none';
-	root.style.display = 'block';
 }
 
