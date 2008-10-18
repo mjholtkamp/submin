@@ -1,5 +1,6 @@
 load('dom')
 load("selector")
+load('ajax')
 
 // Using window.onload because an onclick="..." handler doesn't give the
 // handler a this-variable

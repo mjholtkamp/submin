@@ -1,3 +1,5 @@
+load('log.js')
+
 function Submin_config() {
 	this.debug = false;
 }
@@ -61,7 +63,7 @@ function AjaxAsyncPostRequest(url, params, callback) {
 	if (submin.debug)
 		alert(url + "?ajax&" + params);
 	var transport = new XMLHttpRequest();
-	transport.open('post', url, false);
+	transport.open('post', url, true);
 	transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	transport.setRequestHeader("Connection", "close");
 	transport.onreadystatechange = function() {
@@ -76,6 +78,7 @@ function AjaxCallback(transport, callback) {
 		var response = Response(transport);
 		callback(response);
 	}
+
 }
 
 function AjaxLog(response) {
