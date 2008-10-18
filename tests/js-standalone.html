@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Language" content="en-us" />
+		<title>Submin - Main screen turn on</title>
+		<link rel="stylesheet" href="../www/css/master.css">
+		<link rel="stylesheet" href="../www/css/log.css">
+		<script type="text/javascript">
+			var base_url = "/";
+			var is_admin = true;
+			var me = "admin";
+		</script>
+
+		<script type="text/javascript" src="../www/js/basic.js"></script>
+		<script type="text/javascript" src="../www/js/ajax.js"></script>
+		<script type="text/javascript" src="../www/js/log.js"></script>
+	</head>
+	<body>
+				<script type="text/javascript" src="../www/js/sidebar.js"></script>
+		<link rel="stylesheet" href="../www/css/sidebar.css">
+
+		<script type="text/javascript">
+			var selected_object = "";
+			var selected_type = "";
+		</script>
+
+<div id="sidebar">
+	<h1><a href="/">Submin</a></h1>
+	<p>
+	<ul><li>Logout (admin)</li></ul>
+	</p>
+	
+	<div class="showhide">
+
+	
+	<h2 class="showhide-trigger"><img class="showhide-icon" src="../www/img/arrow-collapsed.png" />Users</h2>
+	<ul class="showhide-object" id="users">		
+		<li><a title="admin">admin</a><span class="deleteuser"><img class="remover" src="../www/img/min.gif" /></span></li>
+		<li><a title="admin">If you see this</a><span class="deleteuser"><img class="remover" src="../www/img/min.gif" /></span></li>
+		<li><a title="admin">after you clicked</a><span class="deleteuser"><img class="remover" src="../www/img/min.gif" /></span></li>
+		<li><a title="admin">on users</a><span class="deleteuser"><img class="remover" src="../www/img/min.gif" /></span></li>
+		<li><a title="admin">Then it's ok!</a><span class="deleteuser"><img class="remover" src="../www/img/min.gif" /></span></li>
+	</ul>
+	</div>
+	<div class="showhide">
+	
+	
+	<h2 class="showhide-trigger"><img class="showhide-icon" src="../www/img/arrow-collapsed.png" />Groups</h2>
+	<ul class="showhide-object" id="groups">
+		
+		<li><a title="submin-admins"><em>submin-admins</em></a></li>
+		<li><a>Don't worry</a><span class="deletegroup"><img class="remover" src="../www/img/min.gif" /></span></li>
+		<li><a>about the</a><span class="deletegroup"><img class="remover" src="../www/img/min.gif" /></span></li>
+		<li><a>disappearing</a><span class="deletegroup"><img class="remover" src="../www/img/min.gif" /></span></li>
+		<li><a>images. That's</a><span class="deletegroup"><img class="remover" src="../www/img/min.gif" /></span></li>
+		<li><a>normal :)</a><span class="deletegroup"><img class="remover" src="../www/img/min.gif" /></span></li>
+	</ul>
+	</div>
+	<div class="showhide">
+	
+	<h2 class="showhide-trigger"><img class="showhide-icon" src="../www/img/arrow-collapsed.png" />Repositories</h2>
+	<ul class="showhide-object" id="repositories">
+		<li><a title="admin">admin</a></li>
+	</ul>
+
+	</div>
+	<ul id="addicons">
+		<li><a href="/users/add/" title="Add a user"><img src="../www/img/add-user.png" id="sidebar_add_user_img"/></a></li>
+		<li><a href="/groups/add/" title="Add a group"><img src="../www/img/add-group.png" id="sidebar_add_group_img"/></a></li>
+		<li><a href="/repositories/add/" title="Add a repository"><img src="../www/img/add-repository.png" id="sidebar_add_repository_img"/></a></li>
+	</ul>
+	
+</div>
+
+		<link rel="stylesheet" href="/css/intro.css">
+
+<div id="content">
+	<form>
+		<label>Log</label>
+		<input type="submit" value="test good" onclick="Log('This message should have a green background and should disappear after a few seconds', 1); return false;" />
+		<input type="submit" value="test bad" onclick="Log('This message should not dissappear (until after a click) and the background should be red '); return false;" />
+		
+	</form>
+</div>
+
+	</body>
+<html>
