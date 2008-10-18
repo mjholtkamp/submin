@@ -32,7 +32,7 @@ function setupCollapsables(docroot, prefix, collapseFun, expandFun) {
 			// Set the overflow to 'hidden', this is a workaround to make
 			// sure the elements are rerendered everytime it is hidden/shown.
 			// This is needed for example in Opera.
-			var root = collapsables_getRoot(prefix, image);
+			var root = collapsables_getCollapsee(prefix, image);
 			root.style.overflow = 'hidden';
 			
 			if (image.src == collapsables_arrow_expanded.src) {
