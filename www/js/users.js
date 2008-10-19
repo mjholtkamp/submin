@@ -2,6 +2,13 @@ load('dom')
 load("selector")
 load('ajax')
 
+var selector = null;
+
+function refreshAndLog(response) {
+	selector.reInit();
+	AjaxLog(response);
+}
+
 // Using window.onload because an onclick="..." handler doesn't give the
 // handler a this-variable
 var old_load = window.onload;
@@ -64,7 +71,7 @@ function checkPasswords() {
 }
 
 function sendPassword(password) {
-	AjaxAsyncPostLog(document.location, "password=" + password)
+	AjaxAsyncPostLog(document.location, "password=" + password);
 }
 
 
@@ -72,11 +79,11 @@ function sendPassword(password) {
  * Adding users to groups and removing them from groups
  */
 function addMemberToGroupAjax(group) {
-	return AjaxAsyncPostLog(document.location, "addToGroup=" + group);
+	return AjaxAsyncPostRequest(document.location, "addToGroup=" + group, refreshAndLog);
 }
 
 function removeMemberFromGroupAjax(group) {
-	return AjaxAsyncPostLog(document.location, "removeFromGroup=" + group);
+	return AjaxAsyncPostRequest(document.location, "removeFromGroup=" + group, refreshAndLog);
 }
 
 /* Requests the groups via ajax, and forms two lists to be used by Selector */
@@ -98,7 +105,7 @@ function initGroups() {
 }
 
 function userSelectorInit() {
-	var selector = new Selector({
+	selector = new Selector({
 			"selectorId": "memberof",
 			"urlPrefix": base_url + "groups/show/",
 			"initCallback": initGroups,
