@@ -1,3 +1,9 @@
+submin (1.1.0-1) testing; urgency=low
+
+  * Released version 1.1.0-1
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Sun, 19 Oct 2008 09:46:13 +0200
+
 submin (1.0-1) testing; urgency=low
 
   * Changed the release to 1.0.
