@@ -34,7 +34,7 @@ function setupCollapsables(docroot, prefix, collapseFun, expandFun) {
 			// This is needed for example in Opera.
 			var root = collapsables_getCollapsee(prefix, image);
 			root.style.overflow = 'hidden';
-			
+
 			if (image.src == collapsables_arrow_expanded.src) {
 				collapsable.onclick =
 					function() { arrowCollapse(prefix, this, collapseFun, expandFun); }
@@ -184,5 +184,10 @@ function collapsables_collapse(prefix, triggered, collapse)
 	} else {
 		collapsee.style.display = 'block';
 	}
+	// force refresh on certain browsers This is needed for the repositories
+	// edit box (Safari, ff, ??)
+	var root = collapsables_getRoot(prefix, triggered);
+	root.style.display = 'none';
+	root.style.display = 'block';
 }
 

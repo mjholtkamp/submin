@@ -37,7 +37,7 @@ class XMLResponse(Response):
 			content
 
 		Response.__init__(self, content)
-		self.headers = {'Content-Type': 'text/xml'}
+		self.headers = {'Content-Type': 'text/xml', 'Cache-Control': 'no-cache'}
 
 class XMLStatusResponse(XMLResponse):
 	def __init__(self, success, text):
