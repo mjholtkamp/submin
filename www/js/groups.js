@@ -1,12 +1,19 @@
 load('dom')
 load("selector")
 
+var selector = null;
+
+function refreshAndLog(response) {
+	selector.reInit();
+	AjaxLog(response);
+}
+
 function removeMemberAjax(member) {
-	AjaxAsyncPostLog(document.location, "removeMember=" + member);
+	AjaxAsyncPostRequest(document.location, "removeMember=" + member, refreshAndLog);
 }
 
 function addMemberAjax(member) {
-	AjaxAsyncPostLog(document.location, "addMember=" + member);
+	AjaxAsyncPostRequest(document.location, "addMember=" + member, refreshAndLog);
 }
 
 var old_load = window.onload;
@@ -34,7 +41,7 @@ function initUsers() {
 }
 
 function groupSelectorInit() {
-	var selector = new Selector({
+	selector = new Selector({
 			"selectorId": "members",
 			"urlPrefix": base_url + "users/show/",
 			"initCallback": initUsers,
