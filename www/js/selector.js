@@ -15,6 +15,14 @@
  * - canLink: is a user allowed to see a link to the other object? This is a
  *   	function, expecting the name of the current object.
  * - type: "permissions" if permission selector, users/groups otherwise
+ *
+ * WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+ *
+ * The init/add/remove calbacks must call the reInit() of the Selector
+ * object, because these callbacks can be asynchronous and the Selector
+ * object does not know when to refresh.
+ * 
+ * WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
  */
 function Selector(options) {
 	this.options = options;
