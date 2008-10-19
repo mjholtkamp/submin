@@ -21,7 +21,7 @@ class UIScenarios(object):
 		# Don't randomly change this order! Code below uses indexes to refer
 		# to these browsers and does not rebuild those indexes when getting
 		# data from pickled-file.
-		self.browsers = ["Safari 3", "Firefox 2", "Firefox 3", "IE 7"]
+		self.browsers = ["Safari 3", "Firefox 2", "Firefox 3", "IE 7", "Opera 9"]
 
 		self.sections = []
 		# Should we get the sections from .txt file or pickled (".saved") file?

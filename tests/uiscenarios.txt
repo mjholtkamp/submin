@@ -12,19 +12,21 @@ Any but Login	 Click on group	 Go to group page
 Any but Login	 Click on repository	 Go to repository page
 Any but Login	 Click on add user	 Go to add user page
 Add user	 Fill in name, click on 'create'	 User created, redirected to new user
-Any but Login	 Click on add group	 Go to add group page
-Add group	 Fill in name, click on 'create'	 Group created, redirected to new group
-Any but Login	 Click on add repository	 Go to add repository page
-Add repository	 Fill in name, click on 'create'	 Repository created, redirected to new repository
 User	 Fill in email, press 'change'	 Log message: email changed
 User	 Change password	 asked to verify password
 User	 Verify password	 Log message: password changed
 User	 Select group in select-bar	 Log message: user added to group
 User	 Click minus sign right of group	 Log message: user removed from group
 User	 Click group in group-list	 redirected to group page
+Any but Login	 Click on add group	 Go to add group page
+Add group	 Fill in name, click on 'create'	 Group created, redirected to new group
 Group	 Select user in select-bar on group page	 Log message: user is added to group
 Group	 Click on minus sign right of user	 Log message: user is removed from group
 Group	 Click on user in userlist	 redirected to user page
+Any but Login	 Click on add repository	 Go to add repository page
+Add repository	 Fill in name, click on 'create'	 Repository created, redirected to new repository
+Any but Login	 Click on minus sign next to a user in the sidebar	User deleted after popup
+Any but Login	 Click on minus sign next to a group in the sidebar	Group deleted after popup
 Repository	 Click on any directory triangle	 subdirectories expanded/collapsed (*1)
 Repository	 Click on any directory	 permission list is updated.
 Repository	 Select user from select bar in permission list	 Log message: user is added to list (*2)
