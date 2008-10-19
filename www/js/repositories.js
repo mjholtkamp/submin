@@ -239,6 +239,12 @@ function repostree_reMark(response, path)
 	var id = 'repostree_' + path;
 	var node = repostree_getnode(document.getElementById(id));
 	repostree_markPermissions(node);
+	permissionsEditor.reInit();
+}
+
+function refreshAndLog(response) {
+	permissionsEditor.reInit();
+	AjaxLog(response);
 }
 
 function addPermissionToPath(id, type, path) {
@@ -250,7 +256,7 @@ function removePermissionFromPath(id, type, path) {
 }
 
 function changePathPermission(id, type, permission, path) {
-	AjaxAsyncPostLog(document.location, 'setpermission&type=' + type + '&name=' + id + '&path=' + path + '&permission=' + permission);
+	AjaxAsyncPostRequest(document.location, 'setpermission&type=' + type + '&name=' + id + '&path=' + path + '&permission=' + permission, refreshAndLog);
 }
 
 function initPermissionsEditor(path) {

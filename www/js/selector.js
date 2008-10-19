@@ -105,7 +105,6 @@ Selector.prototype.permissionsSelect = function(name, type, permissions) {
 	select.onchange = function() {
 		var permissions = values[parseInt(select.selectedIndex)];
 		_this.options.changeCallback(name, type, permissions, _this.options.path);
-		_this.reInit();
 		return false;
 	};
 	return select;
@@ -163,7 +162,6 @@ Selector.prototype.setupAddedItem = function(added) {
 
 Selector.prototype.removerOnClick = function(name, type) {
 	this.options.removeCallback(name, type, this.options.path);
-	this.reInit();
 	return false;
 };
 
@@ -219,7 +217,6 @@ Selector.prototype.selectOnChange = function() {
 		this.options.addCallback(displayname);
 	}
 
-	this.reInit();
 	return false;
 }
 
