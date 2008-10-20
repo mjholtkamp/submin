@@ -13,6 +13,7 @@ body {
 
 ul { 
 	padding-left: 0em; 
+	margin: 0;
 }
 li { 
 	list-style: none;
