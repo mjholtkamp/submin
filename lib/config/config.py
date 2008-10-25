@@ -99,6 +99,8 @@ class ConfigData:
 			if os.path.isdir(repos):
 				repositories.append(repos[repos.rfind('/') + 1:])
 
+		repositories.sort()
+
 		return repositories
 
 	def get(self, section, variable):
