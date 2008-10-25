@@ -1,4 +1,5 @@
 from config.config import Config
+import exceptions
 
 class Repository(object):
 	class DoesNotExist(Exception):
@@ -18,7 +19,10 @@ class Repository(object):
 		'''Return subdirs (not recursive) of 'path' relative to our reposdir
 		Subdirs are returned as a hash with two entities: 'name' and 
 		'has_subdirs', which should be self-explanatory.'''
-		import pysvn
+		try:
+			import pysvn
+		except exceptions.ImportError, e:
+			raise Exception('Module pysvn not found, please install it')
 		import os
 
 		client = pysvn.Client()

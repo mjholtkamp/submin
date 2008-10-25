@@ -54,16 +54,14 @@ def dispatcher(request):
 			if not issubclass(response.__class__, Response):
 				raise Exception, "Handler %r should return a Response instance" % handler
 		except Exception, e:
-			#import traceback
-			#import sys
-			#trace = traceback.extract_tb(sys.exc_info()[2])
-			#list = traceback.format_list(trace)
-			#list.append(str(e))
-			#list = '\n'.join(list)
+			import traceback
+			import sys
+			trace = traceback.extract_tb(sys.exc_info()[2])
+			list = traceback.format_list(trace)
+			list = '<br />\n'.join(list)
 
-			raise
 			if not request.is_ajax():
-				response = ErrorResponse(str(e), request=request)
+				response = ErrorResponse(str(e), request=request, details=list)
 			else:
 				response = XMLStatusResponse(False, str(e))
 
