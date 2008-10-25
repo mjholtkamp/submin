@@ -55,12 +55,20 @@ class User(object):
 			pass
 
 		self.notifications = []
+		repositories = config.repositories()
 		for k in allowed:
+			try:
+				repositories.remove(k)
+			except ValueError:
+				continue
 			enable = False
 			if k in enabled:
 				enable = True
 
 			self.notifications.append(dict(name=k,allowed=True,enabled=enable))
+
+		for k in repositories:
+			self.notifications.append(dict(name=k,allowed=False,enabled=False))
 
 	def __str__(self):
 		return self.name
