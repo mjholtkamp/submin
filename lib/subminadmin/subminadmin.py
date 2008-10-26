@@ -45,7 +45,8 @@ class SubminAdmin:
 	def get_apache_user(self, preferred):
 		from pwd import getpwnam
 		users = []
-		for user in [preferred, 'www-data', 'httpd', 'apache']:
+		# _www in OS X :)
+		for user in [preferred, 'www-data', 'httpd', 'apache', '_www']:
 			pwd = ()
 			try:
 				pwd = getpwnam(user)
@@ -91,6 +92,8 @@ session_salt = %(session salt)s
 		apache_conf_cgi = '''
     Alias %(http base)s/submin %(www dir)s
     <Directory %(www dir)s>
+        Order allow,deny
+        Allow from all
         Options ExecCGI FollowSymLinks
         AddHandler cgi-script py cgi pl
         SetEnv SUBMIN_CONF %(submin conf)s
@@ -153,7 +156,8 @@ Apache files created:
    %(apache conf wsgi)s
    %(apache conf cgi)s
 
-   Please include one of these in your apache.conf
+   Please include one of these in your apache config. Also make sure that
+   you have mod_dav_svn and mod_authz_svn enabled.
 ''' % vars
 
 
