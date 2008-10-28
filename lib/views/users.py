@@ -106,6 +106,9 @@ class Users(View):
 		if 'initSelector' in req.post:
 			return self.initSelector(req, user)
 
+		if 'listNotifications' in req.post:
+			return self.listNotifications(req, user)
+
 		return XMLStatusResponse(False,
 			'You tried to submit an empty field value')
 
@@ -160,6 +163,16 @@ class Users(View):
 		return XMLTemplateResponse("ajax/usermemberof.xml",
 				{"memberof": user.member_of, "nonmemberof": [],
 					"user": user.name})
+
+	def listNotifications(self, req, user):
+		is_admin = req.session['user'].is_admin
+		if not is_admin and req.session['user'].name != user.name:
+			return XMLStatusResponse(False, "You do not have permission to "
+					"view this user.")
+
+		return XMLTemplateResponse("ajax/usernotifications.xml",
+				{"notifications": user.notifications, "user": user.name,
+					"is_admin": is_admin})
 
 	@admin_required
 	def removeFromGroup(self, req, user):

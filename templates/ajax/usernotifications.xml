@@ -1,0 +1,14 @@
+<response>
+	<success>True</success>
+	<notifications user="[val user]">
+		[iter:notifications
+			[test:is_admin
+			<notification name="[ival.name]" allowed="[test:ival.allowed True][else False]" enabled="[test:ival.enabled True][else False]"/>
+			]
+			[test:!is_admin 
+				[test:ival.allowed
+					<notification name="[ival.name]" allowed="True" enabled="[test:ival.enabled True][else False]"/>
+				]
+			]
+	</notifications>
+</response>
