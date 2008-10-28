@@ -2,6 +2,7 @@ import os
 
 from library import Library
 from template import Template
+from types import * # for ikey/ival
 register = Library()
 
 class ElseError(Exception):
@@ -89,9 +90,12 @@ def iter(node, tpl):
 		tpl.node_variables['iindex'] = []
 	if not tpl.node_variables.has_key('iseq'):
 		tpl.node_variables['iseq'] = []
+	if not tpl.node_variables.has_key('ikey'):
+		tpl.node_variables['ikey'] = []
 	tpl.node_variables['ival'].append(None)
 	tpl.node_variables['iindex'].append(None)
 	tpl.node_variables['iseq'].append(None)
+	tpl.node_variables['ikey'].append(None)
 	
 	value = ''
 	if node.arguments.startswith('ival'):
@@ -102,6 +106,8 @@ def iter(node, tpl):
 			args = node.arguments.split('.', 1)[1]
 			if len(tpl.node_variables['ival']) >= 1:
 				value = tpl.variable_value('', args, tpl.node_variables['ival'][-2])
+	elif node.arguments == 'ikey':
+		value = tpl.node_variables['ikey'][-2]
 	else:
 		value = tpl.variable_value(node.arguments)
 	evaluated_string = ''
@@ -110,11 +116,17 @@ def iter(node, tpl):
 	tpl.node_variables['iseq'][-1] = value
 	for index, item in enumerate(value):
 		tpl.node_variables['iindex'][-1] = index
-		tpl.node_variables['ival'][-1] = item
+		tpl.node_variables['ikey'][-1] = item
+		if not type(value) == DictType:
+			tpl.node_variables['ival'][-1] = item
+		else:
+			tpl.node_variables['ival'][-1] = value[item]
+
 		evaluated_string += ''.join([x.evaluate(tpl) for x in node.nodes])
 	tpl.node_variables['ival'].pop()
 	tpl.node_variables['iindex'].pop()
 	tpl.node_variables['iseq'].pop()
+	tpl.node_variables['ikey'].pop()
 	return evaluated_string
 
 @register.register('ival')
@@ -124,6 +136,15 @@ def ival(node, tpl):
 		args = None
 	if len(tpl.node_variables['ival']) >= 1:
 		return str(tpl.variable_value('', args, tpl.node_variables['ival'][-1]))
+	return ''
+
+@register.register('ikey')
+def ikey(node, tpl):
+	args = node.arguments
+	if not args:
+		args = None
+	if len(tpl.node_variables['ikey']) >= 1:
+		return str(tpl.variable_value('', args, tpl.node_variables['ikey'][-1]))
 	return ''
 
 def ilast(tpl):
