@@ -20,6 +20,7 @@ window.onload = function() {
 	// Initialize the select-dropdown
 	//selectInit();
 	userSelectorInit();
+	reloadNotifications();
 }
 
 function sendEmail() {
@@ -118,4 +119,50 @@ function userSelectorInit() {
 			"removeCallback": removeMemberFromGroupAjax,
 			"canLink": function(user) { return is_admin; }
 	});
+}
+
+function reloadNotifications() {
+	return AjaxAsyncPostRequest(document.location, "listNotifications", reloadNotificationsCB);
+}
+
+function reloadNotificationsCB(response) {
+	list = FindResponse(response, "listNotifications");
+	LogResponse(response);
+	
+	var notifications = list.xml.getElementsByTagName("notification");
+	var n = [];
+	for (var i = 0; i < notifications.length; ++i) {
+		name = notifications[i].getAttribute('name');
+		allowed = notifications[i].getAttribute('allowed');
+		enabled = notifications[i].getAttribute('enabled');
+		n[n.length] = {"name": name, "allowed": allowed, "enabled": enabled};
+	}
+	redrawNotifications(n);
+}
+
+function redrawNotifications(notifications) {
+	var table = document.getElementById('notifications');
+	
+	for (var item_idx = table.childNodes.length - 1; item_idx > 1; --item_idx)
+		table.removeChild(table.childNodes[item_idx]);
+	
+	for (var i = 0; i < notifications.length; ++i) {
+		var tr = $c("tr");
+		var td_name = $c("td");
+		var td_allowed = $c("td");
+		var td_enabled = $c("td");
+		td_name.appendChild(document.createTextNode(notifications[i].name));
+		var input = $c("input", {type: "checkbox"});
+		input.value = notifications[i].name + "_allowed";
+		input.checked = (notifications[i].allowed == "True");
+		td_allowed.appendChild(input);
+		input = $c("input", {type: "checkbox"});
+		input.value = notifications[i].name + "_enabled";
+		input.checked = (notifications[i].enabled == "True");
+		td_enabled.appendChild(input);
+		tr.appendChild(td_name);
+		tr.appendChild(td_allowed);
+		tr.appendChild(td_enabled);
+		table.appendChild(tr);
+	}
 }

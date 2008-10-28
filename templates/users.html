@@ -12,19 +12,12 @@
 					<ul id="memberof" class="selector">
 					</ul>
 					<h3 class="content">Notices from repositories <span class="comment">(Not implemented yet)</span></h3>
-					<table>
+					<table id="notifications">
 						<tr class="noticeshead">
 							<td class="name">&nbsp;</td>
 							[test:is_admin <td>allowed</td>]
 							<td>enabled</td>
 						</tr>
-					[iter:user.notifications 
-						<tr class="notices">
-							<td>[ival.name]</td>
-							[test:is_admin <td><input type="checkbox" [test:ival.allowed checked] /></td>]
-							<td><input type="checkbox" [test:ival.enabled checked] /></td>
-						</tr>
-					]
 					</table>
 				</li>
 			</ul>
