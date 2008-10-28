@@ -33,7 +33,7 @@ function verifyPassword() {
 	var input = $('password')
 	enteredPassword = input.value;
 	if (!enteredPassword) {
-		Log('Please enter a password before pressing "change"', false);
+		Log('Please enter a password before pressing "save password"', false);
 		return false;
 	}
 
