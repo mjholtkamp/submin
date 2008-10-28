@@ -21,6 +21,7 @@ window.onload = function() {
 	//selectInit();
 	userSelectorInit();
 	reloadNotifications();
+	$('savenotifications').parentNode.onsubmit = saveNotifications;
 }
 
 function sendEmail() {
@@ -125,7 +126,8 @@ function userSelectorInit() {
 }
 
 function reloadNotifications() {
-	return AjaxAsyncPostRequest(document.location, "listNotifications", reloadNotificationsCB);
+	AjaxAsyncPostRequest(document.location, "listNotifications", reloadNotificationsCB);
+	return false;
 }
 
 function reloadNotificationsCB(response) {
@@ -174,4 +176,39 @@ function redrawNotifications(notifications) {
 		tr.appendChild(td_enabled);
 		table.appendChild(tr);
 	}
+}
+
+function saveNotifications() {
+	var table = document.getElementById('notifications');
+	
+	var str = "";
+	for (var item_idx = table.childNodes.length - 1; item_idx > 1; --item_idx) {
+		// every childnode (except the first) is a tr. Layout as follows:
+		// admin user: <tr><td>repository name</td><td>allowed</td><td>enabled</td></tr>
+		// normal user: <tr><td>repository name</td><td>enabled</td></tr>
+		var name = table.childNodes[item_idx].childNodes[0].innerHTML;
+		var allowed, enabled;
+
+		if (is_admin) {
+			allowed = table.childNodes[item_idx].childNodes[1].childNodes[0].checked;
+			enabled = table.childNodes[item_idx].childNodes[2].childNodes[0].checked;
+		} else {
+			allowed = true;
+			enabled = table.childNodes[item_idx].childNodes[1].childNodes[0].checked;
+		}
+		if (str != "")
+			str += ":";
+			
+		str += name + "," + allowed + "," + enabled;
+	}
+
+	AjaxAsyncPostRequest(document.location, "saveNotifications=" + str, saveNotificationsCB);
+	return false;
+}
+
+function saveNotificationsCB(response) {
+	list = FindResponse(response, "saveNotifications");
+	LogResponse(response);
+
+	reloadNotifications();
 }

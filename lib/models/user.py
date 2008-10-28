@@ -4,7 +4,11 @@ from config.authz.authz import UnknownUserError
 
 class UserExists(Exception):
 	def __init__(self, user):
-		Exception.args = 'User %s already exists' % user
+		Exception.__init__(self, 'User %s already exists' % user)
+
+class NotAuthorized(Exception):
+	def __init__(self, msg):
+		Exception.__init__(self, msg)
 
 def addUser(username):
 	config = Config()
@@ -54,7 +58,7 @@ class User(object):
 		except (NoOptionError, UnknownUserError):
 			pass
 		
-		self.notifications = []
+		self.notifications = {}
 		repositories = config.repositories()
 		for k in allowed:
 			try:
@@ -65,13 +69,48 @@ class User(object):
 			if k in enabled:
 				enable = True
 
-			self.notifications.append(dict(name=k,allowed=True,enabled=enable))
+			self.notifications[k] = dict(allowed=True,enabled=enable)
 
 		for k in repositories:
-			self.notifications.append(dict(name=k,allowed=False,enabled=False))
+			self.notifications[k] = dict(allowed=False,enabled=False)
 
 	def __str__(self):
 		return self.name
+
+	def setNotification(self, name, notification, is_admin):
+		# is_admin represents caller, not self.is_admin, which represents
+		# this User object!!!
+		if not is_admin and not self.notifications.has_key(name):
+			raise NotAuthorized("You're not allowed to create permissions")
+		
+		if is_admin:
+			# don't check, just set
+			self.notifications[name] = dict(allowed=notification['allowed'],
+				enabled=notification['enabled'])
+			return
+
+		# we know the key exists, see above checks
+		old_notification = self.notifications[name]
+		if not old_notification['allowed']:
+			raise NotAuthorized("You're not allowed to change that notification")
+		
+		self.notifications[name] = dict(allowed=notification['allowed'],
+			enabled=notification['enabled'])
+
+	def saveNotifications(self):
+		config = Config()
+		
+		allowed = []
+		enabled = []
+		for item in self.notifications.iteritems():
+			if item[1]['allowed']:
+				allowed.append(item[0])
+			if item[1]['enabled']:
+				enabled.append(item[0])
+		
+		config.authz.setUserProp(self.name, 'notifications_allowed', ', '.join(allowed))
+		config.authz.setUserProp(self.name, 'notifications_enabled', ', '.join(enabled))
+		config.authz.save()
 
 	def getEmail(self):
 		return self.__email

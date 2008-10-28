@@ -2,7 +2,7 @@ from dispatch.view import View
 from template.shortcuts import evaluate_main
 from dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse
 from views.error import ErrorResponse
-from models.user import User, addUser, UserExists
+from models.user import User, addUser, UserExists, NotAuthorized
 from models.group import Group
 from auth.decorators import *
 from config.authz.authz import UnknownUserError
@@ -108,6 +108,9 @@ class Users(View):
 
 		if 'listNotifications' in req.post:
 			return self.listNotifications(req, user)
+		
+		if 'saveNotifications' in req.post:
+			return self.saveNotifications(req, user)
 
 		return XMLStatusResponse('', False, 'Unknown command')
 
@@ -172,6 +175,24 @@ class Users(View):
 		return XMLTemplateResponse("ajax/usernotifications.xml",
 				{"notifications": user.notifications, "user": user.name,
 					"is_admin": is_admin})
+
+	def saveNotifications(self, req, user):
+		is_admin = req.session['user'].is_admin
+				
+		notifications_str = req.post.get('saveNotifications').split(':')
+		notifications = {}
+		for n_str in notifications_str:
+			n = n_str.split(',')
+			try:
+				allowed = (n[1] == "true")
+				enabled = (n[2] == "true")
+				user.setNotification(n[0], dict(allowed=allowed, enabled=enabled), is_admin)
+			except NotAuthorized, e:
+				return XMLStatusResponse('saveNotifications', False, str(e))
+					
+		user.saveNotifications()
+		
+		return XMLStatusResponse("saveNotifications", True, "Saved notifications for user " + user.name)
 
 	@admin_required
 	def removeFromGroup(self, req, user):
