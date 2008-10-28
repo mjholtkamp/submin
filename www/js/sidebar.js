@@ -87,7 +87,7 @@ function deleteObject()
 		return
 
 	var response = AjaxSyncPostRequest(url, "")
-	Log(response.text, response.success)
+	LogResponse(response)
 	if (response.success)
 		this.parentNode.parentNode.removeChild(this.parentNode)
 
