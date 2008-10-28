@@ -48,12 +48,12 @@ class User(object):
 		enabled = []
 		try:
 			allowed = config.authz.userProp(self.name, 'notifications_allowed')
-			allowed = allowed.split(', ')
+			allowed = [x.strip() for x in allowed.split(',')]
 			enabled = config.authz.userProp(self.name, 'notifications_enabled')
-			enabled = enabled.split(', ')
+			enabled = [x.strip() for x in enabled.split(',')]
 		except (NoOptionError, UnknownUserError):
 			pass
-
+		
 		self.notifications = []
 		repositories = config.repositories()
 		for k in allowed:
