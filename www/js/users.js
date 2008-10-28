@@ -30,7 +30,7 @@ function sendEmail() {
 // global variable to temporarily store the password to be verified
 var enteredPassword;
 function verifyPassword() {
-	var input = $('password')
+	var input = $('password');
 	enteredPassword = input.value;
 	if (!enteredPassword) {
 		Log('Please enter a password before pressing "save password"', false);
@@ -42,6 +42,7 @@ function verifyPassword() {
 	this.firstChild.innerHTML = 'Verify';
 	// change te onclick handler
 	input.focus();
+	input.style.background = "lightgreen";
 	$('password_button').parentNode.onsubmit = checkPasswords;
 	Log('Please verify your password', true);
 	return false;
@@ -55,15 +56,17 @@ function checkPasswords() {
 	// change the onclick handler back to the verifyPassword function
 	$('password_button').parentNode.onsubmit = verifyPassword;
 
+	var input = $('password');
 	// Do the check after cleaning up.
-	if ($('password').value != enteredPassword) {
+	if (input.value != enteredPassword) {
 		Log('Verification of password failed', false);
 		enteredPassword = '';
-		$('password').value = '';
+		input.value = '';
 		return false;
 	}
 
-	$('password').value = '';
+	input.style.background = '';
+	input.value = '';
 
 	// Send the entered password to the server.
 	sendPassword(enteredPassword);
