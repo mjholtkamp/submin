@@ -87,7 +87,6 @@ function AjaxSyncPostRequest(url, params) {
 	var transport = new XMLHttpRequest();
 	transport.open('post', url, false);
 	transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	transport.setRequestHeader("Connection", "close");
 	transport.send('ajax&' + params);
 	return Response(transport)
 }
@@ -104,7 +103,6 @@ function AjaxAsyncPostRequest(url, params, callback) {
 	var transport = new XMLHttpRequest();
 	transport.open('post', url, true);
 	transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	transport.setRequestHeader("Connection", "close");
 	transport.onreadystatechange = function() {
 		AjaxCallback(transport, callback);
 	};
