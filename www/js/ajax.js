@@ -5,34 +5,73 @@ function Submin_config() {
 }
 submin = new Submin_config();
 
-function Response(transport) {
-	var doc = transport.responseXML;
-	var response = {};
-	// DEBUG
-	if (submin.debug) {
-		var string = (new XMLSerializer()).serializeToString(doc);
-		alert(string);
+function newResponseCommand(command_xml) {
+	var command = {};
+	command['name'] = command_xml.getAttribute('name');
+	
+	var success = command_xml.getAttribute('success');
+	if (success.toLowerCase() == 'true') {
+		command['success'] = true;
+	} else {
+		command['success'] = false;
 	}
-	var success =
-		doc.getElementsByTagName('success')[0].childNodes[0].nodeValue;
-	var text = doc.getElementsByTagName('text');
-	if (text)
+
+	var text = command_xml.getElementsByTagName('text');
+	if (text && text.length > 0) {
 		text = text[0];
+	} else {
+		text = null;
+	}
+
 	if (text)
 		text = text.childNodes[0];
 	if (text)
 		text = text.nodeValue;
 	if (!text)
 		text = '';
-	response['text'] = text;
-	response['xml'] = doc;
 
-	if (success.toLowerCase() == 'true') {
-		response['success'] = true;
-	} else {
-		response['success'] = false;
+	command['text'] = text;
+	command['xml'] = command_xml;
+
+	return command;
+}
+
+function FindResponse(response, name) {
+	for (var i = 0; i < response.length; ++i) {
+		if (response[i]['name'] == name) {
+			return response[i];
+		}
 	}
-	return response;
+	return null;
+}
+
+function LogResponse(response) {
+	text_accum = '';
+	success = true;
+	for (var i = 0; i < response.length; ++i) {
+		var text = response[i]['text'];
+		if (text) {
+			if (!response[i].success)
+				success = false;
+			text_accum += text;
+		}
+	}
+	Log(text_accum, success);
+}
+
+function Response(transport) {
+	var doc = transport.responseXML;
+	// DEBUG
+	if (submin.debug) {
+		var string = (new XMLSerializer()).serializeToString(doc);
+		alert(string);
+	}
+	var commands_xml = doc.getElementsByTagName('command');
+	var commands = [];
+	for (var i = 0; i < commands_xml.length; ++i) {
+		commands.push(newResponseCommand(commands_xml[i]));
+	}
+	return commands;
 }
 
 function AjaxSyncGetRequest(url, params) {
@@ -78,14 +117,9 @@ function AjaxCallback(transport, callback) {
 		var response = Response(transport);
 		callback(response);
 	}
-
-}
-
-function AjaxLog(response) {
-	Log(response.text, response.success);
 }
 
 function AjaxAsyncPostLog(url, params) {
-	AjaxAsyncPostRequest(url, params, AjaxLog);
+	AjaxAsyncPostRequest(url, params, LogResponse);
 }
 

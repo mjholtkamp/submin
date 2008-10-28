@@ -81,7 +81,7 @@ class Users(View):
 			return self.list(req)
 
 		if len(path) < 2:
-			return XMLStatusResponse(False, 'Invalid path')
+			return XMLStatusResponse('', False, 'Invalid path')
 
 		action = path[0]
 		username = path[1]
@@ -103,33 +103,32 @@ class Users(View):
 		if 'removeFromGroup' in req.post:
 			return self.removeFromGroup(req, user)
 
-		if 'initSelector' in req.post:
-			return self.initSelector(req, user)
+		if 'listUserGroups' in req.post:
+			return self.listUserGroups(req, user)
 
 		if 'listNotifications' in req.post:
 			return self.listNotifications(req, user)
 
-		return XMLStatusResponse(False,
-			'You tried to submit an empty field value')
+		return XMLStatusResponse('', False, 'Unknown command')
 
 	def setEmail(self, req, user):
 		try:
 			user.email = req.post.get('email')
-			return XMLStatusResponse(True,
+			return XMLStatusResponse('setEmail', True,
 				'Changed email address for user %s to %s' %
 				(user.name, user.email))
 
 		except Exception, e:
-			return XMLStatusResponse(False,
+			return XMLStatusResponse('setEmail', False,
 				'Could not change email of user %s' + user.name)
 
 	def setPassword(self, req, user):
 		try:
 			user.password = req.post.get('password')
-			return XMLStatusResponse(True,
+			return XMLStatusResponse('setPassword', True,
 				'Changed password for user %s' % user.name)
 		except Exception, e:
-			return XMLStatusResponse(False,
+			return XMLStatusResponse('setPassword', False,
 				'Could not change password of user %s' % user.name)
 
 	@admin_required
@@ -139,7 +138,7 @@ class Users(View):
 			users = config.htpasswd.users()
 			return XMLTemplateResponse("ajax/listusers.xml", {'users': users})
 		except Exception, e:
-			return XMLStatusResponse(False, 'Failed to get a list: %s' % e)
+			return XMLStatusResponse('listUsers', False, 'Failed to get a list: %s' % e)
 
 	@admin_required
 	def addToGroup(self, req, user):
@@ -148,16 +147,16 @@ class Users(View):
 		msgs = {True: 'User %s added to group %s' % (user.name, group.name),
 				False: 'User %s already in group %s' % (user.name, group.name)
 				}
-		return XMLStatusResponse(success, msgs[success])
+		return XMLStatusResponse('addToGroup', success, msgs[success])
 
-	def initSelector(self, req, user):
+	def listUserGroups(self, req, user):
 		if req.session['user'].is_admin:
 			return XMLTemplateResponse("ajax/usermemberof.xml",
 					{"memberof": user.member_of,
 						"nonmemberof": user.nonmember_of, "user": user.name})
 
 		if req.session['user'].name != user.name:
-			return XMLStatusResponse(False, "You do not have permission to "
+			return XMLStatusResponse('listUserGroups', False, "You do not have permission to "
 					"view this user.")
 
 		return XMLTemplateResponse("ajax/usermemberof.xml",
@@ -167,7 +166,7 @@ class Users(View):
 	def listNotifications(self, req, user):
 		is_admin = req.session['user'].is_admin
 		if not is_admin and req.session['user'].name != user.name:
-			return XMLStatusResponse(False, "You do not have permission to "
+			return XMLStatusResponse('listNotifications', False, "You do not have permission to "
 					"view this user.")
 
 		return XMLTemplateResponse("ajax/usernotifications.xml",
@@ -179,25 +178,25 @@ class Users(View):
 		group = Group(req.post.get('removeFromGroup'))
 		# TODO: Make this a setting in submin.conf?
 		if group.name == "submin-admins" and user.name == req.session['user'].name:
-			return XMLStatusResponse(False,
+			return XMLStatusResponse('removeFromGroup', False,
 					"You cannot remove yourself from %s" % group.name)
 
 		success = group.removeMember(user.name)
 		msgs = {True: 'User %s removed from group %s' % (user.name, group.name),
 				False: 'User %s is not a member of %s' % (user.name, group.name)
 				}
-		return XMLStatusResponse(success, msgs[success])
+		return XMLStatusResponse('removeFromGroup', success, msgs[success])
 
 	@admin_required
 	def removeUser(self, req, username):
 		if username == req.session['user'].name:
-			return XMLStatusResponse(False,
+			return XMLStatusResponse('removeUser', False,
 				'You are not allowed to delete yourself')
 		try:
 			user = User(username)
 			user.remove()
 		except Exception, e:
-			return XMLStatusResponse(False,
+			return XMLStatusResponse('removeUser', False,
 				'User %s not deleted: %s' % (username, str(e)))
 
-		return XMLStatusResponse(True, 'User %s deleted' % username)
+		return XMLStatusResponse('removeUser', True, 'User %s deleted' % username)

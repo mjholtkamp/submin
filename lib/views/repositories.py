@@ -86,7 +86,7 @@ class Repositories(View):
 
 	@admin_required
 	def getsubdirs(self, req, repository):
-		svn_path = req.post['getsubdirs'].value.strip('/')
+		svn_path = req.post['getSubdirs'].value.strip('/')
 		dirs = repository.getsubdirs(svn_path)
 		templatevars = {'dirs': dirs}
 		return XMLTemplateResponse('ajax/repositorytree.xml', templatevars)
@@ -94,7 +94,7 @@ class Repositories(View):
 	@admin_required
 	def getpermissions(self, req, repository):
 		config = Config()
-		svn_path = Path(req.post['getpermissions'].value)
+		svn_path = Path(req.post['getPermissions'].value)
 
 		perms = []
 		authz_paths = [x[1] for x in repository.authz_paths]
@@ -129,7 +129,7 @@ class Repositories(View):
 		# add member with no permissions (let the user select that)
 		config.authz.setPermission(repository.name, path, name, type)
 		config.authz.save()
-		return XMLStatusResponse(True, ('User', 'Group')[type == 'group'] + ' %s added to path %s' % (name, path))
+		return XMLStatusResponse('addPermission', True, ('User', 'Group')[type == 'group'] + ' %s added to path %s' % (name, path))
 
 	@admin_required
 	def removepermission(self, req, repository):
@@ -140,7 +140,7 @@ class Repositories(View):
 
 		config.authz.removePermission(repository.name, path, name, type)
 		config.authz.save()
-		return XMLStatusResponse(True, ('User', 'Group')[type == 'group'] + ' %s removed from path %s' % (name, path))
+		return XMLStatusResponse('removePermission', True, ('User', 'Group')[type == 'group'] + ' %s removed from path %s' % (name, path))
 
 	@admin_required
 	def setpermission(self, req, repository):
@@ -152,14 +152,14 @@ class Repositories(View):
 
 		config.authz.setPermission(repository.name, path, name, type, permission)
 		config.authz.save()
-		return XMLStatusResponse(True, 'Permission for %s %s changed to %s' %
+		return XMLStatusResponse('setPermission', True, 'Permission for %s %s changed to %s' %
 			(('user', 'group')[type == 'group'], name, permission))
 
 	def ajaxhandler(self, req, path):
 		repositoryname = ''
 
 		if len(path) < 2:
-			return XMLStatusResponse(False, 'Invalid path')
+			return XMLStatusResponse('', False, 'Invalid path')
 
 		action = path[0]
 		repositoryname = path[1]
@@ -167,26 +167,26 @@ class Repositories(View):
 		try:
 			repository = Repository(repositoryname)
 		except (IndexError, Repository.DoesNotExist):
-			return XMLStatusResponse(False,
+			return XMLStatusResponse('', False,
 				'Repository %s does not exist.' % repositoryname)
 
-		if 'getsubdirs' in req.post:
+		if 'getSubdirs' in req.post:
 			return self.getsubdirs(req, repository)
 
-		if 'getpermissions' in req.post:
+		if 'getPermissions' in req.post:
 			return self.getpermissions(req, repository)
 
-		if 'getpermissionpaths' in req.post:
+		if 'getPermissionPaths' in req.post:
 			return self.getpermissionpaths(req, repository)
 
-		if 'addpermission' in req.post:
+		if 'addPermission' in req.post:
 			return self.addpermission(req, repository)
 
-		if 'removepermission' in req.post:
+		if 'removePermission' in req.post:
 			return self.removepermission(req, repository)
 
-		if 'setpermission' in req.post:
+		if 'setPermission' in req.post:
 			return self.setpermission(req, repository)
 
-		return XMLStatusResponse(False, 'operations for repositories are not yet implemented')
+		return XMLStatusResponse('', False, 'Unknown command')
 

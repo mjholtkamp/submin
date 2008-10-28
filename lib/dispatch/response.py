@@ -40,9 +40,9 @@ class XMLResponse(Response):
 		self.headers = {'Content-Type': 'text/xml', 'Cache-Control': 'no-cache'}
 
 class XMLStatusResponse(XMLResponse):
-	def __init__(self, success, text):
+	def __init__(self, command, success, text):
 		from template import evaluate
-		tvars = {'success': str(success), 'text': text}
+		tvars = {'command': command, 'success': str(success), 'text': text}
 		content = evaluate('ajax/response.xml', tvars)
 
 		XMLResponse.__init__(self, content)

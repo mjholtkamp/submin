@@ -5,7 +5,7 @@ var selector = null;
 
 function refreshAndLog(response) {
 	selector.reInit();
-	AjaxLog(response);
+	LogResponse(response);
 }
 
 function removeMemberAjax(member) {
@@ -26,9 +26,13 @@ window.onload = function() {
 function initUsers() {
 	var added = [];
 	var addable = [];
-	var response = AjaxSyncPostRequest(document.location, 'initSelector=1');
-	var users = response.xml.getElementsByTagName("user");
-	Log(response.text, response.success);
+	var response = AjaxSyncPostRequest(document.location, 'listGroupUsers');
+	LogResponse(response);
+	var groupusers = FindResponse(response, 'listGroupUsers');
+	if (!groupusers)
+		return {"added": [], "addable": []};
+
+	var users = groupusers.xml.getElementsByTagName("user");
 
 	for (var user_idx=0; user_idx < users.length; ++user_idx) {
 		var user = users[user_idx];
@@ -37,6 +41,7 @@ function initUsers() {
 		else
 			addable[addable.length] = user.getAttribute("name");
 	}
+	
 	return {"added": added, "addable": addable};
 }
 

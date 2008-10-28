@@ -130,14 +130,16 @@ function repostree_markPermissions(reposnode)
 
 function repostree_getpaths()
 {
-	var response = AjaxSyncPostRequest(document.location, 'getpermissionpaths');
+	var response = AjaxSyncPostRequest(document.location, 'getPermissionPaths');
 
 	// log in case there is a problem
-	Log(response.text, response.success);
+	LogResponse(response);
+	
+	permissionspaths = FindResponse(response, 'getPermissionPaths');
 
 	// first empty array
 	repository_paths.splice(0, repository_paths.length);
-	var paths = response.xml.getElementsByTagName('path');
+	var paths = permissionspaths.xml.getElementsByTagName('path');
 	var paths_length = paths.length;
 	for (var idx = 0; idx < paths_length; ++idx) {
 		var path = paths[idx].getAttribute('name');
@@ -147,12 +149,13 @@ function repostree_getpaths()
 
 function getsubdirs(reposnode)
 {
-	var response = AjaxSyncPostRequest(document.location, 'getsubdirs=' + reposnode.path);
+	var response = AjaxSyncPostRequest(document.location, 'getSubdirs=' + reposnode.path);
 
 	// log in case there is a problem
-	Log(response.text, response.success);
+	LogResponse(response);
+	var subdirs = FindResponse(response, 'getSubdirs');
 
-	var dirs = response.xml.getElementsByTagName('dir');
+	var dirs = subdirs.xml.getElementsByTagName('dir');
 	var dirs_length = dirs.length;
 	for (var idx = 0; idx < dirs_length; ++idx) {
 		var dir = dirs[idx];
@@ -184,12 +187,14 @@ function loadPermissions(path)
 	h3.innerHTML = path;
 
 	// get permissions, users and groups in one call
-	var response = AjaxSyncPostRequest(document.location, 'getpermissions=' + path + '&userlist&grouplist');
-	Log(response.text, response.success);
+	var response = AjaxSyncPostRequest(document.location, 'getPermissions=' + path + '&userlist&grouplist');
+	LogResponse(response);
+
+	repositoryperms = FindResponse(response, "getRepositoryPerms");
 
 	// process users
 	var addable = new Array();
-	var users = response.xml.getElementsByTagName('user');
+	var users = repositoryperms.xml.getElementsByTagName('user');
 	var users_length = users.length;
 	for (var idx = 0; idx < users_length; ++idx) {
 		addable[addable.length] =
@@ -197,7 +202,7 @@ function loadPermissions(path)
 	}
 
 	// process groups
-	var groups = response.xml.getElementsByTagName('group');
+	var groups = repositoryperms.xml.getElementsByTagName('group');
 	var groups_length = groups.length;
 	for (var idx = 0; idx < groups_length; ++idx) {
 		addable[addable.length] =
@@ -207,7 +212,7 @@ function loadPermissions(path)
 	addable[addable.length] = {'type': 'user', 'name': '*'}; // for all users
 
 	// process permissions
-	var perms = response.xml.getElementsByTagName('member');
+	var perms = repositoryperms.xml.getElementsByTagName('member');
 	var perms_length = perms.length;
 	var added = [];
 	for (var idx = 0; idx < perms_length; ++idx) {
@@ -234,7 +239,7 @@ function loadPermissions(path)
 
 function repostree_reMark(response, path)
 {
-	AjaxLog(response);
+	LogResponse(response);
 	repostree_getpaths();
 	var id = 'repostree_' + path;
 	var node = repostree_getnode(document.getElementById(id));
@@ -244,19 +249,19 @@ function repostree_reMark(response, path)
 
 function refreshAndLog(response) {
 	permissionsEditor.reInit();
-	AjaxLog(response);
+	LogResponse(response);
 }
 
 function addPermissionToPath(id, type, path) {
-	AjaxAsyncPostRequest(document.location, 'addpermission&type=' + type + '&name=' + id + '&path=' + path, function(response) { repostree_reMark(response, path); } );
+	AjaxAsyncPostRequest(document.location, 'addPermission&type=' + type + '&name=' + id + '&path=' + path, function(response) { repostree_reMark(response, path); } );
 }
 
 function removePermissionFromPath(id, type, path) {
-	AjaxAsyncPostRequest(document.location, 'removepermission&type=' + type + '&name=' + id + '&path=' + path, function(response) { repostree_reMark(response, path); } );
+	AjaxAsyncPostRequest(document.location, 'removePermission&type=' + type + '&name=' + id + '&path=' + path, function(response) { repostree_reMark(response, path); } );
 }
 
 function changePathPermission(id, type, permission, path) {
-	AjaxAsyncPostRequest(document.location, 'setpermission&type=' + type + '&name=' + id + '&path=' + path + '&permission=' + permission, refreshAndLog);
+	AjaxAsyncPostRequest(document.location, 'setPermission&type=' + type + '&name=' + id + '&path=' + path + '&permission=' + permission, refreshAndLog);
 }
 
 function initPermissionsEditor(path) {

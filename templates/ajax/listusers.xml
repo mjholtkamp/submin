@@ -1,6 +1,7 @@
 <response>
-	<success>True</success>
-	<users>
-		[iter:users <user name="[ival]" />]
-	</users>
+	<command name="listUsers" success="True">
+		<users>
+			[iter:users <user name="[ival]" />]
+		</users>
+	</command>
 </response>

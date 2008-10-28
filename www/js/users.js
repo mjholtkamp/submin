@@ -6,7 +6,7 @@ var selector = null;
 
 function refreshAndLog(response) {
 	selector.reInit();
-	AjaxLog(response);
+	LogResponse(response);
 }
 
 // Using window.onload because an onclick="..." handler doesn't give the
@@ -90,9 +90,14 @@ function removeMemberFromGroupAjax(group) {
 function initGroups() {
 	var added = [];
 	var addable = [];
-	var response = AjaxSyncPostRequest(document.location, 'initSelector=1');
-	var groups = response.xml.getElementsByTagName("group");
-	Log(response.text, response.success);
+	var response = AjaxSyncPostRequest(document.location, 'listUserGroups');
+	// log if something went wrong
+	LogResponse(response);
+	var usergroups = FindResponse(response, 'listUserGroups');
+	if (!usergroups)
+		return {"added": [], "addable": []};
+
+	var groups = usergroups.xml.getElementsByTagName("group");
 
 	for (var group_idx=0; group_idx < groups.length; ++group_idx) {
 		var group = groups[group_idx];

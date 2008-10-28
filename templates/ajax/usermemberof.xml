@@ -1,9 +1,10 @@
 <response>
-	<success>True</success>
-	<groups user="[val user]">
-		[iter:memberof <group member="true" name="[ival]"/>
-		]
-		[iter:nonmemberof <group member="false" name="[ival]"/>
-		]
-	</groups>
+	<command name="listUserGroups" success="True">
+		<groups user="[val user]">
+			[iter:memberof <group member="true" name="[ival]"/>
+			]
+			[iter:nonmemberof <group member="false" name="[ival]"/>
+			]
+		</groups>
+	</command>
 </response>

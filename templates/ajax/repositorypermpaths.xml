@@ -1,7 +1,8 @@
 <response>
-	<success>True</success>
-	<paths repository="[val repository]">
-		[iter:paths <path name="[ival]"/>
-		]
-	</paths>
+	<command name="getPermissionPaths" success="True">
+		<paths repository="[val repository]">
+			[iter:paths <path name="[ival]"/>
+			]
+		</paths>
+	</command>
 </response>

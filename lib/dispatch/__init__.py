@@ -58,12 +58,14 @@ def dispatcher(request):
 			import sys
 			trace = traceback.extract_tb(sys.exc_info()[2])
 			list = traceback.format_list(trace)
-			list = '<br />\n'.join(list)
 
 			if not request.is_ajax():
-				response = ErrorResponse(str(e), request=request, details=list)
+				details = '<br />\n'.join(list)
+				response = ErrorResponse(str(e), request=request, details=details)
 			else:
-				response = XMLStatusResponse(False, str(e))
+				list = ['<err>' + x + '</err>' for x in list]
+				details = '\n'.join(list)
+				response = XMLStatusResponse('', False, str(e) + details)
 
 	else:
 		response = HTTP404('/'.join(path))

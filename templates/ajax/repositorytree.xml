@@ -1,6 +1,7 @@
 <response>
-	<success>True</success>
-	<dirs>
-		[iter:dirs <dir has_subdirs="[ival.has_subdirs]">[ival.name]</dir>]
-	</dirs>
+	<command name="getSubdirs" success="True">
+		<dirs>
+			[iter:dirs <dir has_subdirs="[ival.has_subdirs]">[ival.name]</dir>]
+		</dirs>
+	</command>
 </response>

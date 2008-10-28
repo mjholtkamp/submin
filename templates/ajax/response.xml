@@ -1,4 +1,5 @@
 <response>
-	<success>[val success]</success>
-	<text>[val text]</text>
+	<command name="[val command]" success="[val success]">
+		<text>[val text]</text>
+	</command>
 </response>

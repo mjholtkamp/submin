@@ -88,7 +88,7 @@ class Groups(View):
 			return self.list()
 
 		if len(path) < 2:
-			return XMLStatusResponse(False, 'Invalid Path')
+			return XMLStatusResponse('', False, 'Invalid Path')
 
 		action = path[0]
 		groupname = path[1]
@@ -102,19 +102,19 @@ class Groups(View):
 		if 'addMember' in req.post:
 			return self.addMember(req, groupname)
 
-		if 'initSelector' in req.post:
-			return self.initSelector(req, Group(groupname))
+		if 'listGroupUsers' in req.post:
+			return self.listGroupUsers(req, Group(groupname))
 
-		return XMLStatusResponse(False, 'You tried to submit an empty field value')
+		return XMLStatusResponse('', False, 'Unknown command')
 
-	def initSelector(self, req, group):
+	def listGroupUsers(self, req, group):
 		if req.session['user'].is_admin:
 			return XMLTemplateResponse("ajax/groupmembers.xml",
 					{"members": group.members, "nonmembers": group.nonmembers,
 						"group": group.name})
 
 		if group.name not in req.session['user'].member_of:
-			return XMLStatusResponse(False, "You do not have permission to"
+			return XMLStatusResponse('listGroupUsers', False, "You do not have permission to"
 					"view this group.")
 
 		return XMLTemplateResponse("ajax/groupmembers.xml",
@@ -128,7 +128,7 @@ class Groups(View):
 			groups = config.authz.groups()
 			return XMLTemplateResponse("ajax/listgroups.xml", {'groups': groups})
 		except Exception, e:
-			return XMLStatusResponse(False, 'Failed to get a list: %s' % e)
+			return XMLStatusResponse('listGroups', False, 'Failed to get a list: %s' % e)
 
 	@admin_required
 	def removeMember(self, req, groupname):
@@ -136,13 +136,13 @@ class Groups(View):
 		username = req.post['removeMember'].value
 		# TODO: Make this a setting in submin.conf?
 		if group.name == "submin-admins" and username == req.session['user'].name:
-			return XMLStatusResponse(False,
+			return XMLStatusResponse('removeMember', False,
 					"You cannot remove yourself from %s" % group.name)
 
 		success = Group(groupname).removeMember(username)
 		msgs = {True: 'User %s removed from group %s' % (username, groupname),
 				False: 'User %s is not a member of group %s' % (username, groupname)}
-		return XMLStatusResponse(success, msgs[success])
+		return XMLStatusResponse('removeMember', success, msgs[success])
 
 	@admin_required
 	def addMember(self, req, groupname):
@@ -150,22 +150,22 @@ class Groups(View):
 		success = Group(groupname).addMember(username)
 		msgs = {True: 'User %s added to group %s' % (username, groupname),
 				False: 'User %s already in group %s' % (username, groupname)}
-		return XMLStatusResponse(success, msgs[success])
+		return XMLStatusResponse('addMember', success, msgs[success])
 
 	@admin_required
 	def removeGroup(self, groupname):
 		if groupname == 'submin-admins':
-			return XMLStatusResponse(False,
+			return XMLStatusResponse('removeGroup', False,
 				'You are not allowed to delete the submin-admins group')
 
 		try:
 			group = Group(groupname)
 			group.remove()
 		except IOError:
-			return XMLStatusResponse(False, 'File permisson denied')
+			return XMLStatusResponse('removeGroup', False, 'File permisson denied')
 		except UnknownGroupError:
-			return XMLStatusResponse(False,
+			return XMLStatusResponse('removeGroup', False,
 				'Group %s does not exist' % groupname)
 
-		return XMLStatusResponse(True, 'Group %s deleted' % group)
+		return XMLStatusResponse('removeGroup', True, 'Group %s deleted' % group)
 
