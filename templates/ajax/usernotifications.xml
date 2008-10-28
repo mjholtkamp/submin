@@ -7,7 +7,7 @@
 				]
 				[test:!is_admin 
 					[test:ival.allowed
-						<notification name="[ival.name]" allowed="True" enabled="[ival.enabled"/>
+						<notification name="[ival.name]" allowed="True" enabled="[ival.enabled]"/>
 					]
 				]
 		</notifications>

@@ -149,19 +149,25 @@ function redrawNotifications(notifications) {
 	for (var i = 0; i < notifications.length; ++i) {
 		var tr = $c("tr");
 		var td_name = $c("td");
-		var td_allowed = $c("td");
-		var td_enabled = $c("td");
 		td_name.appendChild(document.createTextNode(notifications[i].name));
+		tr.appendChild(td_name);
+
 		var input = $c("input", {type: "checkbox"});
-		input.value = notifications[i].name + "_allowed";
-		input.checked = (notifications[i].allowed == "True");
-		td_allowed.appendChild(input);
-		input = $c("input", {type: "checkbox"});
+		if (is_admin) {
+			var td_allowed = $c("td");
+		
+			input.value = notifications[i].name + "_allowed";
+			input.checked = (notifications[i].allowed == "True");
+			td_allowed.appendChild(input);
+			tr.appendChild(td_allowed);
+
+			input = $c("input", {type: "checkbox"});
+		}
 		input.value = notifications[i].name + "_enabled";
 		input.checked = (notifications[i].enabled == "True");
+
+		var td_enabled = $c("td");
 		td_enabled.appendChild(input);
-		tr.appendChild(td_name);
-		tr.appendChild(td_allowed);
 		tr.appendChild(td_enabled);
 		table.appendChild(tr);
 	}
