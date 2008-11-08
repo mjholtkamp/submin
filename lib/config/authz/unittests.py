@@ -4,6 +4,7 @@ import tempfile
 import time
 
 from authz import *
+from htpasswd import *
 
 class InitTest(unittest.TestCase):
 	"Tests the initializer for the Authz-module"
@@ -93,6 +94,52 @@ class SaveTest(unittest.TestCase):
 		end = os.path.getmtime(filename)
 		self.assert_(end > begin, 'Modification time after save not past ' \
 				+ 'modification time before save (begin > end)')
+
+class HTPasswdTest(unittest.TestCase):
+	"Tester for htpasswd module"
+	def setUp(self):
+		import tempfile
+		self.file = tempfile.NamedTemporaryFile(dir="/tmp/", prefix="submin_htpasswd_")
+		self.ht = HTPasswd(self.file.name)
+
+	def tearDown(self):
+		# flush otherwise it will try to do it upon deletion and the file will
+		# be removed and so this will fail
+		self.ht.flush()
+		self.file.close()
+
+	def testAdd(self):
+		self.ht.add('test', 'test')
+		self.assertEquals(self.ht.users(), ['test'])
+
+	def testRemove(self):
+		self.ht.add('test', 'test')
+		self.ht.remove('test')
+		self.assertEquals(self.ht.users(), [])
+
+	def testChange(self):
+		self.ht.add('foo', 'bar')
+		self.ht.check('foo', 'bar')
+		self.ht.change('foo', 'baz')
+		self.assertEquals(self.ht.check('foo', 'baz'), True)
+		self.assertEquals(self.ht.check('foo', 'bar'), False)
+
+	def testUnknownUser(self):
+		self.assertEquals(self.ht.check('foo', 'baz'), False)
+		self.assertEquals(self.ht.change('foo', 'bar'), False)
+		self.assertEquals(self.ht.remove('foo'), False)
+
+	def testExists(self):
+		self.assertEquals(self.ht.exists('test'), False)
+		self.ht.add('test', 'test')
+		self.assertEquals(self.ht.exists('test'), True)
+
+	def testInvalidMD5(self):
+		self.ht = None
+		self.file.write("foo:bar")
+		self.file.flush()
+		self.ht = HTPasswd(self.file.name)
+		self.assertRaises(NoMD5PasswordError, self.ht.check, "foo", "bar")
 
 if __name__ == '__main__':
 	unittest.main()

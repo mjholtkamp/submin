@@ -103,15 +103,3 @@ class HTPasswd:
 
 		del self.passwords[user]
 		self.modified = True
-
-if __name__ == '__main__':
-	htpasswd = HTPasswd('/tmp/.htpasswd.test')
-	htpasswd.add('test', 'test')
-	htpasswd.list()
-	if htpasswd.check('test', 'test'):
-		print 'correct!'
-	else:
-		print 'fail!'
-	htpasswd.change('test', 'test!')
-	htpasswd.flush()
-
