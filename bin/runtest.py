@@ -2,7 +2,7 @@ import os
 import commands
 import sys
 
-def which (filename):
+def which(filename):
 	if not os.environ.has_key('PATH') or os.environ['PATH'] == '':
 		p = os.defpath
 	else:
@@ -43,8 +43,8 @@ def main():
 		os.system("PYTHONPATH=lib %s %s %s" % (python_cmd, options, file))
 
 	if use_coverage:
-		os.system("python-coverage -c")
-		os.system("python-coverage -r -o /usr/lib")
+		os.system("%s -c" % python_cmd)
+		os.system("%s -r -o /usr/lib,/System/Library/" % python_cmd)
 		os.system("rm -rf coverage-tmp")
 
 if __name__ == "__main__":
