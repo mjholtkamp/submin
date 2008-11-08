@@ -64,6 +64,15 @@ class PathTests(unittest.TestCase):
 		username = "test"
 		path = p + "/user/show/" + username
 		self.assertEquals(str(path), "/base/user/show/test")
+		
+	def testRawCopy(self):
+		p = Path("/base")
+		p2 = p.copy()
+		self.assertEquals(str(p), str(p2))
+
+	def testNotAbsolute(self):
+		p = Path("notabsolute", absolute=False)
+		self.assertEquals(str(p), "notabsolute")
 
 if __name__ == "__main__":
 	unittest.main()
