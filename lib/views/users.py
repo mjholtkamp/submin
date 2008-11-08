@@ -11,6 +11,7 @@ class Users(View):
 	@login_required
 	def handler(self, req, path):
 		localvars = {}
+		config = Config()
 
 		if req.is_ajax():
 			return self.ajaxhandler(req, path)
@@ -23,11 +24,13 @@ class Users(View):
 		if len(path) > 1:
 			localvars['selected_object'] = path[1]
 
-		if path[0] == 'show':
-			return self.show(req, path[1:], localvars)
-
-		if path[0] == 'add':
-			return self.add(req, path[1:], localvars)
+		try:
+			if path[0] == 'show':
+				return self.show(req, path[1:], localvars)
+			if path[0] == 'add':
+				return self.add(req, path[1:], localvars)
+		except Unauthorized:
+			return Redirect(config.base_url)
 
 		return ErrorResponse('Unknown path', request=req)
 
@@ -37,8 +40,7 @@ class Users(View):
 
 		is_admin = req.session['user'].is_admin
 		if not is_admin and path[0] != req.session['user'].name:
-			return ErrorResponse('Permission denied to view this user',
-					request=req)
+			raise Unauthorized('Permission denied to view this user')
 
 		try:
 			user = User(path[0])

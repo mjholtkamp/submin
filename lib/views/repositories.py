@@ -13,6 +13,7 @@ class Repositories(View):
 	@login_required
 	def handler(self, req, path):
 		localvars = {}
+		config = Config()
 
 		if req.is_ajax():
 			return self.ajaxhandler(req, path)
@@ -25,11 +26,13 @@ class Repositories(View):
 		if len(path) > 1:
 			localvars['selected_object'] = path[1]
 
-		if path[0] == 'show':
-			return self.show(req, path[1:], localvars)
-
-		if path[0] == 'add':
-			return self.add(req, path[1:], localvars)
+		try:
+			if path[0] == 'show':
+				return self.show(req, path[1:], localvars)
+			if path[0] == 'add':
+				return self.add(req, path[1:], localvars)
+		except Unauthorized:
+			return Redirect(config.base_url)
 
 		return ErrorResponse('Unknown path', request=req)
 
