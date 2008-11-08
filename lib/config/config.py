@@ -13,17 +13,15 @@ class ConfigData:
 	htpasswd = None
 
 	def __init__(self, filename=''):
-		self.filename = filename
-		if not filename:
-			if not os.environ.has_key('SUBMIN_CONF'):
-				raise Exception('SUBMIN_CONF environment not found')
-			self.filename = os.environ['SUBMIN_CONF']
-
 		self.ctimes = {}
 		self.ctimes["config"] = 0;
 		self.ctimes["authz"] = 0;
 		self.ctimes["userprop"] = 0;
 		self.ctimes["htpasswd"] = 0;
+		self.use_env = False
+		self.filename = filename
+		if not filename:
+			self.use_env = True
 
 		self.reinit()
 
@@ -35,6 +33,18 @@ class ConfigData:
 			return 0
 
 	def reinit(self):
+		filename = self.filename
+		if self.use_env:
+			if not os.environ.has_key('SUBMIN_CONF'):
+				raise Exception('SUBMIN_CONF environment not found')
+			self.filename = os.environ['SUBMIN_CONF']
+			if filename != self.filename:
+				self.ctimes["config"] = 0;
+				self.ctimes["authz"] = 0;
+				self.ctimes["userprop"] = 0;
+				self.ctimes["htpasswd"] = 0;
+				filename = self.filename
+		
 		s_c = os.stat(self.filename)
 		if not self.cp or s_c.st_ctime > self.ctimes["config"]:
 			self.cp = ConfigParser.ConfigParser()
