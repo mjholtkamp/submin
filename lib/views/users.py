@@ -2,7 +2,7 @@ from dispatch.view import View
 from template.shortcuts import evaluate_main
 from dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse
 from views.error import ErrorResponse
-from models.user import User, addUser, UserExists, NotAuthorized
+from models.user import User, addUser, UserExists, NotAuthorized, InvalidEmail
 from models.group import Group
 from auth.decorators import *
 from config.authz.authz import UnknownUserError
@@ -122,10 +122,12 @@ class Users(View):
 			return XMLStatusResponse('setEmail', True,
 				'Changed email address for user %s to %s' %
 				(user.name, user.email))
-
+		except InvalidEmail:
+			return XMLStatusResponse('setEmail', False,
+				'Invalid email. If you think this is an error, please report a bug')
 		except Exception, e:
 			return XMLStatusResponse('setEmail', False,
-				'Could not change email of user %s' + user.name)
+				'Could not change email of user %s: %s' % (user.name, str(e)))
 
 	def setPassword(self, req, user):
 		try:

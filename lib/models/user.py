@@ -10,6 +10,10 @@ class NotAuthorized(Exception):
 	def __init__(self, msg):
 		Exception.__init__(self, msg)
 
+class InvalidEmail(Exception):
+	def __init__(self):
+		Exception.__init__(self, "Invalid email")
+
 def addUser(username):
 	config = Config()
 	if config.htpasswd.exists(username):
@@ -116,6 +120,14 @@ class User(object):
 		return self.__email
 
 	def setEmail(self, email):
+		import re
+		# regex for quick email check. No quotes allowed, be very allowing
+		# for domain-names and ip-addresses.
+		regex = '^[^\'"@]+@(([\w-]\.?)+)$'
+		email_check = re.compile(regex)
+		if not email_check.match(email):
+			raise InvalidEmail()
+ 
 		self.__email = email
 		config = Config()
 		config.authz.setUserProp(self.name, 'email', email)
