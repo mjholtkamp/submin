@@ -80,6 +80,8 @@ class Repositories(View):
 			reposdir = config.get('svn', 'repositories')
 			newrepos = reposdir + '/' + repository
 			if os.system('svnadmin create %s' % newrepos) == 0:
+				repos = Repository(repository)
+				repos.installPostCommitHook()
 				return Redirect(url)
 
 			return ErrorResponse('could not create repository', request=req)

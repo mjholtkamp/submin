@@ -15,17 +15,20 @@ def main():
 	from sys import argv, path
 	import os
 	path.append('_SUBMIN_LIB_DIR_')
+	scriptname = 'commit-email.pl'
+	scriptdir = os.path.dirname(argv[0])
 	env = 'SUBMIN_LIB_DIR'
 	if env in os.environ:
 		path.append(os.environ[env])
 
-	if len(argv) < 3:
-		print "Usage: %s <repository path> <revision>" % argv[0]
+	if len(argv) < 4:
+		print "Usage: %s <configfile> <repository path> <revision>" % argv[0]
 		return
 
-	repospath = argv[1]
-	rev = argv[2]
-	
+	repospath = argv[2]
+	rev = argv[3]
+	os.environ['SUBMIN_CONF'] = argv[1]
+
 	try:
 		from config.config import Config
 	except ImportError, e:
@@ -34,6 +37,7 @@ def main():
 		return
 
 	config = Config()
+	bindir = config.get('backend', 'bindir')
 	a = config.authz
 	n = buildNotifications(a.users())
 	repos = os.path.basename(repospath)
@@ -41,9 +45,9 @@ def main():
 		print "no such repository"
 		return
 
+	mailer = os.path.join(bindir, scriptname)
 	for email in  n[repos]:
-		print "/usr/share/subversion/hook-scripts/commit-email.pl" +\
-			" '%s' '%s' '%s'" % (repospath, rev, email)
+		os.system("%s '%s' '%s' '%s'" % (mailer, repospath, rev, email))
 
 if __name__ == "__main__":
 	main()

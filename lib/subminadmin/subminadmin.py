@@ -12,6 +12,7 @@ class SubminAdmin:
 		self.vars['etc'] = Path('/etc/submin')
 		self.vars['apache user'] = ''
 		self.vars['http base'] = ''
+		self.vars['share dir'] = '_SUBMIN_SHARE_DIR_'
 
 	def _path(self, path):
 		if path.absolute:
@@ -71,6 +72,9 @@ repositories = %(svn dir)s
 
 [www]
 base_url = %(http base)s/submin
+
+[backend]
+bindir = %(share dir)/bin
 
 [generated]
 session_salt = %(session salt)s

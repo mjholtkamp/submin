@@ -45,18 +45,27 @@ else
 	install -m 755 bin/submin-admin.py ${SUBMIN_ADMIN}
 fi
 
-# fix path
-## use .bak extension, because OSX and Linux sed versions differ in handling -i
-sed -i".bak" -e "s@_SUBMIN_LIB_DIR_@${FINAL_PREFIX}/share/submin/lib@" ${PREFIX}/bin/submin-admin
-rm -f ${PREFIX}/bin/submin-admin.bak
-
 rm -rf "${SHARE}"
 mkdir -p ${SHARE}/www # make share and share/www
+mkdir -p ${SHARE}/bin # make share/bin
 cp -r www/{css,img,js} ${SHARE}/www
 cp -r lib templates ${SHARE}
 if [ "$ROOT" == "1" ]; then
 	install -g root -o root -m 755 www/submin.{ws,c}gi ${SHARE}/www/
+	install -g root -o root -m 755 bin/{commit-email.pl,post-commit.py} ${SHARE}/bin/
 else
 	install -m 755 www/submin.{ws,c}gi ${SHARE}/www/
+	install -m 755 bin/{commit-email.pl,post-commit.py} ${SHARE}/bin/
 fi
-find ${SHARE} -type d -name .svn -exec rm -rf \{} \; -prune
+
+# fix hardcoded paths in binaries
+## use .bak extension, because OSX and Linux sed versions differ in handling -i
+sed -i".bak" -e "s@_SUBMIN_LIB_DIR_@${FINAL_PREFIX}/share/submin/lib@" ${PREFIX}/bin/submin-admin
+rm -f ${PREFIX}/bin/submin-admin.bak
+sed -i".bak" -e "s@_SUBMIN_SHARE_DIR_@${FINAL_PREFIX}/share/submin/@" ${SHARE}/lib/subminadmin/subminadmin.py
+rm -f ${SHARE}/lib/subminadmin/subminadmin.py.bak
+sed -i".bak" -e "s@_SUBMIN_LIB_DIR_@${FINAL_PREFIX}/share/submin/lib@" ${SHARE}/bin/post-commit.py
+rm -f ${SHARE}/bin/post-commit.py.bak
+
+find ${SHARE} -type d -name .svn -exec rm -rf \{\} \; -prune
+find ${SHARE} -type f -name \*.pyc -exec rm -rf \{\} \;
