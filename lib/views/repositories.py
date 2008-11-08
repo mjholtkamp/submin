@@ -160,6 +160,18 @@ class Repositories(View):
 		return XMLStatusResponse('setPermission', True, 'Permission for %s %s changed to %s' %
 			(('user', 'group')[type == 'group'], name, permission))
 
+	@admin_required
+	def toggleNotifications(self, req, repository):
+		enable = True
+		change_msg = 'enabled'
+		if repository.notificationsEnabled():
+			enable = False
+			change_msg = 'disabled'
+			
+		repository.changeNotifications(enable)
+		return XMLStatusResponse('toggleNotifications', True, 
+			'Notifications %s' % change_msg)
+
 	def ajaxhandler(self, req, path):
 		repositoryname = ''
 
@@ -192,6 +204,9 @@ class Repositories(View):
 
 		if 'setPermission' in req.post:
 			return self.setpermission(req, repository)
+
+		if 'toggleNotifications' in req.post:
+			return self.toggleNotifications(req, repository)
 
 		return XMLStatusResponse('', False, 'Unknown command')
 

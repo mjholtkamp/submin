@@ -398,3 +398,8 @@ ReposNode.prototype.findNodeById = function(id)
 	return null;
 }
 
+/* ask server to re-enable post-commit hook, this is called from an anchor */
+function toggle_notifications_mailing() {
+	AjaxAsyncPostLog(document.location, 'toggleNotifications');
+	return false; // no following of link
+}

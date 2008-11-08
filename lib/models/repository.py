@@ -10,6 +10,7 @@ class Repository(object):
 
 		self.name = name
 		self.config = config
+		self.signature = "### SUBMIN AUTOCONFIG, DO NOT ALTER FOLLOWING LINE ###\n"
 
 		self.authz_paths = self.config.authz.paths(self.name)
 		self.authz_paths.sort()
@@ -54,11 +55,28 @@ class Repository(object):
 				return True
 
 		return False
-
-	def installPostCommitHook(self):
-		config = Config()
-		signature = "### SUBMIN AUTOCONFIG, DO NOT ALTER FOLLOWING LINE ###\n"
+	
+	def notificationsEnabled(self):
 		import os
+
+		reposdir = self.config.get('svn', 'repositories')
+		hook = os.path.join(reposdir, self.name, 'hooks', 'post-commit')
+		try:
+			f = open(hook, 'r')
+		except IOError:
+			return False # assume it does not exist
+		
+		# if we find the signature, assume it is installed
+		if self.signature in f.readlines():
+			return True
+		return False
+
+	def changeNotifications(self, add='yes'):
+		"""Add or remove our script to/from the post-commit hook"""
+		import os
+		config = Config()
+
+		line_altered = False
 		reposdir = self.config.get('svn', 'repositories')
 		hook = os.path.join(reposdir, self.name, 'hooks', 'post-commit')
 		bindir = self.config.get('backend', 'bindir')
@@ -66,25 +84,33 @@ class Repository(object):
 		config_file = os.environ['SUBMIN_CONF']
 		new_hook = '/usr/bin/python %s "%s" "$1" "$2"\n' % (fullpath, config_file)
 		f = open(hook, 'a+')
-		f.seek(0)
-		alter_line = False
-		line_altered = False
-		new_file_content = []
-		for line in f.readlines():
-			if alter_line:
-				new_file_content.append(new_hook)
-				alter_line = False
-				line_altered = True
-				continue
-			
-			if line == signature:
-				alter_line = True
-			new_file_content.append(line)
+
+		if f.tell() != 0:
+			f.seek(0)
+			alter_line = False
+			new_file_content = []
+			for line in f.readlines():
+				if alter_line:
+					if add:
+						new_file_content.append(new_hook)
+					alter_line = False
+					line_altered = True
+					continue # filter out command
+
+				if line == self.signature:
+					alter_line = True
+					if not add:
+						continue # filter out signature
+
+				new_file_content.append(line)
 		
-		f.truncate(0)
-		f.writelines(new_file_content)
-		if not line_altered:
-			f.write(signature)
+			f.truncate(0)
+			f.writelines(new_file_content)
+		else:
+			f.write("#!/bin/sh\n")
+
+		if not line_altered and add:
+			f.write(self.signature)
 			f.write(new_hook)
 		f.close()
 		os.chmod(hook, 0755)
