@@ -27,6 +27,16 @@ def addUser(username):
 
 	config.htpasswd.add(username, password)
 
+def isEmailValid(email):
+	import re
+	# regex for quick email check. No quotes allowed, be very allowing
+	# for domain-names and ip-addresses.
+	regex = '^[^\'"@]+@(([\w-]\.?)+)$'
+	email_check = re.compile(regex)
+	if not email_check.match(email):
+		return False
+	return True
+
 class User(object):
 	def __init__(self, name):
 		config = Config()
@@ -118,14 +128,9 @@ class User(object):
 
 	def getEmail(self):
 		return self.__email
-
+		
 	def setEmail(self, email):
-		import re
-		# regex for quick email check. No quotes allowed, be very allowing
-		# for domain-names and ip-addresses.
-		regex = '^[^\'"@]+@(([\w-]\.?)+)$'
-		email_check = re.compile(regex)
-		if not email_check.match(email):
+		if not isEmailValid(email):
 			raise InvalidEmail()
  
 		self.__email = email

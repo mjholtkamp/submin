@@ -2,7 +2,7 @@ from dispatch.view import View
 from template.shortcuts import evaluate_main
 from dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse
 from views.error import ErrorResponse
-from models.user import User, addUser, UserExists, NotAuthorized, InvalidEmail
+from models.user import User, addUser, UserExists, NotAuthorized, InvalidEmail, isEmailValid
 from models.group import Group
 from auth.decorators import *
 from config.authz.authz import UnknownUserError
@@ -51,29 +51,58 @@ class Users(View):
 		formatted = evaluate_main('users.html', localvars, request=req)
 		return Response(formatted)
 
+	def showAddForm(self, req, username, email, errormsg=''):
+		localvars = {}
+		localvars['errormsg'] = errormsg
+		localvars['username'] = username
+		localvars['email'] = email
+		formatted = evaluate_main('newuser.html', localvars, request=req)
+		return Response(formatted)
+
 	@admin_required
 	def add(self, req, path, localvars):
 		config = Config()
 		base_url = config.base_url
+		username = ''
+		email = ''
 
-		if req.post and req.post['username']:
+		if req.post and req.post['username'] and req.post['email']:
 			import re
 
 			username = req.post['username'].value.strip()
+			email = req.post['email'].value.strip()
 			if re.findall('[^a-zA-Z0-9_-]', username):
-				return ErrorResponse('Invalid characters in username', request=req)
-			url = base_url + '/users/show/' + username
+				return self.showAddForm(req, username, email, 
+					'Invalid characters in username')
+
+			if username == '':
+				return self.showAddForm(req, username, email, 
+					'Username not supplied')
+			if config.htpasswd.exists(username):
+				return self.showAddForm(req, username, email, 
+					'User already exists')
+
+			if email == '':
+				return self.showAddForm(req, username, email, 
+					'Email must be supplied')
+
+			if not isEmailValid(email):
+				return self.showAddForm(req, username, email, 
+					"Email is not valid")
+
 			try:
 				addUser(username)
+				User(username).setEmail(email)
 			except IOError:
 				return ErrorResponse('File permission denied', request=req)
 			except UserExists:
-				return ErrorResponse('User %s already exists' % username, request=req)
+				return self.showAddForm(req, username, email, 
+					'User %s already exists' % username)
 
+			url = base_url + '/users/show/' + username
 			return Redirect(url)
 
-		formatted = evaluate_main('newuser.html', localvars, request=req)
-		return Response(formatted)
+		return self.showAddForm(req, username, email)
 
 	def ajaxhandler(self, req, path):
 		username = ''

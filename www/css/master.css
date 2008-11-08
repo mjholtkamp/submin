@@ -104,3 +104,11 @@ img.showhide-icon {
 	width: 1em;
 	padding-right: 0.5em;
 }
+
+div.error {
+	border: 1px solid #666;
+	text-align: center;
+	padding: 1.5em 0 1.5em 0;
+	margin: 1em;
+	background: #f66;
+}
