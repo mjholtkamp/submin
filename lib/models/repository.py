@@ -71,7 +71,7 @@ class Repository(object):
 			return True
 		return False
 
-	def changeNotifications(self, add='yes'):
+	def changeNotifications(self, enable=True):
 		"""Add or remove our script to/from the post-commit hook"""
 		import os
 		config = Config()
@@ -91,7 +91,7 @@ class Repository(object):
 			new_file_content = []
 			for line in f.readlines():
 				if alter_line:
-					if add:
+					if enable:
 						new_file_content.append(new_hook)
 					alter_line = False
 					line_altered = True
@@ -99,7 +99,7 @@ class Repository(object):
 
 				if line == self.signature:
 					alter_line = True
-					if not add:
+					if not enable:
 						continue # filter out signature
 
 				new_file_content.append(line)
@@ -107,9 +107,10 @@ class Repository(object):
 			f.truncate(0)
 			f.writelines(new_file_content)
 		else:
-			f.write("#!/bin/sh\n")
+			if enable:
+				f.write("#!/bin/sh\n")
 
-		if not line_altered and add:
+		if not line_altered and enable:
 			f.write(self.signature)
 			f.write(new_hook)
 		f.close()
