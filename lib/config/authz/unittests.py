@@ -58,6 +58,24 @@ class InitTest(unittest.TestCase):
 		self.authz.removePermission('foo', '/', 'bar', 'user')
 		self.assertEquals(self.authz.permissions('foo', '/'), [])
 
+	def testAddPath(self):
+		self.authz.addPath('foo', '/')
+		self.assertRaises(PathExistsError, self.authz.addPath, 'foo', '/')
+
+	def testRemovePath(self):
+		self.authz.removePath('foo', '/')
+
+	def testRemoveAllMembers(self):
+		self.authz.addGroup('foo', ['bar', 'baz'])
+		self.authz.removeAllMembers('foo')
+		self.assertEquals(self.authz.members('foo'), [])
+
+	def testRemoveAllMembersUnknownGroup(self):
+		self.assertRaises(UnknownGroupError, self.authz.removeAllMembers, 'foo')
+
+	def testListMembersUnknownGroup(self):
+		self.assertRaises(UnknownGroupError, self.authz.members, 'foo')
+
 class SaveTest(unittest.TestCase):
 	"Testcase for the save() method on the Authz-objects."
 
