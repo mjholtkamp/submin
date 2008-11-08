@@ -3,6 +3,8 @@
 def buildNotifications(users):
 	notifications = {}
 	for user in users.itervalues():
+		if not user.has_key('notifications_enabled'):
+			continue
 		for path in [x.strip() for x in user['notifications_enabled'].split(',')]:
 			if not notifications.has_key(path):
 				notifications[path] = []
@@ -41,7 +43,7 @@ def main():
 
 	for email in  n[repos]:
 		print "/usr/share/subversion/hook-scripts/commit-email.pl" +\
-			" %s %s %s" % (repospath, rev, email)
+			" '%s' '%s' '%s'" % (repospath, rev, email)
 
 if __name__ == "__main__":
 	main()
