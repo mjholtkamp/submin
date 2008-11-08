@@ -37,6 +37,10 @@ class PathExistsError(Exception):
 	def __init__(self, repos, path):
 		Exception.__init__(self, 'Path %s already exists in repository %s' % (path, repos))
 
+class UnknownPathError(Exception):
+	def __init__(self, repos, path):
+		Exception.__init__(self, 'Path %s unknown in repository %s' % (path, repos))
+
 class UnknownPermissionError(Exception):
 	def __init__(self, path, name):
 		Exception.__init__(self, 'Permission for %s does not exist in path %s' % (name, path))
@@ -208,6 +212,9 @@ class Authz:
 
 	def permissionDicts(self, path):
 		dicts = []
+		if not self.authzParser.has_section(path):
+			(repos, dirpath) = path.split(':', 2)
+			raise UnknownPathError(repos, dirpath)
 		for tuple in self.authzParser.items(path):
 			type = 'user'
 			if tuple[0][0] == '@':
@@ -227,7 +234,11 @@ class Authz:
 			return []
 
 		if member is None:
-			return self.permissionDicts(path)
+			try:
+				dicts = self.permissionDicts(path)
+			except UnknownPathError:
+				return []
+			return dicts
 
 		return self.authzParser.get(path, member)
 
@@ -258,58 +269,4 @@ class Authz:
 			self.authzParser.remove_section(section)
 
 		self.save()
-
-
-if __name__ == '__main__':
-	import sys
-	if len(sys.argv) != 2:
-		raise Exception, 'Please specify authz-file!'
-
-	authz = Authz(sys.argv[1])
-
-	# "tests"
-	print 'authz.paths()\n\t', authz.paths()
-	repos, path = authz.paths()[-1]
-	print 'permissions submin:/\n\t', \
-			authz.permissions(repos, path)
-	print 'permissions /\n\t', authz.permissions(None, '/')
-	print 'groups\n\t', authz.groups()
-	try:
-		print 'devel members\n\t', authz.members('devel')
-	except UnknownGroupError: pass
-	try:
-		authz.removeGroup('foo')
-	except UnknownGroupError: pass
-	authz.addGroup('foo', ['avaeq'])
-	print 'foo members\n\t', authz.members('foo')
-	authz.addMember('foo', 'sabre2th')
-	print 'foo members\n\t', authz.members('foo')
-	authz.removeMember('foo', 'avaeq')
-	print 'foo members\n\t', authz.members('foo')
-
-	authz.setPermission('foo', '/', 'avaeq', 'r')
-	print 'permissions foo:/\n\t', \
-			authz.permissions('foo', '/')
-
-	try:
-		authz.addGroup('foo')
-	except GroupExistsError, e:
-		print 'Group already exists:', e
-
-	try:
-		authz.removeGroup('bar')
-	except UnknownGroupError, e:
-		print 'Unknown group:', e
-
-	try:
-		authz.addMember('foo', 'sabre2th')
-	except MemberExistsError, e:
-		print 'Member exists:', e
-
-	try:
-		authz.removeMember('foo', 'avaeq')
-	except UnknownMemberError, e:
-		print 'Unknown member:', e
-
-	print 'users', authz.users()
 

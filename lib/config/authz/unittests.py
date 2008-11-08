@@ -25,6 +25,38 @@ class InitTest(unittest.TestCase):
 	def testCreateGroupsSection(self):
 		self.assert_(self.authz.authzParser.has_section('groups'),
 				'[groups] section not created')
+	
+	def testAddGroup(self):
+		self.authz.addGroup('foo', ['bar'])
+		self.assertEquals(self.authz.members('foo'), ['bar'])
+		self.authz.addMember('foo', 'baz')
+		self.assertEquals(self.authz.members('foo'), ['bar', 'baz'])
+
+	def testRemoveGroup(self):
+		self.authz.addGroup('foo', ['bar', 'baz'])
+		self.authz.removeMember('foo', 'baz')
+		self.assertEquals(self.authz.members('foo'), ['bar'])
+		
+	def testDoubleGroupAdd(self):
+		self.authz.addGroup('foo', ['bar'])
+		self.assertRaises(GroupExistsError, self.authz.addGroup, 'foo')
+
+	def testDoubleMemberAdd(self):
+		self.authz.addGroup('foo', ['bar'])
+		self.assertRaises(MemberExistsError, self.authz.addMember, 'foo', 'bar')
+
+	def testRemoveUnknownMember(self):
+		self.authz.addGroup('foo', ['bar'])
+		self.assertRaises(UnknownMemberError, self.authz.removeMember, 'foo', 'baz')
+
+	def testRemoveUnknownGroup(self):
+		self.assertRaises(UnknownGroupError, self.authz.removeGroup, 'foo')
+		
+	def testSetRemovePermission(self):
+		self.authz.setPermission('foo', '/', 'bar', 'user', 'rw')
+		self.assertEquals(self.authz.permissions('foo', '/'), [{'type': 'user', 'name': 'bar', 'permission': 'rw'}])
+		self.authz.removePermission('foo', '/', 'bar', 'user')
+		self.assertEquals(self.authz.permissions('foo', '/'), [])
 
 class SaveTest(unittest.TestCase):
 	"Testcase for the save() method on the Authz-objects."
@@ -36,7 +68,7 @@ class SaveTest(unittest.TestCase):
 		authz = Authz(filename, userpropfilename)
 		begin = os.path.getmtime(filename)
 
-		print '\nTesting modification time. This takes at least 1.1 seconds'
+		# Testing modification time. This takes at least 1.1 seconds.
 		# sleep required to up the modification-time, reported in seconds
 		time.sleep(1.1)
 		authz.save()
