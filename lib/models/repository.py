@@ -55,6 +55,39 @@ class Repository(object):
 
 		return False
 
+	def installPostCommitHook(self):
+		config = Config()
+		signature = "### SUBMIN AUTOCONFIG, DO NOT ALTER FOLLOWING LINE ###\n"
+		import os
+		reposdir = self.config.get('svn', 'repositories')
+		hook = os.path.join(reposdir, self.name, 'hooks', 'post-commit')
+		bindir = self.config.get('backend', 'bindir')
+		fullpath = os.path.join(bindir, 'post-commit.py')
+		config_file = os.environ['SUBMIN_CONF']
+		new_hook = '/usr/bin/python %s "%s" "$1" "$2"\n' % (fullpath, config_file)
+		f = open(hook, 'a+')
+		f.seek(0)
+		alter_line = False
+		line_altered = False
+		new_file_content = []
+		for line in f.readlines():
+			if alter_line:
+				new_file_content.append(new_hook)
+				alter_line = False
+				line_altered = True
+				continue
+			
+			if line == signature:
+				alter_line = True
+			new_file_content.append(line)
+		
+		f.truncate(0)
+		f.writelines(new_file_content)
+		if not line_altered:
+			f.write(signature)
+			f.write(new_hook)
+		f.close()
+		os.chmod(hook, 0755)
 
 	def __str__(self):
 		return self.name
