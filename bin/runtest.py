@@ -31,6 +31,7 @@ def main():
 		os.environ['COVERAGE_FILE'] = "coverage-tmp/.converage"
 		try:
 			os.mkdir("coverage-tmp")
+			os.mkdir("coverage-annotate")
 		except OSError:
 			pass
 
@@ -45,7 +46,11 @@ def main():
 	if use_coverage:
 		os.system("%s -c" % python_cmd)
 		os.system("%s -r -o /usr/lib,/System/Library/" % python_cmd)
-		os.system("rm -rf coverage-tmp")
+		omit = ["/usr/lib", "/System/Library"]
+		# touch coverage.py, it tries to find itself while annotating, sigh
+		open("coverage.py", "w")
+		os.system("%s -a -o %s -d coverage-annotate" % (python_cmd, ','.join(omit)))
+		os.system("rm -rf coverage-tmp coverage.py")
 
 if __name__ == "__main__":
 	main()
