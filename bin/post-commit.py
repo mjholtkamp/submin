@@ -47,7 +47,7 @@ def main():
 
 	mailer = os.path.join(bindir, scriptname)
 	for email in  n[repos]:
-		os.system("%s '%s' '%s' '%s'" % (mailer, repospath, rev, email))
+		os.system("%s '%s' '%s' -s '[%s]' %s'" % (mailer, repospath, rev, repos, email))
 
 if __name__ == "__main__":
 	main()
