@@ -1,6 +1,7 @@
 import unittest
 import os
 from user import User, UserExists, NotAuthorized, InvalidEmail, addUser
+from config.authz.authz import UnknownUserError
 from config.config import Config
 
 class UserTests(unittest.TestCase):
@@ -76,6 +77,39 @@ base_url = /
 		e = "a+b@example.com"
 		u.setEmail(e)
 		self.assertEquals(e, u.getEmail())
+
+	def testPassword(self):
+		u = User("test")
+		u.setPassword("foobar")
+		config = Config()
+		self.assertEquals(config.htpasswd.check("test", "foobar"), True)
+
+	def testAddDoubleUser(self):
+		self.assertRaises(UserExists, addUser, "test")
+
+	def testUnknownUser(self):
+		self.assertRaises(UnknownUserError, User, "not a user")
+
+	def testUserName(self):
+		u = User("test")
+		self.assertEquals(str(u), "test")
+
+	def testNotAdmin(self):
+		u = User("test")
+		self.assertRaises(NotAuthorized, u.setNotification, "repos", dict(allowed=True, enabled=True), False)
+
+	# def testSaveNotifications(self):
+	# 	import time
+	# 	u = User("test")
+	# 	u.setNotification("repos", {"allowed": True, "enabled": True}, True)
+	# 	time.sleep(1.1) # file has to be saved, time check resolution is 1 second
+	# 	u.saveNotifications()
+	# 	u2 = User("test")
+	# 	print u2.notifications
+	# 	self.assertEquals(u2.notifications.has_key("repos"), True)
+	# 	self.assertEquals(u2.notifications["repos"]["allowed"], True)
+	# 	self.assertEquals(u2.notifications["repos"]["enabled"], True)
+
 
 if __name__ == "__main__":
 	unittest.main()

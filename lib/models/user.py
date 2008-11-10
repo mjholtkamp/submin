@@ -125,6 +125,7 @@ class User(object):
 		config.authz.setUserProp(self.name, 'notifications_allowed', ', '.join(allowed))
 		config.authz.setUserProp(self.name, 'notifications_enabled', ', '.join(enabled))
 		config.authz.save()
+		config.reinit()
 
 	def getEmail(self):
 		return self.__email
