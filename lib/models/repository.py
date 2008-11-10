@@ -104,7 +104,7 @@ class Repository(object):
 						continue # filter out signature
 
 				new_file_content.append(line)
-		
+
 			f.truncate(0)
 			f.writelines(new_file_content)
 		else:
