@@ -84,6 +84,7 @@ class Repository(object):
 		config_file = os.environ['SUBMIN_CONF']
 		new_hook = '/usr/bin/python %s "%s" "$1" "$2"\n' % (fullpath, config_file)
 		f = open(hook, 'a+')
+		f.seek(0, 2) # seek to end of file, not all systems do this
 
 		if f.tell() != 0:
 			f.seek(0)
