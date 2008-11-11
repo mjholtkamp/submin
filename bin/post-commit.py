@@ -8,7 +8,10 @@ def buildNotifications(users):
 		for path in [x.strip() for x in user['notifications_enabled'].split(',')]:
 			if not notifications.has_key(path):
 				notifications[path] = []
-			notifications[path].append(user['email'])
+
+			# check if user has email, if not, ignore
+			if user.has_key('email'):
+				notifications[path].append(user['email'])
 	return notifications
 
 def main():
