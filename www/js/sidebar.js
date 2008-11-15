@@ -120,6 +120,10 @@ function sidebar_collapse(trigger) {
 
 function sidebar_expand(trigger) {
 	var name = trigger.parentNode.getElementsByTagName("ul")[0].id;
+	sidebar_reload(name);
+}
+
+function sidebar_reload(name) {
 	switch (name) {
 		case "users":
 			AjaxAsyncPostRequest(base_url + 'x', "listUsers", reloadUsers);
@@ -158,6 +162,9 @@ function deleteObject()
 	if (response.success)
 		this.parentNode.parentNode.removeChild(this.parentNode)
 
-	if (selected_type == div.id && name == selected_object)
+	if (selected_type == div.id && name == selected_object) {
 		window.location = base_url + '';
+	} else {
+		sidebar_reload(selected_type);
+	}
 }
