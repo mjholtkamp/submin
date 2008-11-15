@@ -59,6 +59,15 @@ function LogResponse(response) {
 	Log(text_accum, success);
 }
 
+function XMLtoResponse(doc) {
+	var commands_xml = doc.getElementsByTagName('command');
+	var commands = [];
+	for (var i = 0; i < commands_xml.length; ++i) {
+		commands.push(newResponseCommand(commands_xml[i]));
+	}
+	return commands;
+}
+
 function Response(transport) {
 	var doc = transport.responseXML;
 	// DEBUG
@@ -66,12 +75,7 @@ function Response(transport) {
 		var string = (new XMLSerializer()).serializeToString(doc);
 		alert(string);
 	}
-	var commands_xml = doc.getElementsByTagName('command');
-	var commands = [];
-	for (var i = 0; i < commands_xml.length; ++i) {
-		commands.push(newResponseCommand(commands_xml[i]));
-	}
-	return commands;
+	return XMLtoResponse(doc);
 }
 
 function AjaxSyncGetRequest(url, params) {
