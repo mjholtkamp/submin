@@ -87,9 +87,6 @@ class Groups(View):
 		response = None
 		username = ''
 
-		if 'list' in req.post:
-			return self.list()
-
 		if len(path) < 2:
 			return XMLStatusResponse('', False, 'Invalid Path')
 
@@ -123,15 +120,6 @@ class Groups(View):
 		return XMLTemplateResponse("ajax/groupmembers.xml",
 				{"members": group.members, "nonmembers": [],
 					"group": group.name})
-
-	@admin_required
-	def list(self):
-		try:
-			config = Config()
-			groups = config.authz.groups()
-			return XMLTemplateResponse("ajax/listgroups.xml", {'groups': groups})
-		except Exception, e:
-			return XMLStatusResponse('listGroups', False, 'Failed to get a list: %s' % e)
 
 	@admin_required
 	def removeMember(self, req, groupname):

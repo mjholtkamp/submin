@@ -107,10 +107,6 @@ class Users(View):
 	def ajaxhandler(self, req, path):
 		username = ''
 
-		# list doesn't need any arguments
-		if 'list' in req.post:
-			return self.list(req)
-
 		if len(path) < 2:
 			return XMLStatusResponse('', False, 'Invalid path')
 
@@ -166,15 +162,6 @@ class Users(View):
 		except Exception, e:
 			return XMLStatusResponse('setPassword', False,
 				'Could not change password of user %s' % user.name)
-
-	@admin_required
-	def list(self, req):
-		try:
-			config = Config()
-			users = config.htpasswd.users()
-			return XMLTemplateResponse("ajax/listusers.xml", {'users': users})
-		except Exception, e:
-			return XMLStatusResponse('listUsers', False, 'Failed to get a list: %s' % e)
 
 	@admin_required
 	def addToGroup(self, req, user):
