@@ -223,3 +223,19 @@ def else_tag(node, tpl):
 			return ''.join([x.evaluate(tpl) for x in node.nodes])
 		return ''
 
+@register.register('quoted')
+def quoted(node, tpl):
+	if not node.nodes:
+		raise MissingRequiredArguments, \
+			"Missing required argument variable at file %s, line %d" % \
+			(tpl.filename, node.line)
+
+	text = node.nodes[0].evaluate()
+	if not text:
+		raise MissingRequiredArguments, \
+			"Missing required argument variable at file %s, line %d" % \
+			(tpl.filename, node.line)
+	value = tpl.variable_value(text)
+	if value:
+		return str(value).replace('"', '\\"');
+	return ''
