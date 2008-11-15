@@ -13,10 +13,11 @@ window.onload = function() {
 	sidebar.onmousedown = function() { return false; }
 	sidebar.onselectstart = function() { return false; } // ie
 
-	 // xml_lists is set in main.html template
-	reloadUsers(xml_lists);
-	reloadGroups(xml_lists);
-	reloadRepositories(xml_lists);
+	 // xml_lists is set in main.html template, fake a response object
+	var xml_response = XMLtoResponse(xml_lists);	
+	reloadUsers(xml_response);
+	reloadGroups(xml_response);
+	reloadRepositories(xml_response);
 }
 
 var sidebar_img_add_user = new Image();
@@ -55,7 +56,7 @@ function setupSidebarImages() {
 	}
 }
 
-function reloadX(xmlData, X, Xplural, Xcapital, deletable) {
+function reloadX(response, X, Xplural, Xcapital, deletable) {
 	var deletable = true;
 	if (X == "repository")
 		deletable = false;
@@ -65,7 +66,6 @@ function reloadX(xmlData, X, Xplural, Xcapital, deletable) {
 		for (var i = dest.childNodes.length; i; --i)
 			dest.removeChild(dest.lastChild);
 
-	var response = XMLtoResponse(xmlData);
 	var list = FindResponse(response, "list" + Xcapital);
 	var Xs = list.xml.getElementsByTagName(X);
 	for (var i = 0; i < Xs.length; ++i) {
@@ -102,16 +102,16 @@ function reloadX(xmlData, X, Xplural, Xcapital, deletable) {
 	}
 }
 
-function reloadUsers(xmlData) {
-	reloadX(xmlData, "user", "users", "Users", true);
+function reloadUsers(response) {
+	reloadX(response, "user", "users", "Users", true);
 }
 
-function reloadGroups(xmlData) {
-	reloadX(xmlData, "group", "groups", "Groups", true);
+function reloadGroups(response) {
+	reloadX(response, "group", "groups", "Groups", true);
 }
 
-function reloadRepositories(xmlData) {
-	reloadX(xmlData, "repository", "repositories", "Repositories", false);
+function reloadRepositories(response) {
+	reloadX(response, "repository", "repositories", "Repositories", false);
 }
 
 function sidebar_collapse(trigger) {
@@ -122,13 +122,13 @@ function sidebar_expand(trigger) {
 	var name = trigger.parentNode.getElementsByTagName("ul")[0].id;
 	switch (name) {
 		case "users":
-			reloadUsers(xml_lists);
+			AjaxAsyncPostRequest(base_url + 'x', "listUsers", reloadUsers);
 			break;
 		case "groups":
-			reloadGroups(xml_lists);
+			AjaxAsyncPostRequest(base_url + 'x', "listGroups", reloadGroups);
 			break;
 		case "repositories":
-			reloadRepositories(xml_lists);
+			AjaxAsyncPostRequest(base_url + 'x', "listRepositories", reloadRepositories);
 			break;
 	}
 }
