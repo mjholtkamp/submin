@@ -9,6 +9,7 @@ from views.groups import Groups
 from views.authviews import Login, Logout
 from views.repositories import Repositories
 from views.intro import Intro
+from views.ajax import Ajax
 
 from dispatch.session import Session
 
@@ -18,6 +19,7 @@ classes = {
 	'groups': Groups,
 	'login': Login,
 	'logout': Logout,
+	'x': Ajax,
 	'repositories': Repositories,
 	'': Intro,
 }

@@ -6,28 +6,17 @@ window.onload = function() {
 	if (!is_admin)
 		return;
 
-	var users = document.getElementById('users')
-	var groups = document.getElementById('groups')
-	var deleters = users.getElementsByTagName('span')
-
-	for (var idx = 0; idx < deleters.length; ++idx) {
-		var deleter = deleters[idx]
-		deleter.onclick = deleteObject
-	}
-
-	deleters = groups.getElementsByTagName('span')
-
-	for (var idx = 0; idx < deleters.length; ++idx) {
-		var deleter = deleters[idx]
-		deleter.onclick = deleteObject
-	}
-
 	setupSidebarImages();
-	var sidebar = document.getElementById('sidebar')
-	setupCollapsables(sidebar, "showhide");
+	var sidebar = document.getElementById('sidebar');
+	setupCollapsables(sidebar, "showhide", sidebar_collapse, sidebar_expand);
 
 	sidebar.onmousedown = function() { return false; }
 	sidebar.onselectstart = function() { return false; } // ie
+
+	 // xml_lists is set in main.html template
+	reloadUsers(xml_lists);
+	reloadGroups(xml_lists);
+	reloadRepositories(xml_lists);
 }
 
 var sidebar_img_add_user = new Image();
@@ -63,6 +52,84 @@ function setupSidebarImages() {
 		img_repository.onmousedown = function() { this.src = sidebar_img_add_repository_pressed.src; return false; };
 		img_repository.onmouseup = function() { this.src = sidebar_img_add_repository.src; };
 		img_repository.onmouseout = function() { this.src = sidebar_img_add_repository.src; };
+	}
+}
+
+function reloadX(xmlData, X, Xplural, Xcapital, deletable) {
+	var deletable = true;
+	if (X == "repository")
+		deletable = false;
+
+	var dest = document.getElementById(Xplural);
+	if (dest.childNodes)
+		for (var i = dest.childNodes.length; i; --i)
+			dest.removeChild(dest.lastChild);
+
+	var response = XMLtoResponse(xmlData);
+	var list = FindResponse(response, "list" + Xcapital);
+	var Xs = list.xml.getElementsByTagName(X);
+	for (var i = 0; i < Xs.length; ++i) {
+		var name = Xs[i].getAttribute("name");
+		var special_group = false;
+		// CRUFT after we convert not to abuse submin-admins
+		if (X == "group" && name == "submin-admins")
+			special_group = true;
+		
+		var li = $c("li");
+		if (selected_type == Xplural && selected_object == name)
+			li.setAttribute("class", "selected");
+
+		var link = $c("a", {href: base_url + Xplural + "/show/" + name, title: name});
+		var nameNode = document.createTextNode(name);
+		if (special_group) {
+			var em = $c("em");
+			em.appendChild(nameNode);
+			link.appendChild(em);
+		} else {
+			link.appendChild(nameNode);
+		}
+		li.appendChild(link);
+		if (is_admin && deletable && !special_group) {
+			var span = $c("span");
+			span.setAttribute("class", "delete" + X);
+			var img = $c("img", {src: base_url + "img/min.gif"});
+			img.setAttribute("class", "remover");
+			span.appendChild(img);
+			span.onclick = deleteObject;
+			li.appendChild(span);
+		}
+		dest.appendChild(li);
+	}
+}
+
+function reloadUsers(xmlData) {
+	reloadX(xmlData, "user", "users", "Users", true);
+}
+
+function reloadGroups(xmlData) {
+	reloadX(xmlData, "group", "groups", "Groups", true);
+}
+
+function reloadRepositories(xmlData) {
+	reloadX(xmlData, "repository", "repositories", "Repositories", false);
+}
+
+function sidebar_collapse(trigger) {
+	
+}
+
+function sidebar_expand(trigger) {
+	var name = trigger.parentNode.getElementsByTagName("ul")[0].id;
+	switch (name) {
+		case "users":
+			reloadUsers(xml_lists);
+			break;
+		case "groups":
+			reloadGroups(xml_lists);
+			break;
+		case "repositories":
+			reloadRepositories(xml_lists);
+			break;
 	}
 }
 

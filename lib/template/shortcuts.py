@@ -1,9 +1,9 @@
 from config.config import Config
 from __init__ import evaluate
-from models.user import User
+from models.user import *
 from config.authz.authz import UnknownUserError
-from models.group import Group
-from models.repository import Repository
+from models.group import *
+from models.repository import *
 
 def evaluate_main(templatename, templatevariables={}, request=None):
 	templatevariables['main_include'] = templatename
@@ -19,43 +19,13 @@ def evaluate_main(templatename, templatevariables={}, request=None):
 		except UnknownUserError:
 			pass
 
-	users = []
-	htpasswd_users = config.htpasswd.users()
-	htpasswd_users.sort()
-	if is_admin:
-		for user in htpasswd_users:
-			try:
-				users.append(User(user))
-			except UnknownUserError:
-				pass
-	else:
-		users.append(session_user)
+	users = listUsers(is_admin)
+	groups = listGroups(is_admin)
+	repositories = listRepositories(is_admin)
 
-	groups = []
-	authz_groups = config.authz.groups()
-	authz_groups.sort()
-
-	# make sure submin-admins is in front (it's special!)
-	special_group = 'submin-admins'
-	if special_group in authz_groups:
-		authz_groups.remove(special_group)
-		authz_groups.insert(0, special_group)
-
-	for groupname in authz_groups:
-		group = Group(groupname)
-		if is_admin or session_user.name in group.members:
-			groups.append(group)
-
-	repositories = []
-	repository_names = config.repositories()
-
-	for repos in repository_names:
-		repositories.append(Repository(repos))
-
-	templatevariables['main_users'] = users
-	templatevariables['main_groups'] = groups
-	templatevariables['main_repositories'] = repositories
-
+	xml_lists = evaluate("ajax/listall.xml", 
+		{'users': users, 'groups': groups, 'repositories': repositories})
+	templatevariables['main_all'] = xml_lists.replace("\n", "")
 	templatevariables['main_base_url'] = config.base_url
 
 	if request:

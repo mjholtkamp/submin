@@ -12,6 +12,7 @@
 			var base_url = "[val main_base_url]";
 			var is_admin = [test:is_admin true][else false];
 			var me = "[val main_user.name]";
+			var xml_lists = (new DOMParser()).parseFromString("[quoted main_all]", "text/xml");
 		</script>
 		<script type="text/javascript" src="[val main_base_url]js/basic.js"></script>
 		<script type="text/javascript" src="[val main_base_url]js/ajax.js"></script>
