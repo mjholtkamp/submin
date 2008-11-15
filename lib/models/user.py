@@ -13,6 +13,21 @@ class NotAuthorized(Exception):
 class InvalidEmail(Exception):
 	def __init__(self):
 		Exception.__init__(self, "Invalid email")
+		
+def listUsers(is_admin):
+	config = Config()
+	users = []
+	htpasswd_users = config.htpasswd.users()
+	htpasswd_users.sort()
+	if is_admin:
+		for user in htpasswd_users:
+			try:
+				users.append(User(user))
+			except UnknownUserError:
+				pass
+	else:
+		users.append(session_user)
+	return users
 
 def addUser(username):
 	config = Config()

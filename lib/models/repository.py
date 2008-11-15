@@ -1,6 +1,18 @@
 from config.config import Config
 import exceptions
 
+def listRepositories(is_admin):
+	config = Config()
+	repositories = []
+	if is_admin:
+		repository_names = config.repositories()
+		repository_names.sort()
+
+		for repos in repository_names:
+			repositories.append(Repository(repos))
+
+	return repositories
+
 class Repository(object):
 	class DoesNotExist(Exception):
 		pass

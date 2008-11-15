@@ -5,6 +5,24 @@ def addGroup(groupname):
 	config = Config()
 	config.authz.addGroup(groupname)
 
+def listGroups(is_admin):
+	config = Config()
+	groups = []
+	authz_groups = config.authz.groups()
+	authz_groups.sort()
+
+	# make sure submin-admins is in front (it's special!)
+	special_group = 'submin-admins'
+	if special_group in authz_groups:
+		authz_groups.remove(special_group)
+		authz_groups.insert(0, special_group)
+
+	for groupname in authz_groups:
+		group = Group(groupname)
+		if is_admin or session_user.name in group.members:
+			groups.append(group)
+	return groups
+
 class Group(object):
 	def __init__(self, name):
 		config = Config()
