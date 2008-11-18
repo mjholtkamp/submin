@@ -101,23 +101,23 @@ function AjaxSyncPostLog(url, params) {
 	return response.success
 }
 
-function AjaxAsyncPostRequest(url, params, callback) {
+function AjaxAsyncPostRequest(url, params, callback, callback_param) {
 	if (submin.debug)
 		alert(url + "?ajax&" + params);
 	var transport = new XMLHttpRequest();
 	transport.open('post', url, true);
 	transport.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	transport.onreadystatechange = function() {
-		AjaxCallback(transport, callback);
+		AjaxCallback(transport, callback, callback_param);
 	};
 	transport.send('ajax&' + params);
 
 }
 
-function AjaxCallback(transport, callback) {
+function AjaxCallback(transport, callback, callback_param) {
 	if (transport.readyState == 4) {
 		var response = Response(transport);
-		callback(response);
+		callback(response, callback_param);
 	}
 }
 
