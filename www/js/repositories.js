@@ -80,7 +80,6 @@ function repostree_expandCB(me)
 	var reposnode = repostree_getnode(me);
 	reposnode.collapsed = false;
 	getsubdirs(reposnode);
-	repostree_markPermissions(reposnode);
 }
 
 // mark ReposNodes which have permissions
@@ -172,6 +171,7 @@ function getsubdirsCB(response, reposnode)
 		reposnode.createChild(dirname, has_subdirs);
 	}
 	setupCollapsables(reposnode.collapsee, reposnode.prefix, repostree_collapseCB, repostree_expandCB);
+	repostree_markPermissions(reposnode);
 }
 
 function reloadPermissions(triggered)
