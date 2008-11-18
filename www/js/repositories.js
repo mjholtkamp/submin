@@ -19,7 +19,7 @@ beforeLoad();
 var repos_old_load = window.onload;
 window.onload = function() {
 	if (repos_old_load) repos_old_load();
-	setupCollapsables(document.getElementById('content'), 'repostree', repostree_collapseCB, repostree_expandCB);
+	setupCollapsables(document.getElementById('repostree'), 'repostree', repostree_collapseCB, repostree_expandCB);
 	repository_tree.attach('repostree_/');
 	document.getElementById('repostree_root_text').onclick = function() {
 		reloadPermissions(this);
@@ -149,12 +149,17 @@ function repostree_getpaths()
 
 function getsubdirs(reposnode)
 {
-	var response = AjaxSyncPostRequest(document.location, 'getSubdirs=' + reposnode.path);
+	AjaxAsyncPostRequest(document.location, 'getSubdirs=' + reposnode.path, getsubdirsCB, reposnode);
+}
 
+function getsubdirsCB(response, reposnode)
+{
 	// log in case there is a problem
 	LogResponse(response);
 	var subdirs = FindResponse(response, 'getSubdirs');
-
+	
+	reposnode.removeChilds(reposnode.path);
+	
 	var dirs = subdirs.xml.getElementsByTagName('dir');
 	var dirs_length = dirs.length;
 	for (var idx = 0; idx < dirs_length; ++idx) {
@@ -306,6 +311,19 @@ ReposNode.prototype.attach = function(id)
 	this.root = collapsables_getRoot(this.prefix, el);
 	this.collapsed = collapsables_isCollapsed(this.prefix, el);
 	this.path = this.id2path(id);
+}
+
+ReposNode.prototype.removeChilds = function(dir)
+{
+	var id = this.prefix + '_' + dir;
+	var node = this.findNodeById(id);
+	if (!node)
+		return;
+
+	var c = node.collapsee;
+	for (var i = c.childNodes.length; i--;)
+		c.removeChild(c.childNodes[i]);
+	node.children = new Array();
 }
 
 /* Create a new child under ReposNode with subdir name 'dir'
