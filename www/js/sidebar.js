@@ -148,6 +148,10 @@ function reloadRepositories(response) {
 }
 
 function sidebar_collapse(trigger) {
+	var ul = trigger.parentNode.getElementsByTagName("ul")[0];
+	if (ul.childNodes)
+		for (var i = ul.childNodes.length; i; --i)
+			ul.removeChild(ul.lastChild);
 }
 
 function sidebar_expand(trigger) {
@@ -197,6 +201,6 @@ function deleteObject()
 	if (selected_type == div.id && name == selected_object) {
 		window.location = base_url + '';
 	} else {
-		sidebar_reload(selected_type);
+		sidebar_reload(div.id);
 	}
 }
