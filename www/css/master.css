@@ -112,3 +112,8 @@ div.error {
 	margin: 1em;
 	background: #f66;
 }
+
+.required {
+	color: red;
+	margin: 0 0.6em;
+}
