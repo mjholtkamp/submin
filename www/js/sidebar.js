@@ -94,6 +94,7 @@ function reloadX(response, X, Xplural, Xcapital, deletable) {
 		if (is_admin && deletable && !special_group) {
 			var span = $c("span");
 			span.setAttribute("class", "delete" + X);
+			span.setAttribute("name", name);
 			var img = $c("img", {src: base_url + "img/min.gif"});
 			img.setAttribute("class", "remover");
 			span.appendChild(img);
@@ -182,7 +183,7 @@ function deleteObject()
 			return
 			break
 	}
-	var name = this.parentNode.firstChild.firstChild.nodeValue;
+	var name = this.getAttribute("name");
 	var url = base_url + '' + type + '/delete/' + name
 
 	var answer = confirm('Really delete ' + name + '? There is no undo')
