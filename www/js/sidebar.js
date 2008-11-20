@@ -102,7 +102,7 @@ function reloadX(response, X, Xplural, Xcapital, deletable) {
 			li.appendChild(span);
 		}
 		dest.appendChild(li);
-		var choplength = parseInt(getStyle(link, "width")) * 0.85;
+		var choplength = parseInt(getStyle(link, "width")) * 0.80;
 		var maxlen = autoEllipseText(nameNode, name, choplength);
 		nameNode.innerHTML = name.substr(0, maxlen);
 
@@ -148,7 +148,6 @@ function reloadRepositories(response) {
 }
 
 function sidebar_collapse(trigger) {
-	
 }
 
 function sidebar_expand(trigger) {
