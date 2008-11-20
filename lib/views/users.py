@@ -2,7 +2,7 @@ from dispatch.view import View
 from template.shortcuts import evaluate_main
 from dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse
 from views.error import ErrorResponse
-from models.user import User, addUser, UserExists, NotAuthorized, InvalidEmail, isEmailValid
+from models.user import *
 from models.group import Group
 from auth.decorators import *
 from config.authz.authz import UnknownUserError
@@ -51,11 +51,12 @@ class Users(View):
 		formatted = evaluate_main('users.html', localvars, request=req)
 		return Response(formatted)
 
-	def showAddForm(self, req, username, email, errormsg=''):
+	def showAddForm(self, req, username, email, fullname, errormsg=''):
 		localvars = {}
 		localvars['errormsg'] = errormsg
 		localvars['username'] = username
 		localvars['email'] = email
+		localvars['fullname'] = fullname
 		formatted = evaluate_main('newuser.html', localvars, request=req)
 		return Response(formatted)
 
@@ -65,44 +66,47 @@ class Users(View):
 		base_url = config.base_url
 		username = ''
 		email = ''
+		fullname = ''
 
-		if req.post and req.post['username'] and req.post['email']:
+		if req.post and req.post['username'] and req.post['email'] and req.post['fullname']:
 			import re
 
 			username = req.post['username'].value.strip()
 			email = req.post['email'].value.strip()
+			fullname = req.post['fullname'].value.strip()
 			if re.findall('[^a-zA-Z0-9_-]', username):
-				return self.showAddForm(req, username, email, 
+				return self.showAddForm(req, username, email, fullname,
 					'Invalid characters in username')
 
 			if username == '':
-				return self.showAddForm(req, username, email, 
+				return self.showAddForm(req, username, email, fullname,
 					'Username not supplied')
 			if config.htpasswd.exists(username):
-				return self.showAddForm(req, username, email, 
+				return self.showAddForm(req, username, email, fullname,
 					'User already exists')
 
 			if email == '':
-				return self.showAddForm(req, username, email, 
+				return self.showAddForm(req, username, email, fullname,
 					'Email must be supplied')
 
 			if not isEmailValid(email):
-				return self.showAddForm(req, username, email, 
+				return self.showAddForm(req, username, email, fullname,
 					"Email is not valid")
 
 			try:
 				addUser(username)
 				User(username).setEmail(email)
+				User(username).setFullName(fullname)
 			except IOError:
 				return ErrorResponse('File permission denied', request=req)
 			except UserExists:
-				return self.showAddForm(req, username, email, 
+				return self.showAddForm(req, username, email, fullname,
 					'User %s already exists' % username)
 
 			url = base_url + '/users/show/' + username
 			return Redirect(url)
 
-		return self.showAddForm(req, username, email)
+		return self.showAddForm(req, username, email, fullname)
 
 	def ajaxhandler(self, req, path):
 		username = ''
@@ -117,7 +121,10 @@ class Users(View):
 			return self.removeUser(req, username)
 
 		user = User(username)
-
+		
+		if 'fullname' in req.post and req.post['fullname'].value.strip():
+			return self.setFullName(req, user)
+		
 		if 'email' in req.post and req.post['email'].value.strip():
 			return self.setEmail(req, user)
 
@@ -153,6 +160,18 @@ class Users(View):
 		except Exception, e:
 			return XMLStatusResponse('setEmail', False,
 				'Could not change email of user %s: %s' % (user.name, str(e)))
+  
+	def setFullName(self, req, user):
+		try:
+			user.fullname = req.post.get('fullname')
+			return XMLStatusResponse('setFullName', True,
+				'Changed name for user %s to %s' %
+				(user.name, user.fullname))
+		except InvalidFullName, e:
+			return XMLStatusResponse('setFullName', False, str(e))
+		except Exception, e:
+			return XMLStatusResponse('setFullName', False,
+				'Could not change name of user %s: %s' % (user.name, str(e)))
 
 	def setPassword(self, req, user):
 		try:

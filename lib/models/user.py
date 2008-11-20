@@ -13,7 +13,11 @@ class NotAuthorized(Exception):
 class InvalidEmail(Exception):
 	def __init__(self):
 		Exception.__init__(self, "Invalid email")
-		
+
+class InvalidFullName(Exception):
+	def __init__(self):
+		Exception.__init__(self, "Invalid characters found in full name")
+
 def listUsers(is_admin):
 	config = Config()
 	users = []
@@ -52,6 +56,16 @@ def isEmailValid(email):
 		return False
 	return True
 
+def isFullNameValid(fullname):
+	import re
+	# regex for quick fullname check. No quotes or newlines allowed.
+	regex = '[\'"\n]'
+	fullname_check = re.compile(regex)
+	if fullname_check.search(fullname):
+		return False
+	return True
+
+
 class User(object):
 	def __init__(self, name):
 		config = Config()
@@ -72,9 +86,13 @@ class User(object):
 		self.is_admin = 'submin-admins' in self.member_of
 
 		self.__email = ''
+		self.__fullname = ''
 		if authz_users.has_key(self.name):
 			if authz_users[self.name].has_key('email'):
 				self.__email = authz_users[self.name]['email']
+			if authz_users[self.name].has_key('fullname'):
+				self.__fullname = authz_users[self.name]['fullname']
+		
 
 		# build notifications
 		allowed = []
@@ -142,6 +160,18 @@ class User(object):
 		config.authz.save()
 		config.reinit()
 
+	def getFullName(self):
+		return self.__fullname
+	
+	def setFullName(self, fullname):
+		if not isFullNameValid(fullname):
+			raise InvalidFullName()
+
+		self.__fullname = fullname
+		config = Config()
+		config.authz.setUserProp(self.name, 'fullname', fullname)
+	fullname = property(getFullName, setFullName)
+	
 	def getEmail(self):
 		return self.__email
 		

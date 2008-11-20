@@ -28,6 +28,10 @@ function sendEmail() {
 	AjaxAsyncPostLog(document.location, "email=" + $('email').value);
 }
 
+function sendFullName() {
+	AjaxAsyncPostLog(document.location, "fullname=" + $('fullname').value);
+}
+
 // global variable to temporarily store the password to be verified
 var enteredPassword;
 function verifyPassword() {
