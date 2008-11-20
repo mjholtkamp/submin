@@ -101,12 +101,12 @@ function reloadX(response, X, Xplural, Xcapital, deletable) {
 			li.appendChild(span);
 		}
 		dest.appendChild(li);
+		var choplength = parseInt(getStyle(link, "width")) * 0.85;
 		var maxlen = autoEllipseText(nameNode, name, choplength);
 		nameNode.innerHTML = name.substr(0, maxlen);
 
 		// do we have to chop?
 		if (maxlen != name.length) {
-			var choplength = parseInt(getStyle(link, "width")) * 0.85;
 			var dotdotdot = $c("span");
 			dotdotdot.setAttribute("class", "dotdotdot");
 			dotdotdot.appendChild(document.createTextNode("..."));
