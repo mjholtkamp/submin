@@ -59,6 +59,8 @@ body {
 	margin-left: 0.5em;
 	text-decoration: none;
 	color: black;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 #sidebar li span {
@@ -90,6 +92,11 @@ ul#addicons li {
 	margin: 0;
 	float: left;
 }
-ul#adicons li a {
+ul#addicons li a {
 	margin: 0;
+	overflow: visible;
+}
+.dotdotdot {
+	color: #999;
+	float: left;
 }

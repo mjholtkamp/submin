@@ -79,8 +79,10 @@ function reloadX(response, X, Xplural, Xcapital, deletable) {
 		if (selected_type == Xplural && selected_object == name)
 			li.setAttribute("class", "selected");
 
-		var link = $c("a", {href: base_url + Xplural + "/show/" + name, title: name});
-		var nameNode = document.createTextNode(name);
+		var link = $c("a", {href: base_url + Xplural + "/show/" + name});
+
+		var nameNode = $c("span");
+		nameNode.appendChild(document.createTextNode(name));
 		if (special_group) {
 			var em = $c("em");
 			em.appendChild(nameNode);
@@ -99,7 +101,37 @@ function reloadX(response, X, Xplural, Xcapital, deletable) {
 			li.appendChild(span);
 		}
 		dest.appendChild(li);
+		var maxlen = autoEllipseText(nameNode, name, choplength);
+		nameNode.innerHTML = name.substr(0, maxlen);
+
+		// do we have to chop?
+		if (maxlen != name.length) {
+			var choplength = parseInt(getStyle(link, "width")) * 0.85;
+			var dotdotdot = $c("span");
+			dotdotdot.setAttribute("class", "dotdotdot");
+			dotdotdot.appendChild(document.createTextNode("..."));
+			link.appendChild(dotdotdot);
+			link.setAttribute("title", name);
+		}
 	}
+}
+
+// adapted from http://blog.paranoidferret.com/?p=15
+function autoEllipseText(element, text, width)
+{
+	element.innerHTML = '<span id="ellipsisSpan" style="white-space:nowrap;">' + text + '</span>';
+	var inSpan = document.getElementById('ellipsisSpan');
+	if (inSpan.offsetWidth > width) {
+		var i = 1;
+		inSpan.innerHTML = '';
+		while (inSpan.offsetWidth < (width) && i <text.length) {
+			inSpan.innerHTML = text.substr(0,i) + '...';
+			i++;
+		} 
+		element.innerHTML = '';
+		return i;
+	}
+	return text.length;
 }
 
 function reloadUsers(response) {
