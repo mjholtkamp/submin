@@ -418,6 +418,32 @@ ReposNode.prototype.findNodeById = function(id)
 
 /* ask server to re-enable post-commit hook, this is called from an anchor */
 function toggle_notifications_mailing() {
-	AjaxAsyncPostLog(document.location, 'toggleNotifications');
+	var id = document.getElementById('notifications');
+	if (!id)
+		return;
+	
+	var enable = "false";
+	if (id.checked)
+		enable = "true";
+
+	AjaxAsyncPostRequest(document.location, 'setNotifications=' + enable,
+	 	toggle_notifications_mailingCB);
 	return false; // no following of link
+}
+
+function toggle_notifications_mailingCB(response) {
+	LogResponse(response);
+	var command = FindResponse(response, 'setNotifications');
+	if (!command)
+		return;
+
+	var enabled = command.xml.getAttribute('enabled');
+	if (!enabled)
+		return;
+
+	var id = document.getElementById('notifications');
+	if (!id)
+		return;
+	
+	id.checked = (enabled.lowercase() == "true");
 }

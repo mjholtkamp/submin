@@ -100,3 +100,19 @@ div#permissions-editor img.adder {
 div#permissions-editor li span img {
 	margin-right: 0.25em;
 }
+div.settings ul li {
+	height: 1.5em;
+	padding: 0.2em;
+	clear: both;
+}
+div.settings ul li label {
+	width: 10em;
+	float: left;
+	text-align: right;
+	padding: 0 0.5em;
+	background: #eee;
+}
+div.settings ul li input {
+	vertical-align: text-top;
+	margin: 0 0.5em;
+}

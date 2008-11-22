@@ -2,13 +2,17 @@
 		<link rel="stylesheet" href="[val main_base_url]css/repository.css">
 
 <div id="content">
-	<h1 class="content">Repository [val repository.name]
-		<span class="link">
-([test:svn_http_url <a class="external" href="[val svn_http_url]" title="[val svn_http_url]">svn</a>][else <span title="svn_base_url not set in config">svn</span>])
-([test:trac_http_url <a class="external" href="[val trac_http_url]" title="[val trac_http_url]">trac</a>][else <span title="trac_base_url not set in config">trac</span>])
-		(<a href="javascript:toggle_notifications_mailing()">toggle notification</a>)
-		</span>
-		</h1>
+	<h1 class="content">Repository [val repository.name]</h1>
+		<div class="settings">
+			<ul>
+				<li><label>Subversion URL</label><span>[test:svn_http_url <a class="external" href="[val svn_http_url]">[val svn_http_url]</a>][else <div class="comment">svn_base_url not set in config</div>]</span>
+				</li>
+				<li><label>Trac URL</label><span>[test:trac_http_url <a class="external" href="[val trac_http_url]">[val trac_http_url]</a>][else <div class="comment">trac_base_url not set in config</div>]</span></li>
+				<li><label>Send notifications</label><span><input id="notifications" type="checkbox" onclick="javascript:toggle_notifications_mailing()" />enabled</span>
+				</li>
+			</ul>
+		</div>
+		<h3 class="content">Path permissions</h3>
 		<div id="repostree">
 			<ul>
 				<li class="repostree" id="repostree_/">

@@ -161,16 +161,30 @@ class Repositories(View):
 			(('user', 'group')[type == 'group'], name, permission))
 
 	@admin_required
-	def toggleNotifications(self, req, repository):
-		enable = True
+	def setNotifications(self, req, repository):
+		enable = req.post['setNotifications'].value
 		change_msg = 'enabled'
-		if repository.notificationsEnabled():
-			enable = False
+		if not enable.lower() == "true":
 			change_msg = 'disabled'
 			
 		repository.changeNotifications(enable)
-		return XMLStatusResponse('toggleNotifications', True, 
-			'Notifications %s' % change_msg)
+		message = 'Notifications %s' % change_msg
+		templatevars = {'command': 'setNotifications',
+				'enabled': str(enable), 'message': message}
+		return XMLTemplateResponse('ajax/repositorynotifications.xml', 
+				templatevars)
+
+	@admin_required
+	def getNotifications(self, req, repository):
+		enabled = repository.notificationsEnabled()
+		change_msg = 'enabled'
+		if not enabled:
+			change_msg = 'disabled'
+		message = 'Notifications %s' % change_msg
+		templatevars = {'command': 'getNotifications',
+				'enabled': str(enabled), 'message': message}
+		return XMLTemplateResponse('ajax/repositorynotifications.xml', 
+				templatevars)
 
 	def ajaxhandler(self, req, path):
 		repositoryname = ''
@@ -205,8 +219,12 @@ class Repositories(View):
 		if 'setPermission' in req.post:
 			return self.setpermission(req, repository)
 
-		if 'toggleNotifications' in req.post:
-			return self.toggleNotifications(req, repository)
+		if 'setNotifications' in req.post:
+			return self.setNotifications(req, repository)
+
+		if 'getNotifications' in req.post:
+			return self.getNotifications(req, repository)
+		
 
 		return XMLStatusResponse('', False, 'Unknown command')
 

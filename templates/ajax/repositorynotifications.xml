@@ -1,0 +1,5 @@
+<response>
+	<command name="[val command]" success="True" enabled="[val enabled]">
+		<text>[val message]</text>
+	</command>
+</response>
