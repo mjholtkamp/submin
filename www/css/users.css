@@ -1,3 +1,8 @@
+label {
+	width: 100px;
+	float: left;
+}
+
 tr.noticeshead {
 	font-weight: bold;
 }
