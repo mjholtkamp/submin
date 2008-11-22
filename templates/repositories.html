@@ -8,7 +8,7 @@
 				<li><label>Subversion URL</label><span>[test:svn_http_url <a class="external" href="[val svn_http_url]">[val svn_http_url]</a>][else <div class="comment">svn_base_url not set in config</div>]</span>
 				</li>
 				<li><label>Trac URL</label><span>[test:trac_http_url <a class="external" href="[val trac_http_url]">[val trac_http_url]</a>][else <div class="comment">trac_base_url not set in config</div>]</span></li>
-				<li><label>Send notifications</label><span><input id="notifications" type="checkbox" onclick="javascript:toggle_notifications_mailing()" />enabled</span>
+				<li><label>Send notifications</label><span><input id="notifications" type="checkbox" onclick="javascript:toggle_notifications_mailing()" [test:repository.notificationsEnabled checked]/>enabled</span>
 				</li>
 			</ul>
 		</div>
