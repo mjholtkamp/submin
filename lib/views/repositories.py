@@ -162,9 +162,9 @@ class Repositories(View):
 
 	@admin_required
 	def setNotifications(self, req, repository):
-		enable = req.post['setNotifications'].value
+		enable = req.post['setNotifications'].value.lower() == "true"
 		change_msg = 'enabled'
-		if not enable.lower() == "true":
+		if not enable:
 			change_msg = 'disabled'
 			
 		repository.changeNotifications(enable)
