@@ -13,6 +13,7 @@ div.login ul li {
 }
 
 div.login ul li label {
+	float: left;
 	text-align: right;
 	width: 80px;
 }
@@ -21,3 +22,7 @@ div.login ul li label {
 	width: 160px;
 }
 
+div.error {
+	width: 400px;
+	margin: 0 auto;
+}
