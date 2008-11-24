@@ -26,7 +26,10 @@ class Repository(object):
 
 		self.authz_paths = self.config.authz.paths(self.name)
 		self.authz_paths.sort()
-		self.dirs = self.getsubdirs("")
+		try:
+			self.dirs = self.getsubdirs("")
+		except:
+			raise self.DoesNotExist
 
 	def getsubdirs(self, path):
 		'''Return subdirs (not recursive) of 'path' relative to our reposdir
