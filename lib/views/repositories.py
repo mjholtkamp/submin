@@ -4,7 +4,7 @@ from views.error import ErrorResponse
 from dispatch.view import View
 from models.user import User
 from models.group import Group
-from models.repository import Repository
+from models.repository import *
 from auth.decorators import *
 from path.path import Path
 from ConfigParser import NoOptionError
@@ -63,31 +63,49 @@ class Repositories(View):
 		formatted = evaluate_main('repositories.html', localvars, request=req)
 		return Response(formatted)
 
+	def showAddForm(self, req, reposname, errormsg=''):
+		localvars = {}
+		localvars['errormsg'] = errormsg
+		localvars['repository'] = reposname
+		formatted = evaluate_main('newrepository.html', localvars, request=req)
+		return Response(formatted)
+
 	@admin_required
 	def add(self, req, path, localvars):
 		config = Config()
 		base_url = config.base_url
+		repository = ''
 
 		if req.post and req.post['repository']:
-			import re
+			import re, commands
 
 			repository = req.post['repository'].value.strip()
 			if re.findall('[^a-zA-Z0-9_-]', repository):
-				return ErrorResponse('Invalid characters in repository name', request=req)
+				return self.showAddForm(req, repository, 'Invalid characters in repository name')
+
+			if repository == '':
+				return self.showAddForm(req, repository, 'Repository name not supplied')
+
+			try:
+				a = Repository(repository)
+				return self.showAddForm(req, repository, 'Repository %s alread exists' % repository)
+			except Repository.DoesNotExist:
+				pass
 
 			url = base_url + '/repositories/show/' + repository
 
 			reposdir = config.get('svn', 'repositories')
 			newrepos = reposdir + '/' + repository
-			if os.system('svnadmin create %s' % newrepos) == 0:
+			cmd = 'svnadmin create %s' % newrepos
+			(exitstatus, outtext) = commands.getstatusoutput(cmd)
+			if exitstatus == 0:
 				repos = Repository(repository)
-				repos.installPostCommitHook()
+				repos.changeNotifications(True)
 				return Redirect(url)
 
-			return ErrorResponse('could not create repository', request=req)
+			return ErrorResponse('could not create repository', request=req, details=outtext)
 
-		formatted = evaluate_main('newrepository.html', localvars, request=req)
-		return Response(formatted)
+		return self.showAddForm(req, repository)
 
 	@admin_required
 	def getsubdirs(self, req, repository):
