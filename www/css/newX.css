@@ -6,3 +6,7 @@ div#content label {
 div#content input {
 	float: left;
 }
+
+.required {
+	float: left;
+}
