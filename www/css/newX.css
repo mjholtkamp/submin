@@ -1,0 +1,8 @@
+div#content label {
+	width: 100px;
+	float: left;
+}
+
+div#content input {
+	float: left;
+}
