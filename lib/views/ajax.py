@@ -29,36 +29,34 @@ class Ajax(View):
 
 	@admin_required
 	def listAll(self, req):
-		is_admin = req.session['user'].is_admin
+		session_user = req.session['user']
 		try:
-			users = listUsers(req.session['user'])
-			groups = listGroups(is_admin)
-			repositories = listRepositories(is_admin)
+			users = listUsers(session_user)
+			groups = listGroups(session_user)
+			repositories = listRepositories(session_user)
 			return XMLTemplateResponse("ajax/listall.xml", 
 				{'users': users, 'groups': groups, 'repositories': repositories})
 		except Exception, e:
 			return XMLStatusResponse('listAll', False, 'Failed to get a list: %s' % e)
 
 	def listUsers(self, req):
-		is_admin = req.session['user'].is_admin
+		session_user = req.session['user']
 		try:
-			users = listUsers(is_admin)
+			users = listUsers(session_user)
 			return XMLTemplateResponse("ajax/listusers.xml", {'users': users})
 		except Exception, e:
 			return XMLStatusResponse('listUsers', False, 'Failed to get a list: %s' % e)
 
 	def listGroups(self, req):
 		try:
-			is_admin = req.session['user'].is_admin
-			groups = listGroups(is_admin)
+			groups = listGroups(req.session['user'])
 			return XMLTemplateResponse("ajax/listgroups.xml", {'groups': groups})
 		except Exception, e:
 			return XMLStatusResponse('listGroups', False, 'Failed to get a list: %s' % e)
 
 	def listRepositories(self, req):
 		try:
-			is_admin = req.session['user'].is_admin
-			repos = listRepositories(is_admin)
+			repos = listRepositories(req.session['user'])
 			return XMLTemplateResponse("ajax/listrepositories.xml", {'repositories': repos})
 		except Exception, e:
 			return XMLStatusResponse('listGroups', False, 'Failed to get a list: %s' % e)
