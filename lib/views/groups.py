@@ -55,17 +55,27 @@ class Groups(View):
 		formatted = evaluate_main('groups.html', localvars, request=req)
 		return Response(formatted)
 
+	def showAddForm(self, req, groupname, errormsg=''):
+		localvars = {}
+		localvars['errormsg'] = errormsg
+		localvars['groupname'] = groupname
+		formatted = evaluate_main('newgroup.html', localvars, request=req)
+		return Response(formatted)
+
 	@admin_required
 	def add(self, req, path, localvars):
 		config = Config()
 		base_url = config.base_url
+		groupname = ''
 
 		if req.post and req.post['groupname']:
 			import re
 
 			groupname = req.post['groupname'].value.strip()
 			if re.findall('[^a-zA-Z0-9_-]', groupname):
-				return ErrorResponse('Invalid characters in groupname', request=req)
+				return self.showAddForm(req, groupname, 'Invalid characters in groupname')
+			if groupname == '':
+				return self.showAddForm(req, groupname, 'Groupname not supplied')
 
 			url = base_url + '/groups/show/' + groupname
 
@@ -74,12 +84,11 @@ class Groups(View):
 			except IOError:
 				return ErrorResponse('File permission denied', request=req)
 			except GroupExistsError:
-				return ErrorResponse('Group %s already exists' % groupname, request=req)
+				return self.showAddForm(req, groupname, 'Group %s already exists' % groupname)
 
 			return Redirect(url)
 
-		formatted = evaluate_main('newgroup.html', localvars, request=req)
-		return Response(formatted)
+		return self.showAddForm(req, groupname)
 
 	def ajaxhandler(self, req, path):
 		success = False

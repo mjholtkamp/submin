@@ -1,12 +1,17 @@
+div#content .error {
+	clear: both;
+}
+
 div#content label {
 	width: 100px;
 	float: left;
 }
 
-div#content input {
+div#content input, div#content li .required {
 	float: left;
 }
 
-.required {
-	float: left;
+div#content p {
+	clear: both;
+	padding: 1em 1.5em;
 }

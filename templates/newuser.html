@@ -17,7 +17,7 @@
 				<li><label for="id_email">Email:</label> <input id="email" type="text" name="email" value="[val email]"/><span  class="required">*</span></li>
 				<li><input type="submit" name="submit" value="Create" /></li>
 			</ul>
-			<p><em>Fields marked with <span  class="required">*</span> are required</em><p>
+			<p><em>Fields marked with <span class="required">*</span> are required</em></p>
 			[set:empty ]
 			[equals:errormsg:empty][else
 			<div class="error">[val errormsg]</div>
