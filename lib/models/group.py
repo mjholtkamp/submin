@@ -5,7 +5,7 @@ def addGroup(groupname):
 	config = Config()
 	config.authz.addGroup(groupname)
 
-def listGroups(is_admin):
+def listGroups(session_user):
 	config = Config()
 	groups = []
 	authz_groups = config.authz.groups()
@@ -19,7 +19,7 @@ def listGroups(is_admin):
 
 	for groupname in authz_groups:
 		group = Group(groupname)
-		if is_admin or session_user.name in group.members:
+		if session_user.is_admin or session_user.name in group.members:
 			groups.append(group)
 	return groups
 

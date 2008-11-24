@@ -31,7 +31,7 @@ class Ajax(View):
 	def listAll(self, req):
 		is_admin = req.session['user'].is_admin
 		try:
-			users = listUsers(is_admin)
+			users = listUsers(req.session['user'])
 			groups = listGroups(is_admin)
 			repositories = listRepositories(is_admin)
 			return XMLTemplateResponse("ajax/listall.xml", 

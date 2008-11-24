@@ -18,19 +18,19 @@ class InvalidFullName(Exception):
 	def __init__(self):
 		Exception.__init__(self, "Invalid characters found in full name")
 
-def listUsers(is_admin):
+def listUsers(session_user):
 	config = Config()
 	users = []
 	htpasswd_users = config.htpasswd.users()
 	htpasswd_users.sort()
-	if is_admin:
+	if session_user.is_admin:
 		for user in htpasswd_users:
 			try:
 				users.append(User(user))
 			except UnknownUserError:
 				pass
 	else:
-		users.append(session_user)
+		users.append(session_user.name)
 	return users
 
 def addUser(username):

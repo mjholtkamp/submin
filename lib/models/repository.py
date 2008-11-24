@@ -1,10 +1,10 @@
 from config.config import Config
 import exceptions
 
-def listRepositories(is_admin):
+def listRepositories(session_user):
 	config = Config()
 	repositories = []
-	if is_admin:
+	if session_user.is_admin:
 		repository_names = config.repositories()
 		repository_names.sort()
 
