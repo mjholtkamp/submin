@@ -14,9 +14,9 @@ class Response(object):
 class Redirect(Response):
 	def __init__(self, url):
 		Response.__init__(self)
-		self.url = url
+		self.url = str(url)
 		self.status_code = 302
-		self.headers.update({'Location': url})
+		self.headers.update({'Location': str(url)})
 
 class HTTP404(Response):
 	def __init__(self, page='/'):
