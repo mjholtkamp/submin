@@ -1,3 +1,9 @@
+submin (1.1.2-1) testing; urgency=low
+
+  * Fixed WSGI redirect bug (#126)
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Tue, 09 Dec 2008 02:46:43 +0100
+
 submin (1.1.1-1) testing; urgency=low
 
   * Fixed IE layout
