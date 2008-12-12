@@ -190,8 +190,6 @@ function deleteObject()
 	deleteObject = FindResponse(response, cmd);
 	LogResponse(response);
 	if (deleteObject && deleteObject.success) {
-		this.parentNode.parentNode.removeChild(this.parentNode)
-
 		if (selected_type == div.id && name == selected_object) {
 			window.location = base_url + '';
 		} else {
