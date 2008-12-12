@@ -181,8 +181,15 @@ function deleteObject()
 		return
 
 	var response = AjaxSyncPostRequest(url, "");
-	deleteUser = FindResponse(response, "removeUser");
-	if (deleteUser.success) {
+	cmd = "";
+	switch (type) {
+		case "user":       cmd = "removeUser"; break;
+		case "group":      cmd = "removeGroup"; break;
+		case "repository": cmd = "removeRepository"; break; 
+	}
+	deleteObject = FindResponse(response, cmd);
+	LogResponse(response);
+	if (deleteObject && deleteObject.success) {
 		this.parentNode.parentNode.removeChild(this.parentNode)
 
 		if (selected_type == div.id && name == selected_object) {
@@ -190,7 +197,6 @@ function deleteObject()
 		} else {
 			LogResponse(response);
 			sidebar_reload(div.id);
-			Log("tried to delete user...");
 		}
 	} else {
 		LogResponse(response);
