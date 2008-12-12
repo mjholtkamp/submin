@@ -206,7 +206,7 @@ class Repositories(View):
 
 	@admin_required
 	def removeRepository(self, req, repository):
-		#repository.remove()
+		repository.remove()
 		return XMLStatusResponse('removeRepository', True, 'Repository %s deleted' % repository.name)
 
 	def ajaxhandler(self, req, path):

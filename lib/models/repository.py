@@ -1,4 +1,6 @@
 from config.config import Config
+from path.path import Path
+import commands
 import exceptions
 
 def listRepositories(session_user):
@@ -131,6 +133,16 @@ class Repository(object):
 			f.write(new_hook)
 		f.close()
 		os.chmod(hook, 0755)
+
+	def remove(self):
+		config = Config()
+		reposdir = config.get('svn', 'repositories')
+		newrepos = Path(reposdir) + self.name
+		cmd = 'rm -rf %s' % newrepos
+		(exitstatus, outtext) = commands.getstatusoutput(cmd)
+		if exitstatus == 0:
+			return
+		raise Exception("could not remove repository %s" % self.name)
 
 	def __str__(self):
 		return self.name
