@@ -56,11 +56,7 @@ function setupSidebarImages() {
 	}
 }
 
-function reloadX(response, X, Xplural, Xcapital, deletable) {
-	var deletable = true;
-	if (X == "repository")
-		deletable = false;
-
+function reloadX(response, X, Xplural, Xcapital) {
 	var dest = document.getElementById(Xplural);
 	if (dest.childNodes)
 		for (var i = dest.childNodes.length; i; --i)
@@ -91,7 +87,7 @@ function reloadX(response, X, Xplural, Xcapital, deletable) {
 			link.appendChild(nameNode);
 		}
 		li.appendChild(link);
-		if (is_admin && deletable && !special_group) {
+		if (is_admin && !special_group) {
 			var span = $c("span");
 			span.setAttribute("class", "delete" + X);
 			span.setAttribute("name", name);
@@ -136,15 +132,15 @@ function autoEllipseText(element, text, width)
 }
 
 function reloadUsers(response) {
-	reloadX(response, "user", "users", "Users", true);
+	reloadX(response, "user", "users", "Users");
 }
 
 function reloadGroups(response) {
-	reloadX(response, "group", "groups", "Groups", true);
+	reloadX(response, "group", "groups", "Groups");
 }
 
 function reloadRepositories(response) {
-	reloadX(response, "repository", "repositories", "Repositories", false);
+	reloadX(response, "repository", "repositories", "Repositories");
 }
 
 function sidebar_collapse(trigger) {
@@ -175,17 +171,8 @@ function sidebar_reload(name) {
 
 function deleteObject()
 {
-	var div = this.parentNode.parentNode
-	var type = ''
-	switch (div.id) {
-		case 'users':
-		case 'groups':
-			type = div.id
-			break
-		default:
-			return
-			break
-	}
+	var div = this.parentNode.parentNode;
+	var type = div.id;
 	var name = this.getAttribute("name");
 	var url = base_url + '' + type + '/delete/' + name
 
@@ -193,14 +180,19 @@ function deleteObject()
 	if (!answer)
 		return
 
-	var response = AjaxSyncPostRequest(url, "")
-	LogResponse(response)
-	if (response.success)
+	var response = AjaxSyncPostRequest(url, "");
+	deleteUser = FindResponse(response, "removeUser");
+	if (deleteUser.success) {
 		this.parentNode.parentNode.removeChild(this.parentNode)
 
-	if (selected_type == div.id && name == selected_object) {
-		window.location = base_url + '';
+		if (selected_type == div.id && name == selected_object) {
+			window.location = base_url + '';
+		} else {
+			LogResponse(response);
+			sidebar_reload(div.id);
+			Log("tried to delete user...");
+		}
 	} else {
-		sidebar_reload(div.id);
+		LogResponse(response);
 	}
 }

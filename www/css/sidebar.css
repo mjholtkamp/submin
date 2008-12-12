@@ -46,10 +46,10 @@ body {
 #sidebar li:hover, li.selected {
 	background: #C0CDED;
 }
-#sidebar li:hover .deleteuser, #sidebar li:hover .deletegroup {
+#sidebar li:hover .deleteuser, #sidebar li:hover .deletegroup, #sidebar li:hover .deleterepository {
 	display: inline;
 }
-#sidebar li .deleteuser, #sidebar li .deletegroup {
+#sidebar li .deleteuser, #sidebar li .deletegroup, #sidebar li .deleterepository {
 	display: none;
 }
 #sidebar li a {
