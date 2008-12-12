@@ -204,6 +204,11 @@ class Repositories(View):
 		return XMLTemplateResponse('ajax/repositorynotifications.xml', 
 				templatevars)
 
+	@admin_required
+	def removeRepository(self, req, repository):
+		#repository.remove()
+		return XMLStatusResponse('removeRepository', True, 'Repository %s deleted' % repository.name)
+
 	def ajaxhandler(self, req, path):
 		repositoryname = ''
 
@@ -212,12 +217,15 @@ class Repositories(View):
 
 		action = path[0]
 		repositoryname = path[1]
-
+		
 		try:
 			repository = Repository(repositoryname)
 		except (IndexError, Repository.DoesNotExist):
 			return XMLStatusResponse('', False,
 				'Repository %s does not exist.' % repositoryname)
+
+		if action == 'delete':
+			return self.removeRepository(req, repository)
 
 		if 'getSubdirs' in req.post:
 			return self.getsubdirs(req, repository)
