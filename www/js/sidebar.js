@@ -183,9 +183,9 @@ function deleteObject()
 	var response = AjaxSyncPostRequest(url, "");
 	cmd = "";
 	switch (type) {
-		case "user":       cmd = "removeUser"; break;
-		case "group":      cmd = "removeGroup"; break;
-		case "repository": cmd = "removeRepository"; break; 
+		case "users":        cmd = "removeUser"; break;
+		case "groups":       cmd = "removeGroup"; break;
+		case "repositories": cmd = "removeRepository"; break; 
 	}
 	deleteObject = FindResponse(response, cmd);
 	LogResponse(response);
