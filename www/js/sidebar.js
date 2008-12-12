@@ -187,9 +187,9 @@ function deleteObject()
 		case "groups":       cmd = "removeGroup"; break;
 		case "repositories": cmd = "removeRepository"; break; 
 	}
-	deleteObject = FindResponse(response, cmd);
+	delete_object = FindResponse(response, cmd);
 	LogResponse(response);
-	if (deleteObject && deleteObject.success) {
+	if (delete_object && delete_object.success) {
 		if (selected_type == div.id && name == selected_object) {
 			window.location = base_url + '';
 		} else {
