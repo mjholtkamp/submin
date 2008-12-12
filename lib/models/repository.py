@@ -138,7 +138,7 @@ class Repository(object):
 		config = Config()
 		reposdir = config.get('svn', 'repositories')
 		newrepos = Path(reposdir) + self.name
-		cmd = 'rm -rf %s' % newrepos
+		cmd = 'rm -rf "%s"' % newrepos
 		(exitstatus, outtext) = commands.getstatusoutput(cmd)
 		if exitstatus == 0:
 			return
