@@ -211,8 +211,17 @@ class Users(View):
 			return XMLStatusResponse('listNotifications', False, "You do not have permission to "
 					"view this user.")
 
+		# rebuild notifications into a list so we can sort it
+		notifications = []
+		for (name, d) in user.notifications.iteritems():
+			# add key (string) to val (dict)
+			d['name'] = name
+			notifications.append(d)
+		# sort on name
+		notifications.sort(cmp=lambda x,y: cmp(x['name'], y['name']))
+
 		return XMLTemplateResponse("ajax/usernotifications.xml",
-				{"notifications": user.notifications, "user": user.name,
+				{"notifications": notifications, "user": user.name,
 					"is_admin": is_admin})
 
 	def saveNotifications(self, req, user):

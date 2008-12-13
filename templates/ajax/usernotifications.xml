@@ -3,11 +3,11 @@
 		<notifications user="[val user]">
 			[iter:notifications
 				[test:is_admin
-				<notification name="[ikey]" allowed="[ival.allowed]" enabled="[ival.enabled]"/>
+				<notification name="[ival.name]" allowed="[ival.allowed]" enabled="[ival.enabled]"/>
 				]
 				[test:!is_admin 
 					[test:ival.allowed
-						<notification name="[ikey]" allowed="True" enabled="[ival.enabled]"/>
+						<notification name="[ival.name]" allowed="True" enabled="[ival.enabled]"/>
 					]
 				]
 		</notifications>
