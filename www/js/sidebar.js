@@ -89,7 +89,7 @@ function reloadX(response, X, Xplural, Xcapital) {
 			var span = $c("span");
 			addClassName(span, "delete" + X);
 			span.setAttribute("name", name);
-			var img = $c("img", {src: base_url + "img/min.gif"});
+			var img = $c("img", {src: base_url + "img/min.png"});
 			addClassName(img, "remover");
 			span.appendChild(img);
 			span.onclick = deleteObject;

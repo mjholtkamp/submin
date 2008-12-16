@@ -32,8 +32,7 @@ function Selector(options) {
 
 /* Creates the add/remove button for each item */
 Selector.prototype.makeButton = function(className) {
-	var imgSrc = base_url + "img/" +
-		(className == "remover" ? "min.gif" : "plus.gif");
+	var imgSrc = base_url + "img/ming.png";
 	var img = $c("img", {"src": imgSrc, "className": className});
 	return img;
 }
