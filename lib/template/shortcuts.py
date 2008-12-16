@@ -17,13 +17,6 @@ def evaluate_main(templatename, templatevariables={}, request=None):
 
 	session_user = request.session['user']
 
-	users = listUsers(session_user)
-	groups = listGroups(session_user)
-	repositories = listRepositories(session_user)
-
-	xml_lists = evaluate("ajax/listall.xml", 
-		{'users': users, 'groups': groups, 'repositories': repositories})
-	templatevariables['main_all'] = xml_lists.replace("\n", "")
 	templatevariables['main_base_url'] = config.base_url
 
 	templatevariables['request'] = request

@@ -13,11 +13,9 @@ window.onload = function() {
 	sidebar.onmousedown = function() { return false; }
 	sidebar.onselectstart = function() { return false; } // ie
 
-	 // xml_lists is set in main.html template, fake a response object
-	var xml_response = XMLtoResponse(xml_lists);	
-	reloadUsers(xml_response);
-	reloadGroups(xml_response);
-	reloadRepositories(xml_response);
+	sidebar_reload("users");
+	sidebar_reload("groups");
+	sidebar_reload("repositories");
 }
 
 var sidebar_img_add_user = new Image();

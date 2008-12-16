@@ -39,6 +39,8 @@ function setupCollapsables(docroot, prefix, collapseFun, expandFun) {
 				collapsable.onclick =
 					function() { arrowCollapse(prefix, this, collapseFun, expandFun); }
 				collapsables_collapse(prefix, collapsable, false);
+				var trigger = collapsables_getTrigger(prefix, collapsable);
+				expandFun(trigger);
 			} else {
 				collapsable.onclick =
 					function() { arrowExpand(prefix, this, collapseFun, expandFun); }
