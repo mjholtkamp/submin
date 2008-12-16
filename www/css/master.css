@@ -46,10 +46,6 @@ h3.content {
 }
 
 img.adder, img.remover {
-	height: 13px;
-	width: 13px;
-	max-width: 13px;
-	max-height: 13px;
 	vertical-align: middle;
 }
 
@@ -85,16 +81,11 @@ ul.selector li select.adder {
 
 ul.selector li .remover, ul.selector li .adder {
 	float: left;
-	width: 13px;
 	cursor: pointer;
 }
 
 ul.selector li .adder {
 	padding-top: 2px;
-}
-
-ul.selector li img {
-	height: 13px;
 }
 
 img.showhide-icon {
