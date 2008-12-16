@@ -19,8 +19,8 @@ beforeLoad();
 var repos_old_load = window.onload;
 window.onload = function() {
 	if (repos_old_load) repos_old_load();
-	setupCollapsables(document.getElementById('repostree'), 'repostree', repostree_collapseCB, repostree_expandCB);
 	repository_tree.attach('repostree_/');
+	setupCollapsables(document.getElementById('repostree'), 'repostree', repostree_collapseCB, repostree_expandCB);
 	document.getElementById('repostree_root_text').onclick = function() {
 		reloadPermissions(this);
 	};
@@ -294,6 +294,7 @@ function ReposNode(prefix)
 	this.has_subdirs = false;
 	this.collapsed = true;
 	this.children = new Array();
+	this.root = null;
 }
 
 ReposNode.prototype.id2path = function(id)
