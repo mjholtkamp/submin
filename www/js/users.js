@@ -171,6 +171,7 @@ function redrawNotifications(notifications) {
 		
 			input.value = notifications[i].name + "_allowed";
 			input.checked = (notifications[i].allowed == "True");
+			input.defaultChecked = input.checked; // IE7 quirk
 			td_allowed.appendChild(input);
 			tr.appendChild(td_allowed);
 
@@ -178,6 +179,7 @@ function redrawNotifications(notifications) {
 		}
 		input.value = notifications[i].name + "_enabled";
 		input.checked = (notifications[i].enabled == "True");
+		input.defaultChecked = input.checked; // IE7 quirk
 
 		var td_enabled = $c("td");
 		td_enabled.appendChild(input);
