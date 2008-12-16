@@ -1,3 +1,4 @@
+load('array');
 var domLoaded = true;
 
 function $(element) {

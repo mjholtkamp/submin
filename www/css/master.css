@@ -48,6 +48,8 @@ h3.content {
 img.adder, img.remover {
 	height: 13px;
 	width: 13px;
+	max-width: 13px;
+	max-height: 13px;
 	vertical-align: middle;
 }
 

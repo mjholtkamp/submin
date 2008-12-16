@@ -71,7 +71,7 @@ function reloadX(response, X, Xplural, Xcapital) {
 		
 		var li = $c("li");
 		if (selected_type == Xplural && selected_object == name)
-			li.setAttribute("class", "selected");
+			addClassName(li, "selected");
 
 		var link = $c("a", {href: base_url + Xplural + "/show/" + name});
 
@@ -87,10 +87,10 @@ function reloadX(response, X, Xplural, Xcapital) {
 		li.appendChild(link);
 		if (is_admin && !special_group) {
 			var span = $c("span");
-			span.setAttribute("class", "delete" + X);
+			addClassName(span, "delete" + X);
 			span.setAttribute("name", name);
 			var img = $c("img", {src: base_url + "img/min.gif"});
-			img.setAttribute("class", "remover");
+			addClassName(img, "remover");
 			span.appendChild(img);
 			span.onclick = deleteObject;
 			li.appendChild(span);
@@ -103,7 +103,7 @@ function reloadX(response, X, Xplural, Xcapital) {
 		// do we have to chop?
 		if (maxlen != name.length) {
 			var dotdotdot = $c("span");
-			dotdotdot.setAttribute("class", "dotdotdot");
+			addClassName(dotdotdot, "dotdotdot");
 			dotdotdot.appendChild(document.createTextNode("..."));
 			link.appendChild(dotdotdot);
 			link.setAttribute("title", name);
