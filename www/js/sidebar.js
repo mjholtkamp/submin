@@ -92,6 +92,7 @@ function reloadX(response, X, Xplural, Xcapital) {
 			var img = $c("img", {src: base_url + "img/min.png"});
 			addClassName(img, "remover");
 			span.appendChild(img);
+			span.setAttribute("title", "delete " + name)
 			span.onclick = deleteObject;
 			li.appendChild(span);
 		}
