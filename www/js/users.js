@@ -25,7 +25,12 @@ window.onload = function() {
 }
 
 function sendEmail() {
-	AjaxAsyncPostLog(document.location, "email=" + $('email').value);
+	AjaxAsyncPostRequest(document.location, "email=" + $('email').value, sendEmailCB);
+}
+
+function sendEmailCB(response) {
+	LogResponse(response);
+	reloadNotifications();
 }
 
 function sendFullName() {
@@ -151,6 +156,8 @@ function reloadNotificationsCB(response) {
 
 function redrawNotifications(notifications) {
 	var table = document.getElementById('notifications');
+	var email = document.getElementById('email');
+	email = email.value;
 	var tbodies = table.getElementsByTagName('tbody');
 	if (tbodies.length != 1)
 		return;
@@ -172,6 +179,8 @@ function redrawNotifications(notifications) {
 			input.value = notifications[i].name + "_allowed";
 			input.checked = (notifications[i].allowed == "True");
 			input.defaultChecked = input.checked; // IE7 quirk
+			if (!email || email == "")
+				input.disabled = "disabled";
 			td_allowed.appendChild(input);
 			tr.appendChild(td_allowed);
 
@@ -180,6 +189,8 @@ function redrawNotifications(notifications) {
 		input.value = notifications[i].name + "_enabled";
 		input.checked = (notifications[i].enabled == "True");
 		input.defaultChecked = input.checked; // IE7 quirk
+		if (!email || email == "")
+			input.disabled = "disabled";
 
 		var td_enabled = $c("td");
 		td_enabled.appendChild(input);
