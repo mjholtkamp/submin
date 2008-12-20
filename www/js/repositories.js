@@ -148,7 +148,8 @@ function repostree_getpaths()
 
 function getsubdirs(reposnode)
 {
-	AjaxAsyncPostRequest(document.location, 'getSubdirs=' + reposnode.path, getsubdirsCB, reposnode);
+	var esubdir = escape_plus(reposnode.path);
+	AjaxAsyncPostRequest(document.location, 'getSubdirs=' + esubdir, getsubdirsCB, reposnode);
 }
 
 function getsubdirsCB(response, reposnode)
@@ -192,7 +193,8 @@ function loadPermissions(path)
 	h3.innerHTML = path;
 
 	// get permissions, users and groups in one call
-	var response = AjaxSyncPostRequest(document.location, 'getPermissions=' + path + '&userlist&grouplist');
+	var epath = escape_plus(path);
+	var response = AjaxSyncPostRequest(document.location, 'getPermissions=' + epath + '&userlist&grouplist');
 	LogResponse(response);
 
 	repositoryperms = FindResponse(response, "getRepositoryPerms");
@@ -258,15 +260,21 @@ function refreshAndLog(response) {
 }
 
 function addPermissionToPath(id, type, path) {
-	AjaxAsyncPostRequest(document.location, 'addPermission&type=' + type + '&name=' + id + '&path=' + path, function(response) { repostree_reMark(response, path); } );
+	var epath = escape_plus(path);
+	var ename = escape_plus(id);
+	AjaxAsyncPostRequest(document.location, 'addPermission&type=' + type + '&name=' + ename + '&path=' + epath, function(response) { repostree_reMark(response, path); } );
 }
 
 function removePermissionFromPath(id, type, path) {
-	AjaxAsyncPostRequest(document.location, 'removePermission&type=' + type + '&name=' + id + '&path=' + path, function(response) { repostree_reMark(response, path); } );
+	var epath = escape_plus(path);
+	var ename = escape_plus(id);
+	AjaxAsyncPostRequest(document.location, 'removePermission&type=' + type + '&name=' + ename + '&path=' + epath, function(response) { repostree_reMark(response, path); } );
 }
 
 function changePathPermission(id, type, permission, path) {
-	AjaxAsyncPostRequest(document.location, 'setPermission&type=' + type + '&name=' + id + '&path=' + path + '&permission=' + permission, refreshAndLog);
+	var epath = escape_plus(path);
+	var ename = escape_plus(id);
+	AjaxAsyncPostRequest(document.location, 'setPermission&type=' + type + '&name=' + ename + '&path=' + epath + '&permission=' + permission, refreshAndLog);
 }
 
 function initPermissionsEditor(path) {

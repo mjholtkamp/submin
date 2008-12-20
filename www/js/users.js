@@ -25,7 +25,8 @@ window.onload = function() {
 }
 
 function sendEmail() {
-	AjaxAsyncPostRequest(document.location, "email=" + $('email').value, sendEmailCB);
+	var eemail = escape_plus($('email').value);
+	AjaxAsyncPostRequest(document.location, "email=" + eemail, sendEmailCB);
 }
 
 function sendEmailCB(response) {
@@ -93,11 +94,13 @@ function sendPassword(password) {
  * Adding users to groups and removing them from groups
  */
 function addMemberToGroupAjax(group) {
-	return AjaxAsyncPostRequest(document.location, "addToGroup=" + group, refreshAndLog);
+	var egroup = escape_plus(group);
+	return AjaxAsyncPostRequest(document.location, "addToGroup=" + egroup, refreshAndLog);
 }
 
 function removeMemberFromGroupAjax(group) {
-	return AjaxAsyncPostRequest(document.location, "removeFromGroup=" + group, refreshAndLog);
+	var egroup = escape_plus(group);
+	return AjaxAsyncPostRequest(document.location, "removeFromGroup=" + egroup, refreshAndLog);
 }
 
 /* Requests the groups via ajax, and forms two lists to be used by Selector */
@@ -221,8 +224,9 @@ function saveNotifications() {
 		}
 		if (str != "")
 			str += ":";
-			
-		str += name + "," + allowed + "," + enabled;
+
+		var ename = escape_plus(name);
+		str += ename + "," + allowed + "," + enabled;
 	}
 
 	AjaxAsyncPostRequest(document.location, "saveNotifications=" + str, saveNotificationsCB);

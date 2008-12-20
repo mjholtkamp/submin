@@ -125,3 +125,6 @@ function AjaxAsyncPostLog(url, params) {
 	AjaxAsyncPostRequest(url, params, LogResponse);
 }
 
+function escape_plus(string) {
+	return escape(string).replace(/\+/g, "%2b");
+}

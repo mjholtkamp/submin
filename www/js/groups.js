@@ -9,11 +9,13 @@ function refreshAndLog(response) {
 }
 
 function removeMemberAjax(member) {
-	AjaxAsyncPostRequest(document.location, "removeMember=" + member, refreshAndLog);
+	var emember = escape_plus(member);
+	AjaxAsyncPostRequest(document.location, "removeMember=" + emember, refreshAndLog);
 }
 
 function addMemberAjax(member) {
-	AjaxAsyncPostRequest(document.location, "addMember=" + member, refreshAndLog);
+	var emember = escape_plus(member);
+	AjaxAsyncPostRequest(document.location, "addMember=" + emember, refreshAndLog);
 }
 
 var old_load = window.onload;
