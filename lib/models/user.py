@@ -194,6 +194,7 @@ class User(object):
 		config = Config()
 		self.removeFromGroups(config) # pass config, otherwise next line will overwrite changes
 		config.authz.removeUserProps(self.name)
+		config.authz.removePermissions(self.name, 'user')
 		config.htpasswd.remove(self.name)
 		config.htpasswd.flush()
 

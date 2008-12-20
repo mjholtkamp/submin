@@ -64,6 +64,7 @@ class Group(object):
 	def remove(self):
 		config = Config()
 		config.authz.removeGroup(self.name)
+		config.authz.removePermissions(self.name, 'group')
 
 	def __str__(self):
 		return self.name

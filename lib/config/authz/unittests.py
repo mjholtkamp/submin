@@ -77,6 +77,18 @@ class InitTest(unittest.TestCase):
 	def testListMembersUnknownGroup(self):
 		self.assertRaises(UnknownGroupError, self.authz.members, 'foo')
 
+	def testRemovePermissionsUser(self):
+		self.authz.setPermission('foo', '/', 'bar', 'user', 'rw')
+		self.assertEquals(self.authz.permissions('foo', '/'), [{'type': 'user', 'name': 'bar', 'permission': 'rw'}])
+		self.authz.removePermissions('bar', 'user')
+		self.assertEquals(self.authz.permissions('foo', '/'), [])
+
+	def testRemovePermissionsGroup(self):
+		self.authz.setPermission('foo', '/', 'bar', 'group', 'rw')
+		self.assertEquals(self.authz.permissions('foo', '/'), [{'type': 'group', 'name': 'bar', 'permission': 'rw'}])
+		self.authz.removePermissions('bar', 'group')
+		self.assertEquals(self.authz.permissions('foo', '/'), [])
+
 class SaveTest(unittest.TestCase):
 	"Testcase for the save() method on the Authz-objects."
 

@@ -127,7 +127,6 @@ class Authz:
 			raise InvalidRepositoryError(repository, path)
 		return path
 
-
 	def removePath(self, repository, path):
 		section = self.createSectionName(repository, path)
 		self.authzParser.remove_section(section)
@@ -270,3 +269,14 @@ class Authz:
 
 		self.save()
 
+	def removePermissions(self, member, type):
+		'''Remove all permissions of user/group (defined by type), this is
+		used when deleting a user/group'''
+		paths = self.paths()
+		for path in paths:
+			repos = path[0]
+			path = path[1]
+			try:
+				self.removePermission(repos, path, member, type)
+			except UnknownPermissionError:
+				pass # if it didn't exist, it's also fine
