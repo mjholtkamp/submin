@@ -18,10 +18,13 @@ class InitTest(unittest.TestCase):
 
 	def tearDown(self):
 		os.unlink(self.filename)
+		os.unlink(self.userpropfilename)
 
 	def testCreateFile(self):
 		self.assert_(os.path.exists(self.filename),
 				'File %s does not exist' % self.filename)
+		self.assert_(os.path.exists(self.userpropfilename),
+				'File %s does not exist' % self.userpropfilename)
 
 	def testCreateGroupsSection(self):
 		self.assert_(self.authz.authzParser.has_section('groups'),
@@ -64,7 +67,9 @@ class InitTest(unittest.TestCase):
 		self.assertRaises(PathExistsError, self.authz.addPath, 'foo', '/')
 
 	def testRemovePath(self):
+		self.authz.addPath('foo', '/')
 		self.authz.removePath('foo', '/')
+		self.assertEquals(self.authz.paths(), [])
 
 	def testRemoveAllMembers(self):
 		self.authz.addGroup('foo', ['bar', 'baz'])
@@ -88,6 +93,19 @@ class InitTest(unittest.TestCase):
 		self.assertEquals(self.authz.permissions('foo', '/'), [{'type': 'group', 'name': 'bar', 'permission': 'rw'}])
 		self.authz.removePermissions('bar', 'group')
 		self.assertEquals(self.authz.permissions('foo', '/'), [])
+
+	def testCreateSectionName(self):
+		self.assertRaises(InvalidRepositoryError, self.authz.createSectionName, None, "/foo")
+
+	def testGroupsSelfCheck(self):
+		'''Be destructive and see if module checks that'''
+		self.authz.authzParser.remove_section('groups')
+		self.assertEquals(self.authz.groups(), [])
+
+	def testMemberOf(self):
+		self.authz.addGroup('foo', ['bar'])
+		self.assertEquals(self.authz.member_of('bar'), ['foo'])
+
 
 class SaveTest(unittest.TestCase):
 	"Testcase for the save() method on the Authz-objects."
