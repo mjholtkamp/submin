@@ -1,8 +1,28 @@
-submin (2.0-1) testing; urgency=low
+submin (1.2.0-1) testing; urgency=low
 
-  * Preparation for version 2.0
+  * Users can choose to receive email notifications of commits
+  * Allow deletion of repositories
+  * Small bugfixes
 
- -- Michiel Holtkamp <submin@supermind.nl>  Sun, 19 Oct 2008 09:54:21 +0200
+ -- Michiel Holtkamp <submin@supermind.nl>  Tue, 13 Jan 2009 13:20:08 +0100
+
+submin (1.1.2-1) testing; urgency=low
+
+  * Fixed WSGI redirect bug (#126)
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Tue, 09 Dec 2008 02:46:43 +0100
+
+submin (1.1.1-1) testing; urgency=low
+
+  * Fixed IE layout
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Mon, 20 Oct 2008 03:45:08 +0200
+
+submin (1.1.0-1) testing; urgency=low
+
+  * Released version 1.1.0-1
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Sun, 19 Oct 2008 09:46:13 +0200
 
 submin (1.0-1) testing; urgency=low
 
