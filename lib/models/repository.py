@@ -18,6 +18,9 @@ def listRepositories(session_user):
 class Repository(object):
 	class DoesNotExist(Exception):
 		pass
+	class ImportError(Exception):
+		def __init__(self, s):
+			Exception.__init__(self, s)
 
 	def __init__(self, name):
 		config = Config()
@@ -30,6 +33,8 @@ class Repository(object):
 		self.authz_paths.sort()
 		try:
 			self.dirs = self.getsubdirs("")
+		except self.ImportError, e:
+			raise e
 		except:
 			raise self.DoesNotExist
 
@@ -40,7 +45,7 @@ class Repository(object):
 		try:
 			import pysvn
 		except exceptions.ImportError, e:
-			raise Exception('Module pysvn not found, please install it')
+			raise self.ImportError('Module pysvn not found, please install it')
 		import os
 
 		client = pysvn.Client()
