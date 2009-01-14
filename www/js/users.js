@@ -1,6 +1,4 @@
-load('dom')
-load("selector")
-load('ajax')
+// needs dom.js, selector.js and ajax.js (all included in main)
 
 var selector = null;
 

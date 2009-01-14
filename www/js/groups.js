@@ -1,5 +1,4 @@
-load('dom')
-load("selector")
+//needs dom.js and selector.js (all included in main)
 
 var selector = null;
 
