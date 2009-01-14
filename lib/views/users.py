@@ -85,17 +85,14 @@ class Users(View):
 				return self.showAddForm(req, username, email, fullname,
 					'User already exists')
 
-			if email == '':
-				return self.showAddForm(req, username, email, fullname,
-					'Email must be supplied')
-
-			if not isEmailValid(email):
+			if email != '' and not isEmailValid(email):
 				return self.showAddForm(req, username, email, fullname,
 					"Email is not valid")
 
 			try:
 				addUser(username)
-				User(username).setEmail(email)
+				if email != '':
+					User(username).setEmail(email)
 				User(username).setFullName(fullname)
 			except IOError:
 				return ErrorResponse('File permission denied', request=req)
