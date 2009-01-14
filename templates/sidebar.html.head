@@ -1,0 +1,6 @@
+<script type="text/javascript" src="[val main_base_url]js/sidebar.js"></script>
+<link rel="stylesheet" href="[val main_base_url]css/sidebar.css">
+<script type="text/javascript">
+	var selected_object = "[val selected_object]";
+	var selected_type = "[val selected_type]";
+</script>
