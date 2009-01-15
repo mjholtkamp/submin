@@ -35,10 +35,18 @@ body {
 	display: none;
 }
 
-#sidebar h1, #sidebar h1 a {
-	color: #505D6D;
-	margin-left: 0.5em;
+#sidebar h1 {
+	margin-top: 0.5em;
+	margin-left: 0em;
+	padding-left: 1em;
+	font-size: 24px;
 }
+
+#sidebar h1 a {
+	color: #505D6D;
+	margin-left: 0em;
+}
+
 #sidebar div.showhide li {
 	float: left;
 	width: 100%;
