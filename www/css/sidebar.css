@@ -27,11 +27,11 @@ body {
 	clear: both;
 	cursor: pointer;
 }
-#sidebar ul {
+#sidebar div.showhide ul {
 	margin: 0;
 }
 
-#sidebar ul.showhide-object {
+#sidebar div.showhide ul.showhide-object {
 	display: none;
 }
 
@@ -39,11 +39,11 @@ body {
 	color: #505D6D;
 	margin-left: 0.5em;
 }
-#sidebar li {
+#sidebar div.showhide li {
 	float: left;
 	width: 100%;
 }
-#sidebar li:hover, li.selected {
+#sidebar div.showhide li:hover, div.showhide li.selected {
 	background: #C0CDED;
 }
 #sidebar li:hover .deleteuser, #sidebar li:hover .deletegroup, #sidebar li:hover .deleterepository {
@@ -52,7 +52,7 @@ body {
 #sidebar li .deleteuser, #sidebar li .deletegroup, #sidebar li .deleterepository {
 	display: none;
 }
-#sidebar li a {
+#sidebar div.showhide li a {
 	display: block;
 	float: left;
 	width: 75%;
@@ -61,6 +61,15 @@ body {
 	color: black;
 	overflow: hidden;
 	white-space: nowrap;
+}
+
+#sidebar div.logout li a {
+	display: block;
+	float: left;
+	width: 75%;
+	margin-left: 0.5em;
+	text-decoration: none;
+	color: black;
 }
 
 #sidebar li span {
