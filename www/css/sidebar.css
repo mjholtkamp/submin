@@ -1,9 +1,4 @@
 body {
-	margin: 0;
-	background: #fff;
-	color: #000;
-	font-family: "Lucida Grande", helvetica, arial, sans-serif;
-	font-size: 12px;
 	background: #fff url(../img/sidebar.png) top left repeat-y;
 }
 #sidebar {
