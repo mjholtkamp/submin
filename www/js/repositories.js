@@ -1,7 +1,4 @@
-load('dom');
-load('array');
-load('window');
-load('selector');
+// needs selector.js
 
 // for ReposNode object, see below
 var repository_tree = new ReposNode('repostree');

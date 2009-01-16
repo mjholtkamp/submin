@@ -74,7 +74,7 @@ function collapsables_findClassNames(node, classname)
 
 		do {
 			current = current.parentNode;
-			if (current == node)
+			if (current == node || !current)
 				return classNodes;
 		} while (!current.nextSibling);
 		current = current.nextSibling;

@@ -1,5 +1,4 @@
-load('dom');
-load('window');
+// needs dom.js and window.js
 
 var Log_timeout;
 

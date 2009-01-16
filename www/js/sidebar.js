@@ -1,5 +1,4 @@
-load('collapsables');
-
+// needs collapsables.js
 var sidebar_old_load = window.onload;
 window.onload = function() {
 	if (sidebar_old_load) sidebar_old_load()

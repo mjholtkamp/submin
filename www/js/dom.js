@@ -1,4 +1,4 @@
-load('array');
+// needs array.js
 var domLoaded = true;
 
 function $(element) {

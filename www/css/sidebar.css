@@ -1,9 +1,4 @@
 body {
-	margin: 0;
-	background: #fff;
-	color: #000;
-	font-family: "Lucida Grande", helvetica, arial, sans-serif;
-	font-size: 12px;
 	background: #fff url(../img/sidebar.png) top left repeat-y;
 }
 #sidebar {
@@ -27,23 +22,31 @@ body {
 	clear: both;
 	cursor: pointer;
 }
-#sidebar ul {
+#sidebar div.showhide ul {
 	margin: 0;
 }
 
-#sidebar ul.showhide-object {
+#sidebar div.showhide ul.showhide-object {
 	display: none;
 }
 
-#sidebar h1, #sidebar h1 a {
-	color: #505D6D;
-	margin-left: 0.5em;
+#sidebar h1 {
+	margin-top: 0.5em;
+	margin-left: 0em;
+	padding-left: 1em;
+	font-size: 24px;
 }
-#sidebar li {
+
+#sidebar h1 a {
+	color: #505D6D;
+	margin-left: 0em;
+}
+
+#sidebar div.showhide li {
 	float: left;
 	width: 100%;
 }
-#sidebar li:hover, li.selected {
+#sidebar div.showhide li:hover, div.showhide li.selected {
 	background: #C0CDED;
 }
 #sidebar li:hover .deleteuser, #sidebar li:hover .deletegroup, #sidebar li:hover .deleterepository {
@@ -52,7 +55,7 @@ body {
 #sidebar li .deleteuser, #sidebar li .deletegroup, #sidebar li .deleterepository {
 	display: none;
 }
-#sidebar li a {
+#sidebar div.showhide li a {
 	display: block;
 	float: left;
 	width: 75%;
@@ -61,6 +64,15 @@ body {
 	color: black;
 	overflow: hidden;
 	white-space: nowrap;
+}
+
+#sidebar div.logout li a {
+	display: block;
+	float: left;
+	width: 75%;
+	margin-left: 0.5em;
+	text-decoration: none;
+	color: black;
 }
 
 #sidebar li span {

@@ -1,4 +1,4 @@
-load('log.js')
+// needs log.js
 
 function Submin_config() {
 	this.debug = false;

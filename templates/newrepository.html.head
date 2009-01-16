@@ -1,0 +1,10 @@
+<link rel="stylesheet" href="[val main_base_url]css/newX.css">
+<script type="text/javascript">
+var newrepository_onload = window.onload;
+window.onload = function() {
+	if (newrepository_onload)
+		newrepository_onload();
+
+	document.getElementById('repository').focus();
+}
+</script>

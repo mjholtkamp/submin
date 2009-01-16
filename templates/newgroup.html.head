@@ -1,0 +1,10 @@
+<link rel="stylesheet" href="[val main_base_url]css/newX.css">
+<script type="text/javascript">
+var newgroup_onload = window.onload;
+window.onload = function() {
+	if (newgroup_onload)
+		newgroup_onload();
+
+	document.getElementById('groupname').focus();
+}
+</script>
