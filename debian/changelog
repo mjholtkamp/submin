@@ -1,6 +1,8 @@
 submin (2.0-1) testing; urgency=low
 
   * Preparation for version 2.0
+  * Simplify javascript (closes #136), html cleanup, css cleanup
+  * Other small bugfixes
 
  -- Michiel Holtkamp <submin@supermind.nl>  Sun, 19 Oct 2008 09:54:21 +0200
 
