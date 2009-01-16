@@ -40,7 +40,7 @@ cd `dirname $0`/..
 # install submin-admin
 mkdir -p `dirname ${SUBMIN_ADMIN}`
 if [ "$ROOT" == "1" ]; then
-	install -g root -o root -m 755 bin/submin-admin.py ${SUBMIN_ADMIN}
+	install -g 0 -o 0 -m 755 bin/submin-admin.py ${SUBMIN_ADMIN}
 else
 	install -m 755 bin/submin-admin.py ${SUBMIN_ADMIN}
 fi
@@ -51,8 +51,8 @@ mkdir -p ${SHARE}/bin # make share/bin
 cp -r www/{css,img,js} ${SHARE}/www
 cp -r lib templates ${SHARE}
 if [ "$ROOT" == "1" ]; then
-	install -g root -o root -m 755 www/submin.{ws,c}gi ${SHARE}/www/
-	install -g root -o root -m 755 bin/{commit-email.pl,post-commit.py} ${SHARE}/bin/
+	install -g 0 -o 0 -m 755 www/submin.{ws,c}gi ${SHARE}/www/
+	install -g 0 -o 0 -m 755 bin/{commit-email.pl,post-commit.py} ${SHARE}/bin/
 else
 	install -m 755 www/submin.{ws,c}gi ${SHARE}/www/
 	install -m 755 bin/{commit-email.pl,post-commit.py} ${SHARE}/bin/
@@ -69,3 +69,4 @@ rm -f ${SHARE}/bin/post-commit.py.bak
 
 find ${SHARE} -type d -name .svn -exec rm -rf \{\} \; -prune
 find ${SHARE} -type f -name \*.pyc -exec rm -rf \{\} \;
+
