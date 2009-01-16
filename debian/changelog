@@ -1,3 +1,10 @@
+submin (1.2.1-1) testing; urgency=low
+
+  * Simplify javascript (closes #136), html cleanup, css cleanup
+  * Other small bugfixes
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Fri, 16 Jan 2009 06:40:43 +0100
+
 submin (1.2.0-1) testing; urgency=low
 
   * Users can choose to receive email notifications of commits
