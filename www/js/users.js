@@ -188,8 +188,10 @@ function redrawNotifications(notifications) {
 		input.value = notifications[i].name + "_enabled";
 		input.checked = (notifications[i].enabled == "True");
 		input.defaultChecked = input.checked; // IE7 quirk
-		if (!email || email == "")
+		if (!email || email == "") {
 			input.disabled = "disabled";
+			input.title = "Please fill in an email address to enabled this control";
+		}
 
 		var td_enabled = $c("td");
 		td_enabled.appendChild(input);
