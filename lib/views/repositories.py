@@ -5,6 +5,7 @@ from dispatch.view import View
 from models.user import User
 from models.group import Group
 from models.repository import *
+from models.trac import *
 from auth.decorators import *
 from path.path import Path
 from ConfigParser import NoOptionError
@@ -43,6 +44,18 @@ class Repositories(View):
 			repository = Repository(path[0])
 		except (IndexError, Repository.DoesNotExist):
 			return ErrorResponse('This repository does not exist.', request=req)
+
+		localvars['trac_config_ok'] = True
+		localvars['trac_exists'] = False
+		try:
+			trac = Trac(path[0])
+			localvars['trac_exists'] = True
+		except UnknownTrac, e:
+			pass
+		except MissingConfig, e:
+			localvars['trac_config_ok'] = False
+			localvars['trac_msg'] = \
+				'There is something missing in your config: %s' % str(e)
 
 		config = Config()
 		try:
