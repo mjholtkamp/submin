@@ -57,6 +57,7 @@ div#permissions-editor {
 
 div#permissions-editor h3 {
 	margin: 1.5em;
+	border: 0;
 }
 
 div#permissions-editor li {

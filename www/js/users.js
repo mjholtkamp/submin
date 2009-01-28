@@ -15,11 +15,20 @@ window.onload = function() {
 	$('password_button').parentNode.onsubmit = verifyPassword;
 	$('email').focus();
 
+	var content = document.getElementById('content');
+	setupCollapsables(content, "usershowhide", users_collapse, users_expand);
+
 	// Initialize the select-dropdown
 	//selectInit();
 	userSelectorInit();
 	reloadNotifications();
 	$('savenotifications').parentNode.onsubmit = saveNotifications;
+}
+
+function users_collapse(me) {
+}
+
+function users_expand(me) {
 }
 
 function sendEmail() {

@@ -1,30 +1,46 @@
 <div id="content">
 	<h1 class="content">User [val user.name]</h1>
-		<div class="settings">
-			<ul>
-        <li><form onSubmit="sendFullName();return false;"><label for="fullname">Name</label><input type="text" value="[val user.fullname]" id="fullname"/><input type="submit" value="save name" name="namebutton"/></form></li>
-				<li><form onSubmit="sendEmail();return false;"><label for="email">Email</label><input type="text" value="[val user.email]" id="email"/><input type="submit" value="save email" name="email"/></form></li>
-				<li><form onSubmit=""><label for="password">Password</label><input type="password" id="password"/><input type="submit" value="save password" name="password" id="password_button"/></form></li>
-				<li>
-					<h3 class="content">Member of</h3>
-					<ul id="memberof" class="selector">
-					</ul>
-					<h3 class="content">Notices from repositories</h3>
-					<table id="notifications">
-						<thead>
-						<tr class="noticeshead">
-							<td class="name">&nbsp;</td>
-							[test:is_admin <td>allowed</td>]
-							<td>enabled</td>
-						</tr>
-						</thead>
-						<tbody>
-						</tbody>
-					</table>
-					<form onsubmit="return false;">
-					<input id="savenotifications" type="submit" value="save notifications">
-					</form>
-				</li>
-			</ul>
+	<div class="settings">
+		<ul>
+			<li><form onSubmit="sendFullName();return false;"><label for="fullname">Name</label><input type="text" value="[val user.fullname]" id="fullname"/><input type="submit" value="save name" name="namebutton"/></form></li>
+			<li><form onSubmit="sendEmail();return false;"><label for="email">Email</label><input type="text" value="[val user.email]" id="email"/><input type="submit" value="save email" name="email"/></form></li>
+			<li><form onSubmit=""><label for="password">Password</label><input type="password" id="password"/><input type="submit" value="save password" name="password" id="password_button"/></form></li>
+		</ul>
+		<div class="usershowhide">
+			<h3 class="usershowhide-trigger"><img class="usershowhide-icon" src="[val main_base_url]img/arrow-expanded.png" />Member of</h3>
+			<div class="usershowhide-object">
+				<ul id="memberof" class="selector">
+				</ul>
+			</div>
 		</div>
+		<div class="usershowhide">
+			<h3 class="usershowhide-trigger">
+				<img class="usershowhide-icon" src="[val main_base_url]img/arrow-expanded.png" />Notices from repositories
+			</h3>
+			<div class="usershowhide-object">
+				<table id="notifications">
+					<thead>
+					<tr class="noticeshead">
+						<td class="name">&nbsp;</td>
+						[test:is_admin <td>allowed</td>]
+						<td>enabled</td>
+					</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+				<form onsubmit="return false;" />
+				<input id="savenotifications" type="submit" value="save notifications" />
+				</form>
+			</div>
+		</div>
+		<div class="usershowhide">
+			<h3 class="usershowhide-trigger"><img class="usershowhide-icon" src="[val main_base_url]img/arrow-expanded.png" />Admin of</h3>
+			<div class="usershowhide-object">
+				<ul id="adminof" class="selector">
+					<li><span class="comment">Not implemented yet</span></li>
+				</ul>
+			</div>
+		</div>
+	</div>
 </div>

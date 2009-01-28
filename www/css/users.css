@@ -3,6 +3,19 @@ label {
 	float: left;
 }
 
+#content img.usershowhide-icon {
+	height: 1em;
+	width: 1em;
+	padding-right: 0em;
+	padding-left: 0em;
+	margin-right: 0.5em;
+	margin-left: -1.5em;
+}
+
+#content div.usershowhide {
+	margin-left: 1.5em;
+}
+
 tr.noticeshead {
 	font-weight: bold;
 }

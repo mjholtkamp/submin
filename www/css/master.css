@@ -30,14 +30,14 @@ a.external {
 	background:url(../img/external.png) 99% 40% no-repeat; padding-right: 15px;
 }
 
-h1.content {
+#content h1 {
 	background: #ddd;
 	padding: 0.3em;
 	padding-left: 0.7em;
 	padding-right: 0.7em;
 }
 
-h3.content {
+#content h3 {
 	border-bottom: 1px solid black;
 }
 
@@ -57,6 +57,7 @@ li form {
 }
 
 ul.selector {
+	padding-top: 1.0em;
 	padding-bottom: 1.5em;
 }
 
