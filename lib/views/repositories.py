@@ -222,6 +222,11 @@ class Repositories(View):
 		repository.remove()
 		return XMLStatusResponse('removeRepository', True, 'Repository %s deleted' % repository.name)
 
+	@admin_required
+	def tracEnvCreate(self, req, repository):
+		(s, m) = createTracEnv(repository.name)
+		return XMLStatusResponse('tracEnvCreate', s, 'Trac environment "%s" created: %s' % (repository.name, m))
+
 	def ajaxhandler(self, req, path):
 		repositoryname = ''
 
@@ -263,7 +268,9 @@ class Repositories(View):
 
 		if 'getNotifications' in req.post:
 			return self.getNotifications(req, repository)
-		
+
+		if 'tracEnvCreate' in req.post:
+			return self.tracEnvCreate(req, repository)
 
 		return XMLStatusResponse('', False, 'Unknown command')
 

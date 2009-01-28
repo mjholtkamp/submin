@@ -453,3 +453,8 @@ function toggle_notifications_mailingCB(response) {
 	
 	id.checked = (enabled.lowercase() == "true");
 }
+
+function trac_env_create() {
+	AjaxAsyncPostLog(document.location, 'tracEnvCreate');
+	return false;
+}
