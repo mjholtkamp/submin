@@ -455,6 +455,19 @@ function toggle_notifications_mailingCB(response) {
 }
 
 function trac_env_create() {
-	AjaxAsyncPostLog(document.location, 'tracEnvCreate');
+	AjaxAsyncPostRequest(document.location, 'tracEnvCreate', trac_env_createCB);
 	return false;
+}
+
+function trac_env_createCB(response) {
+	LogResponse(response);
+	var command = FindResponse(response, 'tracEnvCreate');
+	if (!command)
+		return;
+	var s = command.xml.getAttribute('success');
+	if (!s)
+		return;
+	if (s == "True") {
+		window.location.href = window.location.href;
+	}
 }

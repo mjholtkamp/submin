@@ -34,7 +34,7 @@ def createTracEnv(repository):
 	cmd =  "PATH=%s trac-admin %s initenv '%s' 'sqlite:db/trac.db' 'svn' '%s'" % \
 		(path, tracenv, projectname, svndir)
 	(exitstatus, outtext) = commands.getstatusoutput(cmd)
-	return (exitstatus, outtext)
+	return (exitstatus == 0, outtext)
 
 class Trac(object):
 	def __init__(self, name):
