@@ -7,7 +7,7 @@ class SubminAdmin:
 		self.prompt_fmt = "Submin [%s]> "
 		self.prompt = ""
 		self.quit = False
-		self.subcmd_aliases = [('?', 'help'), ('exit', 'quit')]
+		self.cmd_aliases = [('?', 'help'), ('exit', 'quit')]
 
 	def run(self):
 		if len(self.argv) < 2:
@@ -41,17 +41,17 @@ Use '?' or 'help' for help on commands.
 
 			self.execute(argv)
 
-	def import_class(self, cmd, argv):
+	def cmd_instance(self, cmd, argv):
 		objname = "c_" + cmd
 		try:
 			fullobjname = "subminadmin." + objname
 			X = __import__(fullobjname)
-			Class = eval("X." + objname + "." + objname + "(self, argv)")
-			return Class
+			instance = eval("X." + objname + "." + objname + "(self, argv)")
+			return instance
 		except ImportError, e:
 			return None
 
-	def subcommands(self):
+	def commands(self):
 		import glob
 		import inspect
 		import re
@@ -59,27 +59,27 @@ Use '?' or 'help' for help on commands.
 		basefile = inspect.getmodule(self).__file__
 		basedir = os.path.dirname(basefile)
 		pat = re.compile('c_(.*).py')
-		subcmds = []
+		cmds = []
 		for f in glob.glob('%s/c_*.py' % basedir):
 			fname = os.path.basename(f)
-			subcmd = re.search(pat, fname)
-			subcmds.append(subcmd.group(1))
+			cmd = re.search(pat, fname)
+			cmds.append(cmd.group(1))
 
-		return subcmds
+		return cmds
 
-	def subcmd_alias(self, subcmd):
-		for tup in self.subcmd_aliases:
-			if tup[0] == subcmd:
+	def cmd_alias(self, cmd):
+		for tup in self.cmd_aliases:
+			if tup[0] == cmd:
 				return tup[1]
 
-		return subcmd
+		return cmd
 
 	def execute(self, argv):
 		if len(argv) < 1:
 			return True
 
-		cmd = self.subcmd_alias(argv[0])
-		Class = self.import_class(cmd, argv[1:])
+		cmd = self.cmd_alias(argv[0])
+		Class = self.cmd_instance(cmd, argv[1:])
 		if not Class:
 			print "Unknown command"
 			return True
