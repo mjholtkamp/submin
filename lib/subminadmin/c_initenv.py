@@ -51,7 +51,8 @@ Usage:
 
 		expected_args = 1
 		if len(self.argv) != expected_args:
-			print "Wrong number of arguments, expected: %u" % expected_args
+			print "Wrong number of arguments (%u), expected %u" % \
+					(len(self.argv), expected_args)
 			return
 
 		self.init_vars['svn dir'] = self.argv[0]
