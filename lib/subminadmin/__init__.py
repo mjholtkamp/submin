@@ -65,6 +65,7 @@ Use '?' or 'help' for help on commands.
 			cmd = re.search(pat, fname)
 			cmds.append(cmd.group(1))
 
+		cmds.sort()
 		return cmds
 
 	def cmd_alias(self, cmd):
