@@ -1,11 +1,13 @@
 import sys
+import os
 
 class SubminAdmin:
 	def __init__(self, argv):
 		self.argv = argv
-		self.prompt_fmt = "submin-admin [%s]> "
+		self.prompt_fmt = "Submin [%s]> "
 		self.prompt = ""
 		self.quit = False
+		self.subcmd_aliases = [('?', 'help'), ('exit', 'quit')]
 
 	def run(self):
 		if len(self.argv) < 2:
@@ -13,6 +15,9 @@ class SubminAdmin:
 			return
 
 		self.env = self.argv[1]
+		if self.env[0] != os.path.sep:
+			self.env = os.path.join(os.getcwd(), self.env)
+
 		self.prompt = self.prompt_fmt % self.env
 
 		if len(self.argv) < 3:
@@ -22,6 +27,11 @@ class SubminAdmin:
 		self.execute(self.argv[2:])
 
 	def interactive(self):
+		print '''Welcome to submin-admin
+Interactive Submin administration console.
+
+Use '?' or 'help' for help on commands.
+'''
 		while not self.quit:
 			try:
 				argv = raw_input(self.prompt).split()
@@ -44,7 +54,6 @@ class SubminAdmin:
 	def subcommands(self):
 		import glob
 		import inspect
-		import os
 		import re
 
 		basefile = inspect.getmodule(self).__file__
@@ -58,11 +67,18 @@ class SubminAdmin:
 
 		return subcmds
 
+	def subcmd_alias(self, subcmd):
+		for tup in self.subcmd_aliases:
+			if tup[0] == subcmd:
+				return tup[1]
+
+		return subcmd
+
 	def execute(self, argv):
 		if len(argv) < 1:
 			return True
 
-		cmd = argv[0]
+		cmd = self.subcmd_alias(argv[0])
 		Class = self.import_class(cmd, argv[1:])
 		if not Class:
 			print "Unknown command"

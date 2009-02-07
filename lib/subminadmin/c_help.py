@@ -6,7 +6,8 @@ class c_help():
 
 	def run(self):
 		if len(self.argv) > 0:
-			subject = self.sa.import_class(self.argv[0], [])
+			subcmd = self.sa.subcmd_alias(self.argv[0])
+			subject = self.sa.import_class(subcmd, [])
 			if subject:
 				print subject.__doc__
 			else:
