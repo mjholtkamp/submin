@@ -48,7 +48,7 @@ Use '?' or 'help' for help on commands.
 			X = __import__(fullobjname)
 			instance = eval("X." + objname + "." + objname + "(self, argv)")
 			return instance
-		except ImportError, e:
+		except (ImportError, AttributeError):
 			return None
 
 	def commands(self):

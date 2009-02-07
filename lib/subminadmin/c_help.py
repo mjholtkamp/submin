@@ -23,6 +23,9 @@ Usage:
 			cmds = self.sa.commands()
 			for cmd in cmds:
 				instance = self.sa.cmd_instance(cmd, [])
+				if instance is None:
+					continue
+
 				docs = instance.__doc__.split('\n', 1)
 				print "%10s - %s" % (cmd, docs[0])
 			print """
