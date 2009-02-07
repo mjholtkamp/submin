@@ -91,7 +91,7 @@ class ConfigData:
 			self.ctimes["htpasswd"] = htpasswd_ctime
 
 		# Normalize base_url and make it a member for easy access
-		self.base_url = Path(self.get("www", "base_url"), append_slash=True)
+		self.base_url = Path(self.get("www", "base_url"), absolute=True, append_slash=True)
 
 		if os.environ.has_key('SCRIPT_FILENAME'):
 			self.base_path = os.path.dirname(os.path.realpath(os.environ['SCRIPT_FILENAME']))

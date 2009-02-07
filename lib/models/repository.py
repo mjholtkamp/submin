@@ -143,6 +143,9 @@ class Repository(object):
 		config = Config()
 		reposdir = config.get('svn', 'repositories')
 		newrepos = Path(reposdir) + self.name
+		if not newrepos.absolute:
+			raise Exception("Error, repository path is relative, this should be fixed")
+
 		cmd = 'rm -rf "%s"' % newrepos
 		(exitstatus, outtext) = commands.getstatusoutput(cmd)
 		if exitstatus == 0:
