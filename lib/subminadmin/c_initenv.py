@@ -23,7 +23,7 @@ Examples:
 		self.argv = argv
 		self.defaults = {
 			'svn dir': Path('svn'),
-			'http base': '/'
+			'http base': Path('/')
 		}
 		self.init_vars = {
 			'conf dir': Path('conf'),
@@ -37,28 +37,40 @@ Examples:
 		if a == '':
 			return defval
 
-		if type(defval) == 'path.path.Path':
-			return Path(a)
+		p = Path(a)
+		if type(p) == type(defval):
+			return p
 
 		return a
 
 	def interactive(self):
 		svn_dir = self.prompt_user("Path to the repository", 'svn dir')
-		self.init_vars['svn dir'] = Path(svn_dir)
+		self.init_vars['svn dir'] = svn_dir
+		http_base = self.prompt_user("HTTP base", 'http base')
+		self.init_vars['http base'] = http_base
 		self.create_env()
 
 	def create_dir(self, directory):
-		"""Create a relative or absulute directory, if it doesn't exists already"""
+		"""Create a relative or absulute directory, if it doesn't exist already"""
 		if not os.path.exists(str(directory)):
 			if not directory.absolute:
 				directory = self.env + directory
-			os.makedirs(str(directory), mode=0700)
+			
+			try:
+				os.makedirs(str(directory), mode=0700)
+			except OSError, e:
+				print 'making dir %s failed, do you have permissions?' % \
+						str(directory)
+				raise e
 
 	def create_env(self):
 		"""This is called when all info is gathered"""
-		self.create_dir(self.env)
-		self.create_dir(self.init_vars['svn dir'])
-		self.create_dir(self.init_vars['conf dir'])
+		try:
+			self.create_dir(self.env)
+			self.create_dir(self.init_vars['svn dir'])
+			self.create_dir(self.init_vars['conf dir'])
+		except OSError:
+			return # already printed error message
 
 	def run(self):
 		if os.path.exists(str(self.env)):
