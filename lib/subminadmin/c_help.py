@@ -23,7 +23,7 @@ Usage:
 			cmds = self.sa.commands()
 			for cmd in cmds:
 				instance = self.sa.cmd_instance(cmd, [])
-				if instance is None:
+				if instance is None or instance.__doc__ is None:
 					continue
 
 				docs = instance.__doc__.split('\n', 1)
