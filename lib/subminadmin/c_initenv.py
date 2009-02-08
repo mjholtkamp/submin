@@ -81,10 +81,8 @@ Examples:
 			self.interactive()
 			return
 
-		expected_args = 2
-		if len(self.argv) != expected_args:
-			print "Wrong number of arguments (%u), expected %u" % \
-					(len(self.argv), expected_args)
+		if len(self.argv) != 2:
+			self.sa.execute(['help', 'initenv'])
 			return
 
 		self.init_vars['svn dir'] = Path(self.argv[0])
