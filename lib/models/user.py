@@ -1,6 +1,7 @@
 from config.config import Config
 from ConfigParser import NoOptionError
 from config.authz.authz import UnknownUserError
+from models.repository import repositoriesOnDisk
 
 class UserExists(Exception):
 	def __init__(self, user):
@@ -106,7 +107,7 @@ class User(object):
 			pass
 		
 		self.notifications = {}
-		repositories = config.repositories()
+		repositories = repositoriesOnDisk()
 		for k in allowed:
 			try:
 				repositories.remove(k)

@@ -100,19 +100,6 @@ class ConfigData:
 			# no cgi script
 			self.base_path = ''
 
-	def repositories(self):
-		import glob, os.path
-		reposdir = self.get('svn', 'repositories')
-		_repositories = glob.glob(os.path.join(reposdir, '*'))
-		repositories = []
-		for repos in _repositories:
-			if os.path.isdir(repos):
-				repositories.append(repos[repos.rfind('/') + 1:])
-
-		repositories.sort()
-
-		return repositories
-
 	def get(self, section, variable):
 		return self.cp.get(section, variable)
 

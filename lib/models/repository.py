@@ -7,11 +7,26 @@ def listRepositories(session_user):
 	config = Config()
 	repositories = []
 	if session_user.is_admin:
-		repository_names = config.repositories()
+		repository_names = repositoriesOnDisk()
 		repository_names.sort()
 
 		for repos in repository_names:
 			repositories.append(Repository(repos))
+
+	return repositories
+
+def repositoriesOnDisk():
+	"""Returns all repositories that are found on disk"""
+	import glob, os.path
+	config = Config()
+	reposdir = config.get('svn', 'repositories')
+	reps = glob.glob(os.path.join(reposdir, '*'))
+	repositories = []
+	for rep in reps:
+		if os.path.isdir(rep):
+			repositories.append(rep[rep.rfind('/') + 1:])
+
+	repositories.sort()
 
 	return repositories
 
