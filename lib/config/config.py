@@ -55,7 +55,7 @@ class ConfigData:
 		authz_file = ''
 		userprop_file = ''
 		try:
-			authz_file = self.get('svn', 'authz_file')
+			authz_file = str(self.getpath('svn', 'authz_file'))
 		except ConfigParser.NoSectionError, e:
 			raise Exception(
 				"Missing config section 'svn' in file %s" % filename)
@@ -64,7 +64,7 @@ class ConfigData:
 				"Missing config option 'authz_file' in file %s" % filename)
 
 		try:
-			userprop_file = self.get('svn', 'userprop_file')
+			userprop_file = str(self.getpath('svn', 'userprop_file'))
 		except ConfigParser.NoSectionError, e:
 			raise Exception(
 				"Missing config section 'svn' in file %s" % filename)
@@ -84,7 +84,7 @@ class ConfigData:
 			self.ctimes["authz"] = authz_ctime
 			self.ctimes["userprop"] = userprop_ctime
 
-		htpasswd_file = self.get('svn', 'access_file')
+		htpasswd_file = str(self.getpath('svn', 'access_file'))
 		htpasswd_ctime = self._ctime(htpasswd_file)
 		if not self.htpasswd or htpasswd_ctime > self.ctimes["htpasswd"]:
 			self.htpasswd = HTPasswd(htpasswd_file)
@@ -99,6 +99,13 @@ class ConfigData:
 		else:
 			# no cgi script
 			self.base_path = ''
+
+	def getpath(self, section, variable):
+		path = Path(self.get(section, variable))
+		if path.absolute:
+			return path
+		
+		return Path(self.base_path) + path
 
 	def get(self, section, variable):
 		return self.cp.get(section, variable)

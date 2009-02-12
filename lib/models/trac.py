@@ -15,7 +15,7 @@ class MissingConfig(Exception):
 def tracBaseDir():
 	config = Config()
 	try:
-		basedir = config.get('trac', 'basedir')
+		basedir = config.getpath('trac', 'basedir')
 		return basedir
 	except (NoOptionError, NoSectionError):
 		raise MissingConfig("No 'basedir' in [trac] section")
@@ -23,15 +23,15 @@ def tracBaseDir():
 def createTracEnv(repository):
 	config = Config()
 	basedir = tracBaseDir()
-	if not os.path.isdir(basedir):
-		os.makedirs(basedir)
+	if not os.path.isdir(str(basedir)):
+		os.makedirs(str(basedir))
 
-	tracenv = os.path.join(basedir, repository)
+	tracenv = basedir + repository
 	projectname = repository
-	svnbasedir = config.get('svn', 'repositories')
-	svndir = os.path.join(svnbasedir, repository)
+	svnbasedir = config.getpath('svn', 'repositories')
+	svndir = svnbasedir + repository
 	path = config.get('backend', 'path')
-	cmd =  "PATH=%s trac-admin %s initenv '%s' 'sqlite:db/trac.db' 'svn' '%s'" % \
+	cmd =  "PATH='%s' trac-admin '%s' initenv '%s' 'sqlite:db/trac.db' 'svn' '%s'" % \
 		(path, tracenv, projectname, svndir)
 	(exitstatus, outtext) = commands.getstatusoutput(cmd)
 	return (exitstatus == 0, outtext)
@@ -41,6 +41,6 @@ class Trac(object):
 		self.name = name
 		self.basedir = tracBaseDir()
 
-		tracenv = os.path.join(self.basedir, self.name)
+		tracenv = str(self.basedir + self.name)
 		if not os.path.isdir(tracenv):
-			raise UnknownTrac(name)
+			raise UnknownTrac(tracenv)

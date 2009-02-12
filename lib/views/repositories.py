@@ -107,9 +107,9 @@ class Repositories(View):
 
 			url = base_url + '/repositories/show/' + repository
 
-			reposdir = config.get('svn', 'repositories')
-			newrepos = reposdir + '/' + repository
-			cmd = 'svnadmin create %s' % newrepos
+			reposdir = config.getpath('svn', 'repositories')
+			newrepos = reposdir + repository
+			cmd = 'svnadmin create %s' % str(newrepos)
 			(exitstatus, outtext) = commands.getstatusoutput(cmd)
 			if exitstatus == 0:
 				repos = Repository(repository)

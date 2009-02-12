@@ -19,8 +19,8 @@ def repositoriesOnDisk():
 	"""Returns all repositories that are found on disk"""
 	import glob, os.path
 	config = Config()
-	reposdir = config.get('svn', 'repositories')
-	reps = glob.glob(os.path.join(reposdir, '*'))
+	reposdir = config.getpath('svn', 'repositories')
+	reps = glob.glob(str(reposdir + '*'))
 	repositories = []
 	for rep in reps:
 		if os.path.isdir(rep):
@@ -64,8 +64,8 @@ class Repository(object):
 		import os
 
 		client = pysvn.Client()
-		reposdir = self.config.get('svn', 'repositories')
-		url = 'file://' + reposdir
+		reposdir = self.config.getpath('svn', 'repositories')
+		url = 'file://' + str(reposdir)
 		url = os.path.join(url, self.name)
 		url = os.path.join(url, path)
 
@@ -96,10 +96,10 @@ class Repository(object):
 	def notificationsEnabled(self):
 		import os
 
-		reposdir = self.config.get('svn', 'repositories')
-		hook = os.path.join(reposdir, self.name, 'hooks', 'post-commit')
+		reposdir = self.config.getpath('svn', 'repositories')
+		hook = reposdir + self.name + 'hooks' + 'post-commit'
 		try:
-			f = open(hook, 'r')
+			f = open(str(hook), 'r')
 		except IOError:
 			return False # assume it does not exist
 		
@@ -114,13 +114,15 @@ class Repository(object):
 		config = Config()
 
 		line_altered = False
-		reposdir = self.config.get('svn', 'repositories')
-		hook = os.path.join(reposdir, self.name, 'hooks', 'post-commit')
-		bindir = self.config.get('backend', 'bindir')
-		fullpath = os.path.join(bindir, 'post-commit.py')
+		reposdir = self.config.getpath('svn', 'repositories')
+		hook = reposdir + self.name + 'hooks' + 'post-commit'
+		bindir = self.config.getpath('backend', 'bindir')
+		fullpath = bindir + 'post-commit.py'
 		config_file = os.environ['SUBMIN_CONF']
-		new_hook = '/usr/bin/python %s "%s" "$1" "$2"\n' % (fullpath, config_file)
-		f = open(hook, 'a+')
+		new_hook = '/usr/bin/python %s "%s" "$1" "$2"\n' % \
+				(str(fullpath), config_file)
+
+		f = open(str(hook), 'a+')
 		f.seek(0, 2) # seek to end of file, not all systems do this
 
 		if f.tell() != 0:
@@ -152,12 +154,12 @@ class Repository(object):
 			f.write(self.signature)
 			f.write(new_hook)
 		f.close()
-		os.chmod(hook, 0755)
+		os.chmod(str(hook), 0755)
 
 	def remove(self):
 		config = Config()
-		reposdir = config.get('svn', 'repositories')
-		newrepos = Path(reposdir) + self.name
+		reposdir = config.getpath('svn', 'repositories')
+		newrepos = reposdir + self.name
 		if not newrepos.absolute:
 			raise Exception("Error, repository path is relative, this should be fixed")
 

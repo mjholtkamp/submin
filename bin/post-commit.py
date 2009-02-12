@@ -40,7 +40,7 @@ def main():
 		return
 
 	config = Config()
-	bindir = config.get('backend', 'bindir')
+	bindir = config.getpath('backend', 'bindir')
 	a = config.authz
 	n = buildNotifications(a.users())
 	repos = os.path.basename(repospath)
@@ -48,7 +48,7 @@ def main():
 		print "no such repository"
 		return
 
-	mailer = os.path.join(bindir, scriptname)
+	mailer = bindir + scriptname
 	for email in  n[repos]:
 		os.system("%s '%s' '%s' -s '[%s]' '%s'" % (mailer, repospath, rev, repos, email))
 
