@@ -14,10 +14,11 @@ class ConfigData:
 
 	def __init__(self, filename=''):
 		self.ctimes = {}
-		self.ctimes["config"] = 0;
-		self.ctimes["authz"] = 0;
-		self.ctimes["userprop"] = 0;
-		self.ctimes["htpasswd"] = 0;
+		self.ctimes["config"] = 0
+		self.ctimes["authz"] = 0
+		self.ctimes["userprop"] = 0
+		self.ctimes["htpasswd"] = 0
+		self.version = 1
 		self.use_env = False
 		self.filename = filename
 		if not filename:
@@ -33,23 +34,29 @@ class ConfigData:
 			return 0
 
 	def reinit(self):
+		if os.environ.has_key('SUBMIN_ENV'):
+			self.version = 2
+			self.base_path = Path(os.environ['SUBMIN_ENV'])
+			self.filename = str(self.base_path + 'conf' + 'submin.ini')
+			self.use_env = False
+
 		filename = self.filename
 		if self.use_env:
 			if not os.environ.has_key('SUBMIN_CONF'):
 				raise Exception('SUBMIN_CONF environment not found')
 			self.filename = os.environ['SUBMIN_CONF']
 			if filename != self.filename:
-				self.ctimes["config"] = 0;
-				self.ctimes["authz"] = 0;
-				self.ctimes["userprop"] = 0;
-				self.ctimes["htpasswd"] = 0;
+				self.ctimes["config"] = 0
+				self.ctimes["authz"] = 0
+				self.ctimes["userprop"] = 0
+				self.ctimes["htpasswd"] = 0
 				filename = self.filename
 		
-		s_c = os.stat(self.filename)
-		if not self.cp or s_c.st_ctime > self.ctimes["config"]:
+		conf_ctime = self._ctime(self.filename)
+		if not self.cp or conf_ctime > self.ctimes["config"]:
 			self.cp = ConfigParser.ConfigParser()
 			self.cp.read(self.filename)
-			self.ctimes["config"] = s_c.st_ctime
+			self.ctimes["config"] = conf_ctime
 
 		# authz/userprop preparation
 		authz_file = ''
@@ -93,22 +100,30 @@ class ConfigData:
 		# Normalize base_url and make it a member for easy access
 		self.base_url = Path(self.get("www", "base_url"), absolute=True, append_slash=True)
 
-		if os.environ.has_key('SCRIPT_FILENAME'):
-			self.base_path = os.path.dirname(os.path.realpath(os.environ['SCRIPT_FILENAME']))
-			self.base_path = os.path.dirname(self.base_path.rstrip('/'))
-		else:
-			# no cgi script
-			self.base_path = ''
+		if self.version == 1:
+			if os.environ.has_key('SCRIPT_FILENAME'):
+				self.base_path = os.path.dirname(os.path.realpath(os.environ['SCRIPT_FILENAME']))
+				self.base_path = os.path.dirname(self.base_path.rstrip('/'))
+			else:
+				# no cgi script
+				self.base_path = ''
 
 	def getpath(self, section, variable):
 		path = Path(self.get(section, variable))
 		if path.absolute:
 			return path
 		
-		return Path(self.base_path) + path
+		return self.base_path + path
 
 	def get(self, section, variable):
 		return self.cp.get(section, variable)
+
+	def set(self, section, variable, value):
+		self.cp.set(section, variable, value)
+
+	def save(self):
+		f = file(self.filename, 'w')
+		self.cp.write(f)
 
 class Config(object):
 	"""Wrapper around ConfigData, so this is actually a Singleton.
