@@ -1,5 +1,5 @@
 from path.path import Path
-from config.config import ConfigData
+from config.config import Config
 import os
 
 class c_config():
@@ -21,14 +21,14 @@ Usage:
 		self.submin_ini_defaults(filename)
 
 	def subcmd_get(self, argv):
-		c = ConfigData()
+		c = Config()
 
 	def subcmd_set(self, argv):
 		if len(argv) != 3:
 			self.sa.execute(['help', 'config'])
 			return
 
-		c = ConfigData()
+		c = Config()
 		c.set(argv[0], argv[1], argv[2])
 		c.save()
 
