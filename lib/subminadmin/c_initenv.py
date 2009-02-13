@@ -69,6 +69,20 @@ Examples:
 			self.create_dir(self.env)
 			self.create_dir(self.init_vars['svn dir'])
 			self.create_dir(self.init_vars['conf dir'])
+
+			self.sa.execute(['config', 'defaults'])
+
+			# write changes to config
+			from config.config import ConfigData
+			os.environ['SUBMIN_ENV'] = self.sa.env
+			c = ConfigData()
+			c.set('svn', 'repositories', str(self.init_vars['svn dir']))
+			p = self.init_vars['http base']
+			c.set('www', 'base_url', str(p + 'submin'))
+			c.set('www', 'trac_base_url', str(p + 'trac'))
+			c.set('www', 'svn_base_url', str(p + 'svn'))
+			c.save()
+
 		except OSError:
 			return # already printed error message
 
