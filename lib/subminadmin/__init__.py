@@ -1,6 +1,8 @@
 import sys
 import os
 
+from config.config import CouldNotReadConfig
+
 class SubminAdmin:
 	def __init__(self, argv):
 		self.argv = argv
@@ -90,7 +92,12 @@ Use '?' or 'help' for help on commands.
 			print "Unknown command"
 			return True
 
-		return Class.run()
+		try:
+			Class.run()
+		except CouldNotReadConfig, e:
+			print "Error reading config:"
+			print str(e)
+			print
 
 	def usage(self):
 		print "Usage: %s </path/to/projenv> [command [subcommand] [option]]" \
