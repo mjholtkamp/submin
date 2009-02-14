@@ -97,6 +97,8 @@ If you use Trac, it will be accessible from <http base>/trac.
 			self.create_dir(self.init_vars['svn dir'])
 			self.create_dir(self.init_vars['conf dir'])
 			self.create_dir(self.init_vars['trac dir'])
+			self.create_dir(Path('auth'))
+			self.create_dir(Path('static'))
 		except OSError:
 			return # already printed error message
 

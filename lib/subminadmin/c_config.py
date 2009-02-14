@@ -44,12 +44,12 @@ Usage:
 
 	def submin_ini_defaults(self, filename):
 		vars = {
-			'authz': 'authz',
-			'userprop': 'userprop.conf',
-			'htpasswd': 'htpasswd',
+			'authz': 'auth/authz',
+			'userprop': 'auth/userprop.conf',
+			'htpasswd': 'auth/htpasswd',
 			'svn dir': 'svn',
 			'http base': '',
-			'bin dir': 'bin',
+			'bin dir': 'static/bin',
 			'trac dir': 'trac',
 			'session salt': self.session_salt()
 		}
