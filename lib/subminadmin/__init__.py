@@ -80,6 +80,11 @@ Use '?' or 'help' for help on commands.
 			return True
 
 		cmd = self.cmd_alias(argv[0])
+		if not os.path.exists(self.env):
+			if cmd not in ['quit', 'initenv', 'help']:
+				print 'environment does not exist, use initenv'
+				return True
+
 		Class = self.cmd_instance(cmd, argv[1:])
 		if not Class:
 			print "Unknown command"
