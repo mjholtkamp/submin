@@ -127,7 +127,6 @@ If you use Trac, it will be accessible from <http base>/trac.
 		print "\nAdded an admin user with password 'admin'\n"
 		
 		self.sa.execute(['upgrade'])
-		self.sa.execute(['unixperms', 'fix'])
 
 	def run(self):
 		if os.path.exists(str(self.env)):

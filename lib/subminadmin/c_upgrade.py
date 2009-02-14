@@ -48,3 +48,4 @@ Usage:
 
 	def run(self):
 		self.upgrade()
+		self.sa.execute(['unixperms', 'fix'])
