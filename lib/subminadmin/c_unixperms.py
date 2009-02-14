@@ -14,7 +14,7 @@ Usage:
 
 	def subcmd_fix(self, argv):
 		if os.getuid() != 0:
-			print '''To set permissions properly, execute as root:
+			print '''To also set ownerships properly, execute as root:
     submin-admin unixperms fix
 '''
 			self.root = False
