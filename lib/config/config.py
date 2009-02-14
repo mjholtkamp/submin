@@ -6,6 +6,10 @@ from authz.htpasswd import HTPasswd
 
 from path.path import Path
 
+class CouldNotReadConfig(Exception):
+	def __init__(self, msg):
+		Exception.__init__(self, msg)
+
 class ConfigData:
 	"""Upon construction, it should be checked if files need to be read."""
 	cp = None
@@ -52,10 +56,18 @@ class ConfigData:
 				self.ctimes["htpasswd"] = 0
 				filename = self.filename
 		
-		conf_ctime = self._ctime(self.filename)
+		try:
+			conf_stat = os.stat(self.filename)
+		except OSError, e:
+			raise CouldNotReadConfig(str(e))
+
+		conf_ctime = conf_stat.st_ctime 
 		if not self.cp or conf_ctime > self.ctimes["config"]:
 			self.cp = ConfigParser.ConfigParser()
-			self.cp.read(self.filename)
+			files = self.cp.read(self.filename)
+			if len(files) == 0:
+				raise CouldNotReadConfig('File is empty?')
+
 			self.ctimes["config"] = conf_ctime
 
 		# authz/userprop preparation
