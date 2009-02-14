@@ -31,7 +31,6 @@ Examples:
 			'conf dir': Path('conf'),
 			'authz': Path('authz'),
 			'htpasswd': Path('htpasswd'),
-			'bin dir': Path('bin')
 		}
 
 	def prompt_user(self, prompt, default):
@@ -97,7 +96,6 @@ If you use Trac, it will be accessible from <http base>/trac.
 			self.create_dir(self.env)
 			self.create_dir(self.init_vars['svn dir'])
 			self.create_dir(self.init_vars['conf dir'])
-			self.create_dir(self.init_vars['bin dir'])
 			self.create_dir(self.init_vars['trac dir'])
 		except OSError:
 			return # already printed error message
@@ -126,6 +124,7 @@ If you use Trac, it will be accessible from <http base>/trac.
 		c.authz.addGroup('submin-admins', ['admin'])
 		print "\nAdded an admin user with password 'admin'\n"
 		
+		self.sa.execute(['upgrade'])
 		self.sa.execute(['unixperms', 'fix'])
 
 	def run(self):
