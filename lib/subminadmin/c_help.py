@@ -27,7 +27,7 @@ Usage:
 					continue
 
 				docs = instance.__doc__.split('\n', 1)
-				print "%10s - %s" % (cmd, docs[0])
+				print "  %-10s - %s" % (cmd, docs[0])
 			print """
 Use 'help [command]' to get more information on that command
 """
