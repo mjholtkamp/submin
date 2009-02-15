@@ -40,9 +40,9 @@ Examples:
 		if a == '':
 			return defval
 
-		p = Path(a)
+		p = Path('')
 		if type(p) == type(defval):
-			return p
+			return Path(a, absolute=defval.absolute, append_slash=defval.append_slash)
 
 		return a
 
