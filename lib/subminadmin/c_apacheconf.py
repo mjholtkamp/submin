@@ -18,7 +18,7 @@ Usage:
 
 		self.defaults = {
 			'type': 'wsgi',
-			'output': '/etc/submin/apache.conf'
+			'output': config.base_path + 'conf' + 'apache.conf'
 		}
 		self.init_vars = {
 			'submin env': self.sa.env,
@@ -102,7 +102,7 @@ Usage:
 		contents += self._apache_conf_svn(self.init_vars)
 		contents += self._apache_conf_trac(self.init_vars)
 
-		file(self.init_vars['output'], 'w').write(contents)
+		file(str(self.init_vars['output']), 'w').write(contents)
 
 		print '''
 Apache file created: %(output)s
