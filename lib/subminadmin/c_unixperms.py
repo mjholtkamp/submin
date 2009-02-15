@@ -64,10 +64,14 @@ This should also remove possible following warnings.
 
 	def _change_item(self, item, user, group):
 		try:
+			permission = 0640
 			if os.path.isdir(item):
-				os.chmod(item, 0750)
-			else:
-				os.chmod(item, 0640)
+				permission = 0750
+			(root, ext) = os.path.splitext(item)
+			if ext == '.cgi' or ext == '.wsgi':
+				permission = 0750
+
+			os.chmod(item, permission)
 		except OSError:
 			print ' *** Failed to change permissions of %s' % s
 			print '     Do you have the right permissions?'
