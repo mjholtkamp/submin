@@ -43,7 +43,7 @@ class ConfigData:
 			self.base_path = Path(os.environ['SUBMIN_ENV'])
 			self.filename = str(self.base_path + 'conf' + 'submin.ini')
 			self.use_env = False
-			self.template_path = self.base_path + 'static' + 'template'
+			self.template_path = self.base_path + 'static' + 'templates'
 
 		filename = self.filename
 		if self.use_env:
