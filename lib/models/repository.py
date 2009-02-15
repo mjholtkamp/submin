@@ -118,7 +118,12 @@ class Repository(object):
 		hook = reposdir + self.name + 'hooks' + 'post-commit'
 		bindir = self.config.getpath('backend', 'bindir')
 		fullpath = bindir + 'post-commit.py'
-		config_file = os.environ['SUBMIN_CONF']
+		# XXX ugly code :(
+		if config.version == 1:
+			config_file = os.environ['SUBMIN_CONF']
+		else:
+			config_file = os.environ['SUBMIN_ENV']
+
 		new_hook = '/usr/bin/python %s "%s" "$1" "$2"\n' % \
 				(str(fullpath), config_file)
 

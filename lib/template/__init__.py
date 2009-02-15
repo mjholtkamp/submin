@@ -7,8 +7,7 @@ import template_commands
 
 def evaluate(templatename, localvars={}):
 	config = Config()
-	template_dir = os.path.join(config.base_path, 'templates')
-	templatename = os.path.join(template_dir, templatename)
+	templatename = str(config.template_path + templatename)
 	oldcwd = os.getcwd()
 	if os.path.dirname(templatename):
 		os.chdir(os.path.dirname(templatename))

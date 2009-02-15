@@ -43,6 +43,7 @@ class ConfigData:
 			self.base_path = Path(os.environ['SUBMIN_ENV'])
 			self.filename = str(self.base_path + 'conf' + 'submin.ini')
 			self.use_env = False
+			self.template_path = self.base_path + 'static' + 'template'
 
 		filename = self.filename
 		if self.use_env:
@@ -114,11 +115,12 @@ class ConfigData:
 
 		if self.version == 1:
 			if os.environ.has_key('SCRIPT_FILENAME'):
-				self.base_path = os.path.dirname(os.path.realpath(os.environ['SCRIPT_FILENAME']))
-				self.base_path = os.path.dirname(self.base_path.rstrip('/'))
+				p = os.path.dirname(os.path.realpath(os.environ['SCRIPT_FILENAME']))
+				self.base_path = Path(os.path.dirname(p.rstrip('/')))
 			else:
 				# no cgi script
-				self.base_path = ''
+				self.base_path = Path('')
+			self.template_path = self.base_path + 'templates'
 
 	def getpath(self, section, variable):
 		path = Path(self.get(section, variable))

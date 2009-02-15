@@ -30,7 +30,10 @@ def main():
 
 	repospath = argv[2]
 	rev = argv[3]
-	os.environ['SUBMIN_CONF'] = argv[1]
+	if argv[1].endswith('.conf'):
+		os.environ['SUBMIN_CONF'] = argv[1]
+	else:
+		os.environ['SUBMIN_ENV'] = argv[1]
 
 	try:
 		from config.config import Config
