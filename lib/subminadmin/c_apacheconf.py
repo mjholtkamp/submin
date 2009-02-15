@@ -50,9 +50,20 @@ Usage:
 
 	def interactive(self):
 		print '''
+Choosing CGI or WSGI is a trade-off between speed and compatibility. CGI is
+enabled for most Apache installations, but slower than WSGI. If you have WSGI
+enabled (mod_wsgi), you should choose WSGI.
 '''
-		self._get_value_from_user("Wsgi or cgi?", 'type')
-		self._get_value_from_user("Output file?", 'output')
+		self._get_value_from_user("wsgi or cgi?", 'type')
+
+		print '''
+The Apache config file will be created, all we need now is a filename. THIS
+FILE WILL BE OVERWRITTEN WITHOUT ANY WARNING! The default option is good in
+most installations. Just include this file in your main apache config. The
+recommended way is to include it in a VirtualHost.
+'''
+		self._get_value_from_user("Output file? (will be overwritten!!)",
+			'output')
 
 		self._apache_conf_create()
 
