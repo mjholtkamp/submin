@@ -88,12 +88,12 @@ Use '?' or 'help' for help on commands.
 				print 'environment does not exist, use initenv'
 				return True
 
-		Class = self.cmd_instance(cmd, argv[1:])
-		if not Class:
-			print "Unknown command"
-			return True
-
 		try:
+			Class = self.cmd_instance(cmd, argv[1:])
+			if not Class:
+				print "Unknown command"
+				return True
+
 			Class.run()
 		except CouldNotReadConfig, e:
 			print "Error reading config:"
