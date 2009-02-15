@@ -30,7 +30,11 @@ def createTracEnv(repository):
 	projectname = repository
 	svnbasedir = config.getpath('svn', 'repositories')
 	svndir = svnbasedir + repository
-	path = config.get('backend', 'path')
+	try:
+		path = config.get('backend', 'path')
+	except NoOptionError:
+		path = "/bin:/usr/bin:/usr/local/bin:/opt/local/bin"
+
 	cmd =  "PATH='%s' trac-admin '%s' initenv '%s' 'sqlite:db/trac.db' 'svn' '%s'" % \
 		(path, tracenv, projectname, svndir)
 	(exitstatus, outtext) = commands.getstatusoutput(cmd)
