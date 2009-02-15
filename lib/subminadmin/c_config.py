@@ -50,6 +50,7 @@ Usage:
 			'svn dir': 'svn',
 			'http base': '',
 			'bin dir': 'static/bin',
+			'path env': '/bin:/usr/bin:/usr/local/bin:/opt/local/bin',
 			'trac dir': 'trac',
 			'session salt': self.session_salt()
 		}
@@ -67,6 +68,7 @@ trac_base_url = %(http base)s/trac
 
 [backend]
 bindir = %(bin dir)s
+path = %(path env)s
 
 [trac]
 basedir = %(trac dir)s
