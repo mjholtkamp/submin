@@ -199,7 +199,7 @@ function redrawNotifications(notifications) {
 		input.defaultChecked = input.checked; // IE7 quirk
 		if (!email || email == "") {
 			input.disabled = "disabled";
-			input.title = "Please fill in an email address to enabled this control";
+			input.title = "Please fill in an email address to enable this control";
 		}
 
 		var td_enabled = $c("td");
