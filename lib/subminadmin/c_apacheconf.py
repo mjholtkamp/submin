@@ -133,7 +133,7 @@ Apache file created: %(output)s
         </Directory>
     </IfModule>
     <IfModule !mod_cgi.c>
-        Alias "%(submin base url)s" %(www dir)s/nocgi.html
+        AliasMatch "^%(submin base url)s" %(www dir)s/nocgi.html
         <Location "%(submin base url)s">
             Order allow,deny
             Allow from all
@@ -157,7 +157,7 @@ Apache file created: %(output)s
         </Location>
     </IfModule>
     <IfModule !mod_wsgi.c>
-        Alias "%(submin base url)s" %(www dir)s/nowsgi.html
+        AliasMatch "^%(submin base url)s" %(www dir)s/nowsgi.html
         <Location "%(submin base url)s">
             Order allow,deny
             Allow from all
@@ -206,7 +206,7 @@ Apache file created: %(output)s
         </LocationMatch>
     </IfModule>
     <IfModule !mod_python.c>
-        Alias "%(trac base url)s" %(www dir)s/nomodpython.html
+        AliasMatch "^%(trac base url)s" %(www dir)s/nomodpython.html
         <Location "%(trac base url)s">
             Order allow,deny
             Allow from all
