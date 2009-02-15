@@ -132,6 +132,13 @@ Apache file created: %(output)s
             RewriteRule ^/?$ submin.cgi/
         </Directory>
     </IfModule>
+    <IfModule !mod_cgi.c>
+        Alias "%(submin base url)s" %(www dir)s/nocgi.html
+        <Location "%(submin base url)s">
+            Order allow,deny
+            Allow from all
+        </Location>
+    </IfModule>
 ''' % vars
 		return apache_conf_cgi
 
@@ -144,7 +151,16 @@ Apache file created: %(output)s
         AliasMatch ^%(submin base url)s/js/(.*) %(www dir)s/js/$1
 
         <Location "%(submin base url)s">
+            Order allow,deny
+            Allow from all
             SetEnv SUBMIN_ENV "%(submin env)s"
+        </Location>
+    </IfModule>
+    <IfModule !mod_wsgi.c>
+        Alias "%(submin base url)s" %(www dir)s/nowsgi.html
+        <Location "%(submin base url)s">
+            Order allow,deny
+            Allow from all
         </Location>
     </IfModule>
 ''' % vars
@@ -188,6 +204,13 @@ Apache file created: %(output)s
            AuthUserFile "%(access file)s"
            Require valid-user
         </LocationMatch>
+    </IfModule>
+    <IfModule !mod_python.c>
+        Alias "%(trac base url)s" %(www dir)s/nomodpython.html
+        <Location "%(trac base url)s">
+            Order allow,deny
+            Allow from all
+        </Location>
     </IfModule>
 ''' % vars
 		return apache_conf_trac
