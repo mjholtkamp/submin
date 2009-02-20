@@ -200,6 +200,7 @@ function redrawNotifications(notifications) {
 		if (!email || email == "") {
 			input.disabled = "disabled";
 			input.title = "Please fill in an email address to enable this control";
+			input.setAttribute("class", "disabled")
 		}
 
 		var td_enabled = $c("td");

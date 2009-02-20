@@ -24,3 +24,6 @@ tr.noticeshead td.name {
 	width: 100px;
 }
 
+#content input.disabled {
+	cursor: help;
+}
