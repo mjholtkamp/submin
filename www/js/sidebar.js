@@ -63,6 +63,7 @@ function reloadX(response, X, Xplural, Xcapital) {
 	var Xs = list.xml.getElementsByTagName(X);
 	for (var i = 0; i < Xs.length; ++i) {
 		var name = Xs[i].getAttribute("name");
+		var valid = Xs[i].getAttribute("valid") != "False";
 		var special_group = false;
 		// CRUFT after we convert not to abuse submin-admins
 		if (X == "group" && name == "submin-admins")
@@ -83,8 +84,14 @@ function reloadX(response, X, Xplural, Xcapital) {
 		} else {
 			link.appendChild(nameNode);
 		}
-		li.appendChild(link);
-		if (is_admin && !special_group) {
+		if (valid) {
+			li.appendChild(link);
+		} else {
+			nameNode.setAttribute("class", "invalid");
+			nameNode.setAttribute("title", "This repository is invalid (please check permissions)");
+			li.appendChild(nameNode);
+		}
+		if (is_admin && !special_group && valid) {
 			var span = $c("span");
 			addClassName(span, "delete" + X);
 			span.setAttribute("name", name);

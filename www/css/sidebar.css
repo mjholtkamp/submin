@@ -55,7 +55,7 @@ body {
 #sidebar li .deleteuser, #sidebar li .deletegroup, #sidebar li .deleterepository {
 	display: none;
 }
-#sidebar div.showhide li a {
+#sidebar div.showhide li a, #sidebar div.showhide li span.invalid {
 	display: block;
 	float: left;
 	width: 75%;
@@ -64,6 +64,11 @@ body {
 	color: black;
 	overflow: hidden;
 	white-space: nowrap;
+}
+
+#sidebar div.showhide li span.invalid {
+	color: red;
+	cursor: help;
 }
 
 #sidebar div.logout li a {
