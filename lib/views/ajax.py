@@ -10,6 +10,7 @@ from auth.decorators import *
 
 class Ajax(View):
 	"""Ajax view, for global ajax requests, like list users/groups/repositories"""
+	@login_required
 	def handler(self, req, path):
 		config = Config()
 		# we only handle ajax requests
@@ -57,7 +58,9 @@ class Ajax(View):
 	def listRepositories(self, req):
 		try:
 			repos = listRepositories(req.session['user'])
-			return XMLTemplateResponse("ajax/listrepositories.xml", {'repositories': repos})
+			invalid = listRepositories(req.session['user'], only_invalid=True)
+			variables = {'repositories': repos, 'invalid_repositories': invalid}
+			return XMLTemplateResponse("ajax/listrepositories.xml", variables)
 		except Exception, e:
 			return XMLStatusResponse('listGroups', False, 'Failed to get a list: %s' % e)
 

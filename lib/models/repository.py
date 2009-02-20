@@ -3,7 +3,7 @@ from path.path import Path
 import commands
 import exceptions
 
-def listRepositories(session_user):
+def listRepositories(session_user, only_invalid=False):
 	config = Config()
 	repositories = []
 	if session_user.is_admin:
@@ -11,7 +11,13 @@ def listRepositories(session_user):
 		repository_names.sort()
 
 		for repos in repository_names:
-			repositories.append(Repository(repos))
+			try:
+				r = Repository(repos)
+				if not only_invalid:
+					repositories.append(repos)
+			except Repository.DoesNotExist:
+				if only_invalid:
+					repositories.append(repos)
 
 	return repositories
 
