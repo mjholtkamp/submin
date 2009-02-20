@@ -1,3 +1,9 @@
+submin (1.2.2-1) testing; urgency=low
+
+  * Fixed listing of repositories when permissions were incorrect (#143)
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Fri, 20 Feb 2009 04:30:38 +0100
+
 submin (1.2.1-1) testing; urgency=low
 
   * Simplify javascript (closes #136), html cleanup, css cleanup
