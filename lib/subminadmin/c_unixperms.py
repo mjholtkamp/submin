@@ -73,14 +73,14 @@ This should also remove possible following warnings.
 
 			os.chmod(item, permission)
 		except OSError:
-			print ' *** Failed to change permissions of %s' % s
+			print ' *** Failed to change permissions of %s' % item
 			print '     Do you have the right permissions?'
 
 		if self.root:
 			try:
 				os.chown(item, user, group)
 			except OSError:
-				print ' *** Failed to change ownership of %s' % s
+				print ' *** Failed to change ownership of %s' % item
 
 	def _apache_user(self, preferred=''):
 		from pwd import getpwnam
