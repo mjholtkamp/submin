@@ -94,6 +94,14 @@ do this by checking if they reside in the same dirs as the auth files."""
 			self._copy_dir(self.old_options['trac_dir'], new_trac_dir)
 
 		# copy users/groups/permissions
+		file_info = [
+			('authz_file', 'svn', 'authz_file'),
+			('access_file', 'svn', 'access_file'),
+			('userprop_file', 'svn', 'userprop_file'),
+		]
+		for info in file_info:
+			new_file = str(newc.getpath(info[1], info[2]))
+			shutil.copy2(self.old_options[info[0]], new_file)
 
 	def _copy_dir(self, old_dir, new_dir):
 		os.rmdir(new_dir) # copytree will fail otherwise
