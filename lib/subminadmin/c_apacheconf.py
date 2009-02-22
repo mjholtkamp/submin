@@ -13,25 +13,6 @@ Usage:
 		self.sa = sa
 		self.argv = argv
 
-		os.environ['SUBMIN_ENV'] = self.sa.env
-		config = Config()
-
-		self.defaults = {
-			'type': 'wsgi',
-			'output': config.base_path + 'conf' + 'apache.conf'
-		}
-		self.init_vars = {
-			'submin env': self.sa.env,
-			'www dir': config.base_path + 'static' + 'www',
-			'submin base url': config.get('www', 'base_url'),
-			'svn base url': config.get('www', 'svn_base_url'),
-			'trac base url': config.get('www', 'trac_base_url'),
-			'svn dir': config.getpath('svn', 'repositories'),
-			'access file': config.getpath('svn', 'access_file'),
-			'authz file': config.getpath('svn', 'authz_file'),
-			'trac dir': config.getpath('trac', 'basedir')
-		}
-
 	def _get_value_from_user(self, prompt, default):
 		defval = self.defaults[default]
 		a = raw_input("%s [%s]> " % (prompt, defval))
@@ -227,6 +208,25 @@ Apache file created: %(output)s
 		return apache_conf_trac
 
 	def run(self):
+		os.environ['SUBMIN_ENV'] = self.sa.env
+		config = Config()
+
+		self.defaults = {
+			'type': 'wsgi',
+			'output': config.base_path + 'conf' + 'apache.conf'
+		}
+		self.init_vars = {
+			'submin env': self.sa.env,
+			'www dir': config.base_path + 'static' + 'www',
+			'submin base url': config.get('www', 'base_url'),
+			'svn base url': config.get('www', 'svn_base_url'),
+			'trac base url': config.get('www', 'trac_base_url'),
+			'svn dir': config.getpath('svn', 'repositories'),
+			'access file': config.getpath('svn', 'access_file'),
+			'authz file': config.getpath('svn', 'authz_file'),
+			'trac dir': config.getpath('trac', 'basedir')
+		}
+
 		if len(self.argv) < 1:
 			self.sa.execute(['help', 'apacheconf'])
 			return
