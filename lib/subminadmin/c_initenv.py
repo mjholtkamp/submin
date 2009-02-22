@@ -158,27 +158,28 @@ If you use Trac, it will be accessible from <http base>/trac.
 	def run(self):
 		if os.path.exists(str(self.env)):
 			print "Directory already exists, won't overwrite"
-			return
+			return False
 
 		if len(self.argv) < 1:
 			try:
 				self.interactive()
 			except KeyboardInterrupt:
 				print
-				return
-			return
+				return False
+			return True
 
 		for arg in self.argv:
 			if '=' not in arg:
 				self.sa.execute(['help', 'initenv'])
-				return
+				return False
 
 			(key, val) = arg.split('=', 1)
 			if not self.defaults.has_key(key):
 				print "\nSorry, I don't understand `%s':\n" % key
 				self.sa.execute(['help', 'initenv'])
-				return
+				return False
 
 			self.set_init_var(key, val)
 
 		self.create_env()
+		return True

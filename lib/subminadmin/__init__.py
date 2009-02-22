@@ -88,17 +88,20 @@ Use '?' or 'help' for help on commands.
 				print 'environment does not exist, use initenv'
 				return True
 
+		rc = False
 		try:
 			Class = self.cmd_instance(cmd, argv[1:])
 			if not Class:
 				print "Unknown command"
 				return True
 
-			Class.run()
+			rc = Class.run()
 		except CouldNotReadConfig, e:
 			print "Error reading config:"
 			print str(e)
 			print
+		
+		return rc
 
 	def usage(self):
 		print "Usage: %s </path/to/projenv> [command [subcommand] [option]]" \
