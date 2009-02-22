@@ -6,45 +6,58 @@ class c_initenv():
 	'''Initialize a new enviroment
 Usage:
     initenv                        - Create environment interactively
-    initenv <repospath> <httpbase> - Create environment from arguments
+    initenv <argument> [arguments] - Create environment from arguments
 
-Examples:
-    initenv svn /
-            -- Uses default repositories inside submin dir, submin website is
-               reached at: http://example.com/submin
-    initenv svn /dev
-            -- As above, but site is reached at http://example.com/dev/submin
-    initenv /var/lib/svn /
-            -- Uses subversion repositories outside submin dir. If the
-               directory doesn't already exist, it is created.'''
+Arguments:
+    svn_dir=<path>           - base path for svn repositories (default: svn)
+    trac_dir=<path>          - dir for trac environments (default: trac)
+    http_base=<url>          - base url (default: /)
+    trac_url=<url>           - url to trac (default: trac)
+    submin_url=<url>         - url to submin (default: submin)
+    svn_url=<url>            - url to subversion repositories (default: svn)
+
+Notes:
+    The *_url arguments are all relative to http_base, unless they begin with
+    "http://" or with "/".
+
+    Paths are relative to environment directory, unless they begin with "/".'''
 
 	def __init__(self, sa, argv):
 		self.sa = sa
 		self.env = Path(self.sa.env)
 		self.argv = argv
 		self.defaults = {
-			'svn dir': Path('svn'),
-			'trac dir': Path('trac'),
-			'http base': Path('/')
+			'svn_dir': Path('svn'),
+			'trac_dir': Path('trac'),
+			'http_base': Path('/'),
+			'trac_url': Path('trac'),
+			'submin_url': Path('submin'),
+			'svn_url': Path('svn')
 		}
 		self.init_vars = {
-			'conf dir': Path('conf'),
+			'conf_dir': Path('conf'),
 			'authz': Path('authz'),
 			'htpasswd': Path('htpasswd'),
 		}
 
-	def prompt_user(self, prompt, default):
-		defval = self.defaults[default]
+	def prompt_user(self, prompt, key):
+		defval = self.defaults[key]
 		a = raw_input("%s [%s]> " % (prompt, defval))
 
 		if a == '':
-			return defval
+			self.set_init_var(key, defval)
+			return
 
-		p = Path('')
-		if type(p) == type(defval):
-			return Path(a, absolute=defval.absolute, append_slash=defval.append_slash)
+		self.set_init_var(key, a)
 
-		return a
+	def set_init_var(self, key, val):
+		defval = self.defaults[key]
+		if type(Path('')) == type(defval):
+			p = Path(str(val), append_slash=defval.append_slash)
+			self.init_vars[key] = p
+			return
+
+		self.init_vars[key] = val
 
 	def interactive(self):
 		print '''
@@ -54,8 +67,7 @@ be relative to the submin environment. If you want to use an existing
 repository, please provide the full pathname to the Subversion parent
 directory (ie. /var/lib/svn).
 '''
-		svn_dir = self.prompt_user("Path to the repository?", 'svn dir')
-		self.init_vars['svn dir'] = svn_dir
+		self.prompt_user("Path to the repository?", 'svn_dir')
 
 		print '''
 Please provide a location for the parent dir of Trac environments. For a new
@@ -63,8 +75,7 @@ installation, the default setting is ok. If you don't want to use Trac, the
 default setting is also ok. For existing Trac environments, please provide
 the full path.
 '''
-		trac_dir = self.prompt_user("Path to trac environment?", 'trac dir')
-		self.init_vars['trac dir'] = trac_dir
+		self.prompt_user("Path to trac environment?", 'trac_dir')
 
 		print '''
 The HTTP path tells Submin where the website is located relative to the root.
@@ -72,8 +83,7 @@ This is needed for proper working of the website. Submin will be accesible
 from <http base>/submin, Subversion will be accessible from <http base>/svn.
 If you use Trac, it will be accessible from <http base>/trac.
 '''
-		http_base = self.prompt_user("HTTP base?", 'http base')
-		self.init_vars['http base'] = http_base
+		self.prompt_user("HTTP base?", 'http_base')
 
 		self.create_env()
 
@@ -94,26 +104,30 @@ If you use Trac, it will be accessible from <http base>/trac.
 		"""This is called when all info is gathered"""
 		try:
 			self.create_dir(self.env)
-			self.create_dir(self.init_vars['svn dir'])
-			self.create_dir(self.init_vars['conf dir'])
-			self.create_dir(self.init_vars['trac dir'])
+			self.create_dir(self.init_vars['svn_dir'])
+			self.create_dir(self.init_vars['conf_dir'])
+			self.create_dir(self.init_vars['trac_dir'])
 			self.create_dir(Path('auth'))
 			self.create_dir(Path('static'))
 		except OSError:
 			return # already printed error message
 
 		self.sa.execute(['config', 'defaults'])
+		
+		# check http_base
+		p = self.init_vars['http_base']
+		if str(p) == "":
+			self.init_vars['http_base'] = Path("/")
 
 		# write changes to config
 		from config.config import Config
 		os.environ['SUBMIN_ENV'] = self.sa.env
 		c = Config()
-		c.set('svn', 'repositories', str(self.init_vars['svn dir']))
-		p = self.init_vars['http base']
-		c.set('www', 'base_url', str(p + 'submin'))
-		c.set('www', 'trac_base_url', str(p + 'trac'))
-		c.set('www', 'svn_base_url', str(p + 'svn'))
-		c.set('trac', 'basedir', str(self.init_vars['trac dir']))
+		c.set('svn', 'repositories', str(self.init_vars['svn_dir']))
+		c.set('www', 'base_url', self._get_url('submin_url'))
+		c.set('www', 'trac_base_url', self._get_url('trac_url'))
+		c.set('www', 'svn_base_url', self._get_url('svn_url'))
+		c.set('trac', 'basedir', str(self.init_vars['trac_dir']))
 		c.save()
 
 		# add an admin user
@@ -128,6 +142,13 @@ If you use Trac, it will be accessible from <http base>/trac.
 		
 		self.sa.execute(['upgrade'])
 
+	def _get_url(self, key):
+		p = self.init_vars[key]
+		if p.absolute or str(p).startswith("http://"):
+			return str(p)
+
+		return str(self.init_vars['http_base'] + p)
+
 	def run(self):
 		if os.path.exists(str(self.env)):
 			print "Directory already exists, won't overwrite"
@@ -141,10 +162,17 @@ If you use Trac, it will be accessible from <http base>/trac.
 				return
 			return
 
-		if len(self.argv) != 2:
-			self.sa.execute(['help', 'initenv'])
-			return
+		for arg in self.argv:
+			if '=' not in arg:
+				self.sa.execute(['help', 'initenv'])
+				return
 
-		self.init_vars['svn dir'] = Path(self.argv[0])
-		self.init_vars['http base'] = Path(self.argv[1])
+			(key, val) = arg.split('=', 1)
+			if not self.defaults.has_key(key):
+				print "\nSorry, I don't understand `%s':\n" % key
+				self.sa.execute(['help', 'initenv'])
+				return
+
+			self.set_init_var(key, val)
+
 		self.create_env()
