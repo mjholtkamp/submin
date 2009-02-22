@@ -145,7 +145,7 @@ If you use Trac, it will be accessible from <http base>/trac.
 
 			c.authz.addGroup('submin-admins', ['admin'])
 			print "\nAdded an admin user with password 'admin'\n"
-		
+
 		self.sa.execute(['upgrade'])
 
 	def _get_url(self, key):
