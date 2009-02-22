@@ -6,9 +6,9 @@ class c_initenv():
 	'''Initialize a new enviroment
 Usage:
     initenv                        - Create environment interactively
-    initenv <argument> [arguments] - Create environment from arguments
+    initenv <option> [option ...]  - Create environment from options
 
-Arguments:
+Options:
     svn_dir=<path>           - base path for svn repositories (default: svn)
     trac_dir=<path>          - dir for trac environments (default: trac)
     http_base=<url>          - base url (default: /)
@@ -32,7 +32,8 @@ Notes:
 			'http_base': Path('/'),
 			'trac_url': Path('trac'),
 			'submin_url': Path('submin'),
-			'svn_url': Path('svn')
+			'svn_url': Path('svn'),
+			'create_user': 'yes'
 		}
 		self.init_vars = {
 			'conf_dir': Path('conf'),
@@ -102,6 +103,10 @@ If you use Trac, it will be accessible from <http base>/trac.
 
 	def create_env(self):
 		"""This is called when all info is gathered"""
+		for key, value in self.defaults.iteritems():
+			if not self.init_vars.has_key(key):
+				self.init_vars[key] = value
+
 		try:
 			self.create_dir(self.env)
 			self.create_dir(self.init_vars['svn_dir'])
@@ -130,15 +135,16 @@ If you use Trac, it will be accessible from <http base>/trac.
 		c.set('trac', 'basedir', str(self.init_vars['trac_dir']))
 		c.save()
 
-		# add an admin user
-		c.htpasswd.add('admin', 'admin')
-		try:
-			c.authz.removeGroup('submin-admins') # on overwrite
-		except UnknownGroupError:
-			pass # ignore
+		if self.init_vars['create_user'] == "yes":
+			# add an admin user
+			c.htpasswd.add('admin', 'admin')
+			try:
+				c.authz.removeGroup('submin-admins') # on overwrite
+			except UnknownGroupError:
+				pass # ignore
 
-		c.authz.addGroup('submin-admins', ['admin'])
-		print "\nAdded an admin user with password 'admin'\n"
+			c.authz.addGroup('submin-admins', ['admin'])
+			print "\nAdded an admin user with password 'admin'\n"
 		
 		self.sa.execute(['upgrade'])
 
