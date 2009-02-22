@@ -50,11 +50,13 @@ This should also remove possible following warnings.
 				st = os.stat(os.path.dirname(item))
 				if st.st_uid != apache.pw_uid:
 					print '''\
-*** WARN: file should be writable by apache user, but parent directory is not.
+ *** WARN: file should be writable by apache user, but parent directory is not.
              (%s)''' % item
 
 	def _recurse_change(self, directory, user, group):
-		self._change_item(directory, user, group)
+		if not self._change_item(directory, user, group):
+			return
+
 		for root, dirs, files in os.walk(directory):
 			for f in files:
 				self._change_item(os.path.join(root, f), user, group)
@@ -63,6 +65,7 @@ This should also remove possible following warnings.
 				self._recurse_change(path, user, group)
 
 	def _change_item(self, item, user, group):
+		success = True
 		try:
 			permission = 0640
 			if os.path.isdir(item):
@@ -75,12 +78,16 @@ This should also remove possible following warnings.
 		except OSError:
 			print ' *** Failed to change permissions of %s' % item
 			print '     Do you have the right permissions?'
+			success = False
 
 		if self.root:
 			try:
 				os.chown(item, user, group)
 			except OSError:
 				print ' *** Failed to change ownership of %s' % item
+				success = False
+
+		return success
 
 	def _apache_user(self, preferred=''):
 		from pwd import getpwnam
