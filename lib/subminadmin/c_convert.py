@@ -24,14 +24,11 @@ Usage:
 do this by checking if they reside in the same dirs as the auth files."""
 
 		dirs = {}
-		dirs['authz_file'] = self.old_options['authz_file']
-		dirs['access_file'] = self.old_options['access_file']
-		dirs['userprop_file'] = self.old_options['userprop_file']
-		dirs['svn_dir'] = self.old_options['svn_dir']
-		dirs['trac_dir'] = self.old_options['trac_dir']
-
-		for d in dirs:
-			dirs[d] = os.path.dirname(dirs[d])
+		opts = ['authz_file', 'access_file', 'userprop_file', 'svn_dir', \
+			'trac_dir']
+			
+		for opt in opts:
+			dirs[opt] = os.path.dirname(self.old_options[opt])
 
 		if dirs['authz_file'] == dirs['access_file'] and \
 				dirs['authz_file'] == dirs['userprop_file']:
@@ -68,8 +65,6 @@ do this by checking if they reside in the same dirs as the auth files."""
 		self._get_options_from_config('svn', 'authz_file', 'authz_file')
 		self._get_options_from_config('svn', 'access_file', 'access_file')
 		self._get_options_from_config('svn', 'userprop_file', 'userprop_file')
-		self._get_options_from_config('svn', 'repositories', 'svn_dir')
-		self._get_options_from_config('trac', 'basedir', 'trac_dir')
 
 		# now see if we need to change options
 		self._check_imports()
