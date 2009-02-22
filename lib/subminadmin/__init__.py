@@ -84,7 +84,7 @@ Use '?' or 'help' for help on commands.
 
 		cmd = self.cmd_alias(argv[0])
 		if not os.path.exists(self.env):
-			if cmd not in ['quit', 'initenv', 'help']:
+			if cmd not in ['quit', 'initenv', 'help', 'convert']:
 				print 'environment does not exist, use initenv'
 				return True
 
