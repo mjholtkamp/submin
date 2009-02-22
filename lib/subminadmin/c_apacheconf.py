@@ -19,15 +19,12 @@ Usage:
 
 		if a == '':
 			self.init_vars[default] = defval
-			return defval
 
 		p = Path(a)
 		if type(p) == type(defval):
 			self.init_vars[default] = p
-			return p
 
 		self.init_vars[default] = a
-		return a
 
 	def interactive(self):
 		print '''
