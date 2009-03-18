@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from config.config import Config
 from path.path import Path
 import commands
@@ -37,11 +38,11 @@ def repositoriesOnDisk():
 	return repositories
 
 class Repository(object):
+	"""Internally, this class uses unicode to represent files and directories.
+It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
+
 	class DoesNotExist(Exception):
 		pass
-	class ImportError(Exception):
-		def __init__(self, s):
-			Exception.__init__(self, s)
 
 	def __init__(self, name):
 		config = Config()
@@ -52,53 +53,69 @@ class Repository(object):
 
 		self.authz_paths = self.config.authz.paths(self.name)
 		self.authz_paths.sort()
-		try:
-			self.dirs = self.getsubdirs("")
-		except self.ImportError, e:
-			raise e
-		except:
-			raise self.DoesNotExist
+		self.dirs = self.getsubdirs("")
 
 	def getsubdirs(self, path):
 		'''Return subdirs (not recursive) of 'path' relative to our reposdir
 		Subdirs are returned as a hash with two entities: 'name' and 
 		'has_subdirs', which should be self-explanatory.'''
-		try:
-			import pysvn
-		except exceptions.ImportError, e:
-			raise self.ImportError('Module pysvn not found, please install it')
 		import os
 
-		client = pysvn.Client()
 		reposdir = self.config.getpath('svn', 'repositories')
-		url = 'file://' + str(reposdir)
-		url = os.path.join(url, self.name)
-		url = os.path.join(url, path)
+		url = 'file://' + os.path.join(reposdir, self.name, path)
 
-		files = client.ls(url, recurse=False)
+		files = self.get_entries(url)
 		dirs = []
-		for file in files:
-			if file['kind'] == pysvn.node_kind.dir:
-				name = file['name']
+		for f in files:
+			if f['kind'] == 'dir':
+				hassubdirs = self.hassubdirs(os.path.join(url, f['name']))
 				entry = {}
-				entry['name'] = name[name.rindex('/') + 1:]
-				entry['has_subdirs'] = self.hassubdirs(os.path.join(url, entry['name']))
+				entry['name'] = f['name']
+				entry['has_subdirs'] = hassubdirs
 				dirs.append(entry)
 
 		return dirs
 
+	def get_entries(self, url):
+		import commands
+		# convert from unicode, because we are going to use it 'outside'
+		url = url.encode('utf-8')
+		# Escape single quotes to prevent injection
+		url = url.replace("'", "\\'")
+		(code, text) = commands.getstatusoutput("LC_CTYPE=UTF-8 svn ls '%s'" % url)
+		if code != 0:
+			raise self.DoesNotExist()
+
+		text = text.split('\n')
+
+		entries = []
+		for entry in text:
+			if len(entry) < 1:
+				continue
+
+			e = {}
+			# Assume entries are utf-8
+			name = unicode(entry, 'utf-8')
+			if entry[-1] == '/':
+				e['kind'] = 'dir'
+				e['name'] = name[:-1]
+			else:
+				e['kind'] = 'file'
+				e['name'] = name
+			entries.append(e)
+
+		return entries
+
 	def hassubdirs(self, url):
-		import pysvn
 		import os
 
-		client = pysvn.Client()
-		files = client.ls(url, recurse=False)
-		for file in files:
-			if str(file['kind']) == 'dir':
-				return True
+		files = self.get_entries(url)
+		for f in files:
+			if f['kind'] == 'dir':
+				return True # only one is enough
 
 		return False
-	
+
 	def notificationsEnabled(self):
 		import os
 

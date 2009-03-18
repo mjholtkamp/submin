@@ -1,8 +1,8 @@
 class Response(object):
 	def __init__(self, content=''):
-		self.content = str(content)
+		self.content = content
 		self.status_code = 200
-		self.headers = {'Content-Type': 'text/html'}
+		self.headers = {'Content-Type': 'text/html; charset=utf-8'}
 
 	def status(self):
 		# XXX provide a real status message
@@ -16,7 +16,7 @@ class Redirect(Response):
 		Response.__init__(self)
 		self.url = str(url)
 		self.status_code = 302
-		self.headers.update({'Location': str(url)})
+		self.headers.update({'Location': self.url})
 
 class HTTP404(Response):
 	def __init__(self, page='/'):

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from template.shortcuts import evaluate_main
 from dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse, Redirect
 from views.error import ErrorResponse
@@ -8,6 +9,7 @@ from models.repository import *
 from models.trac import *
 from auth.decorators import *
 from path.path import Path
+from unicode import url_uc_decode
 from ConfigParser import NoOptionError
 
 class Repositories(View):
@@ -42,7 +44,7 @@ class Repositories(View):
 		import os.path
 		try:
 			repository = Repository(path[0])
-		except (IndexError, Repository.DoesNotExist):
+		except Repository.DoesNotExist:
 			return ErrorResponse('This repository does not exist.', request=req)
 
 		localvars['trac_config_ok'] = True
@@ -123,14 +125,16 @@ class Repositories(View):
 	@admin_required
 	def getsubdirs(self, req, repository):
 		svn_path = req.post['getSubdirs'].value.strip('/')
-		dirs = repository.getsubdirs(svn_path)
+		svn_path_u = url_uc_decode(svn_path) #also convert from utf-8
+		dirs = repository.getsubdirs(svn_path_u)
 		templatevars = {'dirs': dirs}
 		return XMLTemplateResponse('ajax/repositorytree.xml', templatevars)
 
 	@admin_required
 	def getpermissions(self, req, repository):
 		config = Config()
-		svn_path = Path(req.post['getPermissions'].value)
+		path = url_uc_decode(req.post['getPermissions'].value)
+		svn_path = Path(path.encode('utf-8'))
 
 		perms = []
 		authz_paths = [x[1] for x in repository.authz_paths]
@@ -161,6 +165,7 @@ class Repositories(View):
 		name = req.post['name'].value
 		type = req.post['type'].value
 		path = req.post['path'].value
+		path = url_uc_decode(path)
 
 		# add member with no permissions (let the user select that)
 		config.authz.setPermission(repository.name, path, name, type)
@@ -173,6 +178,7 @@ class Repositories(View):
 		name = req.post['name'].value
 		type = req.post['type'].value
 		path = req.post['path'].value
+		path = url_uc_decode(path)
 
 		config.authz.removePermission(repository.name, path, name, type)
 		config.authz.save()
@@ -184,6 +190,7 @@ class Repositories(View):
 		name = req.post['name'].value
 		type = req.post['type'].value
 		path = req.post['path'].value
+		path = url_uc_decode(path)
 		permission = req.post['permission'].value
 
 		config.authz.setPermission(repository.name, path, name, type, permission)

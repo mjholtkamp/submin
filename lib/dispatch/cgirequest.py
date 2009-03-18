@@ -22,7 +22,7 @@ class CGIRequest(Request):
 		self.remote_address = self.__environ.get('REMOTE_ADDR')
 	
 	def write(self, content):
-		self.__output.write(content)
+		self.__output.write(content.encode('utf-8'))
 		self.__output.flush()
 
 class CGIGet(GetVariables):

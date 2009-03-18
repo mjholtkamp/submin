@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import ConfigParser
 
 # Exceptions
@@ -248,6 +249,7 @@ class Authz:
 		if type == 'group':
 			member = '@' + member
 
+		path = path.encode('utf-8')
 		section = self.createSectionName(repository, path)
 		if not self.authzParser.has_section(section):
 			self.authzParser.add_section(section)
@@ -258,6 +260,7 @@ class Authz:
 		"""Removes the members permission from the repository:path"""
 		if type == 'group':
 			member = '@' + member
+		path = path.encode('utf-8')
 
 		section = self.createSectionName(repository, path)
 		retval = self.authzParser.remove_option(section, member)
