@@ -62,5 +62,5 @@ class Ajax(View):
 			variables = {'repositories': repos, 'invalid_repositories': invalid}
 			return XMLTemplateResponse("ajax/listrepositories.xml", variables)
 		except Exception, e:
-			return XMLStatusResponse('listGroups', False, 'Failed to get a list: %s' % e)
+			return XMLStatusResponse('listRepositories', False, 'Failed to get a list: %s' % e)
 
