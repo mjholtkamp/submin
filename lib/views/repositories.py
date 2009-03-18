@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from template.shortcuts import evaluate_main
 from dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse, Redirect
 from views.error import ErrorResponse
@@ -119,7 +120,8 @@ class Repositories(View):
 	@admin_required
 	def getpermissions(self, req, repository):
 		config = Config()
-		svn_path = Path(req.post['getPermissions'].value)
+		path = url_uc_decode(req.post['getPermissions'].value)
+		svn_path = Path(path.encode('utf-8'))
 
 		perms = []
 		authz_paths = [x[1] for x in repository.authz_paths]
@@ -150,6 +152,7 @@ class Repositories(View):
 		name = req.post['name'].value
 		type = req.post['type'].value
 		path = req.post['path'].value
+		path = url_uc_decode(path)
 
 		# add member with no permissions (let the user select that)
 		config.authz.setPermission(repository.name, path, name, type)
@@ -162,6 +165,7 @@ class Repositories(View):
 		name = req.post['name'].value
 		type = req.post['type'].value
 		path = req.post['path'].value
+		path = url_uc_decode(path)
 
 		config.authz.removePermission(repository.name, path, name, type)
 		config.authz.save()
@@ -173,6 +177,7 @@ class Repositories(View):
 		name = req.post['name'].value
 		type = req.post['type'].value
 		path = req.post['path'].value
+		path = url_uc_decode(path)
 		permission = req.post['permission'].value
 
 		config.authz.setPermission(repository.name, path, name, type, permission)
