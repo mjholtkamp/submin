@@ -61,7 +61,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		'has_subdirs', which should be self-explanatory.'''
 		import os
 
-		reposdir = self.config.getpath('svn', 'repositories')
+		reposdir = str(self.config.getpath('svn', 'repositories'))
 		url = 'file://' + os.path.join(reposdir, self.name, path)
 
 		files = self.get_entries(url)
