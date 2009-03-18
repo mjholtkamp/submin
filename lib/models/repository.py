@@ -68,6 +68,9 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		# Escape single quotes to prevent injection
 		url = url.replace("'", "\\'")
 		(code, text) = commands.getstatusoutput("LC_CTYPE=UTF-8 svn ls '%s'" % url)
+		if code != 0:
+			raise self.DoesNotExist()
+
 		text = text.split('\n')
 
 		entries = []
