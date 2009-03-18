@@ -7,6 +7,7 @@ from models.group import Group
 from models.repository import *
 from auth.decorators import *
 from path.path import Path
+from unicode import url_uc_decode
 from ConfigParser import NoOptionError
 
 class Repositories(View):
@@ -41,7 +42,7 @@ class Repositories(View):
 		import os.path
 		try:
 			repository = Repository(path[0])
-		except (IndexError, Repository.DoesNotExist):
+		except Repository.DoesNotExist:
 			return ErrorResponse('This repository does not exist.', request=req)
 
 		config = Config()
@@ -110,7 +111,8 @@ class Repositories(View):
 	@admin_required
 	def getsubdirs(self, req, repository):
 		svn_path = req.post['getSubdirs'].value.strip('/')
-		dirs = repository.getsubdirs(svn_path)
+		svn_path_u = url_uc_decode(svn_path) #also convert from utf-8
+		dirs = repository.getsubdirs(svn_path_u)
 		templatevars = {'dirs': dirs}
 		return XMLTemplateResponse('ajax/repositorytree.xml', templatevars)
 

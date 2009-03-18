@@ -1,7 +1,15 @@
+# -*- coding: utf-8 -*-
+
+"""The templates use unicode internally, so everything is first converted
+to unicode (if it is not already unicode). When pushed to the browser, it
+can be converted to the right locale (but currently it is just converted
+to utf-8)"""
+
 import os
 
 from library import Library
 from template import Template
+from unicode import uc_str
 from types import * # for ikey/ival
 register = Library()
 
@@ -16,7 +24,6 @@ class MissingRequiredArguments(Exception):
 	
 class DotInLocalVariable(Exception):
 	pass
-
 
 @register.register('set')
 def set(node, tpl):
@@ -51,7 +58,7 @@ def val(node, tpl):
 			(tpl.filename, node.line)
 	value = tpl.variable_value(text)
 	if value:
-		return str(value)
+		return uc_str(value, 'utf-8')
 	return ''
 
 @register.register('include')
@@ -137,7 +144,7 @@ def ival(node, tpl):
 	if not args:
 		args = None
 	if len(tpl.node_variables['ival']) >= 1:
-		return str(tpl.variable_value('', args, tpl.node_variables['ival'][-1]))
+		return uc_str(tpl.variable_value('', args, tpl.node_variables['ival'][-1]), 'utf-8')
 	return ''
 
 @register.register('ikey')
@@ -146,7 +153,7 @@ def ikey(node, tpl):
 	if not args:
 		args = None
 	if len(tpl.node_variables['ikey']) >= 1:
-		return str(tpl.variable_value('', args, tpl.node_variables['ikey'][-1]))
+		return uc_str(tpl.variable_value('', args, tpl.node_variables['ikey'][-1]), 'utf-8')
 	return ''
 
 def ilast(tpl):
@@ -239,5 +246,5 @@ def quoted(node, tpl):
 			(tpl.filename, node.line)
 	value = tpl.variable_value(text)
 	if value:
-		return str(value).replace('"', '\\"');
+		return uc_str(value, 'utf-8').replace('"', '\\"');
 	return ''
