@@ -1,3 +1,10 @@
+submin (1.2.4-1) testing; urgency=low
+
+  * Used libsvn in favor of executing svn command-line tools
+  * Improved support for non-ASCII characters (was broken in 1.2.3)
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Thu, 19 Mar 2009 17:49:21 +0100
+
 submin (1.2.3-1) testing; urgency=low
 
   * Added better support for non-ASCII characters
