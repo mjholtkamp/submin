@@ -54,3 +54,13 @@ def url_uc_decode(s):
 		s = unicode(s, 'unicode_escape')
 
 	return re.sub('%u[a-zA-Z0-9]{4,4}', _url_uc_to_uc_callback, s)
+
+def uc_from_svn(path):
+	"""Copied from Trac"""
+	return uc_str(path, 'utf-8')
+
+def uc_to_svn(*args):
+	"""Copied from Trac"""
+	return '/'.join([p for p in [p.strip('/') for p in args] if p]) \
+		.encode('utf-8')
+

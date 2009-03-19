@@ -138,7 +138,7 @@ class Repositories(View):
 
 		perms = []
 		authz_paths = [x[1] for x in repository.authz_paths]
-		if str(svn_path) in authz_paths:
+		if uc_str(svn_path) in authz_paths:
 			perms = config.authz.permissions(repository.name, svn_path)
 
 		users = []
