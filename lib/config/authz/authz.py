@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import ConfigParser
+from unicode import uc_str
 
 # Exceptions
 class GroupExistsError(Exception):
@@ -90,7 +91,7 @@ class Authz:
 				else:
 					# Normalize paths
 					s = section.split(':', 1)
-					s[1] = str(Path(s[1], absolute=True))
+					s[1] = uc_str(Path(s[1], absolute=True))
 					sections.append(s)
 		return sections
 
