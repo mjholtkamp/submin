@@ -67,6 +67,7 @@ function repostree_getnode(me)
 function repostree_collapseCB(me)
 {
 	var reposnode = repostree_getnode(me);
+	reposnode.removeChilds(reposnode.path);
 	reposnode.collapsed = true;
 	repostree_markPermissions(reposnode);
 }
