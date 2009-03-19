@@ -55,9 +55,9 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		try:
 			global fs, repos, core, SubversionException
 			from svn import fs, repos, core
-			from libsvn._core import SubversionException
+			from svn.core import SubversionException
 		except ImportError:
-			raise self.ImportError("svn module does not exist, please install")
+			raise self.ImportError("Failed to import python 'svn' module, please install")
 
 		config = Config()
 

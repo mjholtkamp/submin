@@ -24,7 +24,7 @@ def application(environ, start_response):
 		req = WSGIRequest(environ)
 		response = dispatcher(req)
 		start_response(response.status(), response.headers.items())
-		return [response.content]
+		return [response.content.encode('utf-8')]
 	except Exception, e:
 		import traceback
 		trace = traceback.extract_tb(sys.exc_info()[2])
