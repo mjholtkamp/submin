@@ -6,7 +6,7 @@ Standards-Version: 3.6.1
 
 Package: submin
 Architecture: all
-Depends: python-svn, libapache2-svn
+Depends: python-subversion, libapache2-svn
 Recommends: libapache2-mod-python | libapache2-mod-wsgi
 Description: A web admin interface for local svn repositories
  Submin provides a web-based admin interface to your svn repositories.
