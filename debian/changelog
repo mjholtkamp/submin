@@ -1,3 +1,9 @@
+submin (1.2.5-1) testing; urgency=low
+
+  * Improved support for non-ASCII characters in templates (#149)
+
+ -- Michiel Holtkamp <michiel@supermind.nl>  Tue, 31 Mar 2009 13:26:22 +0200
+
 submin (1.2.4-1) testing; urgency=low
 
   * Used libsvn in favor of executing svn command-line tools
