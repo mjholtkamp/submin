@@ -3,6 +3,7 @@ import os
 import sys
 import string
 
+from unicode import uc_str
 from library import Library
 
 class UnknownCommandError(Exception):
@@ -196,7 +197,7 @@ class Parser(object):
 class Template(object):
 	def __init__(self, template, variables={}):
 		if hasattr(template, 'readlines'):
-			self.template_string = ''.join(template.readlines())
+			self.template_string = uc_str(''.join(template.readlines()), 'utf-8')
 			self.filename = os.path.join(os.getcwd(), template.name)
 		else:
 			self.template_string = template

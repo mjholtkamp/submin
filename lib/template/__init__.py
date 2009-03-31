@@ -1,6 +1,7 @@
 import os
 import sys
 
+from unicode import uc_str
 from template import Template
 from config.config import Config
 import template_commands
@@ -15,7 +16,7 @@ def evaluate(templatename, localvars={}):
 	fp = open(os.path.basename(templatename), 'r')
 	evaluated_string = ''
 	if fp:
-		lines = ''.join(fp.readlines())
+		lines = uc_str(''.join(fp.readlines()), 'utf-8')
 		template = Template(lines, localvars)
 		evaluated_string = template.evaluate()
 
