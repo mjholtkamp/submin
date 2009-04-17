@@ -52,6 +52,7 @@ class Authz:
 		self.authz_file = authz_file
 		self.userprop_file = userprop_file
 		self.authzParser = ConfigParser.ConfigParser()
+		self.authzParser.optionxform = str
 		self.userPropParser = ConfigParser.ConfigParser()
 		try:
 			self.authzParser.readfp(open(self.authz_file))

@@ -106,6 +106,10 @@ class InitTest(unittest.TestCase):
 		self.authz.addGroup('foo', ['bar'])
 		self.assertEquals(self.authz.member_of('bar'), ['foo'])
 
+	def testUpperCaseUser(self):
+		self.authz.setPermission('path', '/', 'CHE', 'user', 'rw')
+		self.assertEquals(self.authz.permissions('path', '/'), [{'type': 'user', 'name': 'CHE', 'permission': 'rw'}])
+
 
 class SaveTest(unittest.TestCase):
 	"Testcase for the save() method on the Authz-objects."
