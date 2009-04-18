@@ -94,7 +94,12 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		root_path_utf8 = repos.svn_repos_find_root_path(self.url)
 		if root_path_utf8 is None:
 			raise self.DoesNotExist
-		repository = repos.svn_repos_open(root_path_utf8)
+
+		try:
+			repository = repos.svn_repos_open(root_path_utf8)
+		except SubversionException, e:
+			raise self.PermissionDenied
+
 		fs_ptr = repos.svn_repos_fs(repository)
 
 		path_utf8 = uc_to_svn(uc_str(path))
