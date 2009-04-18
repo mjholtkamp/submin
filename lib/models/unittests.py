@@ -4,6 +4,8 @@ from user import User, UserExists, NotAuthorized, InvalidEmail, addUser
 from config.authz.authz import UnknownUserError
 from config.config import Config
 
+from repository import listRepositories, repositoriesOnDisk, Repository
+
 class UserTests(unittest.TestCase):
 	def setUp(self):
 		import tempfile
@@ -110,6 +112,67 @@ base_url = /
 	# 	self.assertEquals(u2.notifications["repos"]["allowed"], True)
 	# 	self.assertEquals(u2.notifications["repos"]["enabled"], True)
 
+
+class RepositoryTests(unittest.TestCase):
+	def setUp(self):
+		import tempfile
+		self.reposdir = tempfile.mkdtemp()
+		self.config_file = tempfile.NamedTemporaryFile(dir="/tmp/", prefix="submin_cfg_")
+		self.authz_file = tempfile.NamedTemporaryFile(dir="/tmp/", prefix="submin_authz_")
+		self.userprop_file = tempfile.NamedTemporaryFile(dir="/tmp/", prefix="submin_userprop_")
+		self.access_file = tempfile.NamedTemporaryFile(dir="/tmp/", prefix="submin_access_file_")
+
+		os.environ['SUBMIN_CONF'] = self.config_file.name
+		config_content = """
+[svn]
+authz_file = %s
+userprop_file = %s
+access_file = %s
+repositories = %s
+
+[www]
+base_url = /
+
+		""" % (self.authz_file.name, self.userprop_file.name, \
+			self.access_file.name, self.reposdir)
+
+		self.config_file.write(config_content)
+		self.config_file.flush() # but keep it open!
+
+		# this is so config loads the new config file, it's a Singleton!
+		Config().reinit()
+
+		# now make some repositories
+		self.repositories = ['test1', 'foo', 'BAR', 'removeme']
+		for r in self.repositories:
+			os.system("svnadmin create %s" % os.path.join(self.reposdir, r))
+
+	def tearDown(self):
+		for f in [self.config_file, self.authz_file, self.userprop_file, self.access_file]:
+			f.close()
+
+		os.system("rm -rf '%s'" % self.reposdir)
+
+	def testRepositoriesOnDisk(self):
+		result = repositoriesOnDisk()
+		self.assertEquals(result.sort(), self.repositories.sort())
+
+	def testExistingRepository(self):
+		r = Repository(self.repositories[0])
+		self.assertEquals(str(r), self.repositories[0])
+
+	def testUnknownRepository(self):
+		self.assertRaises(Repository.DoesNotExist, Repository, "non-existing-repository")
+
+	def testRemoveRepository(self):
+		r = Repository('removeme')
+		r.remove()
+		result = repositoriesOnDisk()
+		copy = self.repositories[:]
+		for res in result:
+			copy.remove(res)
+
+		self.assertEquals(['removeme'], copy)
 
 if __name__ == "__main__":
 	unittest.main()
