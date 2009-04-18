@@ -143,14 +143,16 @@ base_url = /
 		Config().reinit()
 
 		# now make some repositories
-		self.repositories = ['test1', 'foo', 'BAR', 'removeme']
+		self.repositories = ['foo', 'BAR', 'removeme', 'invalidperm']
 		for r in self.repositories:
-			os.system("svnadmin create %s" % os.path.join(self.reposdir, r))
+			os.system("svnadmin create '%s'" % os.path.join(self.reposdir, r))
+		os.system("chmod 000 '%s'" % os.path.join(self.reposdir, 'invalidperm'))
 
 	def tearDown(self):
 		for f in [self.config_file, self.authz_file, self.userprop_file, self.access_file]:
 			f.close()
 
+		os.system("chmod 777 '%s'" % os.path.join(self.reposdir, 'invalidperm'))
 		os.system("rm -rf '%s'" % self.reposdir)
 
 	def testRepositoriesOnDisk(self):
@@ -160,6 +162,9 @@ base_url = /
 	def testExistingRepository(self):
 		r = Repository(self.repositories[0])
 		self.assertEquals(str(r), self.repositories[0])
+
+	def testInvalidPermRepository(self):
+		self.assertRaises(Repository.PermissionDenied, Repository, "invalidperm")
 
 	def testUnknownRepository(self):
 		self.assertRaises(Repository.DoesNotExist, Repository, "non-existing-repository")
