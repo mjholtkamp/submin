@@ -245,9 +245,13 @@ bindir = /bin
 
 	def testNotificationsEnabled(self):
 		r = Repository('BAR')
+		# first time, because no file is present
 		self.assertEquals(r.notificationsEnabled(), False)
 		r.changeNotifications(enable=True)
 		self.assertEquals(r.notificationsEnabled(), True)
+		# a second time, because now a file is created
+		r.changeNotifications(enable=False)
+		self.assertEquals(r.notificationsEnabled(), False)
 
 if __name__ == "__main__":
 	unittest.main()
