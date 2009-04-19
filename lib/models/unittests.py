@@ -168,7 +168,33 @@ bindir = /bin
 
 	def testRepositoriesOnDisk(self):
 		result = repositoriesOnDisk()
-		self.assertEquals(result.sort(), self.repositories.sort())
+		result.sort()
+		copy = self.repositories[:]
+		copy.sort()
+		self.assertEquals(result, copy)
+
+	def testListRepositoriesAll(self):
+		"""Test listRepositories, which checks for valid permissions of repositories"""
+		class MockUser():
+			is_admin = True
+
+		mock_user = MockUser()
+		result = listRepositories(mock_user, only_invalid=False)
+		copy = self.repositories[:]
+		copy.sort()
+		copy.remove('invalidperm')
+		copy.remove('invalidperm2')
+		self.assertEquals(result, copy)
+
+	def testListRepositoriesOnlyInvalid(self):
+		"""Test listRepositories, which checks for valid permissions of repositories"""
+		class MockUser():
+			is_admin = True
+
+		mock_user = MockUser()
+		result = listRepositories(mock_user, only_invalid=True)
+		expected_result = ['invalidperm', 'invalidperm2']
+		self.assertEquals(result, expected_result)
 
 	def testExistingRepository(self):
 		r = Repository('foo')
@@ -199,7 +225,9 @@ bindir = /bin
 		expected_result = [{'has_subdirs': False, 'name': u'nosubdirs'}, \
 			{'name': u'test', 'has_subdirs': True}]
 
-		self.assertEquals(result.sort(), expected_result.sort())
+		result.sort()
+		expected_result.sort()
+		self.assertEquals(result, expected_result)
 
 	def testRemoveRepository(self):
 		r = Repository('removeme')
