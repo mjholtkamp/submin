@@ -133,6 +133,9 @@ repositories = %s
 [www]
 base_url = /
 
+[backend]
+bindir = /bin
+
 		""" % (self.authz_file.name, self.userprop_file.name, \
 			self.access_file.name, self.reposdir)
 
@@ -207,6 +210,44 @@ base_url = /
 			copy.remove(res)
 
 		self.assertEquals(['removeme'], copy)
+
+	def testChangeNotificationsEmptyHook(self):
+		expected_hook = '''#!/bin/sh
+### SUBMIN AUTOCONFIG, DO NOT ALTER FOLLOWING LINE ###
+/usr/bin/python /bin/post-commit.py "%s" "$1" "$2"
+''' % self.config_file.name
+		hook_fname = os.path.join(self.reposdir, 'BAR', 'hooks', 'post-commit')
+
+		r = Repository('BAR')
+		r.changeNotifications(enable=True)
+		hook = ''.join(file(hook_fname, 'r').readlines())
+		self.assertEquals(hook, expected_hook)
+
+	def testChangeNotificationsExistingHook(self):
+		expected_hook1 = '''#!/bin/sh
+# just a comment
+### SUBMIN AUTOCONFIG, DO NOT ALTER FOLLOWING LINE ###
+/usr/bin/python /bin/post-commit.py "%s" "$1" "$2"
+''' % self.config_file.name
+		expected_hook2 = '''#!/bin/sh
+# just a comment
+'''
+		hook_fname = os.path.join(self.reposdir, 'BAR', 'hooks', 'post-commit')
+		file(hook_fname, 'w').write(expected_hook2)
+
+		r = Repository('BAR')
+		r.changeNotifications(enable=True)
+		hook = ''.join(file(hook_fname, 'r').readlines())
+		self.assertEquals(hook, expected_hook1)
+		r.changeNotifications(enable=False)
+		hook = ''.join(file(hook_fname, 'r').readlines())
+		self.assertEquals(hook, expected_hook2)
+
+	def testNotificationsEnabled(self):
+		r = Repository('BAR')
+		self.assertEquals(r.notificationsEnabled(), False)
+		r.changeNotifications(enable=True)
+		self.assertEquals(r.notificationsEnabled(), True)
 
 if __name__ == "__main__":
 	unittest.main()
