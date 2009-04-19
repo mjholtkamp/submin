@@ -144,9 +144,10 @@ base_url = /
 
 		# now make some repositories
 		self.repositories = ['foo', 'BAR', 'removeme', 'invalidperm', \
-			'invalidperm2']
+			'invalidperm2', 'subdirs']
 		for r in self.repositories:
 			os.system("svnadmin create '%s'" % os.path.join(self.reposdir, r))
+
 		os.system("chmod 000 '%s'" % \
 			os.path.join(self.reposdir, 'invalidperm'))
 
@@ -178,6 +179,24 @@ base_url = /
 
 	def testUnknownRepository(self):
 		self.assertRaises(Repository.DoesNotExist, Repository, "non-existing-repository")
+
+	def testHasSubDirs(self):
+		for subdir in ['test', 'test/subdir']:
+			os.system("svn mkdir -m '' file://'%s' >/dev/null" % \
+				os.path.join(self.reposdir, 'subdirs', subdir))
+		r = Repository('subdirs')
+		self.assertEquals(r.hassubdirs('test'), True)
+
+	def testSubDirsContents(self):
+		for subdir in ['test', 'test/subdir', 'nosubdirs']:
+			os.system("svn mkdir -m '' file://'%s' >/dev/null" % \
+				os.path.join(self.reposdir, 'subdirs', subdir))
+		r = Repository('subdirs')
+		result = r.getsubdirs('')
+		expected_result = [{'has_subdirs': False, 'name': u'nosubdirs'}, \
+			{'name': u'test', 'has_subdirs': True}]
+
+		self.assertEquals(result.sort(), expected_result.sort())
 
 	def testRemoveRepository(self):
 		r = Repository('removeme')
