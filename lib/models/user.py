@@ -31,7 +31,7 @@ def listUsers(session_user):
 			except UnknownUserError:
 				pass
 	else:
-		users.append(session_user.name)
+		users.append(User(session_user.name))
 	return users
 
 def addUser(username):
