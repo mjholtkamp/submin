@@ -1,6 +1,6 @@
 import unittest
 import os
-from user import User, UserExists, NotAuthorized, InvalidEmail, addUser
+from user import User, UserExists, NotAuthorized, InvalidEmail, addUser, listUsers
 from config.authz.authz import UnknownUserError
 from config.config import Config
 
@@ -99,6 +99,29 @@ base_url = /
 	def testNotAdmin(self):
 		u = User("test")
 		self.assertRaises(NotAuthorized, u.setNotification, "repos", dict(allowed=True, enabled=True), False)
+
+	def testListUsersAdmin(self):
+		class MockUser():
+			is_admin = True
+
+		mock_user = MockUser()
+		
+		addUser("foo")
+		users = [x.name for x in listUsers(mock_user)]
+		users.sort()
+		self.assertEquals(users, ["foo", "test"])
+
+	def testListUsersNonAdmin(self):
+		class MockUser():
+			is_admin = False
+			name = "foo"
+
+		mock_user = MockUser()
+
+		addUser("foo")
+		users = [x.name for x in listUsers(mock_user)]
+		users.sort()
+		self.assertEquals(users, ["foo"])
 
 	# def testSaveNotifications(self):
 	# 	import time
