@@ -143,16 +143,23 @@ base_url = /
 		Config().reinit()
 
 		# now make some repositories
-		self.repositories = ['foo', 'BAR', 'removeme', 'invalidperm']
+		self.repositories = ['foo', 'BAR', 'removeme', 'invalidperm', \
+			'invalidperm2']
 		for r in self.repositories:
 			os.system("svnadmin create '%s'" % os.path.join(self.reposdir, r))
-		os.system("chmod 000 '%s'" % os.path.join(self.reposdir, 'invalidperm'))
+		os.system("chmod 000 '%s'" % \
+			os.path.join(self.reposdir, 'invalidperm'))
+
+		os.system("chmod 000 '%s'" % \
+			os.path.join(self.reposdir, 'invalidperm2', 'db', 'revs'))
 
 	def tearDown(self):
 		for f in [self.config_file, self.authz_file, self.userprop_file, self.access_file]:
 			f.close()
 
 		os.system("chmod 777 '%s'" % os.path.join(self.reposdir, 'invalidperm'))
+		os.system("chmod 777 '%s'" % \
+			os.path.join(self.reposdir, 'invalidperm2', 'db', 'revs'))
 		os.system("rm -rf '%s'" % self.reposdir)
 
 	def testRepositoriesOnDisk(self):
@@ -160,11 +167,14 @@ base_url = /
 		self.assertEquals(result.sort(), self.repositories.sort())
 
 	def testExistingRepository(self):
-		r = Repository(self.repositories[0])
-		self.assertEquals(str(r), self.repositories[0])
+		r = Repository('foo')
+		self.assertEquals(str(r), 'foo')
 
 	def testInvalidPermRepository(self):
 		self.assertRaises(Repository.PermissionDenied, Repository, "invalidperm")
+
+	def testInvalidPermRepository2(self):
+		self.assertRaises(Repository.PermissionDenied, Repository, "invalidperm2")
 
 	def testUnknownRepository(self):
 		self.assertRaises(Repository.DoesNotExist, Repository, "non-existing-repository")
