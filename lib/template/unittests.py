@@ -120,6 +120,12 @@ class IkeyTagTest(unittest.TestCase):
 		correctValue = ''.join(kv.iterkeys())
 		self.assertEquals(ev, correctValue)
 
+	def testIKeyAsIterValue(self):
+		"""Iterating over a key is impossible in python"""
+		l = {'key': 'value'}
+		self.assertRaises(template_commands.IteratingIkey, evaluate, \
+		 	'[iter:l [iter:ikey [ival]]]', {'l': l})
+
 class TestTest(unittest.TestCase):
 	'Testcase for the test-tag.'
 

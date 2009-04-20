@@ -25,6 +25,9 @@ class MissingRequiredArguments(Exception):
 class DotInLocalVariable(Exception):
 	pass
 
+class IteratingIkey(Exception):
+	pass
+
 @register.register('set')
 def set(node, tpl):
 	"""Sets a variable to a value, local to the template.
@@ -119,7 +122,10 @@ def iter(node, tpl):
 			if len(tpl.node_variables['ival']) >= 1:
 				value = tpl.variable_value('', args, tpl.node_variables['ival'][-2])
 	elif node.arguments == 'ikey':
-		value = tpl.node_variables['ikey'][-2]
+		# iterable objects cannot be used as key in python
+		raise IteratingIkey, \
+			"Cannot iterate over ikey at file %s, line %d" % \
+			(tpl.filename, node.line)
 	else:
 		value = tpl.variable_value(node.arguments)
 	evaluated_string = ''
