@@ -3,6 +3,7 @@ import os
 from user import User, UserExists, NotAuthorized, InvalidEmail, InvalidFullName, addUser, listUsers
 from config.authz.authz import UnknownUserError
 from config.config import Config
+from pmock import *
 
 from repository import listRepositories, repositoriesOnDisk, Repository
 
@@ -109,23 +110,17 @@ base_url = /
 		self.assertRaises(NotAuthorized, u.setNotification, "repos", dict(allowed=True, enabled=True), False)
 
 	def testListUsersAdmin(self):
-		class MockUser():
-			is_admin = True
-
-		mock_user = MockUser()
-		
+		mock_user = Mock()
+		mock_user.is_admin = True
 		addUser("foo")
 		users = [x.name for x in listUsers(mock_user)]
 		users.sort()
 		self.assertEquals(users, ["foo", "test"])
 
 	def testListUsersNonAdmin(self):
-		class MockUser():
-			is_admin = False
-			name = "foo"
-
-		mock_user = MockUser()
-
+		mock_user = Mock()
+		mock_user.is_admin = False
+		mock_user.name = "foo"
 		addUser("foo")
 		users = [x.name for x in listUsers(mock_user)]
 		users.sort()
@@ -236,10 +231,9 @@ bindir = /bin
 
 	def testListRepositoriesAll(self):
 		"""Test listRepositories, which checks for valid permissions of repositories"""
-		class MockUser():
-			is_admin = True
+		mock_user = Mock()
+		mock_user.is_admin = True
 
-		mock_user = MockUser()
 		result = listRepositories(mock_user, only_invalid=False)
 		copy = self.repositories[:]
 		copy.sort()
@@ -249,10 +243,8 @@ bindir = /bin
 
 	def testListRepositoriesOnlyInvalid(self):
 		"""Test listRepositories, which checks for valid permissions of repositories"""
-		class MockUser():
-			is_admin = True
-
-		mock_user = MockUser()
+		mock_user = Mock()
+		mock_user.is_admin = True
 		result = listRepositories(mock_user, only_invalid=True)
 		expected_result = ['invalidperm', 'invalidperm2']
 		self.assertEquals(result, expected_result)

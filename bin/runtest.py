@@ -49,8 +49,9 @@ def main():
 		omit = ["/usr/lib", "/System/Library"]
 		# touch coverage.py, it tries to find itself while annotating, sigh
 		open("coverage.py", "w")
+		open("pmock.py", "w")
 		os.system("%s -a -o %s -d coverage-annotate" % (python_cmd, ','.join(omit)))
-		os.system("rm -rf coverage-tmp coverage.py")
+		os.system("rm -rf coverage-tmp coverage.py pmock.py")
 
 if __name__ == "__main__":
 	main()
