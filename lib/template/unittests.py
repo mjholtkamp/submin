@@ -2,7 +2,7 @@ import unittest
 from tempfile import mkstemp
 import os
 
-from template import Template
+from template import Template, UnknownCommandError
 # import template
 import template_commands
 template_commands.DEBUG = False
@@ -12,6 +12,10 @@ def evaluate(tpl_string, variables={}):
 	tpl = Template(tpl_string, variables)
 	return (tpl, tpl.evaluate())
 
+class LibraryTest(unittest.TestCase):
+	def testUnknownCommand(self):
+		self.assertRaises(UnknownCommandError, evaluate, \
+			'[unknowncommand this should raise an exception]')
 
 class SetTagTest(unittest.TestCase):
 	'Testcase for the set-tag which can set a template variable'
