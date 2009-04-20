@@ -34,9 +34,7 @@ session_salt = 1984500a.cjctec.8""" % \
 
 	def createFile(self, filename, content):
 		os.system('mkdir -p %s' % os.path.dirname(filename))
-		fp = open(filename, 'w+')
-		fp.write(content)
-		fp.close
+		fp = open(filename, 'w+').write(content)
 
 	def createFiles(self):
 		authz_content = ""
@@ -48,7 +46,7 @@ session_salt = 1984500a.cjctec.8""" % \
 		self.createFile(self.userprop_file, userprop_content)
 
 	def tearDown(self):
-		os.system('rm -rf %s' % self.base)
+		os.system("rm -rf '%s'" % self.base)
 
 	def testInstanceEqual(self):
 		config_instance = Config()
