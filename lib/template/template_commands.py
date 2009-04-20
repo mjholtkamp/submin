@@ -28,6 +28,12 @@ class DotInLocalVariable(Exception):
 class IteratingIkey(Exception):
 	pass
 
+class IvalOutsideIter(Exception):
+	pass
+
+class IkeyOutsideIter(Exception):
+	pass
+
 @register.register('set')
 def set(node, tpl):
 	"""Sets a variable to a value, local to the template.
@@ -152,18 +158,22 @@ def ival(node, tpl):
 	args = node.arguments
 	if not args:
 		args = None
-	if len(tpl.node_variables['ival']) >= 1:
+	if tpl.node_variables.has_key('ival') and len(tpl.node_variables['ival']) >= 1:
 		return uc_str(tpl.variable_value('', args, tpl.node_variables['ival'][-1]), 'utf-8')
-	return ''
+	raise IvalOutsideIter,\
+		"Ival without enclosing iter at file %s, line %d" % \
+		(tpl.filename, node.line)
 
 @register.register('ikey')
 def ikey(node, tpl):
 	args = node.arguments
 	if not args:
 		args = None
-	if len(tpl.node_variables['ikey']) >= 1:
+	if tpl.node_variables.has_key('ikey') and len(tpl.node_variables['ikey']) >= 1:
 		return uc_str(tpl.variable_value('', args, tpl.node_variables['ikey'][-1]), 'utf-8')
-	return ''
+	raise IkeyOutsideIter,\
+		"Ikey without enclosing iter at file %s, line %d" % \
+		(tpl.filename, node.line)
 
 def ilast(tpl):
 	if tpl.node_variables['iindex'][-1] \

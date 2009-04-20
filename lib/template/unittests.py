@@ -113,6 +113,9 @@ class IvalTagTest(unittest.TestCase):
 		correctValue = ''.join([''.join(x.list) for x in l])
 		self.assertEquals(ev, correctValue)
 
+	def testWithoutIter(self):
+		self.assertRaises(template_commands.IvalOutsideIter, evaluate, '[ival]')
+
 class IkeyTagTest(unittest.TestCase):
 	def testCorrectValue(self):
 		kv = {'key1': 'val1', 'key2': 'val2'}
@@ -125,6 +128,9 @@ class IkeyTagTest(unittest.TestCase):
 		l = {'key': 'value'}
 		self.assertRaises(template_commands.IteratingIkey, evaluate, \
 		 	'[iter:l [iter:ikey [ival]]]', {'l': l})
+
+	def testWithoutIter(self):
+		self.assertRaises(template_commands.IkeyOutsideIter, evaluate, '[ikey]')
 
 class TestTest(unittest.TestCase):
 	'Testcase for the test-tag.'
