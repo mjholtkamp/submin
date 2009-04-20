@@ -52,6 +52,9 @@ def val(node, tpl):
 			(tpl.filename, node.line)
 
 	text = node.nodes[0].evaluate()
+
+	# XXX this probably never occurs, because evaluate returns a string or
+	# raises an exception, it never returns None
 	if not text:
 		raise MissingRequiredArguments, \
 			"Missing required argument variable at file %s, line %d" % \
