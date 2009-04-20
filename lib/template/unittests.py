@@ -95,6 +95,24 @@ class IvalTagTest(unittest.TestCase):
 		correctValue = ''
 		self.assertEquals(ev, correctValue)
 
+	def testIvalAsIterValue(self):
+		l = [['a', 'b', 'c'], ['1', '2', '3']]
+		tpl, ev = evaluate('[iter:l [iter:ival [ival]]]', {'l': l})
+		correctValue = ''.join([''.join(x) for x in l])
+		self.assertEquals(ev, correctValue)
+
+	def testIvalObjectAsIterValue(self):
+		class ObjectWithList:
+			def __init__(self, l):
+				self.list = l
+
+		l = []
+		l.append(ObjectWithList(['a', 'b', 'c']))
+		l.append(ObjectWithList(['1', '2', '3']))
+		tpl, ev = evaluate('[iter:l [iter:ival.list [ival]]]', {'l': l})
+		correctValue = ''.join([''.join(x.list) for x in l])
+		self.assertEquals(ev, correctValue)
+
 class IkeyTagTest(unittest.TestCase):
 	def testCorrectValue(self):
 		kv = {'key1': 'val1', 'key2': 'val2'}
