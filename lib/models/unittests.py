@@ -92,7 +92,7 @@ base_url = /
 		u = User("test")
 		u.setPassword("foobar")
 		config = Config()
-		self.assertEquals(config.htpasswd.check("test", "foobar"), True)
+		self.assertTrue(config.htpasswd.check("test", "foobar"))
 
 	def testAddDoubleUser(self):
 		self.assertRaises(UserExists, addUser, "test")
@@ -152,11 +152,11 @@ base_url = /
 		u.setNotification("non-existing", {"allowed": True, "enabled": True}, True)
 		u.saveNotifications()
 		u2 = User("test")
-		self.assertEquals(u2.notifications.has_key("repos"), True)
-		self.assertEquals(u2.notifications["repos"]["allowed"], True)
-		self.assertEquals(u2.notifications["repos"]["enabled"], True)
+		self.assertTrue(u2.notifications.has_key("repos"))
+		self.assertTrue(u2.notifications["repos"]["allowed"])
+		self.assertTrue(u2.notifications["repos"]["enabled"])
 		# should not have notification for non-existing repository
-		self.assertEquals(u2.notifications.has_key("non-existing"), False)
+		self.assertFalse(u2.notifications.has_key("non-existing"))
 
 	def testSaveNotificationsNonAdminNotAllowed(self):
 		"""If not allowed, should raise NotAuthorized"""
@@ -170,9 +170,9 @@ base_url = /
 		u.setNotification("repos", {"allowed": True, "enabled": True}, False)
 		u.saveNotifications()
 		u2 = User("test")
-		self.assertEquals(u2.notifications.has_key("repos"), True)
-		self.assertEquals(u2.notifications["repos"]["allowed"], True)
-		self.assertEquals(u2.notifications["repos"]["enabled"], True)
+		self.assertTrue(u2.notifications.has_key("repos"))
+		self.assertTrue(u2.notifications["repos"]["allowed"])
+		self.assertTrue(u2.notifications["repos"]["enabled"])
 
 class RepositoryTests(unittest.TestCase):
 	def setUp(self):
@@ -275,7 +275,7 @@ bindir = /bin
 			os.system("svn mkdir -m '' file://'%s' >/dev/null" % \
 				os.path.join(self.reposdir, 'subdirs', subdir))
 		r = Repository('subdirs')
-		self.assertEquals(r.hassubdirs('test'), True)
+		self.assertTrue(r.hassubdirs('test'))
 
 	def testSubDirsContents(self):
 		for subdir in ['test', 'test/subdir', 'nosubdirs']:
@@ -335,12 +335,12 @@ bindir = /bin
 	def testNotificationsEnabled(self):
 		r = Repository('BAR')
 		# first time, because no file is present
-		self.assertEquals(r.notificationsEnabled(), False)
+		self.assertFalse(r.notificationsEnabled())
 		r.changeNotifications(enable=True)
-		self.assertEquals(r.notificationsEnabled(), True)
+		self.assertTrue(r.notificationsEnabled())
 		# a second time, because now a file is created
 		r.changeNotifications(enable=False)
-		self.assertEquals(r.notificationsEnabled(), False)
+		self.assertFalse(r.notificationsEnabled())
 
 if __name__ == "__main__":
 	unittest.main()
