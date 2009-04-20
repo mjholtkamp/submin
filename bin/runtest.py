@@ -17,7 +17,12 @@ def which(filename):
 	return None
 
 def main():
-	cmd = "find lib -name unittests.py"
+	paths = "lib"
+	if len(sys.argv) > 1:
+		paths = map(os.path.join, ["lib"], sys.argv[1:])
+		paths = ' '.join(paths)
+
+	cmd = "find %s -name unittests.py" % paths
 	(exitstatus, outtext) = commands.getstatusoutput(cmd)
 	use_coverage = False
 	python_cmd = "python"
