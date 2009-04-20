@@ -9,6 +9,7 @@ from repository import listRepositories, repositoriesOnDisk, Repository
 class UserTests(unittest.TestCase):
 	def setUp(self):
 		import tempfile
+		self.reposdir = tempfile.mkdtemp()
 		self.config_file = tempfile.NamedTemporaryFile(dir="/tmp/", prefix="submin_cfg_")
 		self.authz_file = tempfile.NamedTemporaryFile(dir="/tmp/", prefix="submin_authz_")
 		self.userprop_file = tempfile.NamedTemporaryFile(dir="/tmp/", prefix="submin_userprop_")
@@ -20,17 +21,22 @@ class UserTests(unittest.TestCase):
 authz_file = %s
 userprop_file = %s
 access_file = %s
-repositories = /tmp/svn
+repositories = %s
 
 [www]
 base_url = /
 
-		""" % (self.authz_file.name, self.userprop_file.name, self.access_file.name)
+		""" % (self.authz_file.name, self.userprop_file.name, \
+			self.access_file.name, self.reposdir)
 		self.config_file.write(config_content)
 		self.config_file.flush() # but keep it open!
 
 		# this is so config loads the new config file, it's a Singleton!
 		Config().reinit()
+
+		self.repositories = ['repos']
+		for r in self.repositories:
+			os.system("svnadmin create '%s'" % os.path.join(self.reposdir, r))
 
 		addUser("test")
 
@@ -39,6 +45,8 @@ base_url = /
 		
 		for f in [self.config_file, self.authz_file, self.userprop_file, self.access_file]:
 			f.close()
+
+		os.system("rm -rf '%s'" % self.reposdir)
 
 	def testEmailSingleQuoteInvalid(self):
 		u = User("test")
@@ -138,18 +146,33 @@ base_url = /
 		for invalid_char in invalid_chars.split():
 			self.assertRaises(InvalidFullName, u.setFullName, invalid_char)
 
-	# def testSaveNotifications(self):
-	# 	import time
-	# 	u = User("test")
-	# 	u.setNotification("repos", {"allowed": True, "enabled": True}, True)
-	# 	time.sleep(1.1) # file has to be saved, time check resolution is 1 second
-	# 	u.saveNotifications()
-	# 	u2 = User("test")
-	# 	print u2.notifications
-	# 	self.assertEquals(u2.notifications.has_key("repos"), True)
-	# 	self.assertEquals(u2.notifications["repos"]["allowed"], True)
-	# 	self.assertEquals(u2.notifications["repos"]["enabled"], True)
+	def testSaveNotificationsAdmin(self):
+		u = User("test")
+		u.setNotification("repos", {"allowed": True, "enabled": True}, True)
+		u.setNotification("non-existing", {"allowed": True, "enabled": True}, True)
+		u.saveNotifications()
+		u2 = User("test")
+		self.assertEquals(u2.notifications.has_key("repos"), True)
+		self.assertEquals(u2.notifications["repos"]["allowed"], True)
+		self.assertEquals(u2.notifications["repos"]["enabled"], True)
+		# should not have notification for non-existing repository
+		self.assertEquals(u2.notifications.has_key("non-existing"), False)
 
+	def testSaveNotificationsNonAdminNotAllowed(self):
+		"""If not allowed, should raise NotAuthorized"""
+		u = User("test")
+		self.assertRaises(NotAuthorized, u.setNotification, "repos", {"allowed": True, "enabled": True}, False)
+
+	def testSaveNotificationsNonAdminAllowed(self):
+		"""First set allowed as admin, then set enabled as user"""
+		u = User("test")
+		u.setNotification("repos", {"allowed": True, "enabled": False}, True)
+		u.setNotification("repos", {"allowed": True, "enabled": True}, False)
+		u.saveNotifications()
+		u2 = User("test")
+		self.assertEquals(u2.notifications.has_key("repos"), True)
+		self.assertEquals(u2.notifications["repos"]["allowed"], True)
+		self.assertEquals(u2.notifications["repos"]["enabled"], True)
 
 class RepositoryTests(unittest.TestCase):
 	def setUp(self):
