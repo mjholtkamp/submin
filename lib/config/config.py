@@ -6,6 +6,9 @@ from authz.htpasswd import HTPasswd
 
 from path.path import Path
 
+class NoEnvironment(Exception):
+	pass
+
 class CouldNotReadConfig(Exception):
 	def __init__(self, msg):
 		Exception.__init__(self, msg)
@@ -50,7 +53,7 @@ class ConfigData:
 	def reinit_version1(self):
 		if self.use_env:
 			if not os.environ.has_key('SUBMIN_CONF'):
-				raise Exception('SUBMIN_CONF environment not found')
+				raise NoEnvironment('SUBMIN_CONF environment not found')
 			oldfilename = self.filename
 			self.filename = os.environ['SUBMIN_CONF']
 			if oldfilename != self.filename:

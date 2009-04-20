@@ -1,7 +1,12 @@
 import unittest
-from config import Config, ConfigData, MissingConfigData, CouldNotReadConfig
+from config import Config, ConfigData, MissingConfigData, CouldNotReadConfig, NoEnvironment
 import os
 import tempfile
+
+def ReinitConfig():
+	"""In a seperate function, so we can use assertRaises"""
+	config = Config() # will raise exceptions the first time
+	config.reinit() # will raise exceptions all the other times
 
 class SingletonTest(unittest.TestCase):
 	"""Only tests the 'singletonness' of the Config module"""
@@ -47,6 +52,10 @@ session_salt = 1984500a.cjctec.8""" % \
 
 	def tearDown(self):
 		os.system("rm -rf '%s'" % self.base)
+		if os.environ.has_key('SUBMIN_CONF'):
+			del os.environ['SUBMIN_CONF']
+		# if os.environ.has_key('SUBMIN_ENV'):
+		# 	del os.environ['SUBMIN_ENV']
 
 	def testInstanceEqual(self):
 		config_instance = Config()
@@ -73,29 +82,56 @@ class IncompleteConfigTest(unittest.TestCase):
 
 	def tearDown(self):
 		os.system("rm -rf '%s'" % self.base)
+		if os.environ.has_key('SUBMIN_CONF'):
+			del os.environ['SUBMIN_CONF']
+		if os.environ.has_key('SUBMIN_ENV'):
+			del os.environ['SUBMIN_ENV']
 
-	def writeConfig(self, conf_data):
-		self.filename = os.path.join(self.base, 'submin.conf')
+	def writeConfig(self, conf_data, base=None, confname='submin.conf'):
+		if base == None:
+			base = self.base
+		try:
+			os.makedirs(base)
+		except OSError:
+			pass
+		self.filename = os.path.join(base, confname)
 		fp = open(self.filename, 'w')
 		fp.write(conf_data)
 		fp.close()
 		os.environ['SUBMIN_CONF'] = self.filename
 
+	def testNoEnv(self):			
+		self.assertRaises(NoEnvironment, ReinitConfig)
+
+	def testEnv2(self):
+		os.environ['SUBMIN_ENV'] = self.base
+		self.writeConfig("""
+[svn]
+authz_file=%(base)s/authz
+userprop_file=%(base)s/userprop
+access_file=%(base)s/access-file
+
+[www]
+base_url = /
+""" % {'base': self.base}, base=os.path.join(self.base, 'conf'), confname='submin.ini')
+		ReinitConfig()
+		self.assertEquals(str(Config().base_url), "/")
+
 	def testNoConfig(self):
 		os.environ['SUBMIN_CONF'] = '/tmp/non-existing.file'
-		self.assertRaises(CouldNotReadConfig, Config)
+		self.assertRaises(CouldNotReadConfig, ReinitConfig)
 
 	def testNoSvnSection(self):
 		self.writeConfig("")
-		self.assertRaises(MissingConfigData, Config)
+		self.assertRaises(MissingConfigData, ReinitConfig)
 
 	def testNoAuthzOption(self):
 		self.writeConfig("[svn]")
-		self.assertRaises(MissingConfigData, Config)
+		self.assertRaises(MissingConfigData, ReinitConfig)
 
 	def testNoUserPropOption(self):
 		self.writeConfig("[svn]\nauthz_file=%s/submin-unittest-authz" % self.base)
-		self.assertRaises(MissingConfigData, Config)
+		self.assertRaises(MissingConfigData, ReinitConfig)
 
 	def testNoAccessFileOption(self):
 		self.writeConfig("""
@@ -103,7 +139,7 @@ class IncompleteConfigTest(unittest.TestCase):
 authz_file=%(base)s/submin-unittest-authz
 userprop_file=%(base)s/submin-unittest-userprop
 """ % {'base': self.base})
-		self.assertRaises(MissingConfigData, Config)
+		self.assertRaises(MissingConfigData, ReinitConfig)
 
 	def testNoWWWSection(self):
 		self.writeConfig("""
@@ -112,7 +148,18 @@ authz_file=%(base)s/submin-unittest-authz
 userprop_file=%(base)s/submin-unittest-userprop
 access_file=%(base)s/submin-unittest-access-file
 """ % {'base': self.base})
-		self.assertRaises(MissingConfigData, Config)
+		self.assertRaises(MissingConfigData, ReinitConfig)
+
+	def testNoBaseUrlOption(self):
+		self.writeConfig("""
+[svn]
+authz_file=%(base)s/submin-unittest-authz
+userprop_file=%(base)s/submin-unittest-userprop
+access_file=%(base)s/submin-unittest-access-file
+
+[www]
+""" % {'base': self.base})
+		self.assertRaises(MissingConfigData, ReinitConfig)
 
 if __name__ == "__main__":
 	unittest.main()
