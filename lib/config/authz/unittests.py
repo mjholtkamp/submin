@@ -10,15 +10,16 @@ class InitTest(unittest.TestCase):
 	"Tests the initializer for the Authz-module"
 
 	def setUp(self):
-		tempdir = tempfile.gettempdir()
-		self.filename = os.path.join(tempdir, 'authz')
-		self.userpropfilename = os.path.join(tempdir, 'userprops')
+		self.tempdir = tempfile.mkdtemp()
+		self.filename = os.path.join(self.tempdir, 'authz')
+		self.userpropfilename = os.path.join(self.tempdir, 'userprops')
 		# Easier than using tempfile.mkstemp() because I only need a filename.
 		self.authz = Authz(self.filename, self.userpropfilename)
 
 	def tearDown(self):
 		os.unlink(self.filename)
 		os.unlink(self.userpropfilename)
+		os.rmdir(self.tempdir)
 
 	def testCreateFile(self):
 		self.assert_(os.path.exists(self.filename),
@@ -113,19 +114,25 @@ class InitTest(unittest.TestCase):
 
 class SaveTest(unittest.TestCase):
 	"Testcase for the save() method on the Authz-objects."
+	def setUp(self):
+		self.tempdir = tempfile.mkdtemp()
+		self.filename = os.path.join(self.tempdir, 'authz')
+		self.userpropfilename = os.path.join(self.tempdir, 'userprops')
+
+	def tearDown(self):
+		os.unlink(self.filename)
+		os.unlink(self.userpropfilename)
+		os.rmdir(self.tempdir)
 
 	def testModificationTime(self):
-		tempdir = tempfile.gettempdir()
-		filename = os.path.join(tempdir, 'authz')
-		userpropfilename = os.path.join(tempdir, 'userprops')
-		authz = Authz(filename, userpropfilename)
-		begin = os.path.getmtime(filename)
+		authz = Authz(self.filename, self.userpropfilename)
+		begin = os.path.getmtime(self.filename)
 
 		# Testing modification time. This takes at least 1.1 seconds.
 		# sleep required to up the modification-time, reported in seconds
 		time.sleep(1.1)
 		authz.save()
-		end = os.path.getmtime(filename)
+		end = os.path.getmtime(self.filename)
 		self.assert_(end > begin, 'Modification time after save not past ' \
 				+ 'modification time before save (begin > end)')
 
