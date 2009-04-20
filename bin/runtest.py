@@ -33,7 +33,7 @@ def main():
 			python_cmd = pc
 
 	if use_coverage:
-		os.environ['COVERAGE_FILE'] = "coverage-tmp/.converage"
+		os.environ['COVERAGE_FILE'] = "coverage-tmp/.coverage"
 		try:
 			os.mkdir("coverage-tmp")
 			os.mkdir("coverage-annotate")
