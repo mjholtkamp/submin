@@ -10,6 +10,10 @@ class CouldNotReadConfig(Exception):
 	def __init__(self, msg):
 		Exception.__init__(self, msg)
 
+class MissingConfigData(Exception):
+	def __init__(self, msg):
+		Exception.__init__(self, "Missing config %s" % msg)
+
 class ConfigData:
 	"""Upon construction, it should be checked if files need to be read."""
 	cp = None
@@ -102,24 +106,8 @@ class ConfigData:
 		authz_file = ''
 		userprop_file = ''
 
-		try:
-			authz_file = str(self.getpath('svn', 'authz_file'))
-		except ConfigParser.NoSectionError, e:
-			raise Exception(
-				"Missing config section 'svn' in file %s" % self.filename)
-		except ConfigParser.NoOptionError, e:
-			raise Exception(
-				"Missing config option 'authz_file' in file %s" % self.filename)
-
-		try:
-			userprop_file = str(self.getpath('svn', 'userprop_file'))
-		except ConfigParser.NoSectionError, e:
-			raise Exception(
-				"Missing config section 'svn' in file %s" % self.filename)
-		except ConfigParser.NoOptionError, e:
-			raise Exception(
-				"Missing config option 'userprop_file' in file %s" % \
-						self.filename)
+		authz_file = str(self.getpath('svn', 'authz_file'))
+		userprop_file = str(self.getpath('svn', 'userprop_file'))
 
 		authz_ctime = self._ctime(authz_file)
 		refresh_authz = authz_ctime > self.ctimes["authz"]
@@ -146,7 +134,15 @@ class ConfigData:
 		return self.base_path + path
 
 	def get(self, section, variable):
-		return self.cp.get(section, variable)
+		try:
+			value = self.cp.get(section, variable)
+		except ConfigParser.NoSectionError:
+			raise MissingConfigData(
+				"section %s in file %s" % (section, self.filename))
+		except ConfigParser.NoOptionError:
+			raise MissingConfigData(
+				"option %s in file %s" % (variable, self.filename))
+		return value
 
 	def set(self, section, variable, value):
 		self.cp.set(section, variable, value)
