@@ -60,14 +60,8 @@ def val(node, tpl):
 			"Missing required argument variable at file %s, line %d" % \
 			(tpl.filename, node.line)
 
+	# evaluate always returns a string (possibly empty), or raises an Exception
 	text = node.nodes[0].evaluate()
-
-	# XXX this probably never occurs, because evaluate returns a string or
-	# raises an exception, it never returns None
-	if not text:
-		raise MissingRequiredArguments, \
-			"Missing required argument variable at file %s, line %d" % \
-			(tpl.filename, node.line)
 	value = tpl.variable_value(text)
 	if value:
 		return uc_str(value, 'utf-8')
