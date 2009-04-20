@@ -90,6 +90,11 @@ class IvalTagTest(unittest.TestCase):
 			correctValue += str(i.attr)
 		self.assertEquals(ev, correctValue)
 
+	def testEmptyList(self):
+		tpl, ev = evaluate('[iter:range [ival]]', {'range': []})
+		correctValue = ''
+		self.assertEquals(ev, correctValue)
+
 class IkeyTagTest(unittest.TestCase):
 	def testCorrectValue(self):
 		kv = {'key1': 'val1', 'key2': 'val2'}
@@ -253,6 +258,9 @@ class IncludeTests(unittest.TestCase):
 		tpl, ev = evaluate('[test:do_include [include %s]]' % self.filename,
 				{'do_include': True})
 		self.assertEquals(ev, self.text)
+
+	def testInvalidInclude(self):
+		self.assertRaises(template_commands.UnknownTemplateError, evaluate, '[include nonexistent.filename]')
 
 def runtests():
 	unittest.main()
