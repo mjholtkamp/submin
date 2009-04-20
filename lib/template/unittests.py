@@ -179,6 +179,13 @@ class ElseTest(unittest.TestCase):
 		tpl, ev = evaluate('[set:range [test:foo evals true][else evals false]]')
 		self.assertEquals(ev, '')
 
+	def testEqualsBeforeElseFalse(self):
+		tpl, ev = evaluate('[set:empty ][equals:errormsg:empty][else evals false]')
+		self.assertEquals(ev, 'evals false')
+
+	def testEqualsBeforeElseTrue(self):
+		tpl, ev = evaluate('[set:one 1][set:een 1][equals:een:one evals true][else evals false]')
+		self.assertEquals(ev, 'evals true')
 
 class VariableValueTests(unittest.TestCase):
 	'''Testcase for the variable_value function of a template-object
