@@ -90,6 +90,13 @@ class IvalTagTest(unittest.TestCase):
 			correctValue += str(i.attr)
 		self.assertEquals(ev, correctValue)
 
+class IkeyTagTest(unittest.TestCase):
+	def testCorrectValue(self):
+		kv = {'key1': 'val1', 'key2': 'val2'}
+		tpl, ev = evaluate('[iter:kv [ikey]]', {'kv': kv})
+		correctValue = ''.join(kv.iterkeys())
+		self.assertEquals(ev, correctValue)
+
 class TestTest(unittest.TestCase):
 	'Testcase for the test-tag.'
 
