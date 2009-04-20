@@ -1,6 +1,6 @@
 import unittest
 import os
-from user import User, UserExists, NotAuthorized, InvalidEmail, addUser, listUsers
+from user import User, UserExists, NotAuthorized, InvalidEmail, InvalidFullName, addUser, listUsers
 from config.authz.authz import UnknownUserError
 from config.config import Config
 
@@ -122,6 +122,21 @@ base_url = /
 		users = [x.name for x in listUsers(mock_user)]
 		users.sort()
 		self.assertEquals(users, ["foo"])
+
+	def testFullName(self):
+		expected_full_name = "Full Name"
+		u = User("test")
+		full = u.getFullName()
+		self.assertEquals(full, "")
+		u.setFullName(expected_full_name)
+		full = u.getFullName()
+		self.assertEquals(full, expected_full_name)
+
+	def testInvalidFullName(self):
+		u = User("test")
+		invalid_chars = '\'"\n'
+		for invalid_char in invalid_chars.split():
+			self.assertRaises(InvalidFullName, u.setFullName, invalid_char)
 
 	# def testSaveNotifications(self):
 	# 	import time
