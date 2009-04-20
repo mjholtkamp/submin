@@ -11,7 +11,7 @@ def evaluate(tpl_string, variables={}):
 	'Helper function for the tests.'
 	tpl = Template(tpl_string, variables)
 	return (tpl, tpl.evaluate())
-
+	
 class LibraryTest(unittest.TestCase):
 	def testUnknownCommand(self):
 		self.assertRaises(UnknownCommandError, evaluate, \
@@ -66,6 +66,21 @@ class ValTagTest(unittest.TestCase):
 	def testMissingArgument(self):
 		tpl = Template('[val]')
 		self.assertRaises(template_commands.MissingRequiredArguments, tpl.evaluate)
+
+	def testListIndex(self):
+		tpl, ev = evaluate('[val l.0]', {'l': [1, 2, 3]})
+		self.assertEquals(ev, '1')
+
+	def testListIndexOOB(self):
+		tpl, ev = evaluate('[val l.3]', {'l': [1, 2, 3]})
+		self.assertEquals(ev, '')
+
+	def testRecursive(self):
+		class Answer:
+			value = 42
+		o = {'answer': Answer()}
+		tpl, ev = evaluate('[val o.answer.value]', {'o': o})
+		self.assertEquals(ev, '42')
 
 class IterTagTest(unittest.TestCase):
 	'Testcase for the iter-tag, which iterates over a sequence'
