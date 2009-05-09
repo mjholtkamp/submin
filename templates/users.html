@@ -2,9 +2,9 @@
 	<h1 class="content">User [val user.name]</h1>
 	<div class="settings">
 		<ul>
-			<li><form onSubmit="sendFullName();return false;"><label for="fullname">Name</label><input type="text" value="[val user.fullname]" id="fullname"/><input type="submit" value="save name" name="namebutton"/></form></li>
-			<li><form onSubmit="sendEmail();return false;"><label for="email">Email</label><input type="text" value="[val user.email]" id="email"/><input type="submit" value="save email" name="email"/></form></li>
-			<li><form onSubmit=""><label for="password">Password</label><input type="password" id="password"/><input type="submit" value="save password" name="password" id="password_button"/></form></li>
+			<li><form onSubmit="sendFullName();return false;"><label for="fullname">Name</label><input type="text" class="rounded" value="[val user.fullname]" id="fullname"/><input type="submit" value="save name" name="namebutton"/></form></li>
+			<li><form onSubmit="sendEmail();return false;"><label for="email">Email</label><input type="text" class="rounded" value="[val user.email]" id="email"/><input type="submit" value="save email" name="email"/></form></li>
+			<li><form onSubmit=""><label for="password">Password</label><input type="password" class="rounded" id="password"/><input type="submit" value="save password" name="password" id="password_button"/></form></li>
 		</ul>
 		<div class="usershowhide">
 			<h3 class="usershowhide-trigger"><img class="usershowhide-icon" src="[val main_base_url]img/arrow-expanded.png" />Member of</h3>

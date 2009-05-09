@@ -35,6 +35,8 @@ a.external {
 	padding: 0.3em;
 	padding-left: 0.7em;
 	padding-right: 0.7em;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
 }
 
 #content h3 {
@@ -109,4 +111,9 @@ div.error {
 .required {
 	color: red;
 	margin: 0 0.6em;
+}
+
+input.rounded {
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
 }

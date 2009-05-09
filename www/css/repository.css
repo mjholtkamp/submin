@@ -112,6 +112,8 @@ div.settings ul li label {
 	text-align: right;
 	padding: 0 0.5em;
 	background: #eee;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;	
 }
 div.settings ul li input {
 	vertical-align: text-top;
