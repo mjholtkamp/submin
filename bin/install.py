@@ -16,7 +16,7 @@ import shutil
 class Main():
 	def __init__(self):
 		if len(sys.argv) < 2:
-			usage()
+			self.usage()
 			sys.exit(1)
 
 		self.root = False
@@ -97,9 +97,9 @@ Usage: %s <installdir> [--force] [--final=<installdir2>]
 			shutil.copytree(d, os.path.join(self.share, d))
 
 		for src in ["www/submin.wsgi", "www/submin.cgi"]:
-			self.install(src, os.path.join(self.share, "www/"))
+			self.install(src, os.path.join(self.share, "www/"), mode=0755)
 		for src in ["bin/commit-email.pl", "bin/post-commit.py"]:
-			self.install(src, os.path.join(self.share, src))
+			self.install(src, os.path.join(self.share, src), mode=0755)
 
 		# fix hardcoded paths in binaries
 		self.filereplace(self.submin_admin, "_SUBMIN_LIB_DIR_",
