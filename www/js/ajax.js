@@ -60,6 +60,9 @@ function LogResponse(response) {
 }
 
 function XMLtoResponse(doc) {
+	if (doc == null)
+		return [];
+
 	var commands_xml = doc.getElementsByTagName('command');
 	var commands = [];
 	for (var i = 0; i < commands_xml.length; ++i) {

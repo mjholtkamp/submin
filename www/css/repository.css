@@ -119,3 +119,35 @@ div.settings ul li input {
 	vertical-align: text-top;
 	margin: 0 0.5em;
 }
+
+div#tabs {
+	width: 100%;
+	background: #669;
+	float: left;
+	border-bottom: 1px solid black;
+	margin-bottom: 10px;
+}
+ul.tabs {
+	float: left;
+	padding-top: 10px;
+	margin-left: 50px;
+}
+ul.tabs li {
+	float: left;
+	background: #99c;
+	color: white;
+	cursor: pointer;
+	border-top: 1px solid black;
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+	padding: 2px 10px;
+	-moz-border-radius-topleft: 5px;
+	-webkit-border-top-left-radius: 5px;
+	-moz-border-radius-topright: 5px;
+	-webkit-border-top-right-radius: 5px;
+}
+
+ul.tabs li.active {
+	background: white;
+	color: black;
+}

@@ -4,18 +4,15 @@
 var repository_tree = new ReposNode('repostree');
 var repository_paths = new Array();
 var permissionsEditor = null;
-
-// do this before window.onload
-function beforeLoad() {
-	repostree_getpaths();
-}
-beforeLoad();
+var tabs = Array("info", "permissions");
+var tab_current = tabs[0];
 
 // Using window.onload because an onclick="..." handler doesn't give the
 // handler a this-variable
 var repos_old_load = window.onload;
 window.onload = function() {
 	if (repos_old_load) repos_old_load();
+	repostree_getpaths();
 	repository_tree.attach('repostree_/');
 	setupCollapsables(document.getElementById('repostree'), 'repostree', repostree_collapseCB, repostree_expandCB);
 	document.getElementById('repostree_root_text').onclick = function() {
@@ -24,12 +21,44 @@ window.onload = function() {
 
 	repostree_expandCB(repository_tree.trigger);
 	initPermissionsEditor('/');
+	
+	for (var idx = 0; idx < tabs.length; ++idx)
+		tab_setup(tabs[idx]);
+
+	tab_switch(tab_current);
 }
 
 var repos_old_resize = window.onresize;
 window.onresize = function() {
 	if (repos_old_resize) repos_old_resize();
 	resize_content_div();
+}
+
+function tab_setup(name) {
+	var elname = 'tab_' + name;
+	var el = document.getElementById(elname);
+	if (el) {
+		el.onclick = function() {
+			tab_switch(name);
+		}
+		el = document.getElementById(name);
+		el.style.display = 'none';
+	}
+}
+
+function tab_switch(tab) {
+	var elname = 'tab_' + tab_current;
+	var el = document.getElementById(elname);
+	removeClassName(el, 'active');
+	var el = document.getElementById(tab_current);
+	el.style.display = 'none';
+
+	var elname = 'tab_' + tab;
+	var el = document.getElementById(elname);
+	addClassName(el, 'active');
+	var el = document.getElementById(tab);
+	el.style.display = '';
+	tab_current = tab;
 }
 
 function resize_content_div()
