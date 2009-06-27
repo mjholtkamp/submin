@@ -12,15 +12,17 @@ var tab_current = tabs[0];
 var repos_old_load = window.onload;
 window.onload = function() {
 	if (repos_old_load) repos_old_load();
-	repostree_getpaths();
-	repository_tree.attach('repostree_/');
-	setupCollapsables(document.getElementById('repostree'), 'repostree', repostree_collapseCB, repostree_expandCB);
-	document.getElementById('repostree_root_text').onclick = function() {
-		reloadPermissions(this);
-	};
+	if (is_admin) {
+		repostree_getpaths();
+		repository_tree.attach('repostree_/');
+		setupCollapsables(document.getElementById('repostree'), 'repostree', repostree_collapseCB, repostree_expandCB);
+		document.getElementById('repostree_root_text').onclick = function() {
+			reloadPermissions(this);
+		};
 
-	repostree_expandCB(repository_tree.trigger);
-	initPermissionsEditor('/');
+		repostree_expandCB(repository_tree.trigger);
+		initPermissionsEditor('/');
+	}
 	
 	for (var idx = 0; idx < tabs.length; ++idx)
 		tab_setup(tabs[idx]);
@@ -42,7 +44,8 @@ function tab_setup(name) {
 			tab_switch(name);
 		}
 		el = document.getElementById(name);
-		el.style.display = 'none';
+		if (el)
+			el.style.display = 'none';
 	}
 }
 
@@ -75,8 +78,10 @@ function resize_content_div()
 
 	width = width / 2 - 24;
 
-	repostree.style.width = width + 'px';
-	permissions_editor.style.width = width + 'px';
+	if (repostree)
+		repostree.style.width = width + 'px';
+	if (permissions_editor)
+		permissions_editor.style.width = width + 'px';
 }
 
 function repostree_getnode(me)

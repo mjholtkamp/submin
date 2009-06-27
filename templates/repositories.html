@@ -3,7 +3,7 @@
 	<div id="tabs">
 		<ul class="tabs">
 			<li id="tab_info">info</li>
-			<li id="tab_permissions">permissions</li>
+			[test:is_admin <li id="tab_permissions">permissions</li>]
 		</ul>
 	</div>
 	<div id="info" class="settings">
@@ -11,12 +11,16 @@
 			<li><label>Subversion URL</label><span>[test:svn_http_url <a class="external" href="[val svn_http_url]">[val svn_http_url]</a>][else <div class="comment">svn_base_url not set in config</div>]</span>
 			</li>
 			[test:trac_msg <li><label>Trac Environment</label><span>[val trac_msg]<span></li>]
-			[test:trac_exists <li><label>Trac URL</label><span>[test:trac_http_url <a class="external" href="[val trac_http_url]">[val trac_http_url]</a>][else <div class="comment">trac_base_url not set in config</div>]</span></li>]
-			[else [test:trac_config_ok <li><label>Trac Environment</label><span><input type="submit" value="Create (not working yet)" onclick="javascript:trac_env_create()"></span></li>]]
-			<li><label>Send notifications</label><span><input id="notifications" type="checkbox" onclick="javascript:toggle_notifications_mailing()" [test:repository.notificationsEnabled checked]/>enabled</span>
+			[test:trac_exists <li><label>Trac URL</label><span>
+				[test:trac_http_url <a class="external" href="[val trac_http_url]">[val trac_http_url]</a>]
+				[else <div class="comment">trac_base_url not set in config</div>]</span></li>]
+			[else
+				[test:trac_config_ok [test:is_admin <li><label>Trac Environment</label><span><input type="submit" value="Create (not working yet)" onclick="javascript:trac_env_create()"></span></li>]]]
+			<li><label>Send notifications</label><span><input id="notifications" type="checkbox" [test:is_admin onclick="javascript:toggle_notifications_mailing()"][else disabled] [test:repository.notificationsEnabled checked]/>enabled</span>
 			</li>
 		</ul>
 	</div>
+	[test:is_admin
 	<div id="permissions">
 		<h3 class="content">Path permissions</h3>
 		<div id="repostree">
@@ -38,6 +42,7 @@
 			<ul id="permissions-list">
 			</ul>
 		</div>
-		<script type="text/javascript"> resize_content_div(); </script>
 	</div>
+	]
+	<script type="text/javascript"> resize_content_div(); </script>
 </div>
