@@ -9,18 +9,21 @@ import exceptions
 def listRepositories(session_user, only_invalid=False):
 	config = Config()
 	repositories = []
-	if session_user.is_admin:
-		repository_names = repositoriesOnDisk()
-		repository_names.sort()
+	repository_names = repositoriesOnDisk()
+	repository_names.sort()
 
-		for repos in repository_names:
-			try:
-				r = Repository(repos)
-				if not only_invalid:
+	for repos in repository_names:
+		try:
+			r = Repository(repos)
+			if not only_invalid:
+				if session_user.is_admin:
 					repositories.append(repos)
-			except (Repository.DoesNotExist, Repository.PermissionDenied):
-				if only_invalid:
-					repositories.append(repos)
+				else:
+					if r.userHasReadPermissions(session_user):
+						repositories.append(repos)
+		except (Repository.DoesNotExist, Repository.PermissionDenied):
+			if only_invalid:
+				repositories.append(repos)
 
 	return repositories
 
@@ -216,6 +219,14 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		if exitstatus == 0:
 			return
 		raise Exception("could not remove repository %s" % self.name)
+
+	def userHasReadPermissions(self, session_user):
+		if session_user.notifications.has_key(self.name):
+			perm = session_user.notifications[self.name]
+			if perm['allowed']:
+				return True
+
+		return False
 
 	def __str__(self):
 		return self.name

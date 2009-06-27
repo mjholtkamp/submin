@@ -34,7 +34,6 @@ class Groups(View):
 
 		return ErrorResponse('Unknown path', request=req)
 
-	@admin_required
 	def show(self, req, path, localvars):
 		if len(path) < 1:
 			return ErrorResponse('Invalid path', request=req)
@@ -123,8 +122,8 @@ class Groups(View):
 						"group": group.name})
 
 		if group.name not in req.session['user'].member_of:
-			return XMLStatusResponse('listGroupUsers', False, "You do not have permission to"
-					"view this group.")
+			return XMLStatusResponse('listGroupUsers', False,
+				"You do not have permission to view this group.")
 
 		return XMLTemplateResponse("ajax/groupmembers.xml",
 				{"members": group.members, "nonmembers": [],

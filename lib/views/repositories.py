@@ -39,12 +39,15 @@ class Repositories(View):
 
 		return ErrorResponse('Unknown path', request=req)
 
-	@admin_required
 	def show(self, req, path, localvars):
 		import os.path
 		try:
 			repository = Repository(path[0])
 		except Repository.DoesNotExist:
+			return ErrorResponse('This repository does not exist.', request=req)
+
+		user = req.session['user']
+		if not user.is_admin and not repository.userHasReadPermissions(user):
 			return ErrorResponse('This repository does not exist.', request=req)
 
 		localvars['trac_config_ok'] = True

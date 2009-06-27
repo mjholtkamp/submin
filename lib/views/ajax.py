@@ -28,7 +28,6 @@ class Ajax(View):
 
 		return XMLStatusResponse('', False, 'Unknown command')
 
-	@admin_required
 	def listAll(self, req):
 		session_user = req.session['user']
 		try:
