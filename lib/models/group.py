@@ -1,70 +1,50 @@
-from config.config import Config
-from config.authz.authz import UnknownMemberError, MemberExistsError, UnknownGroupError
+from models import getBackend
+backend = getBackend("group")
 
-def addGroup(groupname):
-	config = Config()
-	config.authz.addGroup(groupname)
-
-def listGroups(session_user):
-	config = Config()
-	groups = []
-	authz_groups = config.authz.groups()
-	authz_groups.sort()
-
-	# make sure submin-admins is in front (it's special!)
-	special_group = 'submin-admins'
-	if special_group in authz_groups:
-		authz_groups.remove(special_group)
-		authz_groups.insert(0, special_group)
-
-	for groupname in authz_groups:
-		group = Group(groupname)
-		if session_user.is_admin or session_user.name in group.members:
-			groups.append(group)
-	return groups
+class UnknownGroupError(Exception):
+	pass
 
 class Group(object):
-	def __init__(self, name):
-		config = Config()
+	@staticmethod
+	def list():
+		return [Group(raw_data=group) for group in backend.groups()]
 
-		self.name = name
+	@staticmethod
+	def add(name):
+		"""Add a new, empty group"""
+		backend.add(name)
 
-		if self.name not in config.authz.groups():
-			raise UnknownGroupError(self.name)
+	def __init__(self, groupname=None, raw_data=None):
+		"""Constructor, either takes a groupname or raw data
 
-		self.members = config.authz.members(self.name)
-		self.members.sort()
-		allusers = config.htpasswd.users()
-		allusers.sort();
-		self.nonmembers = [nonmember for nonmember in allusers if nonmember not
-				in self.members]
-
-	def removeMember(self, member):
-		"""Removes a member from this group.
-		Returns True if successful, False otherwise
+		If groupname is provided, the backend is used to get the required data.
+		If raw_data is provided, the backend is not used.
 		"""
-		config = Config()
-		try:
-			config.authz.removeMember(self.name, member)
-			return True
-		except UnknownMemberError:
-			return False
+		db_group = raw_data
 
-	def addMember(self, member):
-		"""Adds a member to this group.
-		Returns True if succesful, False otherwise
-		"""
-		config = Config()
-		try:
-			config.authz.addMember(self.name, member)
-			return True
-		except MemberExistsError:
-			return False
+		if not raw_data:
+			db_group = backend.get_data(groupname)
+			if not db_group:
+				raise UnknownGroupError(groupname)
 
-	def remove(self):
-		config = Config()
-		config.authz.removeGroup(self.name)
-		config.authz.removePermissions(self.name, 'group')
+		self._id   = db_group['id']
+		self._name = db_group['name']
 
 	def __str__(self):
 		return self.name
+
+	def members(self):
+		return backend.members(self._id)
+
+	def add_member(self, user):
+		backend.add_member(self._id, user.id)
+
+	# Properties
+	def _getId(self):
+		return self._id
+
+	def _getName(self):
+		return self._name
+
+	id   = property(_getId)   # id is read-only
+	name = property(_getName) # name is read-only

@@ -42,7 +42,30 @@ assert foo.email == None
 foo.email = "foo@foo.com"
 foo.is_admin = True
 foo.fullname = "Foo Bar"
+admin.fullname = "A. Dmin"
 
 assert foo.email == "foo@foo.com"
 
 foo.remove()
+
+print "="*78
+print "GROUP STUFF"
+print "="*78
+from models.new_group import backend as gbend, Group
+
+header("Setup")
+gbend.setup()
+
+Group.add("test")
+Group.add("foo")
+
+test = Group("test")
+test.add_member(admin)
+test.add_member(User("bar"))
+
+for group in Group.list():
+	print "*", group, '(%r)' % group
+
+	print "  Members:"
+	for m in group.members():
+		print "  *", m

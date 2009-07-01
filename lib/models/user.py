@@ -48,6 +48,7 @@ class User(object):
 			if not db_user:
 				raise UnknownUserError(username)
 
+		self._id       = db_user['id']
 		self._name     = db_user['name']
 		self._email    = db_user['email']
 		self._fullname = db_user['fullname']
@@ -68,6 +69,9 @@ class User(object):
 		backend.remove(self.name)
 
 	# Properties
+	def _getId(self):
+		return self._id
+
 	def _getName(self):
 		return self._name
 
@@ -78,7 +82,7 @@ class User(object):
 		self._email = email
 		if not validators.validate_email(email):
 			raise validators.InvalidEmail(email)
-		backend.set_email(self._name, email)
+		backend.set_email(self._id, email)
 
 	def _getFullname(self):
 		return self._fullname
@@ -87,15 +91,16 @@ class User(object):
 		self._fullname = fullname
 		if not validators.validate_fullname(fullname):
 			raise validators.InvalidFullname(fullname)
-		backend.set_fullname(self._name, fullname)
+		backend.set_fullname(self._id, fullname)
 
 	def _getIsAdmin(self):
 		return self._is_admin
 
 	def _setIsAdmin(self, is_admin):
 		self._is_admin = is_admin
-		backend.set_is_admin(self._name, is_admin)
+		backend.set_is_admin(self._id, is_admin)
 
+	id       = property(_getId)   # id is read-only
 	name     = property(_getName) # name is read-only
 	email    = property(_getEmail,    _setEmail)
 	fullname = property(_getFullname, _setFullname)
