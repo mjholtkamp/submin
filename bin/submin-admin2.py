@@ -18,16 +18,8 @@ class App(object):
 		from sys import argv, path
 
 		path.append(self.systemlibdir())
-		# env = 'SUBMIN_LIB_DIR'
-		# if env in os.environ:
-		# 	path.append(os.environ[env])
 
-		try:
-			from subminadmin import SubminAdmin
-		except ImportError, e:
-			print e
-			print "is environment %s set?" % env
-			return
+		from subminadmin import SubminAdmin
 
 		sa = SubminAdmin(argv)
 		sa.run()
