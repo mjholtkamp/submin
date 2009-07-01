@@ -49,7 +49,7 @@ Usage:
 			'htpasswd': 'auth/htpasswd',
 			'svn dir': 'svn',
 			'http base': '',
-			'bin dir': 'static/bin',
+			'bin dir': '',
 			'path env': '/bin:/usr/bin:/usr/local/bin:/opt/local/bin',
 			'trac dir': 'trac',
 			'session salt': self.session_salt()

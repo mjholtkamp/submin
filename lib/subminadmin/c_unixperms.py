@@ -15,9 +15,9 @@ Usage:
 	def subcmd_fix(self, argv):
 		if os.getuid() != 0:
 			print '''
-To also set ownerships properly, execute as root:
+To set permissions and ownerships properly, execute:
 
-    submin-admin unixperms fix
+    sudo submin-admin unixperms fix
 
 This should also remove possible following warnings.
 '''

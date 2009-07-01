@@ -216,7 +216,7 @@ Apache file created: %(output)s
 		}
 		self.init_vars = {
 			'submin env': self.sa.env,
-			'www dir': config.base_path + 'static' + 'www',
+			'www dir': self.sa.basedir_www,
 			'submin base url': config.get('www', 'base_url'),
 			'svn base url': config.get('www', 'svn_base_url'),
 			'trac base url': config.get('www', 'trac_base_url'),

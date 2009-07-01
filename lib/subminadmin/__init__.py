@@ -2,6 +2,7 @@ import sys
 import os
 
 from config.config import CouldNotReadConfig
+from path.path import Path
 
 class SubminAdmin:
 	def __init__(self, argv):
@@ -10,6 +11,7 @@ class SubminAdmin:
 		self.prompt = ""
 		self.quit = False
 		self.cmd_aliases = [('?', 'help'), ('exit', 'quit')]
+		self._set_systemdirs()
 
 	def run(self):
 		if len(self.argv) < 2:
@@ -102,6 +104,19 @@ Use '?' or 'help' for help on commands.
 			print
 		
 		return rc
+
+	def _set_systemdirs(self):
+		import inspect
+
+		basefile = inspect.getmodule(self).__file__
+		# Basefile will contain <basedir>/lib/subminadmin/__init__.py
+		subminadmin_basedir = os.path.dirname(basefile)
+		basedir_lib = os.path.dirname(subminadmin_basedir)
+		basedir = Path(os.path.dirname(basedir_lib))
+		basedir_www = basedir + 'www'
+		self.basedir = basedir
+		self.basedir_lib = Path(basedir_lib)
+		self.basedir_www = basedir_www
 
 	def usage(self):
 		print "Usage: %s </path/to/projenv> [command [subcommand] [option]]" \
