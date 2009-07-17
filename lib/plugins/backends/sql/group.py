@@ -1,5 +1,4 @@
 from __init__ import db, execute
-from config.authz import md5crypt
 
 def setup():
 	"""Creates table and other setup"""
@@ -29,7 +28,7 @@ def row_dict(cursor, row):
 
 all_fields = "id, name"
 
-def groups():
+def list():
 	"""Generator for sorted list of groups"""
 	cur = db.cursor()
 	execute(cur, """
@@ -43,7 +42,7 @@ def groups():
 def add(groupname):
 	execute(db.cursor(), "INSERT INTO groups (name) VALUES (?)", (groupname,))
 
-def get_data(groupname):
+def group_data(groupname):
 	cur = db.cursor()
 	execute(cur, """
 		SELECT %s
@@ -54,6 +53,9 @@ def get_data(groupname):
 		return None
 
 	return row_dict(cur, row)
+
+def remove(groupid):
+	execute(db.cursor(), "DELETE FROM groups WHERE id=?", (groupid,))
 
 def members(groupid):
 	"""Returns a sorted list of usernames, which are members of the group with
@@ -75,5 +77,11 @@ def add_member(groupid, userid):
 			(groupid, userid)
 		VALUES
 			(?, ?)
+		""", (groupid, userid))
+
+def remove_member(groupid, userid):
+	execute(db.cursor(), """
+		DELETE FROM group_members
+		WHERE groupid=? AND userid=?
 		""", (groupid, userid))
 
