@@ -17,6 +17,11 @@ backend.setup()
 header("Adding users")
 User.add("admin")
 User.add("foo")
+try:
+	User.add("foo")
+except Exception, e:
+	print "Correctly raised:", e
+
 User.add("bar")
 
 admin = User("admin")
@@ -51,17 +56,23 @@ foo.remove()
 print "="*78
 print "GROUP STUFF"
 print "="*78
-from models.new_group import backend as gbend, Group
+from models.group import backend as gbend, Group, UnknownGroupError
 
 header("Setup")
 gbend.setup()
 
 Group.add("test")
+try:
+	Group.add("test")
+except Exception, e:
+	print "Correctly raised:", e
+
 Group.add("foo")
 
+bar = User("bar")
 test = Group("test")
 test.add_member(admin)
-test.add_member(User("bar"))
+test.add_member(bar)
 
 for group in Group.list():
 	print "*", group, '(%r)' % group
@@ -69,3 +80,19 @@ for group in Group.list():
 	print "  Members:"
 	for m in group.members():
 		print "  *", m
+
+print "Removing user `bar' from group `test'"
+test.remove_member(bar)
+
+print "Now, `test' has the following members:", ', '.join(test.members())
+assert "bar" not in test.members(), "User `bar' should not be in group `test'!"
+
+test.remove()
+assert "test" not in Group.list(), "Group `test' should be removed, but is not!"
+
+header("Trying to retrieve nonexistent group")
+try:
+	nonexistent = Group("Nonexistent")
+except UnknownGroupError:
+	print 'Correcly threw UnknownGroupError'
+
