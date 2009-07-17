@@ -43,8 +43,8 @@ def add(username, password):
 	execute(cur, "INSERT INTO users (name, password) VALUES (?, ?)",
 			(username, password))
 
-def remove(username):
-	execute(db.cursor(), "DELETE FROM users WHERE name=?", (username,))
+def remove(userid):
+	execute(db.cursor(), "DELETE FROM users WHERE id=?", (userid,))
 
 def user_data(username):
 	cur = db.cursor()

@@ -65,7 +65,7 @@ class User(object):
 		return self.name
 
 	def remove(self):
-		backend.remove(self.name)
+		backend.remove(self._id)
 
 	# Properties
 	def _getId(self):
@@ -110,20 +110,20 @@ Backend contract
 ================
 
 * list()
-	Returns a sorted list of users
+	Returns a sorted list of users, sorted by username
 
 * add(username, password)
 	Adds a new user, raises `UserExistsError` if there already is a user with
 	this username
 
 * user_data(username)
-	Returns a dictionary with all required data.
+	Returns a dictionary with all required user data.
 	Returns `None` if no user with this username exists.
 	Fields which need to be implemented (with properties?): name, email,
 	fullname, is_admin
 	
-* remove(username)
-	Removes *username*.
+* remove(userid)
+	Removes user with id *userid*.
 
 * setup()
 	Creates the sql-table or performs other setup
