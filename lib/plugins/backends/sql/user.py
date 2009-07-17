@@ -23,7 +23,7 @@ def row_dict(cursor, row):
 
 all_fields = "id, name, email, fullname, is_admin"
 
-def users():
+def list():
 	"""Generator for sorted list of users"""
 	cur = db.cursor()
 	execute(cur, """
@@ -46,7 +46,7 @@ def add(username, password):
 def remove(username):
 	execute(db.cursor(), "DELETE FROM users WHERE name=?", (username,))
 
-def get_data(username):
+def user_data(username):
 	cur = db.cursor()
 	execute(cur, """
 		SELECT %s

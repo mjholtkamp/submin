@@ -17,8 +17,7 @@ class User(object):
 		if not session_user.is_admin: # only admins get to see the entire list
 			return [session_user]     # users only see themselves
 
-		#return backend.users()
-		return [User(raw_data=user) for user in backend.users()]
+		return [User(raw_data=user) for user in backend.list()]
 
 	@staticmethod
 	def add(username):
@@ -44,7 +43,7 @@ class User(object):
 		db_user = raw_data
 
 		if not raw_data:
-			db_user = backend.get_data(username)
+			db_user = backend.user_data(username)
 			if not db_user:
 				raise UnknownUserError(username)
 
@@ -110,16 +109,14 @@ __doc__ = """
 Backend contract
 ================
 
-Username is unique and primary key.
-
-* users()
+* list()
 	Returns a sorted list of users
 
 * add(username, password)
 	Adds a new user, raises `UserExistsError` if there already is a user with
 	this username
 
-* get_data(username)
+* user_data(username)
 	Returns a dictionary with all required data.
 	Returns `None` if no user with this username exists.
 	Fields which need to be implemented (with properties?): name, email,
@@ -130,4 +127,13 @@ Username is unique and primary key.
 
 * setup()
 	Creates the sql-table or performs other setup
+
+* set_email(id, email)
+	Sets the email for user with id *id*
+
+* set_fullname(id, fullname)
+	Sets the fullname for user with id *id*
+
+* set_is_admin(id, is_admin)
+	Sets whether user with id *id* is an admin
 """
