@@ -1,5 +1,8 @@
-from __init__ import db, execute
+from __init__ import db, execute, SQLIntegrityError
 from config.authz import md5crypt
+
+class UserExistsError(Exception):
+	pass
 
 def setup():
 	"""Creates table and other setup"""
@@ -40,8 +43,11 @@ def add(username, password):
 	newhash = md5crypt.md5crypt(password, salt, '$' + magic + '$')
 
 	cur = db.cursor()
-	execute(cur, "INSERT INTO users (name, password) VALUES (?, ?)",
-			(username, password))
+	try:
+		execute(cur, "INSERT INTO users (name, password) VALUES (?, ?)",
+				(username, password))
+	except SQLIntegrityError, e:
+		raise UserExistsError("User `%s' already exists" % username)
 
 def remove(userid):
 	execute(db.cursor(), "DELETE FROM users WHERE id=?", (userid,))

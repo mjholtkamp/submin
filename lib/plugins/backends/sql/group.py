@@ -1,4 +1,7 @@
-from __init__ import db, execute
+from __init__ import db, execute, SQLIntegrityError
+
+class GroupExistsError(Exception):
+	pass
 
 def setup():
 	"""Creates table and other setup"""
@@ -40,7 +43,10 @@ def list():
 		yield row_dict(cur, x)
 
 def add(groupname):
-	execute(db.cursor(), "INSERT INTO groups (name) VALUES (?)", (groupname,))
+	try:
+		execute(db.cursor(), "INSERT INTO groups (name) VALUES (?)", (groupname,))
+	except SQLIntegrityError, e:
+		raise GroupExistsError("Group `%s' already exists" % groupname)
 
 def group_data(groupname):
 	cur = db.cursor()

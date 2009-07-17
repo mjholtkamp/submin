@@ -3,6 +3,8 @@ from bootstrap import settings
 
 db = sqlite3.connect(settings.sqlite_path)
 
+SQLIntegrityError = sqlite3.IntegrityError
+
 def default_execute(cursor, query, args=(), commit=True):
 	cursor.execute(query, args)
 	if commit:
