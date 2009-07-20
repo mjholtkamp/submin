@@ -133,7 +133,7 @@ class ConfigData:
 		path = Path(self.get(section, variable))
 		if path.absolute:
 			return path
-		
+
 		return self.base_path + path
 
 	def get(self, section, variable):
