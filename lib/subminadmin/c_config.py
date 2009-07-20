@@ -17,8 +17,8 @@ Usage:
 		os.environ['SUBMIN_ENV'] = self.sa.env
 
 	def subcmd_defaults(self, argv):
-		filename = str(Path(self.sa.env) + 'conf' + 'submin.ini')
-		self.submin_ini_defaults(filename)
+		filename = str(Path(self.sa.env) + 'conf' + 'settings.py')
+		self.settings_defaults(filename)
 
 	def subcmd_get(self, argv):
 		c = Config()
@@ -42,7 +42,7 @@ Usage:
 
 		return salt
 
-	def submin_ini_defaults(self, filename):
+	def settings_defaults(self, filename):
 		vars = {
 			'authz': 'auth/authz',
 			'userprop': 'auth/userprop.conf',
@@ -77,7 +77,13 @@ basedir = %(trac dir)s
 session_salt = %(session salt)s
 ''' % vars
 
-		file(filename, 'w').write(submin_ini)
+		submin_settings = '''
+import os
+backend = "sql"
+sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
+'''
+
+		file(filename, 'w').write(submin_settings)
 
 	def run(self):
 		if len(self.argv) < 1:

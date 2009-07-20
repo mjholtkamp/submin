@@ -9,6 +9,7 @@ from models.repository import *
 from models.trac import *
 from auth.decorators import *
 from path.path import Path
+from config.config import MissingConfigData
 from unicode import url_uc_decode
 from ConfigParser import NoOptionError
 
@@ -41,6 +42,8 @@ class Repositories(View):
 
 	def show(self, req, path, localvars):
 		import os.path
+		config = Config()
+
 		try:
 			repository = Repository(path[0])
 		except Repository.DoesNotExist:
@@ -50,19 +53,25 @@ class Repositories(View):
 		if not user.is_admin and not repository.userHasReadPermissions(user):
 			return ErrorResponse('This repository does not exist.', request=req)
 
-		localvars['trac_config_ok'] = True
-		localvars['trac_exists'] = False
+		trac_enabled = False
 		try:
-			trac = Trac(path[0])
-			localvars['trac_exists'] = True
-		except UnknownTrac, e:
+			trac_enabled = config.get('trac', 'enabled')
+		except MissingConfigData:
 			pass
-		except MissingConfig, e:
-			localvars['trac_config_ok'] = False
-			localvars['trac_msg'] = \
-				'There is something missing in your config: %s' % str(e)
 
-		config = Config()
+		if trac_enabled:
+			localvars['trac_config_ok'] = True
+			localvars['trac_exists'] = False
+			try:
+				trac = Trac(path[0])
+				localvars['trac_exists'] = True
+			except UnknownTrac, e:
+				pass
+			except MissingConfig, e:
+				localvars['trac_config_ok'] = False
+				localvars['trac_msg'] = \
+					'There is something missing in your config: %s' % str(e)
+
 		try:
 			svn_base_url = config.get('www', 'svn_base_url')
 			svn_http_url = os.path.join(svn_base_url, repository.name)
