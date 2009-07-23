@@ -1,5 +1,4 @@
 from path.path import Path
-from config.config import Config
 import os, sys
 
 class c_config():
