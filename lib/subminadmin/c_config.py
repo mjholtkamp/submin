@@ -43,13 +43,13 @@ Usage:
 				self._printkeyvalue(o, arg[0], arg[1], maxlen)
 
 	def subcmd_set(self, argv):
-		if len(argv) != 3:
+		if len(argv) != 2:
 			self.sa.execute(['help', 'config'])
 			return
 
-		c = Config()
-		c.set(argv[0], argv[1], argv[2])
-		c.save()
+		from models.options import Options
+		o = Options()
+		o.set_value(argv[0], argv[1])
 
 	def session_salt(self):
 		import random
