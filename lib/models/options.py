@@ -1,5 +1,5 @@
 from models import getBackend
-backend = getBackend("option")
+backend = getBackend("options")
 
 class Options(object):
 	def value(self, key):
