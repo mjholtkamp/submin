@@ -36,7 +36,9 @@ def add(username, password):
 		raise UserExistsError("User `%s' already exists" % username)
 
 def remove(userid):
-	execute(db.cursor(), "DELETE FROM users WHERE id=?", (userid,))
+	cur = db.cursor()
+	execute(cur, "DELETE FROM group_members WHERE userid=?", (userid,))
+	execute(cur, "DELETE FROM users WHERE id=?", (userid,))
 
 def user_data(username):
 	cur = db.cursor()
