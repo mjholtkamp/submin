@@ -4,20 +4,6 @@ from config.authz import md5crypt
 class UserExistsError(Exception):
 	pass
 
-def setup():
-	"""Creates table and other setup"""
-	execute(db.cursor(), """
-		CREATE TABLE users
-		(
-			id       integer primary key autoincrement,
-			name     text not null unique, 
-			password text not null,
-			email    text,
-			fullname text,
-			is_admin bool default 0
-		)
-	""")
-
 def row_dict(cursor, row):
 	# description returns a tuple; the first entry is the name of the field
 	# zip makes (field_name, field_value) tuples, which can be converted into
@@ -75,3 +61,26 @@ set_name     = field_setter("name")
 set_email    = field_setter("email")
 set_fullname = field_setter("fullname")
 set_is_admin = field_setter("is_admin")
+
+
+member_query = """
+		SELECT groups.name FROM group_members
+		LEFT JOIN groups ON group_members.groupid %s groups.id
+		WHERE group_members.userid = ?
+		ORDER BY groups.name ASC
+"""
+
+def member_of(userid):
+	"""Returns list of groups a user is a member of"""
+	cur = db.cursor()
+	execute(cur, member_query % "=", (userid,))
+
+	return [row[0] for row in cur]
+
+def nonmember_of(userid):
+	"""Returns list of groups a user is not a member of"""
+	cur = db.cursor()
+	execute(cur, member_query % "!=", (userid,))
+
+	return [row[0] for row in cur]
+

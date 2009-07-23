@@ -76,9 +76,6 @@ Username is unique and primary key.
 * remove(groupid)
 	Removes group with id *groupid*.
 
-* setup()
-	Creates the sql-table or performs other setup
-
 * members(groupid)
 	Returns a sorted list of members, sorted by username, for group with id
 	*groupid*

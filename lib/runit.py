@@ -12,7 +12,8 @@ os.remove(settings.sqlite_path)
 from models.user import backend, User, UnknownUserError
 
 header("Setup (creating db etc)")
-backend.setup()
+from models import backendSetup
+backendSetup()
 
 header("Adding users")
 User.add("admin")
@@ -58,9 +59,6 @@ print "GROUP STUFF"
 print "="*78
 from models.group import backend as gbend, Group, UnknownGroupError
 
-header("Setup")
-gbend.setup()
-
 Group.add("test")
 try:
 	Group.add("test")
@@ -95,4 +93,16 @@ try:
 	nonexistent = Group("Nonexistent")
 except UnknownGroupError:
 	print 'Correcly threw UnknownGroupError'
+
+Group.add("bar")
+Group.add("test")
+test = Group("test")
+test.add_member(admin)
+all_groups = Group.list()
+member_of = admin.member_of()
+nonmember_of = admin.nonmember_of()
+
+print "All groups:", [group.name for group in all_groups]
+print "Groups admin is a member of:", member_of
+print "Groups admin is not a member of:", nonmember_of
 

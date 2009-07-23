@@ -25,8 +25,4 @@ Options consists of a key and a value pair
 
 * options()
 	Returns a dict of all keys and values
-
-* setup()
-	Creates the sql-table or performs other setup
-
 """

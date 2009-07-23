@@ -1,17 +1,5 @@
 from __init__ import db, execute
 
-
-def setup():
-	"""Creates table and other setup"""
-	c = db.cursor()
-	execute(c, """
-		CREATE TABLE options
-		(
-			key   text primary key not null unique,
-			value text not null unique
-		)
-	""")
-
 def row_dict(cursor, row):
 	# description returns a tuple; the first entry is the name of the field
 	# zip makes (field_name, field_value) tuples, which can be converted into

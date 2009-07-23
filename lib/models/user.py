@@ -53,9 +53,6 @@ class User(object):
 		self._fullname = db_user['fullname']
 		self._is_admin = db_user['is_admin']
 
-		self.member_of    = None # XXX: use Group model here?
-		self.nonmember_of = None
-
 		self.notifications = {}
 
 		self.is_authenticated = False # used by session, listed here to provide
@@ -66,6 +63,12 @@ class User(object):
 
 	def remove(self):
 		backend.remove(self._id)
+
+	def member_of(self):
+		return backend.member_of(self._id)
+
+	def nonmember_of(self):
+		return backend.nonmember_of(self._id)
 
 	# Properties
 	def _getId(self):
@@ -130,9 +133,6 @@ Backend contract
 	
 * remove(userid)
 	Removes user with id *userid*.
-
-* setup()
-	Creates the sql-table or performs other setup
 
 * set_email(id, email)
 	Sets the email for user with id *id*

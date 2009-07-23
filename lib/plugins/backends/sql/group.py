@@ -3,26 +3,6 @@ from __init__ import db, execute, SQLIntegrityError
 class GroupExistsError(Exception):
 	pass
 
-def setup():
-	"""Creates table and other setup"""
-	c = db.cursor()
-	execute(c, """
-		CREATE TABLE groups
-		(
-			id   integer primary key autoincrement,
-			name text not null unique
-		)
-	""")
-
-	execute(c, """
-		CREATE TABLE group_members
-		(
-			groupid integer references groups(id),
-			userid  integer references user(id)
-		)
-	""")
-
-
 def row_dict(cursor, row):
 	# description returns a tuple; the first entry is the name of the field
 	# zip makes (field_name, field_value) tuples, which can be converted into
@@ -61,7 +41,10 @@ def group_data(groupname):
 	return row_dict(cur, row)
 
 def remove(groupid):
-	execute(db.cursor(), "DELETE FROM groups WHERE id=?", (groupid,))
+	cur = db.cursor()
+	execute(cur, "DELETE FROM groups WHERE id=?", (groupid,))
+	execute(cur, "DELETE FROM group_members WHERE groupid=?",
+					(groupid,))
 
 def members(groupid):
 	"""Returns a sorted list of usernames, which are members of the group with

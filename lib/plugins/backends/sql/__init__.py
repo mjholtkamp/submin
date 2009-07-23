@@ -3,6 +3,42 @@ from bootstrap import settings
 
 db = sqlite3.connect(settings.sqlite_path)
 
+
+def setup():
+	"""Creates all necessary tables"""
+
+	db.cursor().executescript("""
+		CREATE TABLE users
+		(
+			id       integer primary key autoincrement,
+			name     text not null unique, 
+			password text not null,
+			email    text,
+			fullname text,
+			is_admin bool default 0
+		);
+
+		CREATE TABLE groups
+		(
+			id   integer primary key autoincrement,
+			name text not null unique
+		);
+
+		CREATE TABLE group_members
+		(
+			groupid integer references groups(id),
+			userid  integer references user(id)
+		);
+
+		CREATE TABLE options
+		(
+			key   text primary key not null unique,
+			value text not null unique
+		);
+	""")
+
+# sqlite3 specific variables / functions
+
 SQLIntegrityError = sqlite3.IntegrityError
 
 def default_execute(cursor, query, args=(), commit=True):
