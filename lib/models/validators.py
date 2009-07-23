@@ -28,7 +28,7 @@ def validate_email(email):
 	return EMAIL_REGEX.match(email)
 
 def validate_username(user):
-	return not USERNAME_REGEX.search(user):
+	return not USERNAME_REGEX.search(user)
 
 def validate_fullname(fullname):
-	return not FULLNAME_REGEX.search(fullname):
+	return not FULLNAME_REGEX.search(fullname)
