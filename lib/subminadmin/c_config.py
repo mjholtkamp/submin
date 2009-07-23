@@ -35,6 +35,7 @@ Usage:
 			self._printkeyvalue(o, argv[0], value, len(argv[0]))
 		else:
 			options = o.options()
+			options.sort()
 			maxlen = 0
 			for arg in options:
 				if len(arg[0]) > maxlen: maxlen = len(arg[0])
