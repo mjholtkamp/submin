@@ -62,6 +62,10 @@ class User(object):
 		return self.name
 
 	def remove(self):
+		backend.remove_from_groups(self._id)
+		backend.remove_permissions_repository(self._id)
+		backend.remove_permissions_submin(self._id)
+		backend.remove_notifications(self._id)
 		backend.remove(self._id)
 
 	def member_of(self):
@@ -132,7 +136,21 @@ Backend contract
 	fullname, is_admin
 	
 * remove(userid)
-	Removes user with id *userid*.
+	Removes user with id *userid*. Before a user can be removed, all
+	remove_-functions below must have been called. This happens in the model,
+	so backend designers need not worry about this restriction.
+
+* remove_from_groups(userid)
+	Removes user with id *userid* from groups
+
+* remove_permissions_repository(userid)
+	Removes a users repository permissions
+
+* remove_permissions_submin(userid)
+	Removes a users submin permissions
+
+* remove_notifications(userid)
+	Removes a users notifications
 
 * member_of(userid)
 	Returns sorted list of groups a user is member of.

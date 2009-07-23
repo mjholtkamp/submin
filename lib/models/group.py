@@ -34,6 +34,9 @@ class Group(object):
 		return self.name
 
 	def remove(self):
+		backend.remove_permissions_repository(self._id)
+		backend.remove_permissions_submin(self._id)
+		backend.remove_members_from_group(self._id)
 		backend.remove(self._id)
 
 	def members(self):
@@ -74,7 +77,18 @@ Username is unique and primary key.
 	Fields which need to be implemented (with properties?): name
 	
 * remove(groupid)
-	Removes group with id *groupid*.
+	Removes group with id *groupid*. Before a group can be removed, all
+	remove_-functions below must have been called. This happens in the model,
+	so backend designers need not worry about this restriction.
+
+* remove_permissions_repository(groupid)
+	Removes repository permissions for group with id *groupid*
+
+* remove_permissions_submin(groupid)
+	Removes submin permissions for group with id *groupid*
+
+* remove_members_from_group(groupid)
+	Removes all members of group with id *groupid*
 
 * members(groupid)
 	Returns a sorted list of members, sorted by username, for group with id

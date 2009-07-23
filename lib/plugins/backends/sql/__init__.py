@@ -35,6 +35,40 @@ def setup():
 			key   text primary key not null unique,
 			value text not null unique
 		);
+
+		CREATE TABLE repositories
+		(
+			id   integer primary key autoincrement,
+			name text not null
+		);
+
+		CREATE TABLE notifications
+		(
+			id           integer primary key autoincrement,
+			userid       integer references users(id),
+			repositoryid integer references repositories(id),
+			allowed      bool default 0,
+			enabled      bool default 0
+		);
+
+		CREATE TABLE permissions_repository
+		(
+			id           integer primary key autoincrement,
+			repositoryid integer references repositories(id),
+			path         text not null,
+			subjecttype  text not null, -- user, group or all
+			subjectid    integer,       -- only null if subjecttype is all
+			type         text           -- '', 'r' or 'rw'
+		);
+
+		CREATE TABLE permissions_submin
+		(
+			id          integer primary key autoincrement,
+			subjecttype text not null, -- user or group
+			subjectid   integer,
+			objecttype  text not null, -- group or repository
+			objectid    integer
+		);
 	""")
 
 # sqlite3 specific variables / functions

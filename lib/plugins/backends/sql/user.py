@@ -35,10 +35,23 @@ def add(username, password):
 	except SQLIntegrityError, e:
 		raise UserExistsError("User `%s' already exists" % username)
 
+# Remove functions, removes users from various tables
+def remove_from_groups(userid):
+	execute(db.cursor(), "DELETE FROM group_members WHERE userid=?", (userid,))
+
+def remove_permissions_repository(userid):
+	execute(db.cursor(), """DELETE FROM permissions_repository
+		WHERE subjecttype="user" AND subjectid=?""", (userid,))
+
+def remove_permissions_submin(userid):
+	execute(db.cursor(), """DELETE FROM permissions_submin
+		WHERE subjecttype="user" AND subjectid=?""", (userid,))
+
+def remove_notifications(userid):
+	execute(db.cursor(), "DELETE FROM notifications WHERE userid=?", (userid,))
+
 def remove(userid):
-	cur = db.cursor()
-	execute(cur, "DELETE FROM group_members WHERE userid=?", (userid,))
-	execute(cur, "DELETE FROM users WHERE id=?", (userid,))
+	execute(db.cursor(), "DELETE FROM users WHERE id=?", (userid,))
 
 def user_data(username):
 	cur = db.cursor()

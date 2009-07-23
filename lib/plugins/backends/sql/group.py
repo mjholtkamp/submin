@@ -40,11 +40,20 @@ def group_data(groupname):
 
 	return row_dict(cur, row)
 
+def remove_permissions_repository(groupid):
+	execute(db.cursor(), """DELETE FROM permissions_repository
+		WHERE subjecttype="group" AND subjectid=?""", (groupid,))
+
+def remove_permissions_submin(groupid):
+	execute(db.cursor(), """DELETE FROM permissions_submin
+		WHERE subjecttype="group" AND subjectid=?""", (groupid,))
+
+def remove_members_from_group(groupid):
+	execute(db.cursor(), "DELETE FROM group_members WHERE groupid=?",
+			(groupid,))
+
 def remove(groupid):
-	cur = db.cursor()
-	execute(cur, "DELETE FROM group_members WHERE groupid=?",
-					(groupid,))
-	execute(cur, "DELETE FROM groups WHERE id=?", (groupid,))
+	execute(db.cursor(), "DELETE FROM groups WHERE id=?", (groupid,))
 
 def members(groupid):
 	"""Returns a sorted list of usernames, which are members of the group with
