@@ -1,5 +1,5 @@
+from path.path import Path
 import os
-from config.config import Config
 
 class c_unixperms():
 	'''Commands regarding unix permissions
@@ -30,28 +30,29 @@ This should also remove possible following warnings.
 		self._fix('')
 
 	def _fix(self, unixuser):
-		os.environ['SUBMIN_ENV'] = self.sa.env
-		config = Config()
+		from models.options import Options
+		o = Options()
 
-		nonroots = []
-		nonroots.append(config.base_path + 'auth')
-		nonroots.append(config.getpath('trac', 'basedir'))
-		for filename in ['authz_file', 'access_file', 'userprop_file', 'repositories']:
-			 nonroots.append(config.getpath('svn', filename))
-
-		apache = self._apache_user(unixuser)
-		root = self._apache_user('root')
-
-		self._recurse_change(str(config.base_path), root.pw_uid, apache.pw_gid)
-		for nonroot in nonroots:
-			item = str(nonroot)
-			self._recurse_change(item, apache.pw_uid, apache.pw_gid)
-			if os.path.isfile(item):
-				st = os.stat(os.path.dirname(item))
-				if st.st_uid != apache.pw_uid:
-					print '''\
- *** WARN: file should be writable by apache user, but parent directory is not.
-             (%s)''' % item
+ # 		base_dir = Path(self.sa.env)
+ # 		nonroots = []
+ # 		nonroots.append(base_dir + 'auth')
+ # 		nonroots.append(config.getpath('trac', 'basedir'))
+ # 		for filename in ['authz_file', 'access_file', 'userprop_file', 'repositories']:
+ # 			 nonroots.append(config.getpath('svn', filename))
+ # 
+ # 		apache = self._apache_user(unixuser)
+ # 		root = self._apache_user('root')
+ # 
+ # 		self._recurse_change(str(config.base_path), root.pw_uid, apache.pw_gid)
+ # 		for nonroot in nonroots:
+ # 			item = str(nonroot)
+ # 			self._recurse_change(item, apache.pw_uid, apache.pw_gid)
+ # 			if os.path.isfile(item):
+ # 				st = os.stat(os.path.dirname(item))
+ # 				if st.st_uid != apache.pw_uid:
+ # 					print '''\
+ # *** WARN: file should be writable by apache user, but parent directory is not.
+ #             (%s)''' % item
 
 	def _recurse_change(self, directory, user, group):
 		if not self._change_item(directory, user, group):

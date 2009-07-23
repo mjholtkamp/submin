@@ -125,26 +125,22 @@ If you use Trac, it will be accessible from <http base>/trac.
 			self.init_vars['http_base'] = Path("/")
 
 		# write changes to config
-		from config.config import Config
-		os.environ['SUBMIN_ENV'] = self.sa.env
-		c = Config()
-		c.set('svn', 'repositories', str(self.init_vars['svn_dir']))
-		c.set('www', 'base_url', self._get_url('submin_url'))
-		c.set('www', 'trac_base_url', self._get_url('trac_url'))
-		c.set('www', 'svn_base_url', self._get_url('svn_url'))
-		c.set('trac', 'basedir', str(self.init_vars['trac_dir']))
-		c.save()
-
-		if self.init_vars['create_user'] == "yes":
-			# add an admin user
-			c.htpasswd.add('admin', 'admin')
-			try:
-				c.authz.removeGroup('submin-admins') # on overwrite
-			except UnknownGroupError:
-				pass # ignore
-
-			c.authz.addGroup('submin-admins', ['admin'])
-			print "\nAdded an admin user with password 'admin'\n"
+		# c.set('svn', 'repositories', str(self.init_vars['svn_dir']))
+		# c.set('www', 'base_url', self._get_url('submin_url'))
+		# c.set('www', 'trac_base_url', self._get_url('trac_url'))
+		# c.set('www', 'svn_base_url', self._get_url('svn_url'))
+		# c.set('trac', 'basedir', str(self.init_vars['trac_dir']))
+		# 
+		# if self.init_vars['create_user'] == "yes":
+		# 	# add an admin user
+		# 	c.htpasswd.add('admin', 'admin')
+		# 	try:
+		# 		c.authz.removeGroup('submin-admins') # on overwrite
+		# 	except UnknownGroupError:
+		# 		pass # ignore
+		# 
+		# 	c.authz.addGroup('submin-admins', ['admin'])
+		# 	print "\nAdded an admin user with password 'admin'\n"
 
 		self.sa.execute(['unixperms', 'fix'])
 

@@ -13,11 +13,7 @@ Usage:
 		self.sa = sa
 		self.argv = argv
 		os.environ['SUBMIN_ENV'] = self.sa.env
-		self.settings_dir = str(Path(self.sa.env) + 'conf')
-		self.settings_file = 'settings'
-		self.settings_path = str(Path(self.settings_dir) + 'settings.py')
-		sys.path.append(self.settings_dir)
-		os.environ['SUBMIN_SETTINGS'] = self.settings_file
+		self.settings_path = str(Path(self.sa.env) + 'conf' + 'settings.py')
 
 	def subcmd_defaults(self, argv):
 		self.settings_defaults(self.settings_path)

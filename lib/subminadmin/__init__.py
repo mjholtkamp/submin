@@ -1,7 +1,6 @@
 import sys
 import os
 
-from config.config import CouldNotReadConfig
 from path.path import Path
 
 class SubminAdmin:
@@ -90,18 +89,12 @@ Use '?' or 'help' for help on commands.
 				print 'environment does not exist, use initenv'
 				return True
 
-		rc = False
-		try:
-			Class = self.cmd_instance(cmd, argv[1:])
-			if not Class:
-				print "Unknown command"
-				return True
+		Class = self.cmd_instance(cmd, argv[1:])
+		if not Class:
+			print "Unknown command"
+			return True
 
-			rc = Class.run()
-		except CouldNotReadConfig, e:
-			print "Error reading config:"
-			print str(e)
-			print
+		rc = Class.run()
 		
 		return rc
 
