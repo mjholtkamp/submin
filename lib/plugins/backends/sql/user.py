@@ -71,6 +71,7 @@ def field_setter(field):
 		execute(cur, sql, (value, userid))
 	return set_field
 
+set_name     = field_setter("name")
 set_email    = field_setter("email")
 set_fullname = field_setter("fullname")
 set_is_admin = field_setter("is_admin")

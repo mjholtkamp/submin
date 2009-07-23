@@ -74,6 +74,12 @@ class User(object):
 	def _getName(self):
 		return self._name
 
+	def _setName(self, name):
+		self._name = name
+		if not validators.validate_username(name):
+			raise validators.InvalidUsername(name)
+		backend.set_name(self._id, name)
+
 	def _getEmail(self):
 		return self._email
 
@@ -100,7 +106,7 @@ class User(object):
 		backend.set_is_admin(self._id, is_admin)
 
 	id       = property(_getId)   # id is read-only
-	name     = property(_getName) # name is read-only
+	name     = property(_getName,     _setName)
 	email    = property(_getEmail,    _setEmail)
 	fullname = property(_getFullname, _setFullname)
 	is_admin = property(_getIsAdmin,  _setIsAdmin)
