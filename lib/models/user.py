@@ -134,6 +134,12 @@ Backend contract
 * remove(userid)
 	Removes user with id *userid*.
 
+* member_of(userid)
+	Returns sorted list of groups a user is member of.
+
+* nonmember_of(userid)
+	Returns sorted list of groups a user is not a member of.
+
 * set_email(id, email)
 	Sets the email for user with id *id*
 
