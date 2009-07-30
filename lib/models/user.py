@@ -61,6 +61,9 @@ class User(object):
 	def __str__(self):
 		return self.name
 
+	def check_password(self, password):
+		backend.check_password(self._id, password)
+
 	def remove(self):
 		backend.remove_from_groups(self._id)
 		backend.remove_permissions_repository(self._id)
@@ -134,6 +137,9 @@ Backend contract
 	Returns `None` if no user with this username exists.
 	Fields which need to be implemented (with properties?): name, email,
 	fullname, is_admin
+
+* check_password(id, password)
+	Checks whether the supplied password is valid for a user with userid *id*
 	
 * remove(userid)
 	Removes user with id *userid*. Before a user can be removed, all

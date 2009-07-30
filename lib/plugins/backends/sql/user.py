@@ -23,10 +23,14 @@ def list():
 	for x in cur:
 		yield row_dict(cur, x)
 
-def add(username, password):
+def _pw_hash(password):
 	magic = 'apr1'
 	salt = md5crypt.makesalt()
 	newhash = md5crypt.md5crypt(password, salt, '$' + magic + '$')
+	return newhash
+
+def add(username, password):
+	password = _pw_hash(password)
 
 	cur = db.cursor()
 	try:
@@ -34,6 +38,13 @@ def add(username, password):
 				(username, password))
 	except SQLIntegrityError, e:
 		raise UserExistsError("User `%s' already exists" % username)
+
+def check_password(userid, password):
+	password = _pw_hash(password)
+	cur = db.cursor()
+	execute(cur, "SELECT password FROM users WHERE id=?", (userid,))
+	row = cur.fetchone()
+	return cur[0] == password
 
 # Remove functions, removes users from various tables
 def remove_from_groups(userid):
