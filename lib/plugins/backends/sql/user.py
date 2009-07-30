@@ -4,6 +4,10 @@ from config.authz import md5crypt
 class UserExistsError(Exception):
 	pass
 
+class NoMD5PasswordError(Exception):
+	def __init__(self):
+		Exception.__init__(self, "Password is not encrypted with MD5")
+
 def row_dict(cursor, row):
 	# description returns a tuple; the first entry is the name of the field
 	# zip makes (field_name, field_value) tuples, which can be converted into
@@ -23,9 +27,10 @@ def list():
 	for x in cur:
 		yield row_dict(cur, x)
 
-def _pw_hash(password):
+def _pw_hash(password, salt=None):
 	magic = 'apr1'
-	salt = md5crypt.makesalt()
+	if salt is None:
+		salt = md5crypt.makesalt()
 	newhash = md5crypt.md5crypt(password, salt, '$' + magic + '$')
 	return newhash
 
@@ -40,11 +45,19 @@ def add(username, password):
 		raise UserExistsError("User `%s' already exists" % username)
 
 def check_password(userid, password):
-	password = _pw_hash(password)
 	cur = db.cursor()
 	execute(cur, "SELECT password FROM users WHERE id=?", (userid,))
 	row = cur.fetchone()
-	return cur[0] == password
+	vals = row[0][1:].split('$')
+	if not len(vals) == 3:
+		raise NoMD5PasswordError
+	magic, salt, encrypted = vals
+	return _pw_hash(password, salt) == row[0]
+
+def set_password(userid, password):
+	password = _pw_hash(password)
+	execute(db.cursor(), "UPDATE users SET password=? WHERE id=?",
+			(password, userid))
 
 # Remove functions, removes users from various tables
 def remove_from_groups(userid):

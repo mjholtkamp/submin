@@ -62,7 +62,10 @@ class User(object):
 		return self.name
 
 	def check_password(self, password):
-		backend.check_password(self._id, password)
+		return backend.check_password(self._id, password)
+
+	def set_password(self, password):
+		backend.set_password(self._id, password)
 
 	def remove(self):
 		backend.remove_from_groups(self._id)
@@ -140,6 +143,9 @@ Backend contract
 
 * check_password(id, password)
 	Checks whether the supplied password is valid for a user with userid *id*
+
+* set_password(id, password)
+	Sets the password for a user with userid *id* to *password*
 	
 * remove(userid)
 	Removes user with id *userid*. Before a user can be removed, all

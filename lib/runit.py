@@ -27,6 +27,11 @@ User.add("bar")
 
 admin = User("admin")
 admin.is_admin = True
+pw = "someone set us up the bomb"
+admin.set_password(pw)
+print "check password returned", admin.check_password(pw)
+assert admin.check_password(pw), "Something went wrong while checking password for admin."
+assert not admin.check_password("foo")
 
 header("A list of all users:")
 for user in User.list(admin):
