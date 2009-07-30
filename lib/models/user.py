@@ -21,7 +21,7 @@ class User(object):
 
 	@staticmethod
 	def add(username):
-		"""Adds a new user with a generated random password
+		"""Adds a new user with a generated random password (returns password).
 
 		Raises UserExistsError if a user with this username already exists.
 		"""
@@ -33,6 +33,7 @@ class User(object):
 				for x in range(0, 50)])
 
 		backend.add(username, password)
+		return password
 
 	def __init__(self, username=None, raw_data=None):
 		"""Constructor, either takes a username or raw data
