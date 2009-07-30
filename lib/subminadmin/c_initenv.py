@@ -125,12 +125,20 @@ If you use Trac, it will be accessible from <http base>/trac.
 			self.init_vars['http_base'] = Path("/")
 
 		# write changes to config
-		# c.set('svn', 'repositories', str(self.init_vars['svn_dir']))
-		# c.set('www', 'base_url', self._get_url('submin_url'))
-		# c.set('www', 'trac_base_url', self._get_url('trac_url'))
-		# c.set('www', 'svn_base_url', self._get_url('svn_url'))
-		# c.set('trac', 'basedir', str(self.init_vars['trac_dir']))
-		# 
+		from models.options import Options
+		o = Options()
+
+		options = {
+			'base_url_submin': self._get_url('submin_url'),
+			'base_url_svn': self._get_url('svn_url'),
+			'base_url_trac': self._get_url('trac_url'),
+			'auth_type': 'sql',
+			'dir_svn': str(self.init_vars['svn_dir']),
+			'dir_trac': str(self.init_vars['trac_dir']),
+		}
+		for (key, value) in options.iteritems():
+			o.set_value(key, value)
+
 		# if self.init_vars['create_user'] == "yes":
 		# 	# add an admin user
 		# 	c.htpasswd.add('admin', 'admin')
