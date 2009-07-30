@@ -139,16 +139,20 @@ If you use Trac, it will be accessible from <http base>/trac.
 		for (key, value) in options.iteritems():
 			o.set_value(key, value)
 
-		# if self.init_vars['create_user'] == "yes":
-		# 	# add an admin user
-		# 	c.htpasswd.add('admin', 'admin')
-		# 	try:
-		# 		c.authz.removeGroup('submin-admins') # on overwrite
-		# 	except UnknownGroupError:
-		# 		pass # ignore
-		# 
-		# 	c.authz.addGroup('submin-admins', ['admin'])
-		# 	print "\nAdded an admin user with password 'admin'\n"
+		# add a user
+		from models.user import User
+		from models.group import Group
+		
+		if self.init_vars['create_user'] == "yes":
+			# add an admin user
+			password = User.add('admin')
+			u = User('admin')
+			
+			Group.add('submin-admins')
+			g = Group('submin-admins')
+			g.add_member(u)
+
+			print "\nAdded an admin user with password '%s'\n" % password
 
 		self.sa.execute(['unixperms', 'fix'])
 
