@@ -27,8 +27,7 @@ def list():
 	for x in cur:
 		yield row_dict(cur, x)
 
-def _pw_hash(password, salt=None):
-	magic = 'apr1'
+def _pw_hash(password, salt=None, magic='apr1'):
 	if salt is None:
 		salt = md5crypt.makesalt()
 	newhash = md5crypt.md5crypt(password, salt, '$' + magic + '$')
@@ -52,7 +51,7 @@ def check_password(userid, password):
 	if not len(vals) == 3:
 		raise NoMD5PasswordError
 	magic, salt, encrypted = vals
-	return _pw_hash(password, salt) == row[0]
+	return _pw_hash(password, salt, magic) == row[0]
 
 def set_password(userid, password):
 	password = _pw_hash(password)
