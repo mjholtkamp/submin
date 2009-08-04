@@ -74,7 +74,7 @@ class Users(View):
 			username = req.post['username'].value.strip()
 			email = req.post['email'].value.strip()
 			fullname = req.post['fullname'].value.strip()
-			if re.findall('[^a-zA-Z0-9_-]', username):
+			if re.findall('[^.a-zA-Z0-9_-]', username):
 				return self.showAddForm(req, username, email, fullname,
 					'Invalid characters in username')
 
