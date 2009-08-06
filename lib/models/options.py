@@ -1,5 +1,6 @@
 import os
 from models import getBackend
+from path.path import Path
 backend = getBackend("options")
 
 class Options(object):
@@ -17,7 +18,7 @@ class Options(object):
 		if path.absolute:
 			return path
 		
-		return self.base_path() + path
+		return Path(self.base_path()) + path
 
 	def base_path(self):
 		return os.environ['SUBMIN_ENV']
