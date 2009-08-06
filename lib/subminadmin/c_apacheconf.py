@@ -1,5 +1,4 @@
 from path.path import Path
-from config.config import Config
 import os
 
 class c_apacheconf():
@@ -195,6 +194,11 @@ Apache file created: %(output)s
            AuthUserFile "%(access file)s"
            Require valid-user
         </LocationMatch>
+        AliasMatch "%(trac base url)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs
+        <Directory %(trac dir)s/*/htdocs>
+          Order allow,deny
+          Allow from all
+        </Directory>
     </IfModule>
     <IfModule !mod_python.c>
         AliasMatch "^%(trac base url)s" %(www dir)s/nomodpython.html
@@ -208,22 +212,23 @@ Apache file created: %(output)s
 
 	def run(self):
 		os.environ['SUBMIN_ENV'] = self.sa.env
-		config = Config()
+		from models.options import Options
+		o = Options()
 
 		self.defaults = {
 			'type': 'wsgi',
-			'output': config.base_path + 'conf' + 'apache.conf'
+			'output': Path(o.base_path()) + 'conf' + 'apache.conf'
 		}
 		self.init_vars = {
 			'submin env': self.sa.env,
 			'www dir': self.sa.basedir_www,
-			'submin base url': config.get('www', 'base_url'),
-			'svn base url': config.get('www', 'svn_base_url'),
-			'trac base url': config.get('www', 'trac_base_url'),
-			'svn dir': config.getpath('svn', 'repositories'),
-			'access file': config.getpath('svn', 'access_file'),
-			'authz file': config.getpath('svn', 'authz_file'),
-			'trac dir': config.getpath('trac', 'basedir')
+			'submin base url': o.value('base_url_submin'),
+			'svn base url': o.value('base_url_svn'),
+			'trac base url': o.value('base_url_trac'),
+			'svn dir': o.path('dir_svn'),
+			'access file': o.value('auth_access_file'),
+			'authz file': o.value('auth_authz_file'),
+			'trac dir': o.path('dir_trac')
 		}
 
 		if len(self.argv) < 1:
