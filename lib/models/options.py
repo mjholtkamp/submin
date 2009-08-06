@@ -12,13 +12,14 @@ class Options(object):
 		return backend.options()
 
 	def path(self, key):
-		base_path = os.environ['SUBMIN_ENV']
 		path = Path(self.value(key))
 		if path.absolute:
 			return path
 		
-		return base_path + path
-		
+		return self.base_path() + path
+
+	def base_path(self):
+		return os.environ['SUBMIN_ENV']
 
 __doc__ = """
 Backend contract
