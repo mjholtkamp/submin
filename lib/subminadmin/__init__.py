@@ -99,11 +99,11 @@ Use '?' or 'help' for help on commands.
 		return rc
 
 	def _set_systemdirs(self):
-		import inspect
-
-		basefile = inspect.getmodule(self).__file__
+		basefile = Path(__file__)
+		if not basefile.absolute:
+			basefile = Path(os.getcwd()) + basefile
 		# Basefile will contain <basedir>/lib/subminadmin/__init__.py
-		subminadmin_basedir = os.path.dirname(basefile)
+		subminadmin_basedir = basefile.dirname()
 		basedir_lib = os.path.dirname(subminadmin_basedir)
 		basedir = Path(os.path.dirname(basedir_lib))
 		basedir_www = basedir + 'www'
