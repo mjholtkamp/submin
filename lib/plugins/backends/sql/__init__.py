@@ -1,8 +1,15 @@
 import sqlite3
-from bootstrap import settings
 
-db = sqlite3.connect(settings.sqlite_path)
+backend_debug = False
+db = None
 
+def teardown():
+	db.close()
+
+def init(settings):
+	global db, backend_debug
+	db = sqlite3.connect(settings.sqlite_path)
+	backend_debug = hasattr(settings, "db_debug") and settings.db_debug
 
 def setup():
 	"""Creates all necessary tables"""
@@ -86,5 +93,5 @@ def debug_execute(cursor, query, args=(), commit=True):
 	default_execute(cursor, query, args, commit=commit)
 
 execute = default_execute
-if hasattr(settings, "db_debug") and settings.db_debug:
+if backend_debug:
 	execute = debug_execute
