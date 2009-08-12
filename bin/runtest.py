@@ -1,62 +1,71 @@
 import os
 import commands
 import sys
+import unittest
 
-def which(filename):
-	if not os.environ.has_key('PATH') or os.environ['PATH'] == '':
-		p = os.defpath
-	else:
-		p = os.environ['PATH']
+if "--help" in sys.argv or "-h" in sys.argv:
+	print "Usage: %s [--no-coverage] [--help|-h]" % sys.argv[0]
+	print
+	print "Options:"
+	print "    --no-coverage: Don't display coverage report and don't annotate"
+	print "    --help (-h):   Display this help-text"
+	print
+	print "%s looks for unittests (in files named unittests.py) in the " % sys.argv[0]
+	print "`lib/' directory."
+	print "To narrow the search, supply a sub-directory of `lib/' at the commandline"
+	print
+	print "By default, %s displays coverage report if it is able to load the" % sys.argv[0]
+	print "coverage-module. Annotations are stored in the `coverage-annotate/' directory."
+	sys.exit(0)
 
-	pathlist = p.split (os.pathsep)
-
-	for path in pathlist:
-		f = os.path.join(path, filename)
-		if os.access(f, os.X_OK):
-			return f
-	return None
+use_coverage = False
+cov = None
+if "--no-coverage" not in sys.argv:
+	try:
+		import coverage
+		use_coverage = True
+		cov = coverage.coverage()
+		cov.start()
+	except ImportError, e:
+		print "No coverage reports available."
+		use_coverage = False
+else:
+	# Remove the --no-coverage option from the sys.argv array to facilitate the
+	# supplying of search paths below.
+	idx = sys.argv.index("--no-coverage")
+	del sys.argv[idx]
 
 def main():
 	paths = "lib"
 	if len(sys.argv) > 1:
-		paths = map(os.path.join, ["lib"], sys.argv[1:])
-		paths = ' '.join(paths)
+		paths = ''
+		for path in sys.argv[1:]:
+			paths += "%s " % (path.startswith("lib") and path or os.path.join("lib", path))
 
 	cmd = "find %s -name unittests.py" % paths
 	(exitstatus, outtext) = commands.getstatusoutput(cmd)
-	use_coverage = False
-	python_cmd = "python"
 
-	for pc in ["python-coverage", "coverage"]:
-		if which(pc):
-			use_coverage = True
-			python_cmd = pc
+	# Most modules assume they have lib in the import-path.
+	sys.path.insert(0, "lib")
 
-	if use_coverage:
-		os.environ['COVERAGE_FILE'] = "coverage-tmp/.coverage"
-		try:
-			os.mkdir("coverage-tmp")
-			os.mkdir("coverage-annotate")
-		except OSError:
-			pass
-
+	suite = unittest.TestSuite()
 	for file in outtext.split('\n'):
-		print("running %s" % file)
-		options = ""
-		if use_coverage:
-			options = "-x -p"
+		file = os.path.normpath(file)
+		print "Adding %s to the test-suite" % file
 
-		os.system("PYTHONPATH=lib %s %s %s" % (python_cmd, options, file))
+		# transform filename to module name
+		mod = file.replace('/', '.')[4:-3] # skip `lib.', up till `.py'
+		suite.addTest(unittest.defaultTestLoader.loadTestsFromName(mod))
+
+	# Run the test!
+	unittest.TextTestRunner(verbosity=1).run(suite)
 
 	if use_coverage:
-		os.system("%s -c" % python_cmd)
-		os.system("%s -r -o /usr/lib,/System/Library/" % python_cmd)
-		omit = ["/usr/lib", "/System/Library"]
-		# touch coverage.py, it tries to find itself while annotating, sigh
-		open("coverage.py", "w")
-		open("pmock.py", "w")
-		os.system("%s -a -o %s -d coverage-annotate" % (python_cmd, ','.join(omit)))
-		os.system("rm -rf coverage-tmp coverage.py pmock.py")
+		cov.stop()
+		cov.report(show_missing=False,
+			omit_prefixes=["/usr/lib/", "/System/Library/", "/Library/Python/"])
+		cov.annotate(directory="coverage-annotate")
+		print "Coverage annotations are stored in `coverage-annotate/'"
 
 if __name__ == "__main__":
 	main()
