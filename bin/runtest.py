@@ -25,7 +25,11 @@ if "--no-coverage" not in sys.argv:
 		import coverage
 		use_coverage = True
 		cov = coverage.coverage()
-		cov.start()
+
+		# ignore never executed statements
+		cov.exclude("if False:")
+		cov.exclude('if __name__ == .__main__.:')
+		cov.exclude('unittest.main()') # is not used since we build our own suite
 	except ImportError, e:
 		print "No coverage reports available."
 		use_coverage = False
@@ -47,6 +51,9 @@ def main():
 
 	# Most modules assume they have lib in the import-path.
 	sys.path.insert(0, "lib")
+
+	if use_coverage:
+		cov.start() # Starting here to avoid bin/runtest to show up in coverage-report
 
 	suite = unittest.TestSuite()
 	for file in outtext.split('\n'):
