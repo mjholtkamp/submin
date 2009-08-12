@@ -26,6 +26,9 @@ class UserTests(unittest.TestCase):
 	def setEmail(self, u, email):
 		u.email = email
 
+	def setUsername(self, u, username):
+		u.name = username
+
 	def setFullname(self, u, fullname):
 		u.fullname = fullname
 
@@ -105,6 +108,30 @@ class UserTests(unittest.TestCase):
 		users.sort()
 		self.assertEquals(users, ["foo"])
 
+	def testRemoveUser(self):
+		mock_user = Mock()
+		mock_user.is_admin = True
+		User.add("foo")
+		foo = User("foo")
+		foo.remove()
+		self.assert_("foo" not in [x.name for x in User.list(mock_user)])
+
+	def testUserName(self):
+		u = User("test")
+		self.assertEquals(u.name, "test")
+
+	def testSetUserName(self):
+		u = User("test")
+		u.name = "foo"
+		self.assertEquals(u.name, "foo")
+
+	def testInvalidUserName(self):
+		u = User("test")
+		invalid_chars = '\'"\n'
+		for invalid_char in invalid_chars:
+			self.assertRaises(InvalidUsername, self.setUsername, u,
+					invalid_char)
+
 	def testFullName(self):
 		expected_full_name = "Full Name"
 		u = User("test")
@@ -117,6 +144,12 @@ class UserTests(unittest.TestCase):
 		for invalid_char in invalid_chars.split():
 			self.assertRaises(InvalidFullname, self.setFullname, u,
 					invalid_char)
+
+	def testIsAdmin(self):
+		u = User("test")
+		self.assert_(not u.is_admin)
+		u.is_admin = True
+		self.assert_(u.is_admin)
 
 	def testSaveNotificationsAdmin(self):
 		u = User("test")
