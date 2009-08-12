@@ -33,8 +33,10 @@ class Settings(object):
 			self.load()
 		return setattr(self.__dict__['settings'], attr, value)
 
+	def setSettings(self, settings):
+		self.__dict__['settings'] = settings
+
 settings = Settings()
 
 def setSettings(new_settings):
-	global settings
-	settings = new_settings
+	settings.setSettings(new_settings)
