@@ -91,8 +91,6 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 		for (key, value) in options.iteritems():
 			o.set_value(key, value)
 
-		backendClose()
-
 	def run(self):
 		if len(self.argv) < 1:
 			self.sa.execute(['help', 'config'])
