@@ -1,7 +1,4 @@
 import os
-from config.config import ConfigData
-from path.path import Path
-import shutil
 
 class c_convert():
 	'''Create a new configuration from an old-style config
@@ -11,101 +8,47 @@ Usage:
 	def __init__(self, sa, argv):
 		self.sa = sa
 		self.argv = argv
-		self.old_options = {}
-		self.oldc = None
-		self.import_svn = False
-		self.import_trac = False
-
-	def _get_options_from_config(self, section, option, store_as):
-		self.old_options[store_as] = self.oldc.get(section, option)
-
-	def _check_imports(self):
-		"""Check if we should import svn and trac or just point to it. We
-do this by checking if they reside in the same dirs as the auth files."""
-
-		dirs = {}
-		opts = ['authz_file', 'access_file', 'userprop_file', 'svn_dir', \
-			'trac_dir']
-			
-		for opt in opts:
-			dirs[opt] = os.path.dirname(self.old_options[opt])
-
-		if dirs['authz_file'] == dirs['access_file'] and \
-				dirs['authz_file'] == dirs['userprop_file']:
-			if dirs['authz_file'] == dirs['svn_dir']:
-				self.import_svn = True
-			if dirs['authz_file'] == dirs['trac_dir']:
-				self.import_trac = True
-
-	def convert(self, oldconfig):
-		# Because Config() is a singleton, we have to be careful with it.
-		# We first want to use it for the old config, then initenv. In initenv
-		# it will be used for the new config, so we have to read old config
-		# before that. So, to make it easy on ourselves, we use ConfigData,
-		# which is not a Singleton
-		try:
-			self.oldc = ConfigData(oldconfig)
-		except IOError, e:
-			print "Reading old config failed: %s" % str(e)
-			return
-
-		cmd_list = ['initenv', 'create_user=no']
-
-		# get options that we need to pass to initenv
-		self._get_options_from_config('svn', 'repositories', 'svn_dir')
-		self._get_options_from_config('www', 'base_url', 'submin_url')
-		self._get_options_from_config('www', 'trac_base_url', 'trac_url')
-		self._get_options_from_config('www', 'svn_base_url', 'svn_url')
-		self._get_options_from_config('trac', 'basedir', 'trac_dir')
-
-		# copy this list, because we don't want the other options
-		initenv_options = self.old_options.copy()
-
-		# get some more options, we need later on
-		self._get_options_from_config('svn', 'authz_file', 'authz_file')
-		self._get_options_from_config('svn', 'access_file', 'access_file')
-		self._get_options_from_config('svn', 'userprop_file', 'userprop_file')
-
-		# now see if we need to change options
-		self._check_imports()
-		if (self.import_svn):
-			initenv_options['svn_dir'] = 'svn'
-		if (self.import_trac):
-			initenv_options['trac_dir'] = 'trac'
-		
-		# now finally build the options list
-		for (key, value) in initenv_options.iteritems():
-			cmd_list.append('%s=%s' % (key, value))
-
-		# call initenv
-		if not self.sa.execute(cmd_list):
-			return
-
-		# we now have our environment, so we can create a config object
 		os.environ['SUBMIN_ENV'] = self.sa.env
-		newc = ConfigData()
 
-		# copy svn/trac data, if necessary
-		new_svn_dir = str(newc.getpath('svn', 'repositories'))
-		new_trac_dir = str(newc.getpath('trac', 'basedir'))
-		if self.import_svn:
-			self._copy_dir(self.old_options['svn_dir'], new_svn_dir)
-		if self.import_trac:
-			self._copy_dir(self.old_options['trac_dir'], new_trac_dir)
+	def read_ini(self, filename):
+		import ConfigParser
+		cp = ConfigParser.ConfigParser()
+		cp.read(filename)
+		return cp
 
-		# copy users/groups/permissions
-		file_info = [
-			('authz_file', 'svn', 'authz_file'),
-			('access_file', 'svn', 'access_file'),
-			('userprop_file', 'svn', 'userprop_file'),
-		]
-		for info in file_info:
-			new_file = str(newc.getpath(info[1], info[2]))
-			shutil.copy2(self.old_options[info[0]], new_file)
+	def init_backend(self):
+		self.sa.execute(['config', 'defaults'])
 
-	def _copy_dir(self, old_dir, new_dir):
-		os.rmdir(new_dir) # copytree will fail otherwise
-		shutil.copytree(old_dir, new_dir)
+	def write_options(self, config):
+		from models.options import Options
+		o = Options()
+
+		options = {
+			'base_url_submin': ('www', 'base_url'),
+			'base_url_svn': ('www', 'svn_base_url'),
+			'base_url_trac': ('www', 'trac_base_url'),
+			'dir_svn': ('svn', 'repositories'),
+			'dir_trac': ('trac', 'basedir'),
+			'dir_bin': ('backend', 'bindir'),
+			'session_salt': ('generated', 'session_salt'),
+			'env_path': ('backend', 'path'),
+		}
+		for (key, section_option) in options.iteritems():
+			value = config.get(section_option[0], section_option[1])
+			o.set_value(key, value)
+
+	def write_users(self, config):
+		pass
+
+	def write_groups(self, config):
+		pass
+
+	def convert(self, old_config_file):
+		config = self.read_ini(old_config_file)
+		self.init_backend()
+		self.write_options(config)
+		self.write_users(config)
+		self.write_groups(config)
 
 	def run(self):
 		if len(self.argv) != 1:
