@@ -10,18 +10,18 @@ mock_settings.backend = "mock"
 from bootstrap import setSettings
 setSettings(mock_settings)
 
-from models import backendInit, backendSetup, backendTearDown
+from models import backendOpen, backendSetup, backendClose
 from models.user import User, UserExistsError, UnknownUserError
 
 from models.validators import *
 
 class UserTests(unittest.TestCase):
 	def setUp(self):
-		backendInit(mock_settings)
+		backendOpen(mock_settings)
 		User.add("test")
 
 	def tearDown(self):
-		backendTearDown()
+		backendClose()
 
 	def setEmail(self, u, email):
 		u.email = email

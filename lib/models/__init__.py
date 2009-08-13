@@ -14,14 +14,14 @@ def backendSetup():
 	fimport("plugins.backends.%s" % settings.backend,
 			"plugins.backends").setup()
 
-def backendInit(pass_settings=settings):
+def backendOpen(pass_settings=settings):
 	"""Initialises the backend: either opens a database connection or does
 	other initialisation."""
 
 	fimport("plugins.backends.%s" % pass_settings.backend,
 			"plugins.backends").init(pass_settings)
 
-def backendTearDown():
+def backendClose():
 	"""Teardown is sometimes needed to close databases, etc."""
 
 	fimport("plugins.backends.%s" % settings.backend,

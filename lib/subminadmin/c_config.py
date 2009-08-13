@@ -67,7 +67,8 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 		file(filename, 'w').write(submin_settings)
 
 		# after writing the bootstrap file, we setup all models
-		from models import backendSetup
+		from models import backendSetup, backendOpen, backendClose
+		backendOpen()
 		backendSetup()
 
 		# And now we can use the models
@@ -88,7 +89,9 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 			'env_path': '/bin:/usr/bin:/usr/local/bin:/opt/local/bin',
 		}
 		for (key, value) in options.iteritems():
-			o.set_value(key, value)		
+			o.set_value(key, value)
+
+		backendClose()
 
 	def run(self):
 		if len(self.argv) < 1:
