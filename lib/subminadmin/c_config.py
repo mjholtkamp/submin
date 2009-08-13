@@ -64,6 +64,14 @@ import os
 backend = "sql"
 sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 '''
+
+		dirname = os.path.dirname(filename)
+		try:
+			os.makedirs(dirname)
+		except OSError, e:
+			if e.errno == 17: # file exists
+				pass
+
 		file(filename, 'w').write(submin_settings)
 
 		# after writing the bootstrap file, we setup all models
