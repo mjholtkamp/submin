@@ -10,6 +10,9 @@ class NoMD5PasswordError(Exception):
 	def __init__(self):
 		Exception.__init__(self, "Password is not encrypted with MD5")
 
+def id2name(userid):
+	return mock_users[userid]["name"]
+
 def list():
 	"""Generator for sorted list of users"""
 	return mock_users

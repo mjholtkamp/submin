@@ -61,8 +61,13 @@ def main():
 		print "Adding %s to the test-suite" % file
 
 		# transform filename to module name
-		mod = file.replace('/', '.')[4:-3] # skip `lib.', up till `.py'
-		suite.addTest(unittest.defaultTestLoader.loadTestsFromName(mod))
+		modname = file.replace('/', '.')[4:-3] # skip `lib.', up till `.py'
+		module = __import__(modname, [], [], '.'.join(modname.split('.')[:-1]))
+		if hasattr(module, 'suite'):
+			suite.addTest(module.suite())
+		else:
+			suite.addTest(
+					unittest.defaultTestLoader.loadTestsFromModule(module))
 
 	# Run the test!
 	unittest.TextTestRunner(verbosity=1).run(suite)

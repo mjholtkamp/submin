@@ -1,5 +1,6 @@
 from models import getBackend
 backend = getBackend("group")
+GroupExistsError = backend.GroupExistsError
 
 class UnknownGroupError(Exception):
 	pass
@@ -91,7 +92,7 @@ Username is unique and primary key.
 	Removes all members of group with id *groupid*
 
 * members(groupid)
-	Returns a sorted list of members, sorted by username, for group with id
+	Returns a sorted list of membernames, sorted by username, for group with id
 	*groupid*
 
 * add_member(groupid, userid)
