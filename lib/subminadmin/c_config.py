@@ -23,8 +23,8 @@ Usage:
 		print formatstring % (key, value)
 
 	def subcmd_get(self, argv):
-		from models.options import Options
-		o = Options()
+		import models.options
+		o = models.options.Options()
 		if len(argv) == 1:
 			value = o.value(argv[0])
 			self._printkeyvalue(o, argv[0], value, len(argv[0]))
@@ -43,8 +43,8 @@ Usage:
 			self.sa.execute(['help', 'config'])
 			return
 
-		from models.options import Options
-		o = Options()
+		import models.options
+		o = models.options.Options()
 		o.set_value(argv[0], argv[1])
 
 	def session_salt(self):
@@ -80,9 +80,10 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 		backendSetup()
 
 		# And now we can use the models
-		from models.options import Options
+		#from models.options import Options
+		import models.options
 
-		o = Options()
+		o = models.options.Options()
 		http_base = ''
 		options = {
 			'base_url_submin': http_base + '/submin',

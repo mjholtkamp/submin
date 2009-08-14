@@ -1,4 +1,4 @@
-from __init__ import db, execute, SQLIntegrityError
+import plugins.backends.sql as backend
 
 class GroupExistsError(Exception):
 	pass
@@ -13,8 +13,8 @@ all_fields = "id, name"
 
 def list():
 	"""Generator for sorted list of groups"""
-	cur = db.cursor()
-	execute(cur, """
+	cur = backend.db.cursor()
+	backend.execute(cur, """
 		SELECT %s
 		FROM groups
 		ORDER BY name ASC
@@ -24,13 +24,14 @@ def list():
 
 def add(groupname):
 	try:
-		execute(db.cursor(), "INSERT INTO groups (name) VALUES (?)", (groupname,))
-	except SQLIntegrityError, e:
+		backend.execute(backend.db.cursor(), \
+			"INSERT INTO groups (name) VALUES (?)", (groupname,))
+	except backend.SQLIntegrityError, e:
 		raise GroupExistsError("Group `%s' already exists" % groupname)
 
 def group_data(groupname):
-	cur = db.cursor()
-	execute(cur, """
+	cur = backend.db.cursor()
+	backend.execute(cur, """
 		SELECT %s
 		FROM groups
 		WHERE name=?""" % all_fields, (groupname,))
@@ -41,25 +42,26 @@ def group_data(groupname):
 	return row_dict(cur, row)
 
 def remove_permissions_repository(groupid):
-	execute(db.cursor(), """DELETE FROM permissions_repository
+	backend.execute(backend.db.cursor(), """DELETE FROM permissions_repository
 		WHERE subjecttype="group" AND subjectid=?""", (groupid,))
 
 def remove_permissions_submin(groupid):
-	execute(db.cursor(), """DELETE FROM permissions_submin
+	backend.execute(backend.db.cursor(), """DELETE FROM permissions_submin
 		WHERE subjecttype="group" AND subjectid=?""", (groupid,))
 
 def remove_members_from_group(groupid):
-	execute(db.cursor(), "DELETE FROM group_members WHERE groupid=?",
-			(groupid,))
+	backend.execute(backend.db.cursor(), """DELETE FROM group_members
+		WHERE groupid=?""", (groupid,))
 
 def remove(groupid):
-	execute(db.cursor(), "DELETE FROM groups WHERE id=?", (groupid,))
+	backend.execute(backend.db.cursor(), """DELETE FROM groups
+		WHERE id=?""", (groupid,))
 
 def members(groupid):
 	"""Returns a sorted list of usernames, which are members of the group with
 	id <groupid>"""
-	cur = db.cursor()
-	execute(cur, """
+	cur = backend.db.cursor()
+	backend.execute(cur, """
 		SELECT users.name
 		FROM group_members
 		LEFT JOIN users ON group_members.userid = users.id
@@ -70,7 +72,7 @@ def members(groupid):
 		yield x[0]
 
 def add_member(groupid, userid):
-	execute(db.cursor(), """
+	backend.execute(backend.db.cursor(), """
 		INSERT INTO group_members
 			(groupid, userid)
 		VALUES
@@ -78,7 +80,7 @@ def add_member(groupid, userid):
 		""", (groupid, userid))
 
 def remove_member(groupid, userid):
-	execute(db.cursor(), """
+	backend.execute(backend.db.cursor(), """
 		DELETE FROM group_members
 		WHERE groupid=? AND userid=?
 		""", (groupid, userid))

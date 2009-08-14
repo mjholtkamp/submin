@@ -1,7 +1,7 @@
 import sqlite3
 
 backend_debug = False
-db = None
+db = object()
 
 def teardown():
 	db.close()

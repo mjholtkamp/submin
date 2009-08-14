@@ -1,4 +1,4 @@
-from __init__ import db, execute, SQLIntegrityError
+import plugins.backends.sql as backend
 from config.authz import md5crypt
 
 class UserExistsError(Exception):
@@ -18,8 +18,8 @@ all_fields = "id, name, email, fullname, is_admin"
 
 def list():
 	"""Generator for sorted list of users"""
-	cur = db.cursor()
-	execute(cur, """
+	cur = backend.db.cursor()
+	backend.execute(cur, """
 		SELECT %s
 		FROM users
 		ORDER BY name ASC
@@ -36,16 +36,16 @@ def _pw_hash(password, salt=None, magic='apr1'):
 def add(username, password):
 	password = _pw_hash(password)
 
-	cur = db.cursor()
+	cur = backend.db.cursor()
 	try:
-		execute(cur, "INSERT INTO users (name, password) VALUES (?, ?)",
+		backend.execute(cur, "INSERT INTO users (name, password) VALUES (?, ?)",
 				(username, password))
-	except SQLIntegrityError, e:
+	except backend.SQLIntegrityError, e:
 		raise UserExistsError("User `%s' already exists" % username)
 
 def check_password(userid, password):
-	cur = db.cursor()
-	execute(cur, "SELECT password FROM users WHERE id=?", (userid,))
+	cur = backend.db.cursor()
+	backend.execute(cur, "SELECT password FROM users WHERE id=?", (userid,))
 	row = cur.fetchone()
 	vals = row[0][1:].split('$')
 	if not len(vals) == 3:
@@ -55,30 +55,33 @@ def check_password(userid, password):
 
 def set_password(userid, password):
 	password = _pw_hash(password)
-	execute(db.cursor(), "UPDATE users SET password=? WHERE id=?",
-			(password, userid))
+	backend.execute(backend.db.cursor(), """UPDATE users
+		SET password=? WHERE id=?""", (password, userid))
 
 # Remove functions, removes users from various tables
 def remove_from_groups(userid):
-	execute(db.cursor(), "DELETE FROM group_members WHERE userid=?", (userid,))
+	backend.execute(backend.db.cursor(), """DELETE FROM group_members
+		WHERE userid=?""", (userid,))
 
 def remove_permissions_repository(userid):
-	execute(db.cursor(), """DELETE FROM permissions_repository
+	backend.execute(backend.db.cursor(), """DELETE FROM permissions_repository
 		WHERE subjecttype="user" AND subjectid=?""", (userid,))
 
 def remove_permissions_submin(userid):
-	execute(db.cursor(), """DELETE FROM permissions_submin
+	backend.execute(backend.db.cursor(), """DELETE FROM permissions_submin
 		WHERE subjecttype="user" AND subjectid=?""", (userid,))
 
 def remove_notifications(userid):
-	execute(db.cursor(), "DELETE FROM notifications WHERE userid=?", (userid,))
+	backend.execute(backend.db.cursor(), """DELETE FROM notifications
+		WHERE userid=?""", (userid,))
 
 def remove(userid):
-	execute(db.cursor(), "DELETE FROM users WHERE id=?", (userid,))
+	backend.execute(backend.db.cursor(), """DELETE FROM users
+		WHERE id=?""", (userid,))
 
 def user_data(username):
-	cur = db.cursor()
-	execute(cur, """
+	cur = backend.db.cursor()
+	backend.execute(cur, """
 		SELECT %s
 		FROM users
 		WHERE name=?""" % all_fields, (username,))
@@ -90,9 +93,9 @@ def user_data(username):
 
 def field_setter(field):
 	def set_field(userid, value):
-		cur = db.cursor()
+		cur = backend.db.cursor()
 		sql = "UPDATE users SET %s=? WHERE id=?" % field
-		execute(cur, sql, (value, userid))
+		backend.execute(cur, sql, (value, userid))
 	return set_field
 
 set_name     = field_setter("name")
@@ -110,15 +113,15 @@ member_query = """
 
 def member_of(userid):
 	"""Returns list of groups a user is a member of"""
-	cur = db.cursor()
-	execute(cur, member_query % "=", (userid,))
+	cur = backend.db.cursor()
+	backend.execute(cur, member_query % "=", (userid,))
 
 	return [row[0] for row in cur]
 
 def nonmember_of(userid):
 	"""Returns list of groups a user is not a member of"""
-	cur = db.cursor()
-	execute(cur, member_query % "!=", (userid,))
+	cur = backend.db.cursor()
+	backend.execute(cur, member_query % "!=", (userid,))
 
 	return [row[0] for row in cur]
 

@@ -125,8 +125,8 @@ If you use Trac, it will be accessible from <http base>/trac.
 			self.init_vars['http_base'] = Path("/")
 
 		# write changes to config
-		from models.options import Options
-		o = Options()
+		import models.options
+		o = models.options.Options()
 
 		options = {
 			'base_url_submin': self._get_url('submin_url'),
@@ -140,16 +140,16 @@ If you use Trac, it will be accessible from <http base>/trac.
 			o.set_value(key, value)
 
 		# add a user
-		from models.user import User
-		from models.group import Group
+		import models.user
+		import models.group
 		
 		if self.init_vars['create_user'] == "yes":
 			# add an admin user
-			password = User.add('admin')
-			u = User('admin')
+			password = models.user.User.add('admin')
+			u = models.user.User('admin')
 			
-			Group.add('submin-admins')
-			g = Group('submin-admins')
+			models.group.Group.add('submin-admins')
+			g = models.group.Group('submin-admins')
 			g.add_member(u)
 
 			print "\nAdded an admin user with password '%s'\n" % password
