@@ -26,7 +26,3 @@ def evaluate(templatename, localvars={}):
 		os.chdir(oldcwd)
 
 	return evaluated_string
-
-if __name__ == "__main__":
-	from tests import *
-	runtests()
