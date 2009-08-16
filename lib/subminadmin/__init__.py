@@ -18,7 +18,10 @@ class SubminAdmin:
 			pass
 
 	def __del__(self):
-		backend.close()
+		try:
+			backend.close()
+		except backend.BackendException:
+			pass # this only happens if initenv is not called yet
 
 	def run(self):
 		if len(self.argv) < 2:
