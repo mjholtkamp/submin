@@ -55,6 +55,24 @@ Usage:
 			if userprop.has_section(user):
 				if userprop.has_option(user, 'email'):
 					u.email = userprop.get(user, 'email')
+				if userprop.has_option(user, 'notifications_allowed'):
+					allowed = userprop.get(user, 'notifications_allowed')
+					allowed = [x.strip() for x in allowed.split(',')]
+
+					enabled = []
+					if userprop.has_option(user, 'notifications_enabled'):
+						enabled = userprop.get(user, 'notifications_enabled')
+						enabled =  [x.strip() for x in enabled.split(',')]
+
+					repositories = {}
+					for repos in allowed:
+						repos_enabled = False
+						if repos in enabled:
+							repos_enabled = True
+						repositories[repos] = {'allowed': True, 'enabled': repos_enabled}
+
+					# add notifications
+					#print repositories
 
 	def write_groups(self, config):
 		from models.group import Group
