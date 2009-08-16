@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from unicode import *
+from unicode import uc_str, uc_url_decode, uc_from_svn, uc_to_svn
 
 class UnicodeTests(unittest.TestCase):
 	uc_encoded = u"元気"
@@ -12,7 +12,7 @@ class UnicodeTests(unittest.TestCase):
 	def testJavaScriptUnicodeEncoding(self):
 		"""Javascript sometimes encodes unicode like %uFFFF, test if that
 		is handled correctly."""
-		result = url_uc_decode(self.js_encoded)
+		result = uc_url_decode(self.js_encoded)
 		self.assertEquals(self.uc_encoded, result)
 
 	def testUnicodeToUnicode(self):
