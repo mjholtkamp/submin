@@ -34,7 +34,10 @@ def _pw_hash(password, salt=None, magic='apr1'):
 	return newhash
 
 def add(username, password):
-	password = _pw_hash(password)
+	if password:
+		password = _pw_hash(password)
+	else:
+		password = ""
 
 	cur = backend.db.cursor()
 	try:
