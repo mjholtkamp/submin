@@ -41,7 +41,23 @@ Usage:
 		pass
 
 	def write_groups(self, config):
-		pass
+		from models.group import Group
+
+		# get filename
+		authz_file = config.get('svn', 'authz_file')
+		
+		# read file
+		cp = self.read_ini(authz_file)
+		
+		# get groups
+		groups = cp.options('groups')
+		for group in groups:
+			members = cp.get('groups', group)
+			g = Group.add(group)
+			for member in members:
+				# convert to userid
+				#g.add_member(member)
+				pass
 
 	def convert(self, old_config_file):
 		config = self.read_ini(old_config_file)
