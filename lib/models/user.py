@@ -1,6 +1,6 @@
-from models import getBackend
+import models
 import validators
-backend = getBackend("user")
+backend = models.backend.get("user")
 UserExistsError = backend.UserExistsError
 
 class UnknownUserError(Exception):

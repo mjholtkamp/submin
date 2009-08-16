@@ -4,15 +4,15 @@ from pmock import *
 mock_settings = Mock()
 mock_settings.backend = "mock"
 
-from models import backendOpen, backendSetup, backendClose
+from models import backend
 from models.group import Group, GroupExistsError, UnknownGroupError
 
 class GroupTests(unittest.TestCase):
 	def setUp(self):
-		backendOpen(mock_settings)
+		backend.open(mock_settings)
 
 	def tearDown(self):
-		backendClose()
+		backend.close()
 
 	def testEmptyList(self):
 		self.assertEquals(Group.list(), [])

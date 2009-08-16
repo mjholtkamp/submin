@@ -4,18 +4,18 @@ from pmock import *
 mock_settings = Mock()
 mock_settings.backend = "mock"
 
-from models import backendOpen, backendSetup, backendClose
+from models import backend
 from models.user import User, UserExistsError, UnknownUserError
 
 from models.validators import *
 
 class UserTests(unittest.TestCase):
 	def setUp(self):
-		backendOpen(mock_settings)
+		backend.open(mock_settings)
 		User.add("test")
 
 	def tearDown(self):
-		backendClose()
+		backend.close()
 
 	def setEmail(self, u, email):
 		u.email = email

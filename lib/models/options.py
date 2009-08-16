@@ -1,7 +1,7 @@
 import os
-from models import getBackend
+import models
 from path.path import Path
-backend = getBackend("options")
+backend = models.backend.get("options")
 
 class Options(object):
 	def value(self, key):

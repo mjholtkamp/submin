@@ -1,5 +1,5 @@
-from models import getBackend
-backend = getBackend("group")
+import models
+backend = models.backend.get("group")
 GroupExistsError = backend.GroupExistsError
 
 class UnknownGroupError(Exception):
