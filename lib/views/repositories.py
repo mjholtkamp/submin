@@ -10,7 +10,7 @@ from models.trac import *
 from auth.decorators import *
 from path.path import Path
 from config.config import MissingConfigData
-from unicode import url_uc_decode
+from unicode import uc_url_decode
 from ConfigParser import NoOptionError
 
 class Repositories(View):
@@ -137,7 +137,7 @@ class Repositories(View):
 	@admin_required
 	def getsubdirs(self, req, repository):
 		svn_path = req.post['getSubdirs'].value.strip('/')
-		svn_path_u = url_uc_decode(svn_path) #also convert from utf-8
+		svn_path_u = uc_url_decode(svn_path) #also convert from utf-8
 		dirs = repository.getsubdirs(svn_path_u)
 		templatevars = {'dirs': dirs}
 		return XMLTemplateResponse('ajax/repositorytree.xml', templatevars)
@@ -145,7 +145,7 @@ class Repositories(View):
 	@admin_required
 	def getpermissions(self, req, repository):
 		config = Config()
-		path = url_uc_decode(req.post['getPermissions'].value)
+		path = uc_url_decode(req.post['getPermissions'].value)
 		svn_path = Path(path.encode('utf-8'))
 
 		perms = []
@@ -177,7 +177,7 @@ class Repositories(View):
 		name = req.post['name'].value
 		type = req.post['type'].value
 		path = req.post['path'].value
-		path = url_uc_decode(path)
+		path = uc_url_decode(path)
 
 		# add member with no permissions (let the user select that)
 		config.authz.setPermission(repository.name, path, name, type)
@@ -190,7 +190,7 @@ class Repositories(View):
 		name = req.post['name'].value
 		type = req.post['type'].value
 		path = req.post['path'].value
-		path = url_uc_decode(path)
+		path = uc_url_decode(path)
 
 		config.authz.removePermission(repository.name, path, name, type)
 		config.authz.save()
@@ -202,7 +202,7 @@ class Repositories(View):
 		name = req.post['name'].value
 		type = req.post['type'].value
 		path = req.post['path'].value
-		path = url_uc_decode(path)
+		path = uc_url_decode(path)
 		permission = req.post['permission'].value
 
 		config.authz.setPermission(repository.name, path, name, type, permission)
