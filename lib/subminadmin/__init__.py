@@ -2,6 +2,7 @@ import sys
 import os
 
 from path.path import Path
+from models import backend
 
 class SubminAdmin:
 	def __init__(self, argv):
@@ -11,6 +12,13 @@ class SubminAdmin:
 		self.quit = False
 		self.cmd_aliases = [('?', 'help'), ('exit', 'quit')]
 		self._set_systemdirs()
+		try:
+			backend.open()
+		except backend.BackendException:
+			pass
+
+	def __del__(self):
+		backend.close()
 
 	def run(self):
 		if len(self.argv) < 2:

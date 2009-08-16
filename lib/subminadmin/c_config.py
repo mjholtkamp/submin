@@ -75,9 +75,9 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 		file(filename, 'w').write(submin_settings)
 
 		# after writing the bootstrap file, we setup all models
-		from models import backendSetup, backendOpen, backendClose
-		backendOpen()
-		backendSetup()
+		from models import backend
+		backend.open()
+		backend.setup()
 
 		# And now we can use the models
 		#from models.options import Options
