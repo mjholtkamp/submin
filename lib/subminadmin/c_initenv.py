@@ -140,16 +140,15 @@ If you use Trac, it will be accessible from <http base>/trac.
 			o.set_value(key, value)
 
 		# add a user
-		import models.user
-		import models.group
+		from models.user import User
+		from models.group import Group
 		
 		if self.init_vars['create_user'] == "yes":
 			# add an admin user
-			password = models.user.User.add('admin')
-			u = models.user.User('admin')
+			u = User.add('admin')
+			password = u.generate_password()
 			
-			models.group.Group.add('submin-admins')
-			g = models.group.Group('submin-admins')
+			g = Group.add('submin-admins')
 			g.add_member(u)
 
 			print "\nAdded an admin user with password '%s'\n" % password

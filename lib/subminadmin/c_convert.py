@@ -38,7 +38,23 @@ Usage:
 			o.set_value(key, value)
 
 	def write_users(self, config):
-		pass
+		from models.user import User
+
+		# get filename
+		htpasswd_file = config.get('svn', 'access_file')
+		userprop_file = config.get('svn', 'userprop_file')
+		
+		# read files
+		htpasswd = file(htpasswd_file).readlines()
+		userprop = self.read_ini(userprop_file)
+
+		# add users
+		for line in htpasswd:
+			(user, password) = line.strip('\n').split(':')
+			u = User.add(user, password)
+			if userprop.has_section(user):
+				if userprop.has_option(user, 'email'):
+					u.email = userprop.get(user, 'email')
 
 	def write_groups(self, config):
 		from models.group import Group

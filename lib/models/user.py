@@ -21,20 +21,15 @@ class User(object):
 		return [User(raw_data=user) for user in backend.list()]
 
 	@staticmethod
-	def add(username):
-		"""Adds a new user with a generated random password (returns password).
+	def add(username, password=None):
+		"""Adds a new user with a no password.
 
+		To generate a password, call generate_password()
 		Raises UserExistsError if a user with this username already exists.
 		"""
-		# generate a random password
-		from string import ascii_letters, digits
-		import random
-		password_chars = ascii_letters + digits
-		password = ''.join([random.choice(password_chars) \
-				for x in range(0, 50)])
 
 		backend.add(username, password)
-		return password
+		return User(username)
 
 	def __init__(self, username=None, raw_data=None):
 		"""Constructor, either takes a username or raw data
@@ -68,6 +63,17 @@ class User(object):
 
 	def set_password(self, password):
 		backend.set_password(self._id, password)
+
+	def generate_password(self):
+		"""generate and return a random password"""
+		from string import ascii_letters, digits
+		import random
+		password_chars = ascii_letters + digits
+		password = ''.join([random.choice(password_chars) \
+				for x in range(0, 50)])
+
+		self.set_password(password)
+		return password
 
 	def remove(self):
 		backend.remove_from_groups(self._id)
