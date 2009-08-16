@@ -1,10 +1,11 @@
 import sqlite3
 
 backend_debug = False
-db = object()
+db = None
 
 def teardown():
-	db.close()
+	if db:
+		db.close()
 
 def init(settings):
 	global db, backend_debug
