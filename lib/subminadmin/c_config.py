@@ -12,7 +12,6 @@ Usage:
 	def __init__(self, sa, argv):
 		self.sa = sa
 		self.argv = argv
-		os.environ['SUBMIN_ENV'] = self.sa.env
 		self.settings_path = str(Path(self.sa.env) + 'conf' + 'settings.py')
 
 	def subcmd_defaults(self, argv):

@@ -12,10 +12,6 @@ class SubminAdmin:
 		self.quit = False
 		self.cmd_aliases = [('?', 'help'), ('exit', 'quit')]
 		self._set_systemdirs()
-		try:
-			backend.open()
-		except backend.BackendException:
-			pass
 
 	def __del__(self):
 		try:
@@ -33,6 +29,13 @@ class SubminAdmin:
 			self.env = os.path.join(os.getcwd(), self.env)
 
 		self.prompt = self.prompt_fmt % self.env
+
+		# setup backend plugins
+		os.environ['SUBMIN_ENV'] = self.env
+		try:
+			backend.open()
+		except backend.BackendException:
+			pass
 
 		if len(self.argv) < 3:
 			self.interactive()
