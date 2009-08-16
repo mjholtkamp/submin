@@ -14,6 +14,7 @@ class Group(object):
 	def add(name):
 		"""Add a new, empty group"""
 		backend.add(name)
+		return Group(name)
 
 	def __init__(self, groupname=None, raw_data=None):
 		"""Constructor, either takes a groupname or raw data
