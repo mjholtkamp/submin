@@ -1,6 +1,7 @@
 submin (1.2.7-1) testing; urgency=low
 
-  * Give suggestions to fix a problem.
+  * Give suggestions to fix permission problems.
+  * Sort subdirectories in repository trees
 
  -- Michiel Holtkamp <submin@supermind.nl>  Sun, 16 Aug 2009 14:50:45 +0200
 
