@@ -7,6 +7,8 @@ submin (2.0-1) testing; urgency=low
   * Used libsvn in favor of pysvn/executing svn command-line tools
   * Improved support for non-ASCII characters (refs #145)
   * Improved support for non-ASCII characters in templates (#149)
+  * Give suggestions to fix permission problems.
+  * Sort subdirectories in repository trees
 
  -- Michiel Holtkamp <submin@supermind.nl>  Sun, 19 Oct 2008 09:54:21 +0200
 
