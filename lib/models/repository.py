@@ -90,6 +90,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 				entry['has_subdirs'] = hassubdirs
 				dirs.append(entry)
 
+		dirs.sort(lambda a, b: cmp(unicode.lower(a['name']), unicode.lower(b['name'])))
 		return dirs
 
 	def get_entries(self, path):
