@@ -1,4 +1,4 @@
-import plugins.backends.sql as backend
+import plugins.backends.sql.common as backend
 from config.authz import md5crypt
 
 class UserExistsError(Exception):

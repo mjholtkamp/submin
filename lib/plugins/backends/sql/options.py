@@ -1,4 +1,4 @@
-import plugins.backends.sql as backend
+import plugins.backends.sql.common as backend
 
 def value(key):
 	cur = backend.db.cursor()

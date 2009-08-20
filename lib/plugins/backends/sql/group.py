@@ -1,4 +1,4 @@
-import plugins.backends.sql as backend
+import plugins.backends.sql.common as backend
 
 class GroupExistsError(Exception):
 	pass
