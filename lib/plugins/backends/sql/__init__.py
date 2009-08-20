@@ -44,17 +44,11 @@ def setup():
 			value text not null unique
 		);
 
-		CREATE TABLE repositories
-		(
-			id   integer primary key autoincrement,
-			name text not null
-		);
-
 		CREATE TABLE notifications
 		(
 			id           integer primary key autoincrement,
 			userid       integer references users(id),
-			repositoryid integer references repositories(id),
+			repositoryid text,
 			allowed      bool default 0,
 			enabled      bool default 0
 		);
@@ -62,7 +56,7 @@ def setup():
 		CREATE TABLE permissions_repository
 		(
 			id           integer primary key autoincrement,
-			repositoryid integer references repositories(id),
+			repositoryid text,
 			path         text not null,
 			subjecttype  text not null, -- user, group or all
 			subjectid    integer,       -- only null if subjecttype is all
@@ -75,7 +69,8 @@ def setup():
 			subjecttype text not null, -- user or group
 			subjectid   integer,
 			objecttype  text not null, -- group or repository
-			objectid    integer
+			objectid    integer, -- groupid if objecttype is group
+			objectname  text -- name of repository if objecttype is repository
 		);
 	""")
 
