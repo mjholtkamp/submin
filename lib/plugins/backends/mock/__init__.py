@@ -8,8 +8,10 @@ def teardown():
 	# XXX: Isn't it better to move mock_users back to the users module then?
 	from user import clear_users
 	from group import clear_groups
+	from options import clear_options
 	clear_users()
 	clear_groups()
+	clear_options()
 
 def init(settings):
 	pass

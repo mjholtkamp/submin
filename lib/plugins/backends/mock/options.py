@@ -1,6 +1,7 @@
-from __init__ import db, execute
-
 _options = {}
+
+def clear_options():
+	_options.clear()
 
 def value(key):
 	return _options[key]

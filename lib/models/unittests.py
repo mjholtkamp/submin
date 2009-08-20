@@ -9,10 +9,11 @@ mock_settings.backend = "mock"
 from bootstrap import setSettings
 setSettings(mock_settings)
 
-model_tests = ["users.UserTests", "groups.GroupTests"]
+model_tests = ["users.UserTests", "groups.GroupTests", "options.OptionTests"]
 
 def suite():
 	s = unittest.TestSuite()
+	import models.tests.options
 	map(s.addTest, map(unittest.defaultTestLoader.loadTestsFromName,
 		["models.tests.%s" % x for x in model_tests]))
 	return s
