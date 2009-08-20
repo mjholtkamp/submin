@@ -11,13 +11,20 @@ class SubminAdmin:
 		self.prompt = ""
 		self.quit = False
 		self.cmd_aliases = [('?', 'help'), ('exit', 'quit')]
+		self.backend_opened = False
 		self._set_systemdirs()
 
 	def __del__(self):
-		try:
-			backend.close()
-		except backend.BackendException:
-			pass # this only happens if initenv is not called yet
+		if self.backend_opened:
+			try:
+				backend.close()
+			except backend.BackendException:
+				pass # this only happens if initenv is not called yet
+
+	def ensure_backend(self):
+		if not self.backend_opened:
+			backend.open()
+			self.backend_opened = True
 
 	def run(self):
 		if len(self.argv) < 2:
@@ -32,10 +39,6 @@ class SubminAdmin:
 
 		# setup backend plugins
 		os.environ['SUBMIN_ENV'] = self.env
-		try:
-			backend.open()
-		except backend.BackendException:
-			pass
 
 		if len(self.argv) < 3:
 			self.interactive()
@@ -98,18 +101,21 @@ Use '?' or 'help' for help on commands.
 			return True
 
 		cmd = self.cmd_alias(argv[0])
-		if not os.path.exists(self.env):
-			if cmd not in ['quit', 'initenv', 'help', 'convert']:
-				print 'environment does not exist, use initenv'
-				return True
-
 		Class = self.cmd_instance(cmd, argv[1:])
 		if not Class:
 			print "Unknown command"
 			return True
 
+		if not self.backend_opened:
+			if not hasattr(Class, "needs_env") or Class.needs_env:
+				if not os.path.exists(self.env):
+					print 'environment does not exist, use initenv'
+					return True
+
+				self.ensure_backend()
+
 		rc = Class.run()
-		
+
 		return rc
 
 	def _set_systemdirs(self):

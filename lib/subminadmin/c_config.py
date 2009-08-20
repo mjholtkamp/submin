@@ -9,6 +9,8 @@ Usage:
 	config get <option>             - get config value in section
 	config set <option> <value>     - set config value in section'''
 
+	needs_env = False
+
 	def __init__(self, sa, argv):
 		self.sa = sa
 		self.argv = argv
@@ -22,6 +24,8 @@ Usage:
 		print formatstring % (key, value)
 
 	def subcmd_get(self, argv):
+		self.sa.ensure_backend()
+
 		import models.options
 		o = models.options.Options()
 		if len(argv) == 1:
@@ -38,6 +42,8 @@ Usage:
 				self._printkeyvalue(o, arg[0], arg[1], maxlen)
 
 	def subcmd_set(self, argv):
+		self.sa.ensure_backend()
+
 		if len(argv) != 2:
 			self.sa.execute(['help', 'config'])
 			return
@@ -74,8 +80,8 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 		file(filename, 'w').write(submin_settings)
 
 		# after writing the bootstrap file, we setup all models
+		self.sa.ensure_backend()
 		from models import backend
-		backend.open()
 		backend.setup()
 
 		# And now we can use the models

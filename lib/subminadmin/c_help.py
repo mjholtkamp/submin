@@ -4,6 +4,8 @@ Usage:
     help           - get a list of commands and it's use,
     help [command] - get more help on that command'''
 
+	needs_env = False
+
 	def __init__(self, sa, argv):
 		self.sa = sa
 		self.argv = argv

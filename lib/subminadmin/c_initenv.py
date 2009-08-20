@@ -22,6 +22,8 @@ Notes:
 
     Paths are relative to environment directory, unless they begin with "/".'''
 
+	needs_env = False
+
 	def __init__(self, sa, argv):
 		self.sa = sa
 		self.env = Path(self.sa.env)
@@ -118,7 +120,7 @@ If you use Trac, it will be accessible from <http base>/trac.
 			return # already printed error message
 
 		self.sa.execute(['config', 'defaults'])
-		
+
 		# check http_base
 		p = self.init_vars['http_base']
 		if str(p) == "":
