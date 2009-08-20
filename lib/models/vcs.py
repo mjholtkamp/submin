@@ -4,7 +4,8 @@ class VCSException(Exception):
 	pass
 
 def list():
-	return ['svn']
+	import pkgutil
+	return [name for _, name, _ in pkgutil.iter_modules(['plugins/vcs'])]
 
 def get(vcstype, model):
 	"""Gets the vcs-backend for a certain type and model."""
