@@ -64,9 +64,8 @@ Use '?' or 'help' for help on commands.
 	def cmd_instance(self, cmd, argv):
 		objname = "c_" + cmd
 		try:
-			fullobjname = "subminadmin." + objname
-			X = __import__(fullobjname)
-			instance = eval("X." + objname + "." + objname + "(self, argv)")
+			X = __import__(objname, globals())
+			instance = getattr(X, objname)(self, argv)
 			return instance
 		except (ImportError, AttributeError), e:
 			print str(e)
