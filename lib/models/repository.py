@@ -15,11 +15,11 @@ class Repository(object):
 		"Returns a Repository object"
 		pass
 
-	def remove(self, name):
+	def remove(self):
 		"Removes a Repository from disk (NO UNDO)"
 		pass
 
-	def subdirs(self, repository, subdir):
+	def subdirs(self, subdir):
 		return []
 
 __doc__ = """
