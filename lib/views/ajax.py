@@ -2,9 +2,9 @@ from dispatch.view import View
 from dispatch.response import *
 from config.config import Config
 from auth.decorators import *
-from models.user import listUsers
-from models.group import listGroups
-from models.repository import listRepositories
+from models.user import User
+from models.group import Group
+from models.repository import Repository
 from template import evaluate
 from auth.decorators import *
 

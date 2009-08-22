@@ -3,7 +3,7 @@ from template.shortcuts import evaluate_main
 from dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse
 from views.error import ErrorResponse
 from models.user import User
-from models.group import Group, addGroup
+from models.group import Group
 from config.authz.authz import GroupExistsError, UnknownGroupError
 from auth.decorators import *
 

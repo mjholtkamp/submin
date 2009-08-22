@@ -1,14 +1,14 @@
 import os
-from config.config import Config
 from dispatch.response import Response, Redirect
 from views.error import ErrorResponse
+from models.options import Options
 
 class Unauthorized(Exception):
 	pass
 
 def login_required(fun):
-	config = Config()
-	login_url = os.path.join(str(config.base_url), 'login')
+	o = Options()
+	login_url = os.path.join(str(o.path('base_url_submin')), 'login')
 
 	def _decorator(self, *args, **kwargs):
 		if not self.request.is_ajax():

@@ -28,6 +28,7 @@ def init_tests():
 	"""Initialize url-coupling to test-views
 	Only loaded if config-options in section "tests" are present
 	"""
+	return
 	config = Config()
 	if not config.cp.has_section("tests"):
 		return
