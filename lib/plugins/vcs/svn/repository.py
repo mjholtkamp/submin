@@ -6,7 +6,7 @@ from unicode import uc_str, uc_to_svn, uc_from_svn
 import commands
 import exceptions
 
-def listRepositories(session_user, only_invalid=False):
+def listRepositories(session_user):
 	config = Config()
 	repositories = []
 	repository_names = repositoriesOnDisk()
@@ -15,15 +15,19 @@ def listRepositories(session_user, only_invalid=False):
 	for repos in repository_names:
 		try:
 			r = Repository(repos)
-			if not only_invalid:
-				if session_user.is_admin:
-					repositories.append(repos)
-				else:
-					if r.userHasReadPermissions(session_user):
-						repositories.append(repos)
-		except (Repository.DoesNotExist, Repository.PermissionDenied):
-			if only_invalid:
-				repositories.append(repos)
+			status = "ok"
+		except Repository.DoesNotExist:
+			pass
+		except Repository.PermissionDenied:
+			status = "permission denied"
+		except Repository.WrongVersion:
+			status = "wrong version"
+
+		if session_user.is_admin:
+			repositories.append({"name": repos, "status": status})
+		else:
+			if r.userHasReadPermissions(session_user):
+				repositories.append({"name": repos, "status": status})
 
 	return repositories
 
@@ -49,6 +53,8 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 	class DoesNotExist(Exception):
 		pass
 	class PermissionDenied(Exception):
+		pass
+	class WrongVersion(Exception):
 		pass
 	class ImportError(Exception):
 		def __init__(self, msg):
@@ -102,6 +108,14 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		try:
 			repository = repos.svn_repos_open(root_path_utf8)
 		except SubversionException, e:
+			# check for messages like the following:
+			# "Expected FS Format 'x'; found format 'y'"
+			# they differ for each version, so do a string match instead of
+			# errorcode match
+			errstr = str(e)
+			if "Expected" in errstr and "format" in errstr and "found" in errstr:
+				raise self.WrongVersion
+
 			raise self.PermissionDenied
 
 		fs_ptr = repos.svn_repos_fs(repository)
