@@ -6,12 +6,13 @@ from views.error import ErrorResponse
 from template import evaluate
 from config.authz.htpasswd import NoMD5PasswordError
 from models.user import User
+from models.options import Options
 
 class Login(View):
 	def handler(self, request, path):
-		config = Config()
+		o = Options()
 		if not request.post:
-			return self.evaluate_form(config)
+			return self.evaluate_form(o)
 		username = request.post.get('username', '')
 		password = request.post.get('password', '')
 
@@ -32,10 +33,13 @@ class Login(View):
 		return Redirect(url)
 
 
-	def evaluate_form(self, config, msg=''):
+	def evaluate_form(self, options, msg=''):
 		localvalues = {}
 		localvalues['msg'] = msg
-		localvalues['base_url'] = config.base_url
+		base_url = options.value('base_url_submin')
+		if base_url[-1] != '/':
+			base_url += '/'
+		localvalues['base_url'] = base_url
 		return Response(evaluate('login.html', localvalues))
 
 
