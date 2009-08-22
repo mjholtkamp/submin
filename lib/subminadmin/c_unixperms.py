@@ -17,10 +17,10 @@ Usage:
 			print '''
 To set permissions and ownerships properly, execute:
 
-    sudo submin-admin unixperms fix
+    sudo submin-admin %s unixperms fix
 
 This should also remove possible following warnings.
-'''
+''' % self.sa.env
 			self.root = False
 
 		if len(argv) > 0:
