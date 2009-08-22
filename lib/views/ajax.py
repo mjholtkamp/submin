@@ -58,8 +58,7 @@ class Ajax(View):
 	def listRepositories(self, req):
 		try:
 			repos = listRepositories(req.session['user'])
-			invalid = listRepositories(req.session['user'], only_invalid=True)
-			variables = {'repositories': repos, 'invalid_repositories': invalid}
+			variables = {'repositories': repos}
 			return XMLTemplateResponse("ajax/listrepositories.xml", variables)
 		except Exception, e:
 			return XMLStatusResponse('listGroups', False, 'Failed to get a list: %s' % e)

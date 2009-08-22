@@ -6,7 +6,7 @@ from unicode import uc_str, uc_to_svn, uc_from_svn
 import commands
 import exceptions
 
-def listRepositories(session_user, only_invalid=False):
+def listRepositories(session_user):
 	config = Config()
 	repositories = []
 	if session_user.is_admin:
@@ -16,11 +16,15 @@ def listRepositories(session_user, only_invalid=False):
 		for repos in repository_names:
 			try:
 				r = Repository(repos)
-				if not only_invalid:
-					repositories.append(repos)
-			except (Repository.DoesNotExist, Repository.PermissionDenied):
-				if only_invalid:
-					repositories.append(repos)
+				status = "ok"
+			except Repository.DoesNotExist:
+				pass
+			except Repository.PermissionDenied:
+				status = "permission denied"
+			except Repository.WrongVersion:
+				status = "wrong version"
+
+			repositories.append({"name": repos, "status": status})
 
 	return repositories
 
@@ -31,6 +35,8 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 	class DoesNotExist(Exception):
 		pass
 	class PermissionDenied(Exception):
+		pass
+	class WrongVersion(Exception):
 		pass
 	class ImportError(Exception):
 		def __init__(self, msg):
@@ -80,7 +86,25 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		root_path_utf8 = repos.svn_repos_find_root_path(self.url)
 		if root_path_utf8 is None:
 			raise self.DoesNotExist
-		repository = repos.svn_repos_open(root_path_utf8)
+
+		try:
+			repository = repos.svn_repos_open(root_path_utf8)
+		except SubversionException, e:
+			errstr = str(e)
+			# check for messages like the following:
+			# "Expected FS Format 'x'; found format 'y'"
+			# they differ for each version, so do a string match instead of
+			# errorcode match
+
+			if "Expected" in errstr and "format" in errstr and "found" in errstr:
+				raise self.WrongVersion("""Wrong Subversion version.
+Differing versions between the program that created the repository (svnadmin)
+and the subversion library that is currently installed on your computer.
+Please check if your installed subversion library is up-to-date.""")
+
+			raise self.PermissionDenied("""Permission denied.
+Please check if the webserver can read and write the repositories.""")
+
 		fs_ptr = repos.svn_repos_fs(repository)
 
 		path_utf8 = uc_to_svn(uc_str(path))
