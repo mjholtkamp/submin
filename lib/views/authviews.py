@@ -5,7 +5,7 @@ from dispatch.response import Response, Redirect
 from views.error import ErrorResponse
 from template import evaluate
 from config.authz.htpasswd import NoMD5PasswordError
-from models.user import User
+from models.user import User, UnknownUserError
 from models.options import Options
 
 class Login(View):
@@ -17,8 +17,13 @@ class Login(View):
 		password = request.post.get('password', '')
 
 		try:
-			if not config.htpasswd.check(username, password):
-				return self.evaluate_form(config, 'Not a valid username and password combination')
+			user = User('username')
+		except UnknownUserError, e:
+			return self.evaluate_form(o, 'Not a valid username and password combination')
+
+		try:
+			if not user.password_check(password):
+				return self.evaluate_form(o, 'Not a valid username and password combination')
 		except NoMD5PasswordError, e:
 			return self.evaluate_form(config, str(e))
 
@@ -26,7 +31,6 @@ class Login(View):
 		if 'redirected_from' in request.session:
 			url = request.session['redirected_from']
 
-		user = User(username)
 		user.is_authenticated = True
 		request.session['user'] = user
 		request.session.save()
