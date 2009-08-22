@@ -57,16 +57,14 @@ def dispatcher(request):
 				raise Exception, "Handler %r should return a Response instance" % handler
 		except Exception, e:
 			import traceback
-			import sys
-			trace = traceback.extract_tb(sys.exc_info()[2])
-			list = traceback.format_list(trace)
+			details = traceback.format_exc()
 
 			if not request.is_ajax():
-				details = '<br />\n'.join(list)
+				details = '<pre>' + details + '</pre>'
 				response = ErrorResponse(str(e), request=request, details=details)
 			else:
 				list = ['<err>' + x + '</err>' for x in list]
-				details = '\n'.join(list)
+				details = '\n'.join(details)
 				response = XMLStatusResponse('', False, str(e) + details)
 
 	else:
