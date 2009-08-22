@@ -1,3 +1,5 @@
+return # disable this module by making it invalid
+
 import ConfigParser
 import os
 
