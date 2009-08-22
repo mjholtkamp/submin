@@ -217,7 +217,7 @@ Apache file created: %(output)s
 
 		self.defaults = {
 			'type': 'wsgi',
-			'output': Path(o.base_path()) + 'conf' + 'apache.conf'
+			'output': o.env_path() + 'conf' + 'apache.conf'
 		}
 		self.init_vars = {
 			'submin env': self.sa.env,
@@ -225,10 +225,10 @@ Apache file created: %(output)s
 			'submin base url': o.value('base_url_submin'),
 			'svn base url': o.value('base_url_svn'),
 			'trac base url': o.value('base_url_trac'),
-			'svn dir': o.path('dir_svn'),
+			'svn dir': o.env_path('dir_svn'),
 			'access file': o.value('auth_access_file'),
 			'authz file': o.value('auth_authz_file'),
-			'trac dir': o.path('dir_trac')
+			'trac dir': o.env_path('dir_trac')
 		}
 
 		if len(self.argv) < 1:
