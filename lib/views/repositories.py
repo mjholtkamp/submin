@@ -9,7 +9,6 @@ from models.repository import *
 from models.trac import *
 from auth.decorators import *
 from path.path import Path
-from config.config import MissingConfigData
 from unicode import uc_url_decode
 from ConfigParser import NoOptionError
 

@@ -33,7 +33,7 @@ class OptionTests(unittest.TestCase):
 			old = os.environ["SUBMIN_ENV"]
 		os.environ["SUBMIN_ENV"] = "/submin/"
 		self.o.set_value("foo", "bar")
-		self.assertEquals(unicode(self.o.path("foo")), "/submin/bar")
+		self.assertEquals(unicode(self.o.env_path("foo")), "/submin/bar")
 
 		if old:
 			os.environ["SUBMIN_ENV"] = old
@@ -41,5 +41,16 @@ class OptionTests(unittest.TestCase):
 			del os.environ["SUBMIN_ENV"]
 
 	def testAbsolutePath(self):
+		import os
+		old = None
+		if os.environ.has_key("SUBMIN_ENV"):
+			old = os.environ["SUBMIN_ENV"]
+		os.environ["SUBMIN_ENV"] = "/submin/"
+
 		self.o.set_value("foo", "/bar")
-		self.assertEquals(unicode(self.o.path("foo")), "/bar")
+		self.assertEquals(unicode(self.o.env_path("foo")), "/bar")
+
+		if old:
+			os.environ["SUBMIN_ENV"] = old
+		else:
+			del os.environ["SUBMIN_ENV"]

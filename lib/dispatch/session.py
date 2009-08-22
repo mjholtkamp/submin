@@ -4,8 +4,6 @@ import os
 import thread
 import md5
 
-from config.config import Config
-
 class SessionDestroyedError(Exception):
 	"""If a session is destroyed, it cannot be opened or accessed anymore
 	"""

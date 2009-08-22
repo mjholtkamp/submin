@@ -13,15 +13,27 @@ class Options(object):
 	def options(self):
 		return backend.options()
 
-	def path(self, key):
-		path = Path(self.value(key))
+	def env_path(self, key=None):
+		base = Path(os.environ['SUBMIN_ENV'])
+		if key == None:
+			return base
+
+		val = self.value(key)
+		if val == None:
+			raise Exception("no such key")
+
+		path = Path(val)
 		if path.absolute:
 			return path
 		
-		return Path(self.base_path()) + path
+		return base + path
 
-	def base_path(self):
-		return os.environ['SUBMIN_ENV']
+	def static_path(self, subdir):
+		# __file__ returns <submin-static-dir>/lib/models/options.py
+		base_lib = os.path.dirname(os.path.dirname(__file__))
+		base = Path(os.path.dirname(base_lib))
+		
+		return base + subdir
 
 __doc__ = """
 Backend contract

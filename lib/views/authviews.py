@@ -4,7 +4,6 @@ from dispatch.view import View
 from dispatch.response import Response, Redirect
 from views.error import ErrorResponse
 from template import evaluate
-from config.config import Config
 from config.authz.htpasswd import NoMD5PasswordError
 from models.user import User
 

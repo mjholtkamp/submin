@@ -2,7 +2,6 @@ from template.shortcuts import evaluate_main
 from dispatch.response import Response, XMLStatusResponse
 from dispatch.view import View
 from auth.decorators import *
-from config.config import Config
 
 class Intro(View):
 	@login_required

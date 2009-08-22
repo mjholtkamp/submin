@@ -1,5 +1,4 @@
 from ConfigParser import NoOptionError, NoSectionError
-from config.config import Config
 import exceptions
 import commands
 import os

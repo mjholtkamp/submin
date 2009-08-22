@@ -8,7 +8,7 @@ class Unauthorized(Exception):
 
 def login_required(fun):
 	o = Options()
-	login_url = os.path.join(str(o.path('base_url_submin')), 'login')
+	login_url = os.path.join(str(o.env_path('base_url_submin')), 'login')
 
 	def _decorator(self, *args, **kwargs):
 		if not self.request.is_ajax():

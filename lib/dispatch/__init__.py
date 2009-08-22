@@ -1,7 +1,5 @@
 from dispatch.response import Response, HTTP404, XMLStatusResponse
 
-from config.config import Config
-
 from views.error import ErrorResponse
 from views.test import Test
 from views.users import Users

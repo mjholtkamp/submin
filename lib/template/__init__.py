@@ -3,12 +3,14 @@ import sys
 
 from unicode import uc_str
 from template import Template
-from config.config import Config
 import template_commands
+from models.options import Options
+from path.path import Path
 
 def evaluate(templatename, localvars={}):
-	config = Config()
-	templatename = str(config.template_path + templatename)
+	o = Options()
+	template_path = o.static_path('templates')
+	templatename = str(template_path + templatename)
 	oldcwd = os.getcwd()
 	if os.path.dirname(templatename):
 		os.chdir(os.path.dirname(templatename))

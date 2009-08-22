@@ -1,4 +1,3 @@
-from config.config import Config
 from __init__ import evaluate
 from models.user import *
 from config.authz.authz import UnknownUserError

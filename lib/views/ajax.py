@@ -1,6 +1,5 @@
 from dispatch.view import View
 from dispatch.response import *
-from config.config import Config
 from auth.decorators import *
 from models.user import User
 from models.group import Group
