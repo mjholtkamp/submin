@@ -1,6 +1,5 @@
 import plugins.backends.sql.common as backend
 from config.authz import md5crypt
-from unicode import uc_str
 
 class UserExistsError(Exception):
 	pass
@@ -13,7 +12,7 @@ def row_dict(cursor, row):
 	# description returns a tuple; the first entry is the name of the field
 	# zip makes (field_name, field_value) tuples, which can be converted into
 	# a dictionary
-	return dict(zip([x[0] for x in cursor.description], [uc_str(x) for x in row]))
+	return dict(zip([x[0] for x in cursor.description], row))
 
 all_fields = "id, name, email, fullname, is_admin"
 

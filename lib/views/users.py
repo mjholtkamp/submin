@@ -74,9 +74,9 @@ class Users(View):
 		if req.post and req.post['username'] and req.post['email'] and req.post['fullname']:
 			import re
 
-			username = req.post['username'].value.strip()
-			email = req.post['email'].value.strip()
-			fullname = req.post['fullname'].value.strip()
+			username = uc_str(req.post['username'].value.strip())
+			email = uc_str(req.post['email'].value.strip())
+			fullname = uc_str(req.post['fullname'].value.strip())
 
 			# check these before we add the user, the rest is checked when adding
 			try:
@@ -157,7 +157,7 @@ class Users(View):
 
 	def setEmail(self, req, user):
 		try:
-			user.email = req.post.get('email')
+			user.email = uc_str(req.post.get('email'))
 			return XMLStatusResponse('setEmail', True,
 				'Changed email address for user %s to %s' %
 				(user.name, user.email))
