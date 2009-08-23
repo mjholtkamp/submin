@@ -61,7 +61,7 @@ class Ajax(View):
 
 	def listRepositories(self, req):
 		try:
-			repos = listRepositories(req.session['user'])
+			repos = Repository.list(req.session['user'])
 			variables = {'repositories': repos}
 			return XMLTemplateResponse("ajax/listrepositories.xml", variables)
 		except Exception, e:

@@ -2,11 +2,12 @@ from dispatch.view import View
 from template.shortcuts import evaluate_main
 from dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse
 from views.error import ErrorResponse
-from models.user import User
+from models.user import User, UserExistsError
 from models.group import Group
 from auth.decorators import *
 from models.options import Options
 from config.authz.authz import UnknownUserError
+from models import validators
 
 class Users(View):
 	@login_required
@@ -63,8 +64,8 @@ class Users(View):
 
 	@admin_required
 	def add(self, req, path, localvars):
-		config = Config()
-		base_url = config.base_url
+		o = Options()
+		base_url = o.url_path('base_url_submin')
 		username = ''
 		email = ''
 		fullname = ''
@@ -75,32 +76,36 @@ class Users(View):
 			username = req.post['username'].value.strip()
 			email = req.post['email'].value.strip()
 			fullname = req.post['fullname'].value.strip()
-			if re.findall('[^.a-zA-Z0-9_-]', username):
+
+			try:
+				validators.validate_username(username)
+				validators.validate_email(email)
+				validators.validate_fullname(fullname)
+			except validators.InvalidUsername:
 				return self.showAddForm(req, username, email, fullname,
 					'Invalid characters in username')
+			except validators.InvalidEmail:
+				return self.showAddForm(req, username, email, fullname,
+					'Email is not valid')
+			except validators.InvalidFullname:
+				return self.showAddForm(req, username, email, fullname,
+					'Invalid characters in full name')
 
 			if username == '':
 				return self.showAddForm(req, username, email, fullname,
 					'Username not supplied')
-			if config.htpasswd.exists(username):
-				return self.showAddForm(req, username, email, fullname,
-					'User already exists')
 
 			if email == '':
 				return self.showAddForm(req, username, email, fullname,
 					'Email must be supplied')
 
-			if not isEmailValid(email):
-				return self.showAddForm(req, username, email, fullname,
-					"Email is not valid")
-
 			try:
-				addUser(username)
-				User(username).setEmail(email)
-				User(username).setFullName(fullname)
+				u = User.add(username)
+				u.email = email
+				u.fullname = fullname
 			except IOError:
 				return ErrorResponse('File permission denied', request=req)
-			except UserExists:
+			except UserExistsError:
 				return self.showAddForm(req, username, email, fullname,
 					'User %s already exists' % username)
 
