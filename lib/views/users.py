@@ -8,6 +8,7 @@ from auth.decorators import *
 from models.options import Options
 from config.authz.authz import UnknownUserError
 from models import validators
+from unicode import uc_str
 
 class Users(View):
 	@login_required
@@ -169,7 +170,7 @@ class Users(View):
   
 	def setFullName(self, req, user):
 		try:
-			user.fullname = req.post.get('fullname')
+			user.fullname = uc_str(req.post.get('fullname'))
 			return XMLStatusResponse('setFullName', True,
 				'Changed name for user %s to %s' %
 				(user.name, user.fullname))
