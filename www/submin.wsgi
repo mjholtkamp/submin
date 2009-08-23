@@ -11,8 +11,9 @@ def application(environ, start_response):
 		os.environ['SUBMIN_CONF'] = environ['SUBMIN_CONF']
 		os.environ['SCRIPT_FILENAME'] = environ['SCRIPT_FILENAME']
 		cwd = os.path.dirname(environ['SCRIPT_FILENAME'])
-		libdir = os.path.realpath(os.path.join(cwd, '../lib/'))
-		sys.path.append(libdir)
+		# __file__ contains <submin-dir>/www/submin.wsgi
+		submindir = os.path.dirname(os.path.dirname(__file__))
+		sys.path.append(os.path.join(submindir, 'lib')
 		from dispatch.wsgirequest import WSGIRequest
 		from dispatch import dispatcher
 

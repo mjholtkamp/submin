@@ -1,6 +1,9 @@
 #!/usr/bin/python
 import sys
-sys.path.append('../lib/')
+import os
+# __file__ contains <submin-dir>/www/submin.cgi
+submindir = os.path.dirname(os.path.dirname(__file__))
+sys.path.append(os.path.join(submindir, 'lib'))
 from models import backend
 
 backend.open()
