@@ -28,6 +28,9 @@ class User(object):
 		Raises UserExistsError if a user with this username already exists.
 		"""
 
+		if not validators.validate_username(username):
+			raise validators.InvalidUsername(username)
+
 		backend.add(username, password)
 		return User(username)
 

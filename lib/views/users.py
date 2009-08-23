@@ -77,13 +77,10 @@ class Users(View):
 			email = req.post['email'].value.strip()
 			fullname = req.post['fullname'].value.strip()
 
+			# check these before we add the user, the rest is checked when adding
 			try:
-				validators.validate_username(username)
 				validators.validate_email(email)
 				validators.validate_fullname(fullname)
-			except validators.InvalidUsername:
-				return self.showAddForm(req, username, email, fullname,
-					'Invalid characters in username')
 			except validators.InvalidEmail:
 				return self.showAddForm(req, username, email, fullname,
 					'Email is not valid')
@@ -108,6 +105,9 @@ class Users(View):
 			except UserExistsError:
 				return self.showAddForm(req, username, email, fullname,
 					'User %s already exists' % username)
+			except validators.InvalidUsername:
+				return self.showAddForm(req, username, email, fullname,
+					'Invalid characters in username')
 
 			url = base_url + '/users/show/' + username
 			return Redirect(url)
@@ -173,7 +173,7 @@ class Users(View):
 			return XMLStatusResponse('setFullName', True,
 				'Changed name for user %s to %s' %
 				(user.name, user.fullname))
-		except InvalidFullName, e:
+		except validators.InvalidFullname, e:
 			return XMLStatusResponse('setFullName', False, str(e))
 		except Exception, e:
 			return XMLStatusResponse('setFullName', False,
@@ -181,7 +181,7 @@ class Users(View):
 
 	def setPassword(self, req, user):
 		try:
-			user.password = req.post.get('password')
+			user.set_password(req.post.get('password'))
 			return XMLStatusResponse('setPassword', True,
 				'Changed password for user %s' % user.name)
 		except Exception, e:
