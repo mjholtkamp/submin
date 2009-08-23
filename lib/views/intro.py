@@ -9,8 +9,8 @@ class Intro(View):
 		localvars = {}
 
 		if not req.session['user'].is_admin:
-			config = Config()
-			base_url = config.base_url
+			o = Options()
+			base_url = o.value('base_url_submin')
 			username = req.session['user'].name
 			return Redirect(base_url + '/users/show/' + username)
 

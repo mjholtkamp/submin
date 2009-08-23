@@ -13,6 +13,13 @@ class Options(object):
 	def options(self):
 		return backend.options()
 
+	def url_path(self, key):
+		path = self.value(key)
+		if path == None:
+			raise Exception("no such key")
+
+		return Path(path, append_slash=True)
+
 	def env_path(self, key=None):
 		base = Path(os.environ['SUBMIN_ENV'])
 		if key == None:

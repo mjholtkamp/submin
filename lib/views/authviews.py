@@ -16,16 +16,22 @@ class Login(View):
 		username = request.post.get('username', '')
 		password = request.post.get('password', '')
 
+		invalid_login = True
 		try:
-			user = User('username')
+			user = User(username)
+			invalid_login = False
 		except UnknownUserError, e:
-			return self.evaluate_form(o, 'Not a valid username and password combination')
+			pass
 
 		try:
-			if not user.password_check(password):
+			if not user.check_password(password):
 				return self.evaluate_form(o, 'Not a valid username and password combination')
 		except NoMD5PasswordError, e:
 			return self.evaluate_form(config, str(e))
+
+		if invalid_login:
+			return self.evaluate_form(o, 'Not a valid username and password combination')
+
 
 		url = '/'
 		if 'redirected_from' in request.session:

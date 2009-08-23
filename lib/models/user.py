@@ -59,6 +59,7 @@ class User(object):
 		return self.name
 
 	def check_password(self, password):
+		"""Return True if password is correct, can raise NoMD5PasswordError"""
 		return backend.check_password(self._id, password)
 
 	def set_password(self, password):

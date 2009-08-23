@@ -2,16 +2,17 @@ from dispatch.view import View
 from template.shortcuts import evaluate_main
 from dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse
 from views.error import ErrorResponse
-from models.user import *
+from models.user import User
 from models.group import Group
 from auth.decorators import *
+from models.options import Options
 from config.authz.authz import UnknownUserError
 
 class Users(View):
 	@login_required
 	def handler(self, req, path):
 		localvars = {}
-		config = Config()
+		o = Options()
 
 		if req.is_ajax():
 			return self.ajaxhandler(req, path)
@@ -30,7 +31,7 @@ class Users(View):
 			if path[0] == 'add':
 				return self.add(req, path[1:], localvars)
 		except Unauthorized:
-			return Redirect(config.base_url)
+			return Redirect(o.value('base_url_submin'))
 
 		return ErrorResponse('Unknown path', request=req)
 
