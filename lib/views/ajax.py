@@ -5,16 +5,17 @@ from models.user import User
 from models.group import Group
 from models.repository import Repository
 from template import evaluate
-from auth.decorators import *
+from models.options import Options
 
 class Ajax(View):
 	"""Ajax view, for global ajax requests, like list users/groups/repositories"""
 	@login_required
 	def handler(self, req, path):
-		config = Config()
+		o = Options()
+
 		# we only handle ajax requests
 		if not req.is_ajax():
-			return Redirect(config.base_url)
+			return Redirect(o.url_path('base_url_submin'))
 
 		if 'listAll' in req.post:
 			return self.listAll(req)
@@ -41,14 +42,19 @@ class Ajax(View):
 	def listUsers(self, req):
 		session_user = req.session['user']
 		try:
-			users = listUsers(session_user)
+			users = User.list(session_user)
 			return XMLTemplateResponse("ajax/listusers.xml", {'users': users})
 		except Exception, e:
 			return XMLStatusResponse('listUsers', False, 'Failed to get a list: %s' % e)
 
 	def listGroups(self, req):
+		user = req.session['user']
 		try:
-			groups = listGroups(req.session['user'])
+			groups = []
+			for group in Group.list():
+				if user.is_admin or user in group.members():
+					groups.append(group)
+
 			return XMLTemplateResponse("ajax/listgroups.xml", {'groups': groups})
 		except Exception, e:
 			return XMLStatusResponse('listGroups', False, 'Failed to get a list: %s' % e)
