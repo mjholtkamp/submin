@@ -5,7 +5,7 @@ from views.error import ErrorResponse
 from dispatch.view import View
 from models.user import User
 from models.group import Group
-from models.repository import Repository, DoesNotExistError
+from models.repository import Repository, DoesNotExistError, PermissionError
 from models.trac import Trac
 from models.options import Options
 from auth.decorators import login_required, admin_required
@@ -42,7 +42,7 @@ class Repositories(View):
 
 		try:
 			repository = Repository(path[0])
-		except Repository.DoesNotExist:
+		except DoesNotExistError:
 			return ErrorResponse('This repository does not exist.', request=req)
 
 		user = req.session['user']
@@ -106,18 +106,15 @@ class Repositories(View):
 			except DoesNotExistError:
 				pass
 
+			try:
+				# XXX hardcode 'vcs-type' now to 'svn'
+				Repository.add('svn', repository)
+			except PermissionError:
+				return ErrorResponse('could not create repository',
+					request=req, details=outtext)
+
 			url = base_url + '/repositories/show/' + repository
-
-			reposdir = o.env_path('dir_svn')
-			newrepos = reposdir + repository
-			cmd = 'svnadmin create "%s"' % str(newrepos)
-			(exitstatus, outtext) = commands.getstatusoutput(cmd)
-			if exitstatus == 0:
-				repos = Repository(repository)
-#				repos.changeNotifications(True)
-				return Redirect(url)
-
-			return ErrorResponse('could not create repository', request=req, details=outtext)
+			return Redirect(url)
 
 		return self.showAddForm(req, repository)
 
@@ -125,12 +122,14 @@ class Repositories(View):
 	def getsubdirs(self, req, repository):
 		svn_path = req.post['getSubdirs'].value.strip('/')
 		svn_path_u = uc_url_decode(svn_path) #also convert from utf-8
-		dirs = repository.getsubdirs(svn_path_u)
+		dirs = repository.subdirs(svn_path_u)
 		templatevars = {'dirs': dirs}
 		return XMLTemplateResponse('ajax/repositorytree.xml', templatevars)
 
 	@admin_required
 	def getpermissions(self, req, repository):
+		return XMLTemplateResponse('ajax/repositoryperms.xml', {})
+
 		config = Config()
 		path = uc_url_decode(req.post['getPermissions'].value)
 		svn_path = Path(path.encode('utf-8'))
@@ -154,7 +153,7 @@ class Repositories(View):
 
 	@admin_required
 	def getpermissionpaths(self, req, repository):
-		authz_paths = [x[1] for x in repository.authz_paths]
+		authz_paths = [] #[x[1] for x in repository.authz_paths]
 		templatevars = {'repository': repository.name, 'paths': authz_paths}
 		return XMLTemplateResponse('ajax/repositorypermpaths.xml', templatevars)
 
@@ -246,7 +245,7 @@ class Repositories(View):
 		
 		try:
 			repository = Repository(repositoryname)
-		except (IndexError, Repository.DoesNotExist):
+		except (IndexError, DoesNotExistError):
 			return XMLStatusResponse('', False,
 				'Repository %s does not exist.' % repositoryname)
 

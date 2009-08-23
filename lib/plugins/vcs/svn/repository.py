@@ -8,32 +8,27 @@ from models.options import Options
 
 from models.repository import DoesNotExistError, PermissionError, VersionError, VCSImportError
 
-def list(session_user):
-	o = Options()
+def list():
 	repositories = []
-	repository_names = repositoriesOnDisk()
+	repository_names = _repositoriesOnDisk()
 	repository_names.sort()
 	
 	for repos in repository_names:
 		try:
 			r = Repository(repos)
 			status = "ok"
-		except DoesNotExist:
+		except DoesNotExistError:
 			pass
-		except PermissionDenied:
+		except PermissionError:
 			status = "permission denied"
-		except WrongVersion:
+		except VersionError:
 			status = "wrong version"
 
-		if session_user.is_admin:
-			repositories.append({"name": repos, "status": status})
-		else:
-			if r.userHasReadPermissions(session_user):
-				repositories.append({"name": repos, "status": status})
+		repositories.append({"name": repos, "status": status})
 
 	return repositories
 
-def repositoriesOnDisk():
+def _repositoriesOnDisk():
 	"""Returns all repositories that are found on disk"""
 	import glob, os.path
 	o = Options()
@@ -45,6 +40,19 @@ def repositoriesOnDisk():
 			repositories.append(rep[rep.rfind('/') + 1:])
 
 	return repositories
+
+def add(name):
+	o = Options()
+	reposdir = o.env_path('dir_svn')
+	newrepos = reposdir + name
+	cmd = 'svnadmin create "%s"' % str(newrepos)
+	(exitstatus, outtext) = commands.getstatusoutput(cmd)
+	if exitstatus != 0:
+		raise PermissionError("External command 'svnadmin' failed: %s" % outtext)
+
+	repos = Repository(name)
+#	repos.changeNotifications(True)
+
 
 class Repository(object):
 	"""Internally, this class uses unicode to represent files and directories.
@@ -66,9 +74,11 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		reposdir = o.env_path('dir_svn')
 		self.url = str(reposdir + self.name)
 
-		self.dirs = self.getsubdirs("")
+		self.initialized = False
+		self.dirs = self.subdirs("")
+		self.initialized = True
 
-	def getsubdirs(self, path):
+	def subdirs(self, path):
 		'''Return subdirs (not recursive) of 'path' relative to our reposdir
 		Subdirs are returned as a hash with two entities: 'name' and 
 		'has_subdirs', which should be self-explanatory.'''

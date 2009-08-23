@@ -17,7 +17,15 @@ class Repository(object):
 		repositories = []
 		for system in systems:
 			backend = models.vcs.get(system, "repository")
-			repositories += backend.list(session_user)
+			repositories += backend.list()
+
+		if not session_user.is_admin:
+			# filter repositories
+			filtered = []
+			for repository in repositories:
+				if self.userHasReadPermissions(repos, session_user):
+					filtered.append({"name": repos, "status": status})
+			repositories = filtered
 
 		return repositories
 
@@ -26,41 +34,40 @@ class Repository(object):
 		return systems
 
 	@staticmethod
+	def userHasReadPermissions(reposname, session_user):
+		# should be replaced by submin_permissions instead of 'notifications'
+		if session_user.notifications.has_key(reposname):
+			perm = session_user.notifications[reposname]
+			if perm['allowed']:
+				return True
+
+		return False
+
+	@staticmethod
 	def add(system, name):
 		backend = models.vcs.get(system, "repository")
 		backend.add(name)
 
 	def __init__(self, repositoryname):
 		"""Returns a Repository object"""
-		self._name = repositoryname
+		self.name = repositoryname
 
 		for system in systems:
 			backend = models.vcs.get(system, "repository")
 			try:
 				self._repository = backend.Repository(repositoryname)
-				break # we found one, no need to check other systems
+				return # we found one, no need to check other systems
 			except DoesNotExistError:
 				pass
 
+		raise DoesNotExistError
+
 	def remove(self):
-		"Removes a Repository from disk (NO UNDO)"
+		"""Removes a Repository from disk (NO UNDO)"""
 		self._repository.remove()
 
 	def subdirs(self, subdir):
-		return []
-
-	def userHasReadPermissions(self, session_user):
-		if session_user.notifications.has_key(self.name):
-			perm = session_user.notifications[self.name]
-			if perm['allowed']:
-				return True
-
-		return False
-
-	def _getName(self):
-		return self._name
-
-	name     = property(_getName)
+		return self._repository.subdirs(subdir)
 
 __doc__ = """
 Backend contract
@@ -78,7 +85,7 @@ as some secondary tasks.
 * remove(name)
 	Removes repository *name*
 
-* subdirs(repository, subdir)
-	Get a list of subdirs of repository *repository* and subdir *subdir*.
+* subdirs(subdir)
+	Get a list of subdirs of subdir *subdir* (root is "")
 	Each dir is a dict with at least a property 'name'.
 """
