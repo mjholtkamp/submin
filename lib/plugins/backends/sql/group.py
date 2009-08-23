@@ -1,6 +1,9 @@
+import sqlite3
 import plugins.backends.sql.common as backend
 
 class GroupExistsError(Exception):
+	pass
+class MemberExistsError(Exception):
 	pass
 
 def row_dict(cursor, row):
@@ -72,12 +75,15 @@ def members(groupid):
 		yield x[0]
 
 def add_member(groupid, userid):
-	backend.execute(backend.db.cursor(), """
-		INSERT INTO group_members
-			(groupid, userid)
-		VALUES
-			(?, ?)
-		""", (groupid, userid))
+	try:
+		backend.execute(backend.db.cursor(), """
+			INSERT INTO group_members
+				(groupid, userid)
+			VALUES
+				(?, ?)
+			""", (groupid, userid))
+	except sqlite3.IntegrityError:
+		raise MemberExistsError
 
 def remove_member(groupid, userid):
 	backend.execute(backend.db.cursor(), """

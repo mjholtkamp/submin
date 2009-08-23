@@ -62,15 +62,9 @@ function reloadX(response, X, Xplural, Xcapital) {
 	for (var i = 0; i < Xs.length; ++i) {
 		var name = Xs[i].getAttribute("name");
 		var status = Xs[i].getAttribute("status");
-		var special_group = false;
-
 		if (!status)
 			status = "ok";
 
-		// CRUFT after we convert not to abuse submin-admins
-		if (X == "group" && name == "submin-admins")
-			special_group = true;
-		
 		var li = $c("li");
 		if (selected_type == Xplural && selected_object == name)
 			addClassName(li, "selected");
@@ -79,13 +73,8 @@ function reloadX(response, X, Xplural, Xcapital) {
 
 		var nameNode = $c("span");
 		nameNode.appendChild(document.createTextNode(name));
-		if (special_group) {
-			var em = $c("em");
-			em.appendChild(nameNode);
-			link.appendChild(em);
-		} else {
-			link.appendChild(nameNode);
-		}
+		link.appendChild(nameNode);
+
 		if (status == "ok") {
 			li.appendChild(link);
 		} else {
@@ -99,7 +88,7 @@ function reloadX(response, X, Xplural, Xcapital) {
 			}
 			li.appendChild(nameNode);
 		}
-		if (is_admin && !special_group && status == "ok") {
+		if (is_admin && status == "ok") {
 			var span = $c("span");
 			addClassName(span, "delete" + X);
 			span.setAttribute("name", name);

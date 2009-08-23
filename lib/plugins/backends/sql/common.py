@@ -34,8 +34,9 @@ def setup():
 
 		CREATE TABLE group_members
 		(
-			groupid integer references groups(id),
-			userid  integer references user(id)
+			groupid integer not null references groups(id),
+			userid  integer not null references user(id),
+			PRIMARY KEY(groupid, userid)
 		);
 
 		CREATE TABLE options

@@ -1,6 +1,7 @@
 import models
 backend = models.backend.get("group")
 GroupExistsError = backend.GroupExistsError
+MemberExistsError = backend.MemberExistsError
 
 class UnknownGroupError(Exception):
 	pass
@@ -93,11 +94,12 @@ Username is unique and primary key.
 	Removes all members of group with id *groupid*
 
 * members(groupid)
-	Returns a sorted list of membernames, sorted by username, for group with id
-	*groupid*
+	Returns a sorted itarable of membernames, sorted by username, for group
+	with id *groupid*.
 
 * add_member(groupid, userid)
-	Adds the user with id *userid* to the group with id *groupid*
+	Adds the user with id *userid* to the group with id *groupid*. Can
+	raise a MemberExistsError.
 
 * remove_member(groupid, userid)
 	Removes the user with id *userid* from the group with id *groupid*
