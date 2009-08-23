@@ -192,17 +192,30 @@ class Users(View):
 	@admin_required
 	def addToGroup(self, req, user):
 		group = Group(req.post.get('addToGroup'))
-		success = group.addMember(user.name)
+		success = True
+		try:
+			group.add_member(user)
+		except MemberExistsError:
+			success = False
+
 		msgs = {True: 'User %s added to group %s' % (user.name, group.name),
 				False: 'User %s already in group %s' % (user.name, group.name)
 				}
 		return XMLStatusResponse('addToGroup', success, msgs[success])
 
 	def listUserGroups(self, req, user):
+		member_of_names = list(user.member_of())
+		member_of = [Group(x) for x in member_of_names]
 		if req.session['user'].is_admin:
+			nonmember_of = []
+			groups = Group.list()
+			for group in groups:
+				if group.name not in member_of_names:
+					nonmember_of.append(group)
+			
 			return XMLTemplateResponse("ajax/usermemberof.xml",
-					{"memberof": user.member_of,
-						"nonmemberof": user.nonmember_of, "user": user.name})
+					{"memberof": member_of,
+						"nonmemberof": nonmember_of, "user": user.name})
 
 		if req.session['user'].name != user.name:
 			return XMLStatusResponse('listUserGroups', False, "You do not have permission to "
@@ -252,12 +265,12 @@ class Users(View):
 	@admin_required
 	def removeFromGroup(self, req, user):
 		group = Group(req.post.get('removeFromGroup'))
-		# TODO: Make this a setting in submin.conf?
-		if group.name == "submin-admins" and user.name == req.session['user'].name:
-			return XMLStatusResponse('removeFromGroup', False,
-					"You cannot remove yourself from %s" % group.name)
+		success = True
+		try:
+			group.remove_member(user)
+		except: # XXX except what?!
+			succes = False
 
-		success = group.removeMember(user.name)
 		msgs = {True: 'User %s removed from group %s' % (user.name, group.name),
 				False: 'User %s is not a member of %s' % (user.name, group.name)
 				}
