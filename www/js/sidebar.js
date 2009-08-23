@@ -63,6 +63,10 @@ function reloadX(response, X, Xplural, Xcapital) {
 		var name = Xs[i].getAttribute("name");
 		var status = Xs[i].getAttribute("status");
 		var special_group = false;
+		
+		if (!status)
+			status = "ok";
+
 		// CRUFT after we convert not to abuse submin-admins
 		if (X == "group" && name == "submin-admins")
 			special_group = true;
