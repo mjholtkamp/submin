@@ -5,18 +5,18 @@ from views.error import ErrorResponse
 from dispatch.view import View
 from models.user import User
 from models.group import Group
-from models.repository import *
-from models.trac import *
-from auth.decorators import *
+from models.repository import Repository, DoesNotExistError
+from models.trac import Trac
+from models.options import Options
+from auth.decorators import login_required, admin_required
 from path.path import Path
 from unicode import uc_url_decode
-from ConfigParser import NoOptionError
 
 class Repositories(View):
 	@login_required
 	def handler(self, req, path):
 		localvars = {}
-		config = Config()
+		o = Options()
 
 		if req.is_ajax():
 			return self.ajaxhandler(req, path)
@@ -29,19 +29,16 @@ class Repositories(View):
 		if len(path) > 1:
 			localvars['selected_object'] = path[1]
 
-		try:
-			if path[0] == 'show':
-				return self.show(req, path[1:], localvars)
-			if path[0] == 'add':
-				return self.add(req, path[1:], localvars)
-		except Unauthorized:
-			return Redirect(config.base_url)
+		if path[0] == 'show':
+			return self.show(req, path[1:], localvars)
+		if path[0] == 'add':
+			return self.add(req, path[1:], localvars)
 
 		return ErrorResponse('Unknown path', request=req)
 
 	def show(self, req, path, localvars):
 		import os.path
-		config = Config()
+		o = Options()
 
 		try:
 			repository = Repository(path[0])
@@ -52,11 +49,8 @@ class Repositories(View):
 		if not user.is_admin and not repository.userHasReadPermissions(user):
 			return ErrorResponse('This repository does not exist.', request=req)
 
+		trac_enabled = o.value('enabled_trac')
 		trac_enabled = False
-		try:
-			trac_enabled = config.get('trac', 'enabled')
-		except MissingConfigData:
-			pass
 
 		if trac_enabled:
 			localvars['trac_config_ok'] = True
@@ -71,20 +65,14 @@ class Repositories(View):
 				localvars['trac_msg'] = \
 					'There is something missing in your config: %s' % str(e)
 
-		try:
-			svn_base_url = config.get('www', 'svn_base_url')
-			svn_http_url = os.path.join(svn_base_url, repository.name)
-		except NoOptionError:
-			svn_http_url = ''
+			trac_base_url = o.url_path('base_url_trac')
+			trac_http_url = str(trac_base_url + repository.name)
+			localvars['trac_http_url'] = trac_http_url
 
-		try:
-			trac_base_url = config.get('www', 'trac_base_url')
-			trac_http_url = os.path.join(trac_base_url, repository.name)
-		except NoOptionError:
-			trac_http_url = ''
+		svn_base_url = o.url_path('base_url_svn')
+		svn_http_url = str(svn_base_url + repository.name)
 
 		localvars['svn_http_url'] = svn_http_url
-		localvars['trac_http_url'] = trac_http_url
 		localvars['repository'] = repository
 		formatted = evaluate_main('repositories.html', localvars, request=req)
 		return Response(formatted)
@@ -98,8 +86,8 @@ class Repositories(View):
 
 	@admin_required
 	def add(self, req, path, localvars):
-		config = Config()
-		base_url = config.base_url
+		o = Options()
+		base_url = o.url_path('base_url_submin')
 		repository = ''
 
 		if req.post and req.post['repository']:
@@ -114,19 +102,19 @@ class Repositories(View):
 
 			try:
 				a = Repository(repository)
-				return self.showAddForm(req, repository, 'Repository %s alread exists' % repository)
-			except Repository.DoesNotExist:
+				return self.showAddForm(req, repository, 'Repository %s already exists' % repository)
+			except DoesNotExistError:
 				pass
 
 			url = base_url + '/repositories/show/' + repository
 
-			reposdir = config.getpath('svn', 'repositories')
+			reposdir = o.env_path('dir_svn')
 			newrepos = reposdir + repository
-			cmd = 'svnadmin create %s' % str(newrepos)
+			cmd = 'svnadmin create "%s"' % str(newrepos)
 			(exitstatus, outtext) = commands.getstatusoutput(cmd)
 			if exitstatus == 0:
 				repos = Repository(repository)
-				repos.changeNotifications(True)
+#				repos.changeNotifications(True)
 				return Redirect(url)
 
 			return ErrorResponse('could not create repository', request=req, details=outtext)

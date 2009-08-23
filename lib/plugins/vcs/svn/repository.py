@@ -1,26 +1,28 @@
 # -*- coding: utf-8 -*-
-from config.config import Config
 from path.path import Path
 import os
 from unicode import uc_str, uc_to_svn, uc_from_svn
 import commands
 import exceptions
+from models.options import Options
 
-def listRepositories(session_user):
-	config = Config()
+from models.repository import DoesNotExistError, PermissionError, VersionError, VCSImportError
+
+def list(session_user):
+	o = Options()
 	repositories = []
 	repository_names = repositoriesOnDisk()
 	repository_names.sort()
-
+	
 	for repos in repository_names:
 		try:
 			r = Repository(repos)
 			status = "ok"
-		except Repository.DoesNotExist:
+		except DoesNotExist:
 			pass
-		except Repository.PermissionDenied:
+		except PermissionDenied:
 			status = "permission denied"
-		except Repository.WrongVersion:
+		except WrongVersion:
 			status = "wrong version"
 
 		if session_user.is_admin:
@@ -34,15 +36,13 @@ def listRepositories(session_user):
 def repositoriesOnDisk():
 	"""Returns all repositories that are found on disk"""
 	import glob, os.path
-	config = Config()
-	reposdir = config.getpath('svn', 'repositories')
+	o = Options()
+	reposdir = o.env_path('dir_svn')
 	reps = glob.glob(str(reposdir + '*'))
 	repositories = []
 	for rep in reps:
 		if os.path.isdir(rep):
 			repositories.append(rep[rep.rfind('/') + 1:])
-
-	repositories.sort()
 
 	return repositories
 
@@ -50,34 +50,21 @@ class Repository(object):
 	"""Internally, this class uses unicode to represent files and directories.
 It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 
-	class DoesNotExist(Exception):
-		pass
-	class PermissionDenied(Exception):
-		pass
-	class WrongVersion(Exception):
-		pass
-	class ImportError(Exception):
-		def __init__(self, msg):
-			Exception.__init__(self, msg)
-
 	def __init__(self, name):
 		try:
 			global fs, repos, core, SubversionException
 			from svn import fs, repos, core
 			from svn.core import SubversionException
 		except ImportError:
-			raise self.ImportError("Failed to import python 'svn' module, please install")
+			raise VCSImportError("Failed to import python 'svn' module, please install")
 
-		config = Config()
+		o = Options()
 
 		self.name = name
-		self.config = config
 		self.signature = "### SUBMIN AUTOCONFIG, DO NOT ALTER FOLLOWING LINE ###\n"
 
-		self.authz_paths = self.config.authz.paths(self.name)
-		self.authz_paths.sort()
-		reposdir = self.config.get('svn', 'repositories')
-		self.url = os.path.join(reposdir, self.name)
+		reposdir = o.env_path('dir_svn')
+		self.url = str(reposdir + self.name)
 
 		self.dirs = self.getsubdirs("")
 
@@ -102,21 +89,21 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 	def get_entries(self, path):
 		# lots of conversions from and to utf-8
 		root_path_utf8 = repos.svn_repos_find_root_path(self.url)
-		if root_path_utf8 is None:
-			raise self.DoesNotExist
+		if root_path_utf8 is None or not os.path.exists(root_path_utf8):
+			raise DoesNotExistError
 
 		try:
 			repository = repos.svn_repos_open(root_path_utf8)
 		except SubversionException, e:
 			# check for messages like the following:
 			# "Expected FS Format 'x'; found format 'y'"
-			# they differ for each version, so do a string match instead of
-			# errorcode match
+			# there are different errorcodes for each version, so do a string
+			# match instead of errorcode match
 			errstr = str(e)
 			if "Expected" in errstr and "format" in errstr and "found" in errstr:
-				raise self.WrongVersion
+				raise self.VersionError
 
-			raise self.PermissionDenied
+			raise PermissionError
 
 		fs_ptr = repos.svn_repos_fs(repository)
 
@@ -223,25 +210,16 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		os.chmod(str(hook), 0755)
 
 	def remove(self):
-		config = Config()
-		reposdir = config.getpath('svn', 'repositories')
+		o = Options()
+		reposdir = o.env_path('dir_svn')
 		newrepos = reposdir + self.name
 		if not newrepos.absolute:
 			raise Exception("Error, repository path is relative, this should be fixed")
 
 		cmd = 'rm -rf "%s"' % newrepos
 		(exitstatus, outtext) = commands.getstatusoutput(cmd)
-		if exitstatus == 0:
-			return
-		raise Exception("could not remove repository %s" % self.name)
-
-	def userHasReadPermissions(self, session_user):
-		if session_user.notifications.has_key(self.name):
-			perm = session_user.notifications[self.name]
-			if perm['allowed']:
-				return True
-
-		return False
+		if exitstatus != 0:
+			raise Exception("could not remove repository %s" % self.name)
 
 	def __str__(self):
 		return self.name
