@@ -80,7 +80,12 @@ def setup():
 SQLIntegrityError = sqlite3.IntegrityError
 
 def default_execute(cursor, query, args=(), commit=True):
-	cursor.execute(query, args)
+	try:
+		cursor.execute(query, args)
+	except:
+		db.rollback()
+		raise
+
 	if commit:
 		db.commit()
 
