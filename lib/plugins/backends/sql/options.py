@@ -1,11 +1,12 @@
 import plugins.backends.sql.common as backend
+from models.exceptions import UnknownKeyError
 
 def value(key):
 	cur = backend.db.cursor()
 	backend.execute(cur, "SELECT value FROM options WHERE key=?", (key,))
 	row = cur.fetchone()
 	if not row:
-		return None
+		raise UnknownKeyError
 
 	return row[0]
 
@@ -19,6 +20,6 @@ def options():
 	backend.execute(cur, "SELECT key, value FROM options")
 	row = cur.fetchall()
 	if not row:
-		return None
+		return {}
 
 	return row

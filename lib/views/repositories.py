@@ -6,8 +6,9 @@ from dispatch.view import View
 from models.user import User
 from models.group import Group
 from models.repository import Repository, DoesNotExistError, PermissionError
-from models.trac import Trac
+from models.trac import Trac, UnknownTrac, createTracEnv
 from models.options import Options
+from models.exceptions import UnknownKeyError
 from auth.decorators import login_required, admin_required
 from path.path import Path
 from unicode import uc_url_decode
@@ -49,8 +50,10 @@ class Repositories(View):
 		if not user.is_admin and not repository.userHasReadPermissions(user):
 			return ErrorResponse('This repository does not exist.', request=req)
 
-		trac_enabled = o.value('enabled_trac')
-		trac_enabled = False
+		try:
+			trac_enabled = o.value('enabled_trac')
+		except UnknownKeyError:
+			trac_enabled = False
 
 		if trac_enabled:
 			localvars['trac_config_ok'] = True

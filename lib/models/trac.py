@@ -1,37 +1,38 @@
-from ConfigParser import NoOptionError, NoSectionError
 import exceptions
 import commands
 import os
+from models.options import Options
+from models.exceptions import UnknownKeyError
 
 class UnknownTrac(Exception):
 	def __init__(self, name):
 		Exception.__init__(self, "Could not find trac env '%s'" % name)
 
 class MissingConfig(Exception):
-	def __init__(self, msg):
-		Exception.__init__(self, '%s' % msg)
+	pass
 
 def tracBaseDir():
-	config = Config()
+	o = Options()
 	try:
-		basedir = config.getpath('trac', 'basedir')
-		return basedir
-	except (NoOptionError, NoSectionError):
-		raise MissingConfig("No 'basedir' in [trac] section")
+		basedir = o.env_path('dir_trac')
+	except UnknownKeyError:
+		raise MissingConfig('No Trac directory specified in options')
+
+	return basedir
 
 def createTracEnv(repository):
-	config = Config()
+	o = Options()
 	basedir = tracBaseDir()
 	if not os.path.isdir(str(basedir)):
 		os.makedirs(str(basedir))
 
 	tracenv = basedir + repository
 	projectname = repository
-	svnbasedir = config.getpath('svn', 'repositories')
+	svnbasedir = o.env_path('dir_svn')
 	svndir = svnbasedir + repository
 	try:
-		path = config.get('backend', 'path')
-	except NoOptionError:
+		path = o.value('path')
+	except UnknownKeyError:
 		path = "/bin:/usr/bin:/usr/local/bin:/opt/local/bin"
 
 	cmd =  "PATH='%s' trac-admin '%s' initenv '%s' 'sqlite:db/trac.db' 'svn' '%s'" % \
