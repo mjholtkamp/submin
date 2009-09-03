@@ -79,7 +79,10 @@ Usage:
 
 					# add notifications
 					for repos, details in repositories.iteritems():
-						print repos, details
+						if details['allowed']:
+							pass # TODO: set submin read permission
+						if details['enabled']:
+							u.notification_enable(repos)
 
 	def write_groups(self, config):
 		from models.group import Group
