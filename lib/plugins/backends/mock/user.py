@@ -1,11 +1,10 @@
+from models.exceptions import UserExistsError
+
 mock_users = [] # [{'id': 0, 'name': 'test'}]
 
 def clear_users():
 	global mock_users
 	mock_users = []
-
-class UserExistsError(Exception):
-	pass
 
 class NoMD5PasswordError(Exception):
 	def __init__(self):
