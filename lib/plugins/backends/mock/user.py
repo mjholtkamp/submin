@@ -1,7 +1,8 @@
-from __init__ import mock_users
+mock_users = [] # [{'id': 0, 'name': 'test'}]
 
 def clear_users():
-	[mock_users.pop() for z in xrange(len(mock_users))]
+	global mock_users
+	mock_users = []
 
 class UserExistsError(Exception):
 	pass
