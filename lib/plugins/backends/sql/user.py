@@ -1,11 +1,6 @@
 import plugins.backends.sql.common as backend
-from models.exceptions import UserExistsError
+from models.exceptions import UserExistsError, NoMD5PasswordError
 from config.authz import md5crypt
-
-
-class NoMD5PasswordError(Exception):
-	def __init__(self):
-		Exception.__init__(self, "Password is not encrypted with MD5")
 
 def row_dict(cursor, row):
 	# description returns a tuple; the first entry is the name of the field

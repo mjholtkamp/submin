@@ -6,10 +6,6 @@ def clear_users():
 	global mock_users
 	mock_users = []
 
-class NoMD5PasswordError(Exception):
-	def __init__(self):
-		Exception.__init__(self, "Password is not encrypted with MD5")
-
 def id2name(userid):
 	return mock_users[userid]["name"]
 

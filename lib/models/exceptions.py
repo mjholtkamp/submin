@@ -24,6 +24,9 @@ class BackendError(Exception):
 class UserExistsError(Exception):
 	pass
 
+class NoMD5PasswordError(Exception):
+	def __init__(self):
+		Exception.__init__(self, "Password is not encrypted with MD5")
 
 ####### Group exceptions #####################################################
 
