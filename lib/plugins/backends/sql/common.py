@@ -4,11 +4,11 @@ from models.exceptions import BackendAlreadySetup
 db = None
 backend_debug = False
 
-def teardown():
+def close():
 	if db:
 		db.close()
 
-def init(settings):
+def open(settings):
 	global db, backend_debug
 	db = sqlite3.connect(settings.sqlite_path)
 	backend_debug = hasattr(settings, "db_debug") and settings.db_debug

@@ -27,7 +27,7 @@ def open(pass_settings=settings):
 	other initialisation."""
 	try:
 		fimport("plugins.backends.%s" % pass_settings.backend,
-				"plugins.backends").init(pass_settings)
+				"plugins.backends").open(pass_settings)
 	except SettingsException, e:
 		raise BackendError(str(e))
 
@@ -35,6 +35,6 @@ def close():
 	"""close() will close databases, if approriate."""
 	try:
 		fimport("plugins.backends.%s" % settings.backend,
-				"plugins.backends").teardown()
+				"plugins.backends").close()
 	except SettingsException, e:
 		raise BackendError(str(e))

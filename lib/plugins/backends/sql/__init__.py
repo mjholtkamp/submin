@@ -1,1 +1,1 @@
-from common import init, setup, teardown, SQLIntegrityError, execute
+from common import open, close, setup, SQLIntegrityError, execute

@@ -1,1 +1,1 @@
-from common import teardown, init, setup
+from common import open, close, setup
