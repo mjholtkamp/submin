@@ -1,5 +1,6 @@
 import os
 from models.exceptions import UserExistsError, GroupExistsError
+from models.exceptions import MemberExistsError
 
 class c_convert():
 	'''Create a new configuration from an old-style config
@@ -81,6 +82,7 @@ Usage:
 
 	def write_groups(self, config):
 		from models.group import Group
+		from models.user import User
 
 		# get filename
 		authz_file = config.get('svn', 'authz_file')
@@ -91,16 +93,18 @@ Usage:
 		# get groups
 		groups = cp.options('groups')
 		for group in groups:
-			members = cp.get('groups', group)
+			members = [x.strip() for x in cp.get('groups', group).split(',')]
 			try:
 				g = Group.add(group)
 			except GroupExistsError:
 				g = Group(group)
 
 			for member in members:
-				# convert to userid
-				#g.add_member(member)
-				pass
+				u = User(member)
+				try:
+					g.add_member(u)
+				except MemberExistsError:
+					pass
 
 	def convert(self, old_config_file):
 		config = self.read_ini(old_config_file)
