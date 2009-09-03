@@ -1,7 +1,5 @@
 from bootstrap import fimport, settings, SettingsException
-
-class BackendException(Exception):
-	pass
+from models.exceptions import BackendAlreadySetup, BackendError
 
 def get(model):
 	"""Gets the backend-module for a certain model."""
@@ -9,7 +7,7 @@ def get(model):
 		backend = fimport("plugins.backends.%s.%s" % (settings.backend, model),
 			       "plugins.backends.%s" % settings.backend)
 	except SettingsException, e:
-		raise BackendException(str(e))
+		raise BackendError(str(e))
 
 	return backend
 
@@ -22,7 +20,7 @@ def setup():
 		fimport("plugins.backends.%s" % settings.backend,
 				"plugins.backends").setup()
 	except SettingsException, e:
-		raise BackendException(str(e))
+		raise BackendError(str(e))
 
 def open(pass_settings=settings):
 	"""opens the backend: either opens a database connection or does
@@ -31,7 +29,7 @@ def open(pass_settings=settings):
 		fimport("plugins.backends.%s" % pass_settings.backend,
 				"plugins.backends").init(pass_settings)
 	except SettingsException, e:
-		raise BackendException(str(e))
+		raise BackendError(str(e))
 
 def close():
 	"""close() will close databases, if approriate."""
@@ -39,4 +37,4 @@ def close():
 		fimport("plugins.backends.%s" % settings.backend,
 				"plugins.backends").teardown()
 	except SettingsException, e:
-		raise BackendException(str(e))
+		raise BackendError(str(e))

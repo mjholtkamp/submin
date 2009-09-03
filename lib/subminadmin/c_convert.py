@@ -1,4 +1,5 @@
 import os
+from models.exceptions import UserExistsError, GroupExistsError
 
 class c_convert():
 	'''Create a new configuration from an old-style config
@@ -51,7 +52,11 @@ Usage:
 		# add users
 		for line in htpasswd:
 			(user, password) = line.strip('\n').split(':')
-			u = User.add(user, password)
+			try:
+				u = User.add(user, password)
+			except UserExistsError:
+				u = User(user)
+
 			if userprop.has_section(user):
 				if userprop.has_option(user, 'email'):
 					u.email = userprop.get(user, 'email')
@@ -87,7 +92,11 @@ Usage:
 		groups = cp.options('groups')
 		for group in groups:
 			members = cp.get('groups', group)
-			g = Group.add(group)
+			try:
+				g = Group.add(group)
+			except GroupExistsError:
+				g = Group(group)
+
 			for member in members:
 				# convert to userid
 				#g.add_member(member)

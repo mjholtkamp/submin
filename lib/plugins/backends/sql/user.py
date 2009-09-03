@@ -1,8 +1,7 @@
 import plugins.backends.sql.common as backend
+from models.exceptions import UserExistsError
 from config.authz import md5crypt
 
-class UserExistsError(Exception):
-	pass
 
 class NoMD5PasswordError(Exception):
 	def __init__(self):

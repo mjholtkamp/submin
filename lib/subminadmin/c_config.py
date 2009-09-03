@@ -1,4 +1,5 @@
 from path.path import Path
+from models.exceptions import BackendAlreadySetup
 import os, sys
 
 class c_config():
@@ -82,7 +83,10 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 		# after writing the bootstrap file, we setup all models
 		self.sa.ensure_backend()
 		from models import backend
-		backend.setup()
+		try:
+			backend.setup()
+		except BackendAlreadySetup:
+			pass # silently ignore and continue setting defaults
 
 		# And now we can use the models
 		#from models.options import Options

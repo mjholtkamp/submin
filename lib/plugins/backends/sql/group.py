@@ -1,10 +1,6 @@
 import sqlite3
 import plugins.backends.sql.common as backend
-
-class GroupExistsError(Exception):
-	pass
-class MemberExistsError(Exception):
-	pass
+from models.exceptions import GroupExistsError, MemberExistsError
 
 def row_dict(cursor, row):
 	# description returns a tuple; the first entry is the name of the field

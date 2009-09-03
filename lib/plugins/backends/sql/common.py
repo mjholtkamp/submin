@@ -1,4 +1,5 @@
 import sqlite3
+from models.exceptions import BackendAlreadySetup
 
 db = None
 backend_debug = False
@@ -15,7 +16,8 @@ def init(settings):
 def setup():
 	"""Creates all necessary tables"""
 
-	db.cursor().executescript("""
+	try:
+		db.cursor().executescript("""
 		CREATE TABLE users
 		(
 			id       integer primary key autoincrement,
@@ -73,7 +75,9 @@ def setup():
 			objectid    integer, -- groupid if objecttype is group
 			objectname  text -- name of repository if objecttype is repository
 		);
-	""")
+		""")
+	except sqlite3.OperationalError, e:
+		raise BackendAlreadySetup(str(e))
 
 # sqlite3 specific variables / functions
 
