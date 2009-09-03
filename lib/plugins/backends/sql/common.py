@@ -49,11 +49,9 @@ def setup():
 
 		CREATE TABLE notifications
 		(
-			id           integer primary key autoincrement,
 			userid       integer references users(id),
 			repository   text,
-			allowed      bool default 0,
-			enabled      bool default 0
+			PRIMARY KEY(userid, repository)
 		);
 
 		CREATE TABLE permissions_repository

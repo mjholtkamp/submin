@@ -5,8 +5,8 @@ mock_settings = Mock()
 mock_settings.backend = "mock"
 
 from models import backend
-from models.user import User, UserExistsError, UnknownUserError
-
+from models.user import User
+from models.exceptions import UserExistsError, UnknownUserError, UserPermissionError
 from models.validators import *
 
 class UserTests(unittest.TestCase):
@@ -83,7 +83,7 @@ class UserTests(unittest.TestCase):
 
 	def testNotAdmin(self):
 		u = User("test")
-		self.assertRaises(NotAuthorized, u.setNotification, "repos", dict(allowed=True, enabled=True), False)
+		self.assertRaises(UserPermissionError, u.notification_enable, "repos")
 
 	def testListUsersAdmin(self):
 		mock_user = Mock()
@@ -147,29 +147,24 @@ class UserTests(unittest.TestCase):
 
 	def testSaveNotificationsAdmin(self):
 		u = User("test")
-		u.setNotification("repos", {"allowed": True, "enabled": True}, True)
-		u.setNotification("non-existing", {"allowed": True, "enabled": True}, True)
-		u.saveNotifications()
+		u.notification_enable("repos")
+		u.notification_enable("non-existing")
 		u2 = User("test")
-		self.assertTrue(u2.notifications.has_key("repos"))
-		self.assertTrue(u2.notifications["repos"]["allowed"])
-		self.assertTrue(u2.notifications["repos"]["enabled"])
+		self.assertTrue(u2.notification_enabled("repos"))
 		# should not have notification for non-existing repository
-		self.assertFalse(u2.notifications.has_key("non-existing"))
+		self.assertFalse(u2.notification_enabled("non-existing"))
 
 	def testSaveNotificationsNonAdminNotAllowed(self):
-		"""If not allowed, should raise NotAuthorized"""
+		"""If not allowed, should raise Exception"""
 		u = User("test")
-		self.assertRaises(NotAuthorized, u.setNotification, "repos", {"allowed": True, "enabled": True}, False)
+		# TODO: set submin read permission for "repos" to False
+		self.assertRaises(UserPermissionError, u.notification_enable, "repos")
 
 	def testSaveNotificationsNonAdminAllowed(self):
 		"""First set allowed as admin, then set enabled as user"""
 		u = User("test")
-		u.setNotification("repos", {"allowed": True, "enabled": False}, True)
-		u.setNotification("repos", {"allowed": True, "enabled": True}, False)
-		u.saveNotifications()
+		# TODO: set submin read permission for "repos" to True
+		u.notification_enable("repos")
 		u2 = User("test")
-		self.assertTrue(u2.notifications.has_key("repos"))
-		self.assertTrue(u2.notifications["repos"]["allowed"])
-		self.assertTrue(u2.notifications["repos"]["enabled"])
+		self.assertTrue(u2.notification_enabled("repos"))
 

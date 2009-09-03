@@ -42,6 +42,15 @@ def remove_permissions_submin(userid):
 def remove_notifications(userid):
 	pass
 
+def notification_enable(userid, repository):
+	pass
+
+def notification_enabled(userid, repository):
+	pass
+
+def notification_disable(userid, repository):
+	pass
+
 def remove(userid):
 	del mock_users[userid]
 

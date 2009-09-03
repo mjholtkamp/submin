@@ -28,6 +28,13 @@ class NoMD5PasswordError(Exception):
 	def __init__(self):
 		Exception.__init__(self, "Password is not encrypted with MD5")
 
+class UnknownUserError(Exception):
+	pass
+
+class UserPermissionError(Exception):
+	"""User has no permission to make this change"""
+	pass
+
 ####### Group exceptions #####################################################
 
 class GroupExistsError(Exception):

@@ -76,6 +76,28 @@ def remove(userid):
 	backend.execute(backend.db.cursor(), """DELETE FROM users
 		WHERE id=?""", (userid,))
 
+def notification_enable(userid, repository):
+	try:
+		backend.execute(backend.db.cursor(), """INSERT INTO notifications
+		(userid, repository) VALUES (?, ?)""", (userid, repository))
+	except backend.SQLIntegrityError:
+		pass # silently ignore if it already exists
+
+def notification_enabled(userid, repository):
+	cur = backend.db.cursor()
+	backend.execute(cur, """
+		SELECT userid
+		FROM notifications
+		WHERE userid=? AND repository=?""", (userid, repository))
+	row = cur.fetchone()
+	if not row:
+		return False
+	return True
+
+def notification_disable(userid, repository):
+	backend.execute(backend.db.cursor(), """INSERT INTO notifications
+	(userid, repository) VALUES (?, ?)""", (userid, repository))
+
 def user_data(username):
 	cur = backend.db.cursor()
 	backend.execute(cur, """

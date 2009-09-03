@@ -1,10 +1,8 @@
 import models
 import validators
 backend = models.backend.get("user")
-UserExistsError = backend.UserExistsError
 
-class UnknownUserError(Exception):
-	pass
+from models.exceptions import UnknownUserError
 
 class User(object):
 	@staticmethod
@@ -92,6 +90,17 @@ class User(object):
 	def nonmember_of(self):
 		return backend.nonmember_of(self._id)
 
+	def notification_enable(self, repository):
+		# TODO: check if user has at least submin read permissions for this
+		# repository.
+		backend.notification_enable(self._id, repository)
+
+	def notification_enabled(self, repository):
+		backend.notification_enabled(self._id, repository)
+
+	def notifiction_disable(self, repository):
+		backend.notification_disable(self._id, repository)
+
 	# Properties
 	def _getId(self):
 		return self._id
@@ -168,19 +177,29 @@ Backend contract
 	Removes user with id *userid* from groups
 
 * remove_permissions_repository(userid)
-	Removes a users repository permissions
+	Removes a user's repository permissions
 
 * remove_permissions_submin(userid)
-	Removes a users submin permissions
+	Removes a user's submin permissions
 
 * remove_notifications(userid)
-	Removes a users notifications
+	Removes a user's notifications
 
 * member_of(userid)
 	Returns sorted list of groups a user is member of.
 
 * nonmember_of(userid)
 	Returns sorted list of groups a user is not a member of.
+
+* notification_enable(userid, repository)
+	Enables notifications of repository.
+
+* notification_enabled(userid, repository)
+	Returns True if the user with id *id* is set to receive notifications
+	from repository *repository*.
+
+* notification_disable(userid, repository)
+	Enables notifications of repository
 
 * set_email(id, email)
 	Sets the email for user with id *id*
