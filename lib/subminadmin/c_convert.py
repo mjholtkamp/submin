@@ -78,7 +78,8 @@ Usage:
 						repositories[repos] = {'allowed': True, 'enabled': repos_enabled}
 
 					# add notifications
-					#print repositories
+					for repos, details in repositories.iteritems():
+						print repos, details
 
 	def write_groups(self, config):
 		from models.group import Group

@@ -32,3 +32,6 @@ class GroupExistsError(Exception):
 
 class MemberExistsError(Exception):
 	pass
+
+class UnknownGroupError(Exception):
+	pass

@@ -5,7 +5,8 @@ mock_settings = Mock()
 mock_settings.backend = "mock"
 
 from models import backend
-from models.group import Group, GroupExistsError, UnknownGroupError
+from models.group import Group
+from models.exceptions import GroupExistsError, UnknownGroupError
 
 class GroupTests(unittest.TestCase):
 	def setUp(self):

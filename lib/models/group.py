@@ -1,10 +1,6 @@
 import models
 backend = models.backend.get("group")
-GroupExistsError = backend.GroupExistsError
-MemberExistsError = backend.MemberExistsError
-
-class UnknownGroupError(Exception):
-	pass
+from models.exceptions import UnknownGroupError
 
 class Group(object):
 	@staticmethod

@@ -1,12 +1,9 @@
 from __init__ import mock_groups
-
+from models.exceptions import GroupExistsError
 ids = 0
 
 def clear_groups():
 	mock_groups.clear()
-
-class GroupExistsError(Exception):
-	pass
 
 def list():
 	"""Generator for sorted list of groups"""
