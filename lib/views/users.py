@@ -2,11 +2,11 @@ from dispatch.view import View
 from template.shortcuts import evaluate_main
 from dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse
 from views.error import ErrorResponse
-from models.user import User, UserExistsError
+from models.user import User
+from models.exceptions import UserExistsError
 from models.group import Group
 from auth.decorators import *
 from models.options import Options
-from config.authz.authz import UnknownUserError
 from models import validators
 from unicode import uc_str
 
