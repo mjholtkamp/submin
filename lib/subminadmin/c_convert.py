@@ -36,6 +36,7 @@ Usage:
 			'dir_bin': ('backend', 'bindir'),
 			'session_salt': ('generated', 'session_salt'),
 			'env_path': ('backend', 'path'),
+			'auth_authz_file': ('svn', 'authz_file'),
 		}
 		for (key, section_option) in options.iteritems():
 			value = config.get(section_option[0], section_option[1])
@@ -47,7 +48,7 @@ Usage:
 		# get filename
 		htpasswd_file = config.get('svn', 'access_file')
 		userprop_file = config.get('svn', 'userprop_file')
-		
+
 		# read files
 		htpasswd = file(htpasswd_file).readlines()
 		userprop = self.read_ini(userprop_file)
@@ -92,10 +93,10 @@ Usage:
 
 		# get filename
 		authz_file = config.get('svn', 'authz_file')
-		
+
 		# read file
 		cp = self.read_ini(authz_file)
-		
+
 		# get groups
 		groups = cp.options('groups')
 		for group in groups:
