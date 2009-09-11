@@ -7,6 +7,8 @@ class c_convert():
 Usage:
     convert <old-config-file>   - Interactively create new config from old'''
 
+	needs_env = False
+
 	def __init__(self, sa, argv):
 		self.sa = sa
 		self.argv = argv
