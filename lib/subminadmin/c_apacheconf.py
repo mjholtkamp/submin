@@ -68,11 +68,18 @@ recommended way is to include it in a VirtualHost.
 		return
 
 	def _apache_conf_create(self):
+		from time import strftime
 		self.init_vars['REQ_FILENAME'] = '%{REQUEST_FILENAME}'; # hack :)
-		contents = '''\
+		self.init_vars['datetime_generated'] = strftime("%Y-%m-%d %H:%M:%S")
+		contents = '''# Generated on: %(datetime_generated)s
 # This config file was automatically created with submin-admin. If you use
-# this command again, it will overwrite all changes to this file.
+# this command again, it will overwrite all changes to this file. The
+# recommanded way to regenerate this file is to change the config with
+# submin-admin and run:
+#
+#   submin-admin %(submin env)s apacheconf create
 # 
+#
 # To make this config active, you have to include it in your apache
 # config. The recommended way is to include it in one of your virtual hosts:
 #
@@ -82,7 +89,10 @@ recommended way is to include it in a VirtualHost.
 #     Include <path to this file>
 # </VirtualHost>
 #
-'''
+''' % self.init_vars
+
+		if self.auth_type == "sql":
+			contents += self._apache_conf_auth_sql_head(self.init_vars)
 
 		if self.init_vars['type'] == 'cgi':
 			contents += self._apache_conf_cgi(self.init_vars)
@@ -157,6 +167,13 @@ Apache file created: %(output)s
 		return apache_conf_wsgi
 
 	def _apache_conf_svn(self, vars):
+		if self.auth_type == "sql":
+			auth_conf = self._apache_conf_auth_sql(vars)
+		elif self.auth_type == "htaccess":
+			auth_conf = self._apache_conf_auth_sql(vars)
+
+		vars['apache_conf_auth'] = auth_conf
+
 		apache_conf_svn = '''
     <IfModule mod_dav_svn.c>
         <Location %(svn base url)s>
@@ -166,7 +183,9 @@ Apache file created: %(output)s
             AuthType Basic
             AuthName "Subversion repository"
 
-            AuthUserFile %(access file)s
+%(apache_conf_auth)s
+
+            # Authorization
             AuthzSVNAccessFile %(authz file)s
 
             Satisfy Any
@@ -176,7 +195,36 @@ Apache file created: %(output)s
 ''' % vars
 		return apache_conf_svn
 
+	def _apache_conf_auth_sql_head(self, vars):
+		conf = '''
+    DBDriver sqlite3
+    DBDParams "%(submin env)s/conf/submin.db"
+''' % vars
+		return conf
+
+	def _apache_conf_auth_sql(self, vars):
+		conf = '''
+            # Authentication
+            AuthBasicProvider dbd
+            AuthDBDUserPWQuery "SELECT password FROM users WHERE name='%%s'"
+''' % vars
+		return conf
+
+	def _apache_conf_auth_htaccess(self, vars):
+		conf = '''
+            # Authentication
+            AuthUserFile %(access file)s
+''' % vars
+		return conf
+
 	def _apache_conf_trac(self, vars):
+		if self.auth_type == "sql":
+			auth_conf = self._apache_conf_auth_sql(vars)
+		elif self.auth_type == "htaccess":
+			auth_conf = self._apache_conf_auth_sql(vars)
+
+		vars['apache_conf_auth'] = auth_conf
+
 		apache_conf_trac = '''
     # Only load if mod_python is available
     <IfModule mod_python.c>
@@ -191,7 +239,9 @@ Apache file created: %(output)s
         <LocationMatch "%(trac base url)s/[^/]+/login">
            AuthType Basic
            AuthName "Trac"
-           AuthUserFile "%(access file)s"
+
+%(apache_conf_auth)s
+
            Require valid-user
         </LocationMatch>
         AliasMatch "%(trac base url)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs
@@ -215,6 +265,10 @@ Apache file created: %(output)s
 		from models.options import Options
 		o = Options()
 
+		if len(self.argv) < 1:
+			self.sa.execute(['help', 'apacheconf'])
+			return
+
 		self.defaults = {
 			'type': 'wsgi',
 			'output': o.env_path() + 'conf' + 'apache.conf'
@@ -226,14 +280,18 @@ Apache file created: %(output)s
 			'svn base url': o.value('base_url_svn'),
 			'trac base url': o.value('base_url_trac'),
 			'svn dir': o.env_path('dir_svn'),
-			'access file': o.value('auth_access_file'),
-			'authz file': o.value('auth_authz_file'),
-			'trac dir': o.env_path('dir_trac')
+			'trac dir': o.env_path('dir_trac'),
+			'authz file': o.env_path('auth_authz_file'),
 		}
+		self.auth_type = o.value('auth_type')
 
-		if len(self.argv) < 1:
-			self.sa.execute(['help', 'apacheconf'])
-			return
+		# variables depending on auth type
+		if self.auth_type == "sql":
+			pass
+		elif o.value('auth_type') == "htaccess":
+			self.init_vars.update({
+				'access file': o.value('auth_access_file'),
+			})
 
 		try:
 			subcmd = getattr(self, 'subcmd_%s' % self.argv[0])

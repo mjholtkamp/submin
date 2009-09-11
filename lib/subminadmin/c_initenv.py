@@ -39,9 +39,11 @@ Notes:
 		}
 		self.init_vars = {
 			'conf_dir': Path('conf'),
-			'authz': Path('authz'),
-			'htpasswd': Path('htpasswd'),
 		}
+		self.init_vars.update({
+			'authz': self.init_vars['conf_dir'] + Path('authz'),
+			'htpasswd': self.init_vars['conf_dir'] + Path('htpasswd'),
+		})
 
 	def prompt_user(self, prompt, key):
 		defval = self.defaults[key]
@@ -137,6 +139,7 @@ If you use Trac, it will be accessible from <http base>/trac.
 			'auth_type': 'sql',
 			'dir_svn': str(self.init_vars['svn_dir']),
 			'dir_trac': str(self.init_vars['trac_dir']),
+			'auth_authz_file': str(self.init_vars['authz']),
 		}
 		for (key, value) in options.iteritems():
 			o.set_value(key, value)
