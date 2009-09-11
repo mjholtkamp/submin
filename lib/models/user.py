@@ -66,6 +66,9 @@ class User(object):
 	def set_password(self, password):
 		backend.set_password(self._id, password)
 
+	def set_md5_password(self, password):
+		backend.set_md5_password(self._id, password)
+
 	def generate_password(self):
 		"""generate and return a random password"""
 		from string import ascii_letters, digits
@@ -166,7 +169,14 @@ Backend contract
 	Checks whether the supplied password is valid for a user with userid *id*
 
 * set_password(id, password)
-	Sets the password for a user with userid *id* to *password*
+	Sets the password for a user with userid *id* to *password*, in backends'
+    native format.
+	
+* set_md5_password(id, password)
+	Sets the md5 password for a user with userid *id* to *password*. If this is
+    not supported by the module, it raises an MD5NotSupported error. This
+    method is mainly used to convert htpasswd files to backends that also
+    use md5 to encrypt passwords.
 	
 * remove(userid)
 	Removes user with id *userid*. Before a user can be removed, all

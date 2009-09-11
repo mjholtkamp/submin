@@ -57,9 +57,11 @@ Usage:
 		for line in htpasswd:
 			(user, password) = line.strip('\n').split(':')
 			try:
-				u = User.add(user, password)
+				u = User.add(user, None)
 			except UserExistsError:
 				u = User(user)
+
+			u.set_md5_password(password)
 
 			if userprop.has_section(user):
 				if userprop.has_option(user, 'email'):
@@ -112,6 +114,8 @@ Usage:
 					g.add_member(u)
 				except MemberExistsError:
 					pass
+				if group == "submin-admins":
+					u.is_admin = True
 
 	def convert(self, old_config_file):
 		config = self.read_ini(old_config_file)

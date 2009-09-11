@@ -52,6 +52,9 @@ def check_password(userid, password):
 
 def set_password(userid, password):
 	password = _pw_hash(password)
+	self.set_md5_password(userid, password)
+
+def set_md5_password(userid, password):
 	backend.execute(backend.db.cursor(), """UPDATE users
 		SET password=? WHERE id=?""", (password, userid))
 
