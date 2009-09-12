@@ -57,6 +57,7 @@ function reloadX(response, X, Xplural, Xcapital) {
 		for (var i = dest.childNodes.length; i; --i)
 			dest.removeChild(dest.lastChild);
 
+	LogResponse(response);
 	var list = FindResponse(response, "list" + Xcapital);
 	var Xs = list.xml.getElementsByTagName(X);
 	for (var i = 0; i < Xs.length; ++i) {
