@@ -1,9 +1,10 @@
 // needs dom.js, selector.js and ajax.js (all included in main)
 
-var selector = null;
+var groupSelector = null;
+var notificationsSelector = null;
 
 function refreshAndLog(response) {
-	selector.reInit();
+	groupSelector.reInit();
 	LogResponse(response);
 }
 
@@ -18,11 +19,9 @@ window.onload = function() {
 	var content = document.getElementById('content');
 	setupCollapsables(content, "usershowhide", users_collapse, users_expand);
 
-	// Initialize the select-dropdown
-	//selectInit();
-	userSelectorInit();
-	reloadNotifications();
-	$('savenotifications').parentNode.onsubmit = saveNotifications;
+	// Initialize the select-dropdowns
+	groupSelectorInit();
+	notificationsSelectorInit();
 }
 
 function users_collapse(me) {
@@ -133,8 +132,31 @@ function initGroups() {
 	return {"added": added, "addable": addable};
 }
 
-function userSelectorInit() {
-	selector = new Selector({
+/* Requests the notifications via ajax, and forms two lists to be used by Selector */
+function initNotifications() {
+	var added = [];
+	var addable = [];
+	var response = AjaxSyncPostRequest(document.location, 'listNotifications');
+	// log if something went wrong
+	LogResponse(response);
+	var notificationsresponse = FindResponse(response, 'listNotifications');
+	if (!notificationsresponse)
+		return {"added": [], "addable": []};
+
+	var notifications = notificationsresponse.xml.getElementsByTagName("notification");
+
+	for (var n_idx=0; n_idx < notifications.length; ++n_idx) {
+		var notification = notifications[n_idx];
+		if (notification.getAttribute("enabled").toLowerCase() == "true")
+			added[added.length] = notification.getAttribute("name");
+		else
+			addable[addable.length] = notification.getAttribute("name");
+	}
+	return {"added": added, "addable": addable};
+}
+
+function groupSelectorInit() {
+	groupSelector = new Selector({
 			"selectorId": "memberof",
 			"urlPrefix": base_url + "groups/show/",
 			"initCallback": initGroups,
@@ -142,6 +164,26 @@ function userSelectorInit() {
 			"removeCallback": removeMemberFromGroupAjax,
 			"canLink": function(user) { return true; }
 	});
+}
+
+function notificationsSelectorInit() {
+	notificationsSelector = new Selector({
+			"selectorId": "notifications",
+			"urlPrefix": base_url + "repositories/show/",
+			"initCallback": initNotifications,
+			"addCallback": enableRepositoryAjax,
+			"removeCallback": disableRepositoryAjax,
+			"canLink": function(user) { return true; }
+	});
+}
+
+
+function enableRepositoryAjax() {
+	
+}
+
+function disableRepositoryAjax() {
+	
 }
 
 function reloadNotifications() {

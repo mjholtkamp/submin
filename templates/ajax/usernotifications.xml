@@ -2,14 +2,8 @@
 	<command name="listNotifications" success="True">
 		<notifications user="[val user]">
 			[iter:notifications
-				[test:is_admin
-				<notification name="[ival.name]" allowed="[ival.allowed]" enabled="[ival.enabled]"/>
-				]
-				[test:!is_admin 
-					[test:ival.allowed
-						<notification name="[ival.name]" allowed="True" enabled="[ival.enabled]"/>
-					]
-				]
+				<notification name="[ival.name]" enabled="[ival.enabled]"/>
+			]
 		</notifications>
 	</command>
 </response>
