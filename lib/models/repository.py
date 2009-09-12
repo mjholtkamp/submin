@@ -23,8 +23,10 @@ class Repository(object):
 			# filter repositories
 			filtered = []
 			for repository in repositories:
-				if self.userHasReadPermissions(repos, session_user):
-					filtered.append({"name": repos, "status": status})
+				name = repository['name']
+				status = repository['status']
+				if Repository.userHasReadPermissions(name, session_user):
+					filtered.append({"name": name, "status": status})
 			repositories = filtered
 
 		return repositories

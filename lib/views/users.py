@@ -206,9 +206,10 @@ class Users(View):
 	def listUserGroups(self, req, user):
 		member_of_names = list(user.member_of())
 		member_of = [Group(x) for x in member_of_names]
-		if req.session['user'].is_admin:
+		session_user = req.session['user']
+		if session_user.is_admin:
 			nonmember_of = []
-			groups = Group.list()
+			groups = Group.list(session_user)
 			for group in groups:
 				if group.name not in member_of_names:
 					nonmember_of.append(group)
