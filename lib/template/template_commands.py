@@ -141,7 +141,7 @@ def iter(node, tpl):
 		it = __builtin__.iter(value)
 	except TypeError:
 		raise VariableNotIterable, \
-			'Variable "%s" not iterable at file "%s", line %d' % \
+			'Variable "%s" not iterable in template "%s", at line %d' % \
 			 	(node.arguments, tpl.filename, node.line)
 
 	for index, item in enumerate(value):
