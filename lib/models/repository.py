@@ -13,11 +13,17 @@ class VCSImportError(Exception):
 
 class Repository(object):
 	@staticmethod
-	def list(session_user):
+	def list_all():
 		repositories = []
 		for system in systems:
 			backend = models.vcs.get(system, "repository")
 			repositories += backend.list()
+
+		return repositories
+
+	@staticmethod
+	def list(session_user):
+		repositories = Repository.list_all()
 
 		if not session_user.is_admin:
 			# filter repositories
@@ -37,9 +43,10 @@ class Repository(object):
 
 	@staticmethod
 	def userHasReadPermissions(reposname, session_user):
+		return True # for now, every user is able to set permissions
 		# should be replaced by submin_permissions instead of 'notifications'
-		if session_user.notifications.has_key(reposname):
-			perm = session_user.notifications[reposname]
+		if session_user.notifications().has_key(reposname):
+			perm = session_user.notifications()[reposname]
 			if perm['allowed']:
 				return True
 

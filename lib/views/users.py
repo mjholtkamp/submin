@@ -234,10 +234,10 @@ class Users(View):
 
 		# rebuild notifications into a list so we can sort it
 		notifications = []
-		for (name, d) in user.notifications.iteritems():
-			# add key (string) to val (dict)
-			d['name'] = name
+		for (name, enabled) in user.notifications().iteritems():
+			d = {'name': name, 'enabled': enabled}
 			notifications.append(d)
+
 		# sort on name
 		notifications.sort(cmp=lambda x,y: cmp(x['name'], y['name']))
 

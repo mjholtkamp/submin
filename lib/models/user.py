@@ -51,8 +51,6 @@ class User(object):
 		self._fullname = db_user['fullname']
 		self._is_admin = db_user['is_admin']
 
-		self.notifications = {}
-
 		self.is_authenticated = False # used by session, listed here to provide
 		                              # default value
 
@@ -98,11 +96,27 @@ class User(object):
 		# repository.
 		backend.notification_enable(self._id, repository)
 
-	def notification_enabled(self, repository):
-		backend.notification_enabled(self._id, repository)
-
-	def notifiction_disable(self, repository):
+	def notification_disable(self, repository):
 		backend.notification_disable(self._id, repository)
+
+	def notifications(self):
+		"""Returns a dict booleans, in the following layout:
+		{
+			'reposname1': True,
+			'repos2': False
+		}
+		
+		Only returns repositories that the user is able to see.
+		"""
+		from repository import Repository
+		notifications = {}
+		for repository in Repository.list_all():
+			enabled = False
+			if backend.notification_enabled(self._id, repository['name']):
+				enabled = True
+
+			notifications[repository['name']] = enabled
+		return notifications
 
 	# Properties
 	def _getId(self):
