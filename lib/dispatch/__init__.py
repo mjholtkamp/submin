@@ -62,7 +62,7 @@ def dispatcher(request):
 				details = '<pre>' + details + '</pre>'
 				response = ErrorResponse(str(e), request=request, details=details)
 			else:
-				response = XMLStatusResponse('', False, details)
+				response = XMLStatusResponse('', False, str(e) + '\n\n' + details)
 
 	else:
 		response = HTTP404('/'.join(path))

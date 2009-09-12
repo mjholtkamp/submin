@@ -16,6 +16,9 @@ register = Library()
 class ElseError(Exception):
 	pass
 
+class VariableNotIterable(Exception):
+	pass
+
 class UnknownTemplateError(Exception):
 	pass
 
@@ -83,7 +86,6 @@ def include(node, tpl):
 	fp = open(os.path.basename(to_include), 'r')
 	evaluated_string = ''
 	if fp:
-		# lines = ''.join(fp.readlines())
 		new_tpl = Template(fp, tpl.variables)
 		evaluated_string = new_tpl.evaluate()
 		
@@ -132,6 +134,16 @@ def iter(node, tpl):
 	if not value:
 		return ''
 	tpl.node_variables['iseq'][-1] = value
+	
+	# check if variable is iterable
+	try:
+		import __builtin__ # we need this because this function is also called 'iter'
+		it = __builtin__.iter(value)
+	except TypeError:
+		raise VariableNotIterable, \
+			'Variable "%s" not iterable at file "%s", line %d' % \
+			 	(node.arguments, tpl.filename, node.line)
+
 	for index, item in enumerate(value):
 		tpl.node_variables['iindex'][-1] = index
 		tpl.node_variables['ikey'][-1] = item

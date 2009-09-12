@@ -1,19 +1,22 @@
 #log {
-	width: 400px;
 	border: 1px solid #666;
 	position: fixed;
 	left: 100px;
 	top: 10px;
-	text-align: center;
-	padding: 1.5em 0 1.5em 0;
 }
 
 .log_error {
+	text-align: left;
+	width: 800px;
 	background: #f66;
+	padding: 1.5em;
 }
 
 .log_message {
+	text-align: center;
+	width: 400px;
 	background: #afa;
+	padding: 1.5em 0 1.5em 0;
 }
 
 .log_error small {

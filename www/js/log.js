@@ -16,6 +16,7 @@ function Log(message, success) {
 	if (!success)
 		classname = 'log_error';
 
+	message = message.replace(/\n/g, '<br />\n');
 	log = $c('div', {className: classname, id: 'log', innerHTML: message})
 
 	document.body.appendChild(log)
