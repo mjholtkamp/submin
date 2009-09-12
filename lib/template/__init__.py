@@ -18,8 +18,7 @@ def evaluate(templatename, localvars={}):
 	fp = open(os.path.basename(templatename), 'r')
 	evaluated_string = ''
 	if fp:
-		lines = uc_str(''.join(fp.readlines()), 'utf-8')
-		template = Template(lines, localvars)
+		template = Template(fp, localvars)
 		evaluated_string = template.evaluate()
 
 		fp.close()
