@@ -28,17 +28,6 @@ class Ajax(View):
 
 		return XMLStatusResponse('', False, 'Unknown command')
 
-	def listAll(self, req):
-		session_user = req.session['user']
-		try:
-			users = listUsers(session_user)
-			groups = listGroups(session_user)
-			repositories = listRepositories(session_user)
-			return XMLTemplateResponse("ajax/listall.xml", 
-				{'users': users, 'groups': groups, 'repositories': repositories})
-		except Exception, e:
-			return XMLStatusResponse('listAll', False, 'Failed to get a list: %s' % e)
-
 	def listUsers(self, req):
 		session_user = req.session['user']
 		try:
@@ -48,15 +37,11 @@ class Ajax(View):
 			return XMLStatusResponse('listUsers', False, 'Failed to get a list: %s' % e)
 
 	def listGroups(self, req):
-		user = req.session['user']
 		try:
-			groups = []
-			for group in Group.list():
-				if user.is_admin or user in group.members():
-					groups.append(group)
-
+			groups = Group.list(req.session['user'])
 			return XMLTemplateResponse("ajax/listgroups.xml", {'groups': groups})
 		except Exception, e:
+			raise
 			return XMLStatusResponse('listGroups', False, 'Failed to get a list: %s' % e)
 
 	def listRepositories(self, req):

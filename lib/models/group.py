@@ -4,8 +4,14 @@ from models.exceptions import UnknownGroupError
 
 class Group(object):
 	@staticmethod
-	def list():
-		return [Group(raw_data=group) for group in backend.list()]
+	def list(session_user):
+		all_groups = [Group(raw_data=group) for group in backend.list()]
+		groups = []
+		for group in all_groups:
+			if session_user.is_admin or session_user.name in group.members():
+				groups.append(group)
+		
+		return groups
 
 	@staticmethod
 	def add(name):

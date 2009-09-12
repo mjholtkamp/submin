@@ -48,7 +48,7 @@ class Groups(View):
 
 			return ErrorResponse('This group does not exist.', request=req)
 
-		if not is_admin and req.session['user'].name not in group.members:
+		if not is_admin and req.session['user'].name not in group.members():
 			return ErrorResponse('Not permitted', request=req)
 
 		localvars['group'] = group
@@ -130,7 +130,7 @@ class Groups(View):
 					{"members": members, "nonmembers": nonmembers,
 						"group": group.name})
 
-		if req.session['user'] not in group.members():
+		if req.session['user'].name not in group.members():
 			return XMLStatusResponse('listGroupUsers', False,
 				"You do not have permission to view this group.")
 
