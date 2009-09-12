@@ -198,7 +198,7 @@ class Template(object):
 	def __init__(self, template, variables={}):
 		if hasattr(template, 'readlines'):
 			self.template_string = uc_str(''.join(template.readlines()), 'utf-8')
-			self.filename = os.path.join(os.getcwd(), template.name)
+			self.filename = template.name
 		else:
 			self.template_string = template
 			self.filename = 'string'
