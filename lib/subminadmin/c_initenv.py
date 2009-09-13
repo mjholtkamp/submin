@@ -152,9 +152,7 @@ If you use Trac, it will be accessible from <http base>/trac.
 			# add an admin user
 			u = User.add('admin')
 			password = u.generate_password()
-			
-			g = Group.add('submin-admins')
-			g.add_member(u)
+			u.is_admin = True
 
 			print "\nAdded an admin user with password '%s'\n" % password
 
