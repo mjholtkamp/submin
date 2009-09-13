@@ -152,6 +152,9 @@ class Users(View):
 		
 		if 'saveNotifications' in req.post:
 			return self.saveNotifications(req, user)
+		
+		if 'setIsAdmin' in req.post:
+			return self.setIsAdmin(req, user)
 
 		return XMLStatusResponse('', False, 'Unknown command')
 
@@ -242,8 +245,7 @@ class Users(View):
 		notifications.sort(cmp=lambda x,y: cmp(x['name'], y['name']))
 
 		return XMLTemplateResponse("ajax/usernotifications.xml",
-				{"notifications": notifications, "user": user.name,
-					"is_admin": is_admin})
+				{"notifications": notifications, "user": user.name})
 
 	def saveNotifications(self, req, user):
 		is_admin = req.session['user'].is_admin
@@ -290,3 +292,20 @@ class Users(View):
 				'User %s not deleted: %s' % (username, str(e)))
 
 		return XMLStatusResponse('removeUser', True, 'User %s deleted' % username)
+
+	@admin_required
+	def setIsAdmin(self, req, user):
+		is_admin = req.post.get('setIsAdmin')
+		if user.name == req.session['user'].name:
+			return XMLStatusResponse('setIsAdmin', False,
+				'You are not allowed to change admin rights for yourself')
+
+		try:
+			user.is_admin = is_admin
+		except Exception, e:
+			return XMLStatusResponse('setIsAdmin', False,
+				'Could not change admin status for user %s: %s' % (user.name, str(e)))
+
+		newstatus = {'false':'revoked', 'true':'granted'}[is_admin]
+		return XMLStatusResponse('setIsAdmin', True, 
+			'Admin rights for user %s %s' % (user.name, newstatus))

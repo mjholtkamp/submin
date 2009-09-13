@@ -3,7 +3,7 @@
 	<div id="tabs">
 		<ul class="tabs">
 			<li id="tab_info">info</li>
-			[test:is_admin <li id="tab_permissions">permissions</li>]
+			[test:session_user.is_admin <li id="tab_permissions">permissions</li>]
 		</ul>
 	</div>
 	<div id="info" class="settings">
@@ -15,12 +15,12 @@
 				[test:trac_http_url <a class="external" href="[val trac_http_url]">[val trac_http_url]</a>]
 				[else <div class="comment">trac_base_url not set in config</div>]</span></li>]
 			[else
-				[test:trac_config_ok [test:is_admin <li><label>Trac Environment</label><span><input type="submit" value="Create (not working yet)" onclick="javascript:trac_env_create()"></span></li>]]]
-			<li><label>Send notifications</label><span><input id="notifications" type="checkbox" [test:is_admin onclick="javascript:toggle_notifications_mailing()"][else disabled] [test:repository.notificationsEnabled checked]/>enabled</span>
+				[test:trac_config_ok [test:session_user.is_admin <li><label>Trac Environment</label><span><input type="submit" value="Create (not working yet)" onclick="javascript:trac_env_create()"></span></li>]]]
+			<li><label>Send notifications</label><span><input id="notifications" type="checkbox" [test:session_user.is_admin onclick="javascript:toggle_notifications_mailing()"][else disabled] [test:repository.notificationsEnabled checked]/>enabled</span>
 			</li>
 		</ul>
 	</div>
-	[test:is_admin
+	[test:session_user.is_admin
 	<div id="permissions">
 		<h3 class="content">Path permissions</h3>
 		<div id="repostree">

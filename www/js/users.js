@@ -15,6 +15,7 @@ window.onload = function() {
 	if (old_load) old_load();
 	$('password_button').parentNode.onsubmit = verifyPassword;
 	$('email').focus();
+	$('is_admin').onclick = setIsAdmin;
 
 	var content = document.getElementById('content');
 	setupCollapsables(content, "usershowhide", users_collapse, users_expand);
@@ -63,6 +64,21 @@ function verifyPassword() {
 	$('password_button').parentNode.onsubmit = checkPasswords;
 	Log('Please verify your password', true);
 	return false;
+}
+
+function setIsAdmin() {
+	// this function is called when the checkbox is already changed.
+	// the checkbox reflects the desired (new) value. Don't negate!
+	var newvalue = $('is_admin').checked;
+	AjaxAsyncPostRequest(document.location, "setIsAdmin=" + newvalue, setIsAdminCB);
+}
+
+function setIsAdminCB(response) {
+	LogResponse(response);
+	var setIsAdmin = FindResponse(response, 'setIsAdmin');
+	if (!setIsAdmin.success) {
+		$('is_admin').checked = ! $('is_admin').checked;
+	}
 }
 
 function checkPasswords() {
