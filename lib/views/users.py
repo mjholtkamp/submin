@@ -150,8 +150,8 @@ class Users(View):
 		if 'listNotifications' in req.post:
 			return self.listNotifications(req, user)
 		
-		if 'saveNotifications' in req.post:
-			return self.saveNotifications(req, user)
+		if 'setNotification' in req.post:
+			return self.setNotification(req, user)
 		
 		if 'setIsAdmin' in req.post:
 			return self.setIsAdmin(req, user)
@@ -247,23 +247,20 @@ class Users(View):
 		return XMLTemplateResponse("ajax/usernotifications.xml",
 				{"notifications": notifications, "user": user.name})
 
-	def saveNotifications(self, req, user):
+	def setNotification(self, req, user):
 		is_admin = req.session['user'].is_admin
 				
-		notifications_str = req.post.get('saveNotifications').split(':')
-		notifications = {}
-		for n_str in notifications_str:
-			n = n_str.split(',')
-			try:
-				allowed = (n[1] == "true")
-				enabled = (n[2] == "true")
-				user.setNotification(n[0], dict(allowed=allowed, enabled=enabled), is_admin)
-			except NotAuthorized, e:
-				return XMLStatusResponse('saveNotifications', False, str(e))
-					
-		user.saveNotifications()
+		enable = uc_str(req.post.get('setNotification'))
+		repository = uc_str(req.post.get('repository'))
+		if enable == "true":
+			user.notification_enable(repository)
+		else:
+			user.notification_disable(repository)
 		
-		return XMLStatusResponse("saveNotifications", True, "Saved notifications for user " + user.name)
+		newstatus = {'true':'Enabled', 'false':'Disabled'}[enable]
+		return XMLStatusResponse("setNotifications", True, 
+			"%s notifications for user %s on repository %s" %\
+			 (newstatus, user.name, repository))
 
 	@admin_required
 	def removeFromGroup(self, req, user):

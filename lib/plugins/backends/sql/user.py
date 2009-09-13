@@ -98,8 +98,8 @@ def notification_enabled(userid, repository):
 	return True
 
 def notification_disable(userid, repository):
-	backend.execute(backend.db.cursor(), """INSERT INTO notifications
-	(userid, repository) VALUES (?, ?)""", (userid, repository))
+	backend.execute(backend.db.cursor(), """DELETE FROM notifications
+	WHERE userid=? AND repository=?""", (userid, repository))
 
 def user_data(username):
 	cur = backend.db.cursor()
