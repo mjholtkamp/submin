@@ -1,3 +1,8 @@
+/* tabs */
+#info, #permissions {
+	display: none;
+}
+
 span.link {
 	font-size: small;
 	font-weight: normal;

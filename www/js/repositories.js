@@ -60,7 +60,7 @@ function tab_switch(tab) {
 	var el = document.getElementById(elname);
 	addClassName(el, 'active');
 	var el = document.getElementById(tab);
-	el.style.display = '';
+	el.style.display = 'inherit';
 	tab_current = tab;
 }
 
