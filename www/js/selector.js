@@ -14,6 +14,8 @@
  *   	the name of the item to be removed.
  * - canLink: is a user allowed to see a link to the other object? This is a
  *   	function, expecting the name of the current object.
+ * - canEdit: is a user allowed to add and remove, or only view? This is also
+ *   	a function, but has no arguments.
  * - type: "permissions" if permission selector, users/groups otherwise
  *
  * WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
@@ -77,8 +79,8 @@ Selector.prototype.init = function() {
 	}
 	// The dropdown
 
-	// Don't show it to non-admins!
-	if (is_admin) {
+	// Show dropdown only if users can edit.
+	if (this.options.canEdit()) {
 		var addable = callbackValue["addable"];
 		if (this.options.type == "permissions") {
 			addable.sort(permissionSort);
@@ -144,7 +146,7 @@ Selector.prototype.setupAddedItem = function(added) {
 			}
 		}
 
-		if (is_admin) {
+		if (this.options.canEdit()) {
 			var remover = this.makeButton("remover");
 			item.appendChild(remover);
 

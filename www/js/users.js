@@ -173,7 +173,8 @@ function groupSelectorInit() {
 			"initCallback": initGroups,
 			"addCallback": addMemberToGroupAjax,
 			"removeCallback": removeMemberFromGroupAjax,
-			"canLink": function(user) { return true; }
+			"canLink": function(user) { return true; },
+			"canEdit": function() { return is_admin; }
 	});
 }
 
@@ -184,7 +185,8 @@ function notificationSelectorInit() {
 			"initCallback": initNotifications,
 			"addCallback": enableRepositoryAjax,
 			"removeCallback": disableRepositoryAjax,
-			"canLink": function(user) { return true; }
+			"canLink": function(user) { return true; },
+			"canEdit": function() { return true; }
 	});
 }
 

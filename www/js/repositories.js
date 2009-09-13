@@ -320,7 +320,8 @@ function initPermissionsEditor(path) {
 		"addCallback": addPermissionToPath,
 		"removeCallback": removePermissionFromPath,
 		"changeCallback": changePathPermission,
-		"path": path
+		"path": path,
+		"canEdit": function() { return is_admin; }
 	});
 }
 

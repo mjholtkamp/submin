@@ -53,6 +53,7 @@ function groupSelectorInit() {
 			"initCallback": initUsers,
 			"addCallback": addMemberAjax,
 			"removeCallback": removeMemberAjax,
-			"canLink": function(user) { return is_admin || user == me; }
+			"canLink": function(user) { return is_admin || user == me; },
+			"canEdit": function() { return is_admin; }
 	});
 }
