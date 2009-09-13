@@ -41,13 +41,14 @@ class Repositories(View):
 		import os.path
 		o = Options()
 
+		user = req.session['user']
 		try:
 			repository = Repository(path[0])
-		except DoesNotExistError:
-			return ErrorResponse('This repository does not exist.', request=req)
 
-		user = req.session['user']
-		if not user.is_admin and not repository.userHasReadPermissions(user):
+			# Lie if user cannot see permission
+			if not user.is_admin and not Repository.userHasReadPermissions(path[0], user):
+				raise DoesNotExistError
+		except DoesNotExistError:
 			return ErrorResponse('This repository does not exist.', request=req)
 
 		try:
