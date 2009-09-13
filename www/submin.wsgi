@@ -1,14 +1,16 @@
 #!/usr/bin/python
+import os
+import sys
 
-def application(environ, start_response):
-	import os
-	import sys
-	if not environ.has_key('SUBMIN_ENV'):
-		start_response('200 ok', [])
-		return 'Please set SUBMIN_ENV in your apache config (ie. via SetEnv)'
+class application:
+	def __init__(self, environ, start_response):
+		self.environ = environ
+		self.start = start_response
+		if not environ.has_key('SUBMIN_ENV'):
+			start_response('200 ok', [])
+			return 'Please set SUBMIN_ENV in your apache config (ie. via SetEnv)'
+		os.environ['SUBMIN_ENV'] = self.environ['SUBMIN_ENV']
 
-	try:
-		os.environ['SUBMIN_ENV'] = environ['SUBMIN_ENV']
 		# __file__ contains <submin-dir>/www/submin.wsgi
 		submindir = os.path.dirname(os.path.dirname(__file__))
 		sys.path.append(os.path.join(submindir, 'lib'))
@@ -16,22 +18,23 @@ def application(environ, start_response):
 
 		backend.open()
 
-		from dispatch.wsgirequest import WSGIRequest
-		from dispatch import dispatcher
-
-		req = WSGIRequest(environ)
-		response = dispatcher(req)
-		start_response(response.status(), response.headers.items())
-		content = response.content.encode('utf-8')
-
+	def __del__(self):
 		backend.close()
 
-		return [content]
-	except Exception, e:
-		import traceback
-		trace = traceback.extract_tb(sys.exc_info()[2])
-		list = traceback.format_list(trace)
-		list.append(str(e))
-		start_response('500 Not Ok', [])
-		return list
+	def __iter__(self):
+		try:
+			from dispatch.wsgirequest import WSGIRequest
+			from dispatch import dispatcher
+
+			req = WSGIRequest(self.environ)
+			response = dispatcher(req)
+			self.start(response.status(), response.headers.items())
+			yield ''.join(response.content.encode('utf-8'))
+		except Exception, e:
+			import traceback
+			trace = traceback.extract_tb(sys.exc_info()[2])
+			list = traceback.format_list(trace)
+			list.append(str(e))
+			self.start('500 Not Ok', [])
+			yield ''.join(list)
 
