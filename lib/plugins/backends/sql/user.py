@@ -120,10 +120,18 @@ def field_setter(field):
 		backend.execute(cur, sql, (value, userid))
 	return set_field
 
+def field_setter_bool(field):
+	def set_field_bool(userid, value):
+		value = {'true': 1, 'false': 0}[value]
+		cur = backend.db.cursor()
+		sql = "UPDATE users SET %s=? WHERE id=?" % field
+		backend.execute(cur, sql, (value, userid))
+	return set_field_bool
+
 set_name     = field_setter("name")
 set_email    = field_setter("email")
 set_fullname = field_setter("fullname")
-set_is_admin = field_setter("is_admin")
+set_is_admin = field_setter_bool("is_admin")
 
 
 member_query = """
