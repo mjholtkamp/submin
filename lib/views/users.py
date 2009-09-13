@@ -163,7 +163,7 @@ class Users(View):
 				(user.name, user.email))
 		except InvalidEmail:
 			return XMLStatusResponse('setEmail', False,
-				'Invalid email. If you think this is an error, please report a bug')
+				'Invalid characters in email-address. If you think this is an error, please report a bug')
 		except Exception, e:
 			return XMLStatusResponse('setEmail', False,
 				'Could not change email of user %s: %s' % (user.name, str(e)))

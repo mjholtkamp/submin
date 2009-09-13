@@ -13,10 +13,8 @@ function Log(message, success) {
 	RemoveLog()
 
 	var classname = 'log_message';
-	if (!success) {
+	if (!success)
 		classname = 'log_error';
-		message = "<h2>Internal Error</h2><br/>" + message;
-	}
 
 	message = message.replace(/ /g, '&nbsp;');
 	message = message.replace(/\n/g, '<br />\n');
