@@ -1,8 +1,15 @@
 <response>
 	<command name="listNotifications" success="True">
-		<notifications user="[val user]">
+		<notifications user="[val username]">
 			[iter:notifications
-				<notification name="[ival.name]" enabled="[ival.enabled]"/>
+				[test:session_user.is_admin
+				<notification name="[ival.name]" allowed="[ival.allowed]" enabled="[ival.enabled]"/>
+				]
+				[test:!session_user.is_admin 
+					[test:ival.allowed
+						<notification name="[ival.name]" allowed="True" enabled="[ival.enabled]"/>
+					]
+				]
 			]
 		</notifications>
 	</command>

@@ -92,31 +92,33 @@ class User(object):
 	def nonmember_of(self):
 		return backend.nonmember_of(self._id)
 
-	def notification_enable(self, repository):
-		# TODO: check if user has at least submin read permissions for this
-		# repository.
-		backend.notification_enable(self._id, repository)
+	def set_notification(self, repository, allowed, enabled, session_user):
+		if not session_user.is_admin:
+			permissions = backend.notification(self._id, repository)
+			if not permissions['allowed']:
+				raise UserPermissionError
 
-	def notification_disable(self, repository):
-		backend.notification_disable(self._id, repository)
+		# automatically allow if enabled
+		if enabled:
+			allowed = True
+
+		backend.set_notification(self._id, repository, allowed, enabled)
 
 	def notifications(self):
-		"""Returns a dict booleans, in the following layout:
+		"""Returns a dict of dicts, in the following layout:
 		{
-			'reposname1': True,
-			'repos2': False
+			'reposname1': {'allowed': True, 'enabled': False},
+			'repos2': {'allowed': False, 'enabled': False}
 		}
-		
-		Only returns repositories that the user is able to see.
 		"""
 		from repository import Repository
 		notifications = {}
 		for repository in Repository.list_all():
-			enabled = False
-			if backend.notification_enabled(self._id, repository['name']):
-				enabled = True
+			notification = backend.notification(self._id, repository['name'])
+			if notification == None:
+				notification = {'allowed': False, 'enabled': False}
+			notifications[repository['name']] = notification
 
-			notifications[repository['name']] = enabled
 		return notifications
 
 	# Properties
@@ -216,15 +218,13 @@ Backend contract
 * nonmember_of(userid)
 	Returns sorted list of groups a user is not a member of.
 
-* notification_enable(userid, repository)
-	Enables notifications of repository.
+* notification(userid, repository)
+	Returns a dict of the notification, or None if it doesn't exist. The dict
+	looks like: {'allowed': True, 'enabled': False}
 
-* notification_enabled(userid, repository)
-	Returns True if the user with id *id* is set to receive notifications
-	from repository *repository*.
-
-* notification_disable(userid, repository)
-	Enables notifications of repository
+* set_notification(userid, repository, allowed, enabled)
+	Set notification to *allowed*, *enabled* (both booleans) for user *userid*
+	on repository *repository*.
 
 * set_email(id, email)
 	Sets the email for user with id *id*

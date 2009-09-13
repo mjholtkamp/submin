@@ -51,6 +51,8 @@ def setup():
 		(
 			userid       integer references users(id),
 			repository   text,
+			allowed      bool default 0,
+			enabled      bool default 0,
 			PRIMARY KEY(userid, repository)
 		);
 

@@ -18,8 +18,6 @@ def evaluate_main(templatename, templatevariables={}, request=None):
 	session_user = request.session['user']
 
 	templatevariables['main_base_url'] = str(o.url_path('base_url_submin'))
-
-#	templatevariables['request'] = request
 	templatevariables['session_user'] = session_user
 
 	return evaluate('main.html', templatevariables)

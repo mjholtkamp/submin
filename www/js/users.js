@@ -1,7 +1,6 @@
 // needs dom.js, selector.js and ajax.js (all included in main)
 
 var groupSelector = null;
-var notificationSelector = null;
 
 // Using window.onload because an onclick="..." handler doesn't give the
 // handler a this-variable
@@ -17,7 +16,8 @@ window.onload = function() {
 
 	// Initialize the select-dropdowns
 	groupSelectorInit();
-	notificationSelectorInit();
+	reloadNotifications();
+	$('savenotifications').parentNode.onsubmit = saveNotifications;
 }
 
 function users_collapse(me) {
@@ -143,29 +143,6 @@ function initGroups() {
 	return {"added": added, "addable": addable};
 }
 
-/* Requests the notifications via ajax, and forms two lists to be used by Selector */
-function initNotifications() {
-	var added = [];
-	var addable = [];
-	var response = AjaxSyncPostRequest(document.location, 'listNotifications');
-	// log if something went wrong
-	LogResponse(response);
-	var notificationsresponse = FindResponse(response, 'listNotifications');
-	if (!notificationsresponse)
-		return {"added": [], "addable": []};
-
-	var notifications = notificationsresponse.xml.getElementsByTagName("notification");
-
-	for (var n_idx=0; n_idx < notifications.length; ++n_idx) {
-		var notification = notifications[n_idx];
-		if (notification.getAttribute("enabled").toLowerCase() == "true")
-			added[added.length] = notification.getAttribute("name");
-		else
-			addable[addable.length] = notification.getAttribute("name");
-	}
-	return {"added": added, "addable": addable};
-}
-
 function groupSelectorInit() {
 	groupSelector = new Selector({
 			"selectorId": "memberof",
@@ -177,19 +154,6 @@ function groupSelectorInit() {
 			"canEdit": function() { return is_admin; }
 	});
 }
-
-function notificationSelectorInit() {
-	notificationSelector = new Selector({
-			"selectorId": "notifications",
-			"urlPrefix": base_url + "repositories/show/",
-			"initCallback": initNotifications,
-			"addCallback": enableRepositoryAjax,
-			"removeCallback": disableRepositoryAjax,
-			"canLink": function(user) { return true; },
-			"canEdit": function() { return true; }
-	});
-}
-
 
 function enableRepositoryAjax(repository) {
 	var erepository = escape_plus(repository);
@@ -206,7 +170,108 @@ function groupRefreshAndLog(response) {
 	LogResponse(response);
 }
 
-function notificationRefreshAndLog(response) {
-	notificationSelector.reInit();
+function reloadNotifications() {
+	AjaxAsyncPostRequest(document.location, "listNotifications", reloadNotificationsCB);
+	return false;
+}
+
+function reloadNotificationsCB(response) {
+	list = FindResponse(response, "listNotifications");
 	LogResponse(response);
+	
+	var notifications = list.xml.getElementsByTagName("notification");
+	var n = [];
+	for (var i = 0; i < notifications.length; ++i) {
+		name = notifications[i].getAttribute('name');
+		allowed = notifications[i].getAttribute('allowed');
+		enabled = notifications[i].getAttribute('enabled');
+		n[n.length] = {"name": name, "allowed": allowed, "enabled": enabled};
+	}
+	redrawNotifications(n);
+}
+
+function redrawNotifications(notifications) {
+	var table = document.getElementById('notifications');
+	var email = document.getElementById('email');
+	email = email.value;
+	var tbodies = table.getElementsByTagName('tbody');
+	if (tbodies.length != 1)
+		return;
+	var tbody = tbodies[0];
+	
+	for (var item_idx = tbody.childNodes.length - 1; item_idx > 0; --item_idx)
+		tbody.removeChild(tbody.childNodes[item_idx]);
+	
+	for (var i = 0; i < notifications.length; ++i) {
+		var tr = $c("tr");
+		var td_name = $c("td");
+		td_name.appendChild(document.createTextNode(notifications[i].name));
+		tr.appendChild(td_name);
+
+		var input = $c("input", {type: "checkbox"});
+		if (is_admin) {
+			var td_allowed = $c("td");
+		
+			input.value = notifications[i].name + "_allowed";
+			input.checked = (notifications[i].allowed == "1");
+			input.defaultChecked = input.checked; // IE7 quirk
+			td_allowed.appendChild(input);
+			tr.appendChild(td_allowed);
+
+			input = $c("input", {type: "checkbox"});
+		}
+		input.value = notifications[i].name + "_enabled";
+		input.checked = (notifications[i].enabled == "1");
+		input.defaultChecked = input.checked; // IE7 quirk
+		if (!email || email == "") {
+			input.disabled = "disabled";
+			input.title = "Please fill in an email address to enable this control";
+			input.setAttribute("class", "disabled")
+		}
+
+		var td_enabled = $c("td");
+		td_enabled.appendChild(input);
+		tr.appendChild(td_enabled);
+		tbody.appendChild(tr);
+	}
+}
+
+function saveNotifications() {
+	var table = document.getElementById('notifications');
+	var tbodies = table.getElementsByTagName('tbody');
+	if (tbodies.length != 1)
+		return;
+	var tbody = tbodies[0];
+
+	var str = "";
+	for (var item_idx = tbody.childNodes.length - 1; item_idx > 0; --item_idx) {
+		// every childnode is a tr. Layout as follows:
+		// admin user: <tr><td>repository name</td><td>allowed</td><td>enabled</td></tr>
+		// normal user: <tr><td>repository name</td><td>enabled</td></tr>
+		var name = tbody.childNodes[item_idx].childNodes[0].innerHTML;
+		var allowed, enabled;
+
+		if (is_admin) {
+			allowed = tbody.childNodes[item_idx].childNodes[1].childNodes[0].checked;
+			enabled = tbody.childNodes[item_idx].childNodes[2].childNodes[0].checked;
+		} else {
+			allowed = true;
+			enabled = tbody.childNodes[item_idx].childNodes[1].childNodes[0].checked;
+		}
+		if (str != "")
+			str += ":";
+
+		var ename = escape_plus(name);
+		str += ename + "," + allowed + "," + enabled;
+	}
+
+	AjaxAsyncPostRequest(document.location, "saveNotifications=" + str, saveNotificationsCB);
+	return false;
+}
+
+function saveNotificationsCB(response) {
+	list = FindResponse(response, "saveNotifications");
+	LogResponse(response);
+
+	reloadNotifications();
 }

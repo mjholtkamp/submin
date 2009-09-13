@@ -3,7 +3,7 @@ from template.shortcuts import evaluate_main
 from dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse
 from views.error import ErrorResponse
 from models.user import User
-from models.exceptions import UserExistsError
+from models.exceptions import UserExistsError, UserPermissionError
 from models.group import Group
 from auth.decorators import *
 from models.options import Options
@@ -150,8 +150,8 @@ class Users(View):
 		if 'listNotifications' in req.post:
 			return self.listNotifications(req, user)
 		
-		if 'setNotification' in req.post:
-			return self.setNotification(req, user)
+		if 'saveNotifications' in req.post:
+			return self.saveNotifications(req, user)
 		
 		if 'setIsAdmin' in req.post:
 			return self.setIsAdmin(req, user)
@@ -230,37 +230,42 @@ class Users(View):
 					"user": user.name})
 
 	def listNotifications(self, req, user):
-		is_admin = req.session['user'].is_admin
-		if not is_admin and req.session['user'].name != user.name:
+		session_user = req.session['user']
+		if not session_user.is_admin and session_user.name != user.name:
 			return XMLStatusResponse('listNotifications', False, "You do not have permission to "
 					"view this user.")
 
 		# rebuild notifications into a list so we can sort it
 		notifications = []
-		for (name, enabled) in user.notifications().iteritems():
-			d = {'name': name, 'enabled': enabled}
+		for (name, d) in user.notifications().iteritems():
+			# add a 'name' key, leave the 'allowed' and 'enabled' keys
+			d['name'] = name
 			notifications.append(d)
 
 		# sort on name
 		notifications.sort(cmp=lambda x,y: cmp(x['name'], y['name']))
-
-		return XMLTemplateResponse("ajax/usernotifications.xml",
-				{"notifications": notifications, "user": user.name})
-
-	def setNotification(self, req, user):
-		is_admin = req.session['user'].is_admin
-				
-		enable = uc_str(req.post.get('setNotification'))
-		repository = uc_str(req.post.get('repository'))
-		if enable == "true":
-			user.notification_enable(repository)
-		else:
-			user.notification_disable(repository)
 		
-		newstatus = {'true':'Enabled', 'false':'Disabled'}[enable]
-		return XMLStatusResponse("setNotifications", True, 
-			"%s notifications for user %s on repository %s" %\
-			 (newstatus, user.name, repository))
+		return XMLTemplateResponse("ajax/usernotifications.xml",
+				{"notifications": notifications, "username": user.name,
+				"session_user": session_user})
+
+	def saveNotifications(self, req, user):
+		session_user = req.session['user']
+		
+		notifications_str = req.post.get('saveNotifications').split(':')
+		notifications = {}
+		for n_str in notifications_str:
+			n = n_str.split(',')
+			if len(n) < 2:
+				return XMLStatusResponse('saveNotifications', False, 'badly formatted notifications')
+			try:
+				allowed = (n[1] == "true")
+				enabled = (n[2] == "true")
+				user.set_notification(n[0], allowed, enabled, session_user)
+			except UserPermissionError, e:
+				return XMLStatusResponse('saveNotifications', False, str(e))
+
+		return XMLStatusResponse("saveNotifications", True, "Saved notifications for user " + user.name)
 
 	@admin_required
 	def removeFromGroup(self, req, user):

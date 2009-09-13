@@ -79,27 +79,28 @@ def remove(userid):
 	backend.execute(backend.db.cursor(), """DELETE FROM users
 		WHERE id=?""", (userid,))
 
-def notification_enable(userid, repository):
-	try:
-		backend.execute(backend.db.cursor(), """INSERT INTO notifications
-		(userid, repository) VALUES (?, ?)""", (userid, repository))
-	except backend.SQLIntegrityError:
-		pass # silently ignore if it already exists
-
-def notification_enabled(userid, repository):
+def notification(userid, repository):
 	cur = backend.db.cursor()
 	backend.execute(cur, """
-		SELECT userid
+		SELECT allowed, enabled
 		FROM notifications
 		WHERE userid=? AND repository=?""", (userid, repository))
 	row = cur.fetchone()
 	if not row:
-		return False
-	return True
+		return None
 
-def notification_disable(userid, repository):
-	backend.execute(backend.db.cursor(), """DELETE FROM notifications
-	WHERE userid=? AND repository=?""", (userid, repository))
+	return row_dict(cur, row)
+
+def set_notification(userid, repository, allowed, enabled):
+	try:
+		backend.execute(backend.db.cursor(), """INSERT INTO notifications
+		(userid, repository, allowed, enabled) VALUES (?, ?, ?, ?)""", 
+			(userid, repository, allowed, enabled))
+	except backend.SQLIntegrityError:
+		# already exists?
+		backend.execute(backend.db.cursor(), """UPDATE notifications
+		SET allowed = ?, enabled = ? WHERE userid = ? AND repository = ? """,
+		 (allowed, enabled, userid, repository))
 
 def user_data(username):
 	cur = backend.db.cursor()
