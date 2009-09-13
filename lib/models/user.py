@@ -45,6 +45,7 @@ class User(object):
 			if not db_user:
 				raise UnknownUserError(username)
 
+		self._type     = 'user' # needed for Manager
 		self._id       = db_user['id']
 		self._name     = db_user['name']
 		self._email    = db_user['email']

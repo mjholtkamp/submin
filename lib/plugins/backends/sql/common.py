@@ -64,11 +64,11 @@ def setup():
 			type         text           -- '', 'r' or 'rw'
 		);
 
-		CREATE TABLE permissions_submin
+		CREATE TABLE managers
 		(
 			id          integer primary key autoincrement,
-			subjecttype text not null, -- user or group
-			subjectid   integer,
+			managertype text not null, -- user or group
+			managerid   integer,
 			objecttype  text not null, -- group or repository
 			objectid    integer, -- groupid if objecttype is group
 			objectname  text -- name of repository if objecttype is repository

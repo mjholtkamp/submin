@@ -32,6 +32,7 @@ class Group(object):
 			if not db_group:
 				raise UnknownGroupError(groupname)
 
+		self._type = 'group' # needed for Manager
 		self._id   = db_group['id']
 		self._name = db_group['name']
 

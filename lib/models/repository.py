@@ -60,6 +60,7 @@ class Repository(object):
 	def __init__(self, repositoryname):
 		"""Returns a Repository object"""
 		self.name = repositoryname
+		self._type = 'repository'
 
 		for system in systems:
 			backend = models.vcs.get(system, "repository")
