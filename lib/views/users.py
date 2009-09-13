@@ -161,7 +161,7 @@ class Users(View):
 			return XMLStatusResponse('setEmail', True,
 				'Changed email address for user %s to %s' %
 				(user.name, user.email))
-		except InvalidEmail:
+		except validators.InvalidEmail:
 			return XMLStatusResponse('setEmail', False,
 				'Invalid characters in email-address. If you think this is an error, please report a bug')
 		except Exception, e:
