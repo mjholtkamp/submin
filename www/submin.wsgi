@@ -29,7 +29,8 @@ class application:
 			req = WSGIRequest(self.environ)
 			response = dispatcher(req)
 			self.start(response.status(), response.headers.items())
-			yield ''.join(response.content.encode('utf-8'))
+			for line in response.content.encode('utf-8'):
+				yield line
 		except Exception, e:
 			import traceback
 			trace = traceback.extract_tb(sys.exc_info()[2])
