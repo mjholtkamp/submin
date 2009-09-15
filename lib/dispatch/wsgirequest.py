@@ -17,9 +17,7 @@ class WSGIRequest(Request):
 
 		# Mimic CGI behaviour
 		for key, value in self.get.variables.iteritems():
-			if self.post.has_key(key):
-				del self.post[key]
-			self.post.list.append(cgi.MiniFieldStorage(key, value))
+			self.post[key] = value
 
 		if self.__environ.get('HTTP_COOKIE'):
 			self._incookies.load(self.__environ.get('HTTP_COOKIE', ''))
