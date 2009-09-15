@@ -8,11 +8,11 @@ class WSGIRequest(Request):
 	def __init__(self, environ):
 		Request.__init__(self)
 		self.__environ = environ
+		self.post = {}
+		post = {}
 
 		self.url = environ['REQUEST_URI']
 		self.method = environ['REQUEST_METHOD']
-		self.post = ''
-		self.get = ''
 		if self.method == 'POST':
 			try:
 				# CONTENT_LENGTH might be absent if POST doesn't have 
@@ -24,12 +24,18 @@ class WSGIRequest(Request):
 
 			if content_length > 0:
 				input = environ['wsgi.input']#.read(content_length)
-				self.post = WSGIFieldStorage(input, environ=environ, keep_blank_values=1)
-		else:
-			self.get = WSGIGet(self.__environ['QUERY_STRING'])
+				post = WSGIFieldStorage(input, environ=environ, keep_blank_values=1)
+		get = WSGIGet(self.__environ['QUERY_STRING'])
+		for key in post.keys():
+			name = post[key].name
+			value = post[key].value
+			self.post[name] = value
+
+		for key, value in get.variables.iteritems():
+			self.post[key] = value
 
 		if self.__environ.get('HTTP_COOKIE'):
-			self._incookies.load(self.__environ.get('HTTP_COOKIE', '')) 
+			self._incookies.load(self.__environ.get('HTTP_COOKIE', ''))
 		self.path_info = self.__environ.get('PATH_INFO', '')
 		self.remote_address = self.__environ.get('REMOTE_ADDR')
 
