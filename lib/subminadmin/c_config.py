@@ -95,7 +95,6 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 		o = models.options.Options()
 		http_base = ''
 		options = {
-			'database_version': '1',
 			'base_url_submin': http_base + '/submin',
 			'base_url_svn': http_base + '/svn',
 			'base_url_trac': http_base + '/trac',

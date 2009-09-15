@@ -52,7 +52,7 @@ def check_password(userid, password):
 
 def set_password(userid, password):
 	password = _pw_hash(password)
-	self.set_md5_password(userid, password)
+	set_md5_password(userid, password)
 
 def set_md5_password(userid, password):
 	backend.execute(backend.db.cursor(), """UPDATE users
@@ -123,7 +123,11 @@ def field_setter(field):
 
 def field_setter_bool(field):
 	def set_field_bool(userid, value):
-		value = {'true': 1, 'false': 0}[value]
+		if value == True or value == 'true' or value == '1':
+			value = 1
+		else:
+			value = 0
+
 		cur = backend.db.cursor()
 		sql = "UPDATE users SET %s=? WHERE id=?" % field
 		backend.execute(cur, sql, (value, userid))

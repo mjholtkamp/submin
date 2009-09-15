@@ -1,6 +1,7 @@
 import os
 from models.exceptions import UserExistsError, GroupExistsError
 from models.exceptions import MemberExistsError
+from models.user import FakeAdminUser
 
 class c_convert():
 	'''Create a new configuration from an old-style config
@@ -53,6 +54,9 @@ Usage:
 		htpasswd = file(htpasswd_file).readlines()
 		userprop = self.read_ini(userprop_file)
 
+		# fake an admin user
+		fake_admin = FakeAdminUser()
+
 		# add users
 		for line in htpasswd:
 			(user, password) = line.strip('\n').split(':')
@@ -84,10 +88,13 @@ Usage:
 
 					# add notifications
 					for repos, details in repositories.iteritems():
+						allowed = False
+						enabled = False
 						if details['allowed']:
-							pass # TODO: set submin read permission
+							allowed = True
 						if details['enabled']:
-							u.notification_enable(repos)
+							enabled = True
+						u.set_notification(repos, allowed, enabled, fake_admin)
 
 	def write_groups(self, config):
 		from models.group import Group

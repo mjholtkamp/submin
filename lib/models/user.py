@@ -4,6 +4,13 @@ backend = models.backend.get("user")
 
 from models.exceptions import UnknownUserError
 
+class FakeAdminUser(object):
+	"""Sometimes you have no session_user but you want to make a change to
+	a user where admin rights are needed. You can pass an instance of this
+	object as 'session_user' to get admin rights."""
+	def __init__(self):
+		self.is_admin = True
+
 class User(object):
 	@staticmethod
 	def list(session_user):

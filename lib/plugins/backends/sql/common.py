@@ -3,6 +3,7 @@ from models.exceptions import BackendAlreadySetup
 
 db = None
 backend_debug = False
+database_version = 1
 
 def close():
 	if db:
@@ -21,7 +22,7 @@ def setup():
 		CREATE TABLE users
 		(
 			id       integer primary key autoincrement,
-			name     text not null unique, 
+			name     text not null unique,
 			password text not null,
 			email    text,
 			fullname text,
@@ -56,7 +57,7 @@ def setup():
 			PRIMARY KEY(userid, repository)
 		);
 
-		CREATE TABLE permissions_repository
+		CREATE TABLE permissions
 		(
 			id           integer primary key autoincrement,
 			repository   text,
@@ -76,6 +77,9 @@ def setup():
 			objectname  text -- name of repository if objecttype is repository
 		);
 		""")
+		db.cursor().execute(
+			"INSERT INTO options (key, value) VALUES ('database_version', ?)",
+			(database_version,))
 	except sqlite3.OperationalError, e:
 		raise BackendAlreadySetup(str(e))
 
