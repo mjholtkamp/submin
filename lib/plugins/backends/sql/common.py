@@ -59,12 +59,12 @@ def setup():
 
 		CREATE TABLE permissions
 		(
-			id           integer primary key autoincrement,
 			repository   text,
 			path         text not null,
-			subjecttype  text not null, -- user, group or all
-			subjectid    integer,       -- only null if subjecttype is all
-			type         text           -- '', 'r' or 'rw'
+			subjecttype  text not null,   -- user, group or all
+			subjectid    integer,         -- only null if subjecttype is all
+			type         text default '', -- '', 'r' or 'rw'
+			UNIQUE(repository, path, subjecttype, subjectid)
 		);
 
 		CREATE TABLE managers
