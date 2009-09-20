@@ -1,23 +1,42 @@
 import unittest
+import shutil # for temporary dir
+import tempfile # for temporary dir
 from pmock import *
 
 mock_settings = Mock()
 mock_settings.backend = "mock"
+mock_settings.base_dir = "/"
 
 from models import backend
 from models.user import User
+from models.options import Options
 from models.exceptions import UserExistsError, UnknownUserError, UserPermissionError
 from models.validators import *
+from models.repository import Repository
 
 class UserTests(unittest.TestCase):
 	def setUp(self):
 		backend.open(mock_settings)
 		User.add("test")
 		self.u = User("test")
+		self.o = Options()
+		self.tmp_dirs = []
 
 	def tearDown(self):
 		self.u.remove()
 		backend.close()
+		for tmp_dir in self.tmp_dirs:
+			shutil.rmtree(tmp_dir)
+
+	def makeTempDir(self):
+		tmp_dir = tempfile.mkdtemp(prefix="tmp-%s-" % self.__class__.__name__)
+		self.tmp_dirs.append(tmp_dir)
+		return tmp_dir
+
+	def addRepository(self, reposname):
+		svndir = self.makeTempDir()
+		self.o.set_value('dir_svn', svndir)
+		Repository.add('svn', reposname)
 
 	def setEmail(self, u, email):
 		u.email = email
@@ -133,6 +152,7 @@ class UserTests(unittest.TestCase):
 		self.assertFalse(self.u.is_admin)
 
 	def testSaveNotificationsAdmin(self):
+		self.addRepository('repos') # otherwise, we cannot add notifications
 		mock_admin = Mock()
 		mock_admin.is_admin = True
 		self.u.set_notification("repos", True, True, mock_admin)
@@ -150,6 +170,7 @@ class UserTests(unittest.TestCase):
 
 	def testSaveNotificationsNonAdminAllowed(self):
 		"""First set allowed as admin, then set enabled as user"""
+		self.addRepository('repos') # otherwise, we cannot add notifications
 		mock_admin = Mock()
 		mock_admin.is_admin = True
 		self.u.set_notification("repos", True, False, mock_admin)

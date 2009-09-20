@@ -3,6 +3,7 @@ from pmock import *
 
 mock_settings = Mock()
 mock_settings.backend = "mock"
+mock_settings.base_dir = "/submin"
 
 from models import backend
 from models.options import Options
@@ -27,30 +28,9 @@ class OptionTests(unittest.TestCase):
 		self.assertEquals(self.o.value("foo"), "bar")
 
 	def testPath(self):
-		import os
-		old = None
-		if os.environ.has_key("SUBMIN_ENV"):
-			old = os.environ["SUBMIN_ENV"]
-		os.environ["SUBMIN_ENV"] = "/submin/"
 		self.o.set_value("foo", "bar")
 		self.assertEquals(unicode(self.o.env_path("foo")), "/submin/bar")
 
-		if old:
-			os.environ["SUBMIN_ENV"] = old
-		else:
-			del os.environ["SUBMIN_ENV"]
-
 	def testAbsolutePath(self):
-		import os
-		old = None
-		if os.environ.has_key("SUBMIN_ENV"):
-			old = os.environ["SUBMIN_ENV"]
-		os.environ["SUBMIN_ENV"] = "/submin/"
-
 		self.o.set_value("foo", "/bar")
 		self.assertEquals(unicode(self.o.env_path("foo")), "/bar")
-
-		if old:
-			os.environ["SUBMIN_ENV"] = old
-		else:
-			del os.environ["SUBMIN_ENV"]
