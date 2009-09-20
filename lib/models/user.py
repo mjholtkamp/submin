@@ -2,7 +2,7 @@ import models
 import validators
 backend = models.backend.get("user")
 
-from models.exceptions import UnknownUserError
+from models.exceptions import UnknownUserError, UserPermissionError
 
 class FakeAdminUser(object):
 	"""Sometimes you have no session_user but you want to make a change to
@@ -102,7 +102,7 @@ class User(object):
 	def set_notification(self, repository, allowed, enabled, session_user):
 		if not session_user.is_admin:
 			permissions = backend.notification(self._id, repository)
-			if not permissions['allowed']:
+			if not permissions or not permissions['allowed']:
 				raise UserPermissionError
 
 		# automatically allow if enabled
