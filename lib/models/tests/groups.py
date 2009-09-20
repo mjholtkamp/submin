@@ -16,11 +16,15 @@ class GroupTests(unittest.TestCase):
 		backend.close()
 
 	def testEmptyList(self):
-		self.assertEquals(Group.list(), [])
+		fake_admin = Mock()
+		fake_admin.is_admin = True
+		self.assertEquals(Group.list(fake_admin), [])
 
 	def testNonEmptyList(self):
 		Group.add("test")
-		self.assertEquals([g.name for g in Group.list()], ["test"])
+		fake_admin = Mock()
+		fake_admin.is_admin = True
+		self.assertEquals([g.name for g in Group.list(fake_admin)], ["test"])
 
 	def testGetGroup(self):
 		Group.add("foo")
@@ -37,8 +41,10 @@ class GroupTests(unittest.TestCase):
 	def testRemoveGroup(self):
 		Group.add("foo")
 		foo = Group("foo")
+		fake_admin = Mock()
+		fake_admin.is_admin = True
 		foo.remove()
-		self.assert_("foo" not in [x.name for x in Group.list()])
+		self.assert_("foo" not in [x.name for x in Group.list(fake_admin)])
 
 	def testEmptyMemberList(self):
 		Group.add("foo")

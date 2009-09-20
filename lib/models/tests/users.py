@@ -13,8 +13,10 @@ class UserTests(unittest.TestCase):
 	def setUp(self):
 		backend.open(mock_settings)
 		User.add("test")
+		self.u = User("test")
 
 	def tearDown(self):
+		self.u.remove()
 		backend.close()
 
 	def setEmail(self, u, email):
@@ -27,49 +29,40 @@ class UserTests(unittest.TestCase):
 		u.fullname = fullname
 
 	def testEmailSingleQuoteInvalid(self):
-		u = User("test")
-		self.assertRaises(InvalidEmail, self.setEmail, u, "a'@example.com")
+		self.assertRaises(InvalidEmail, self.setEmail, self.u, "a'@example.com")
 
 	def testEmailDoubleQuoteInvalid(self):
-		u = User("test")
-		self.assertRaises(InvalidEmail, self.setEmail, u, 'a"@example.com')
+		self.assertRaises(InvalidEmail, self.setEmail, self.u, 'a"@example.com')
 
 	def testEmailDoubleDot(self):
-		u = User("test")
-		self.assertRaises(InvalidEmail, self.setEmail, u, "a@example..com")
+		self.assertRaises(InvalidEmail, self.setEmail, self.u, "a@example..com")
 
 	def testEmailDoubleAt(self):
-		u = User("test")
-		self.assertRaises(InvalidEmail, self.setEmail, u, "a@@example.com")
+		self.assertRaises(InvalidEmail, self.setEmail, self.u, "a@@example.com")
 
 	def testEmailSimple(self):
-		u = User("test")
 		e = "a@a.a"
-		u.email = e
-		self.assertEquals(e, u.email)
+		self.u.email = e
+		self.assertEquals(e, self.u.email)
 
 	def testEmailEndingDotOk(self):
-		u = User("test")
 		e = "a@a.a."
-		u.email = e
-		self.assertEquals(e, u.email)
+		self.u.email = e
+		self.assertEquals(e, self.u.email)
 
 	def testEmailIPAddressOK(self):
-		u = User("test")
 		e = "a@999.999.999.999"
-		u.email = e
-		self.assertEquals(e, u.email)
+		self.u.email = e
+		self.assertEquals(e, self.u.email)
 
 	def testEmailUserPlusOk(self):
-		u = User("test")
 		e = "a+b@example.com"
-		u.email = e
-		self.assertEquals(e, u.email)
+		self.u.email = e
+		self.assertEquals(e, self.u.email)
 
 	def testPassword(self):
-		u = User("test")
-		u.set_password("foobar")
-		self.assertTrue(u.check_password("foobar"))
+		self.u.set_password("foobar")
+		self.assertTrue(self.u.check_password("foobar"))
 
 	def testAddDoubleUser(self):
 		self.assertRaises(UserExistsError, User.add, "test")
@@ -78,12 +71,10 @@ class UserTests(unittest.TestCase):
 		self.assertRaises(UnknownUserError, User, "not a user")
 
 	def testUserName(self):
-		u = User("test")
-		self.assertEquals(str(u), "test")
+		self.assertEquals(str(self.u), "test")
 
 	def testNotAdmin(self):
-		u = User("test")
-		self.assertRaises(UserPermissionError, u.notification_enable, "repos")
+		self.assertRaises(UserPermissionError, self.u.set_notification, "repos", True, True, self.u)
 
 	def testListUsersAdmin(self):
 		mock_user = Mock()
@@ -111,60 +102,61 @@ class UserTests(unittest.TestCase):
 		self.assert_("foo" not in [x.name for x in User.list(mock_user)])
 
 	def testUserName(self):
-		u = User("test")
-		self.assertEquals(u.name, "test")
+		self.assertEquals(self.u.name, "test")
 
 	def testSetUserName(self):
-		u = User("test")
-		u.name = "foo"
-		self.assertEquals(u.name, "foo")
+		self.u.name = "foo"
+		self.assertEquals(self.u.name, "foo")
 
 	def testInvalidUserName(self):
-		u = User("test")
 		invalid_chars = '\'"\n'
 		for invalid_char in invalid_chars:
-			self.assertRaises(InvalidUsername, self.setUsername, u,
+			self.assertRaises(InvalidUsername, self.setUsername, self.u,
 					invalid_char)
 
 	def testFullName(self):
 		expected_full_name = "Full Name"
-		u = User("test")
-		u.fullname = expected_full_name
-		self.assertEquals(u.fullname, expected_full_name)
+		self.u.fullname = expected_full_name
+		self.assertEquals(self.u.fullname, expected_full_name)
 
 	def testInvalidFullName(self):
-		u = User("test")
 		invalid_chars = '\'"\n'
 		for invalid_char in invalid_chars.split():
-			self.assertRaises(InvalidFullname, self.setFullname, u,
+			self.assertRaises(InvalidFullname, self.setFullname, self.u,
 					invalid_char)
 
-	def testIsAdmin(self):
-		u = User("test")
-		self.assert_(not u.is_admin)
-		u.is_admin = True
-		self.assert_(u.is_admin)
+	def testSetIsAdmin(self):
+		self.assertFalse(self.u.is_admin)
+		self.u.is_admin = True
+		self.assertTrue(self.u.is_admin)
+		self.u.is_admin = False
+		self.assertFalse(self.u.is_admin)
 
 	def testSaveNotificationsAdmin(self):
-		u = User("test")
-		u.notification_enable("repos")
-		u.notification_enable("non-existing")
+		mock_admin = Mock()
+		mock_admin.is_admin = True
+		self.u.set_notification("repos", True, True, mock_admin)
+		self.u.set_notification("non-existing", True, True, mock_admin)
 		u2 = User("test")
-		self.assertTrue(u2.notification_enabled("repos"))
+		notifications = u2.notifications()
+		self.assertTrue(notifications['repos']['enabled'])
 		# should not have notification for non-existing repository
-		self.assertFalse(u2.notification_enabled("non-existing"))
+		self.assertFalse(notifications.has_key("non-existing"))
 
 	def testSaveNotificationsNonAdminNotAllowed(self):
 		"""If not allowed, should raise Exception"""
-		u = User("test")
-		# TODO: set submin read permission for "repos" to False
-		self.assertRaises(UserPermissionError, u.notification_enable, "repos")
+		# default permissions are set to false
+		self.assertRaises(UserPermissionError, self.u.set_notification, "repos", True, True, self.u)
 
 	def testSaveNotificationsNonAdminAllowed(self):
 		"""First set allowed as admin, then set enabled as user"""
-		u = User("test")
-		# TODO: set submin read permission for "repos" to True
-		u.notification_enable("repos")
-		u2 = User("test")
-		self.assertTrue(u2.notification_enabled("repos"))
+		mock_admin = Mock()
+		mock_admin.is_admin = True
+		self.u.set_notification("repos", True, False, mock_admin)
+		notifications = self.u.notifications()
+		self.assertFalse(notifications["repos"]["enabled"])
+		self.u.set_notification("repos", True, True, self.u)
+		notifications = self.u.notifications()
+		self.assertTrue(notifications["repos"]["enabled"])
+		
 
