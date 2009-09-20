@@ -9,6 +9,7 @@ from models.repository import Repository, DoesNotExistError, PermissionError
 from models.trac import Trac, UnknownTrac, createTracEnv
 from models.options import Options
 from models.exceptions import UnknownKeyError
+from models.permissions import Permissions
 from auth.decorators import login_required, admin_required
 from path.path import Path
 from unicode import uc_url_decode
@@ -163,15 +164,16 @@ class Repositories(View):
 
 	@admin_required
 	def addpermission(self, req, repository):
-		config = Config()
+		perms = Permissions()
 		name = req.post['name'].value
 		type = req.post['type'].value
 		path = req.post['path'].value
 		path = uc_url_decode(path)
 
 		# add member with no permissions (let the user select that)
-		config.authz.setPermission(repository.name, path, name, type)
-		config.authz.save()
+		perms.set_permission(repository.name, path, name, type, '')
+		#config.authz.setPermission(repository.name, path, name, type)
+		#config.authz.save()
 		return XMLStatusResponse('addPermission', True, ('User', 'Group')[type == 'group'] + ' %s added to path %s' % (name, path))
 
 	@admin_required
