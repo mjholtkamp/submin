@@ -14,9 +14,9 @@ def list():
 	repository_names.sort()
 	
 	for repos in repository_names:
+		status = "ok"
 		try:
 			r = Repository(repos)
-			status = "ok"
 		except DoesNotExistError:
 			pass
 		except PermissionError:
