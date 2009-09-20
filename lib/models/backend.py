@@ -1,4 +1,4 @@
-from bootstrap import fimport, settings, SettingsException
+from bootstrap import fimport, settings, SettingsException, setSettings
 from models.exceptions import BackendAlreadySetup, BackendError
 
 def get(model):
@@ -22,12 +22,15 @@ def setup():
 	except SettingsException, e:
 		raise BackendError(str(e))
 
-def open(pass_settings=settings):
+def open(pass_settings=None):
 	"""opens the backend: either opens a database connection or does
 	other initialisation."""
+	if pass_settings:
+		setSettings(pass_settings)
+
 	try:
-		fimport("plugins.backends.%s" % pass_settings.backend,
-				"plugins.backends").open(pass_settings)
+		fimport("plugins.backends.%s" % settings.backend,
+				"plugins.backends").open(settings)
 	except SettingsException, e:
 		raise BackendError(str(e))
 

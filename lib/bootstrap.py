@@ -12,6 +12,7 @@ class Settings(object):
 	This means that on the first time a setting is requested, the settings are
 	read."""
 	def __init__(self):
+		# use __dict__ to avoid loading the settings file
 		self.__dict__['settings'] = None
 
 	def load(self):
@@ -19,11 +20,14 @@ class Settings(object):
 			raise SettingsException('Settings cannot be imported, please set the SUBMIN_ENV' +\
 			' environment variable to the submin base directory')
 
-		sys.path.insert(0, os.path.join(os.environ['SUBMIN_ENV'], 'conf'))
+		base_dir = os.environ['SUBMIN_ENV']
+		sys.path.insert(0, os.path.join(base_dir, 'conf'))
 
-		self.__dict__['settings'] = fimport('settings')
+		self.setSettings(fimport('settings'))
 
 		del sys.path[0]
+		# we can now set directly because __setattr__ will not call load
+		self.base_dir = base_dir
 
 	def __getattr__(self, attr):
 		if not self.__dict__['settings']:

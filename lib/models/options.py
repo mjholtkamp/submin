@@ -19,7 +19,8 @@ class Options(object):
 		return Path(self.value(key), append_slash=True)
 
 	def env_path(self, key=None):
-		base = Path(os.environ['SUBMIN_ENV'])
+		from bootstrap import settings # for base_dir
+		base = Path(settings.base_dir)
 		if key == None:
 			return base
 
