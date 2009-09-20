@@ -1,4 +1,3 @@
-backend = models.backend.get("manager")
 
 class Manager(object):
 	"""
