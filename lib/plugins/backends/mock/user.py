@@ -1,6 +1,7 @@
 from models.exceptions import UserExistsError
 
 mock_users = [] # [{'id': 0, 'name': 'test'}]
+mock_notifications = {} # {'reposname': {'allowed': True, 'enabled': False}}
 
 def clear_users():
 	global mock_users
@@ -40,16 +41,18 @@ def remove_permissions_submin(userid):
 	pass
 
 def remove_notifications(userid):
-	pass
+	global mock_notifications
+	mock_notifications = {}
 
-def notification_enable(userid, repository):
-	pass
+def notification(userid, repository):
+	global mock_notifications
+	if not mock_notifications.has_key(repository):
+		return None
+	return mock_notifications[repository]
 
-def notification_enabled(userid, repository):
-	pass
-
-def notification_disable(userid, repository):
-	pass
+def set_notification(userid, repository, allowed, enabled):
+	global mock_notifications
+	mock_notifications[repository] = {'allowed': allowed, 'enabled': enabled}
 
 def remove(userid):
 	del mock_users[userid]
