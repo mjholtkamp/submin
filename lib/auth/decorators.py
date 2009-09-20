@@ -28,6 +28,6 @@ def admin_required(fun):
 	@login_required
 	def _decorator(self, *args, **kwargs):
 		if not self.request.session['user'].is_admin:
-			raise Unauthorized("Submin-admin privileges are required.")
+			raise Unauthorized("Admin privileges are required.")
 		return fun(self, *args, **kwargs)
 	return _decorator
