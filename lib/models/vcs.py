@@ -5,7 +5,10 @@ class VCSException(Exception):
 
 def list():
 	import pkgutil, os
-	return [name for _, name, _ in pkgutil.iter_modules(['../lib/plugins/vcs'])]
+	# __file__ returns <submin-dir>/lib/models/vcs.py
+	libdir = os.path.dirname(os.path.dirname(__file__))
+	vcsdir = os.path.join(libdir, 'plugins', 'vcs')
+	return [name for _, name, _ in pkgutil.iter_modules([vcsdir])]
 
 def get(vcstype, model):
 	"""Gets the vcs-backend for a certain type and model."""
