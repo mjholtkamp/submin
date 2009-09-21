@@ -133,24 +133,20 @@ class Repositories(View):
 
 	@admin_required
 	def getpermissions(self, req, repository):
-		return XMLTemplateResponse('ajax/repositoryperms.xml', {})
-
-		config = Config()
+		session_user = req.session['user']
 		path = uc_url_decode(req.post['getPermissions'].value)
 		svn_path = Path(path.encode('utf-8'))
 
-		perms = []
-		authz_paths = [x[1] for x in repository.authz_paths]
-		if uc_str(svn_path) in authz_paths:
-			perms = config.authz.permissions(repository.name, svn_path)
+		p = Permissions()
+		perms = p.list_permissions(repository.name, str(svn_path))
 
 		users = []
 		if 'userlist' in req.post:
-			users = config.htpasswd.users()
+			users = User.list(session_user)
 
 		groups = []
 		if 'grouplist' in req.post:
-			groups = config.authz.groups()
+			groups = Group.list(session_user)
 
 		templatevars = {'perms': perms, 'repository': repository.name,
 			'path': svn_path, 'users': users, 'groups': groups}
@@ -158,8 +154,9 @@ class Repositories(View):
 
 	@admin_required
 	def getpermissionpaths(self, req, repository):
-		authz_paths = [] #[x[1] for x in repository.authz_paths]
-		templatevars = {'repository': repository.name, 'paths': authz_paths}
+		perms = Permissions()
+		paths = perms.list_paths(repository.name)
+		templatevars = {'repository': repository.name, 'paths': paths}
 		return XMLTemplateResponse('ajax/repositorypermpaths.xml', templatevars)
 
 	@admin_required
@@ -172,33 +169,29 @@ class Repositories(View):
 
 		# add member with no permissions (let the user select that)
 		perms.set_permission(repository.name, path, name, type, '')
-		#config.authz.setPermission(repository.name, path, name, type)
-		#config.authz.save()
 		return XMLStatusResponse('addPermission', True, ('User', 'Group')[type == 'group'] + ' %s added to path %s' % (name, path))
 
 	@admin_required
 	def removepermission(self, req, repository):
-		config = Config()
+		perms = Permissions()
 		name = req.post['name'].value
 		type = req.post['type'].value
 		path = req.post['path'].value
 		path = uc_url_decode(path)
 
-		config.authz.removePermission(repository.name, path, name, type)
-		config.authz.save()
+		perms.remove_permission(repository.name, path, name, type)
 		return XMLStatusResponse('removePermission', True, ('User', 'Group')[type == 'group'] + ' %s removed from path %s' % (name, path))
 
 	@admin_required
 	def setpermission(self, req, repository):
-		config = Config()
+		perms = Permissions()
 		name = req.post['name'].value
 		type = req.post['type'].value
 		path = req.post['path'].value
 		path = uc_url_decode(path)
 		permission = req.post['permission'].value
 
-		config.authz.setPermission(repository.name, path, name, type, permission)
-		config.authz.save()
+		perms.set_permission(repository.name, path, name, type, permissions)
 		return XMLStatusResponse('setPermission', True, 'Permission for %s %s changed to %s' %
 			(('user', 'group')[type == 'group'], name, permission))
 

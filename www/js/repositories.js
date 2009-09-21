@@ -260,6 +260,10 @@ function loadPermissions(path)
 		var permission = perm.getAttribute('permission');
 		var type = perm.getAttribute('type');
 
+		// treat anonymous users as users
+		if (type == 'all')
+			type = 'user';
+
 		added[added.length] = {"name": name, "permissions": permission, 'type': type};
 
 		var addable_length = addable.length;

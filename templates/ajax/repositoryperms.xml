@@ -5,10 +5,10 @@
 			]
 		</permissions>
 		<users>
-			[iter:users <user name="[ival]" />]
+			[iter:users <user name="[ival.name]" />]
 		</users>
 		<groups>
-			[iter:groups <group name="[ival]" />]
+			[iter:groups <group name="[ival.name]" />]
 		</groups>
 	</command>
 </response>
