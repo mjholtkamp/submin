@@ -13,8 +13,10 @@ class Permissions(object):
 	def add_permission(self, repos, path, subject, subjecttype, perm):
 		"""Sets permission for repos:path, raises a
 		Repository.DoesNotExistError if repos does not exist."""
-		r = Repository(repos) # just for the exception
-		backend.set_permission(repos, path, subject, subjecttype, perm)
+		if repos != "":
+			r = Repository(repos) # check if exists
+
+		backend.add_permission(repos, path, subject, subjecttype, perm)
 
 	def change_permission(self, repos, path, subject, subjecttype, perm):
 		"""Changes permission for repos:path, raises a
