@@ -316,6 +316,9 @@ function removePermissionFromPath(id, type, path) {
 function changePathPermission(id, type, permission, path) {
 	var epath = escape_plus(path);
 	var ename = escape_plus(id);
+	if (ename == '*')
+		type = 'all';
+
 	AjaxAsyncPostRequest(document.location, 'setPermission&type=' + type + '&name=' + ename + '&path=' + epath + '&permission=' + permission, refreshAndLog);
 }
 

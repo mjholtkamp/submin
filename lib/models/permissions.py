@@ -10,11 +10,17 @@ class Permissions(object):
 	def list_permissions(self, repos, path):
 		return backend.list_permissions(repos, path)
 
-	def set_permission(self, repos, path, subject, subjecttype, perm):
+	def add_permission(self, repos, path, subject, subjecttype, perm):
 		"""Sets permission for repos:path, raises a
 		Repository.DoesNotExistError if repos does not exist."""
 		r = Repository(repos) # just for the exception
 		backend.set_permission(repos, path, subject, subjecttype, perm)
+
+	def change_permission(self, repos, path, subject, subjecttype, perm):
+		"""Changes permission for repos:path, raises a
+		Repository.DoesNotExistError if repos does not exist."""
+		r = Repository(repos) # just for the exception
+		backend.change_permission(repos, path, subject, subjecttype, perm)
 
 	def remove_permission(self, repos, path, subject, subjecttype):
 		backend.remove_permission(repos, path, subject, subjecttype)
@@ -31,10 +37,14 @@ Backend Contract
 	in the following form:
 		{'name': 'testUser', 'type': 'user', 'permission': 'rw'}
 
-* set_permission(repos, path, subject, subjecttype, perm)
-	Set the permission of repos:path to subject (user, group, all)
-	to 'perm'. If the subjecttype is 'all', then an anonymous user is
+* add_permission(repos, path, subject, subjecttype, perm)
+	Set the permission of *repos*:*path* to *subject* (user, group, all)
+	to *perm*. If the *subjecttype* is 'all', then an anonymous user is
 	assumed.
+
+* change_permission(repos, path, subject, subjecttype, perm)
+	Change the permission of *repos*:*path* with *subject* and type
+	*subjecttype* to *perm*.
 
 * remove_permission(repos, path, subject, subjecttype)
 	Removes the permission from *repos*:*path* for *subject* with type

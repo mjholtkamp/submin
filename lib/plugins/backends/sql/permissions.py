@@ -55,13 +55,24 @@ def _subject_to_id(subject, subjecttype):
 
 	return subjectid
 
-def set_permission(repos, path, subject, subjecttype, perm):
+def add_permission(repos, path, subject, subjecttype, perm):
 	cur = backend.db.cursor()
 	subjectid = _subject_to_id(subject, subjecttype)
 
 	backend.execute(cur, """INSERT INTO permissions
-		(repository, path, subjectid, subjecttype, type) VALUES (?, ?, ?, ?, ?)""",
+		(repository, path, subjectid, subjecttype, type)
+		VALUES (?, ?, ?, ?, ?)""",
 		(repos, path, subjectid, subjecttype, perm))
+
+def change_permission(repos, path, subject, subjecttype, perm):
+	cur = backend.db.cursor()
+	subjectid = _subject_to_id(subject, subjecttype)
+
+	backend.execute(cur, """UPDATE permissions
+		SET type = ?
+		WHERE repository = ? AND path = ? AND subjectid = ?
+		AND subjecttype = ?""",
+		(perm, repos, path, subjectid, subjecttype))
 
 def remove_permission(repos, path, subject, subjecttype):
 	cur = backend.db.cursor()

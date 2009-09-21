@@ -168,7 +168,7 @@ class Repositories(View):
 		path = uc_url_decode(path)
 
 		# add member with no permissions (let the user select that)
-		perms.set_permission(repository.name, path, name, type, '')
+		perms.add_permission(repository.name, path, name, type, '')
 		return XMLStatusResponse('addPermission', True, ('User', 'Group')[type == 'group'] + ' %s added to path %s' % (name, path))
 
 	@admin_required
@@ -191,7 +191,7 @@ class Repositories(View):
 		path = uc_url_decode(path)
 		permission = req.post['permission'].value
 
-		perms.set_permission(repository.name, path, name, type, permissions)
+		perms.change_permission(repository.name, path, name, type, permission)
 		return XMLStatusResponse('setPermission', True, 'Permission for %s %s changed to %s' %
 			(('user', 'group')[type == 'group'], name, permission))
 
