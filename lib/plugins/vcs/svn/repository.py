@@ -111,7 +111,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 			# match instead of errorcode match
 			errstr = str(e)
 			if "Expected" in errstr and "format" in errstr and "found" in errstr:
-				raise self.VersionError
+				raise VersionError
 
 			raise PermissionError
 
