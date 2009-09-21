@@ -298,12 +298,18 @@ function refreshAndLog(response) {
 function addPermissionToPath(id, type, path) {
 	var epath = escape_plus(path);
 	var ename = escape_plus(id);
+	if (ename == '*')
+		type = 'all';
+
 	AjaxAsyncPostRequest(document.location, 'addPermission&type=' + type + '&name=' + ename + '&path=' + epath, function(response) { repostree_reMark(response, path); } );
 }
 
 function removePermissionFromPath(id, type, path) {
 	var epath = escape_plus(path);
 	var ename = escape_plus(id);
+	if (ename == '*')
+		type = 'all';
+
 	AjaxAsyncPostRequest(document.location, 'removePermission&type=' + type + '&name=' + ename + '&path=' + epath, function(response) { repostree_reMark(response, path); } );
 }
 

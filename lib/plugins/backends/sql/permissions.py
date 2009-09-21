@@ -12,7 +12,7 @@ def list_paths(repository):
 
 def list_permissions(repos, path):
 	cur = backend.db.cursor()
-	
+
 	queries = [
 		"""SELECT users.name, subjecttype, type FROM permissions
 			LEFT JOIN users ON permissions.subjectid = users.id
@@ -37,8 +37,45 @@ def list_permissions(repos, path):
 
 	return [{'name': row[0], 'type': row[1], 'permission': row[2]} for row in rows]
 
+def _subject_to_id(subject, subjecttype):
+	cur = backend.db.cursor()
+	tables = {'user': 'users', 'group': 'groups', 'all': None}
+	table = tables[subjecttype]
+
+	if table != None:
+		backend.execute(cur, "SELECT id FROM %s WHERE name = ?" % table,
+			(subject,))
+		row = cur.fetchone()
+		if not row:
+			raise Exception("Unknown " + subjecttype)
+
+		subjectid = row[0]
+	else:
+		subjectid = None
+
+	return subjectid
+
 def set_permission(repos, path, subject, subjecttype, perm):
-	pass
+	cur = backend.db.cursor()
+	subjectid = _subject_to_id(subject, subjecttype)
+
+	backend.execute(cur, """INSERT INTO permissions
+		(repository, path, subjectid, subjecttype, type) VALUES (?, ?, ?, ?, ?)""",
+		(repos, path, subjectid, subjecttype, perm))
 
 def remove_permission(repos, path, subject, subjecttype):
-	pass
+	cur = backend.db.cursor()
+	subjectid = _subject_to_id(subject, subjecttype)
+
+	# testing for 'X = NULL' fails, should use 'X IS NULL'
+	# but if we use ? for that case, we get the following error:
+	#   OperationalError: near "?": syntax error
+	# so instead we use this horrid construction
+	test = "subjectid = ?"
+	variables = (repos, path, subjectid, subjecttype)
+	if not subjectid:
+		test = "subjectid IS NULL"
+		variables = (repos, path, subjecttype)
+
+	backend.execute(cur, """DELETE FROM permissions WHERE repository = ?
+		AND path = ? AND %s AND subjecttype = ?""" % test, variables)
