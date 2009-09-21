@@ -47,7 +47,7 @@ def _subject_to_id(subject, subjecttype):
 			(subject,))
 		row = cur.fetchone()
 		if not row:
-			raise Exception("Unknown " + subjecttype)
+			raise Exception("Unknown %s: %s" % (subjecttype, subject))
 
 		subjectid = row[0]
 	else:
