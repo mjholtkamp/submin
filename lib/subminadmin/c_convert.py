@@ -124,12 +124,45 @@ Usage:
 				if group == "submin-admins":
 					u.is_admin = True
 
+	def write_permissions(self, config):
+		from models.permissions import Permissions
+		p = Permissions()
+
+		# get filename
+		authz_file = config.get('svn', 'authz_file')
+
+		# read file
+		cp = self.read_ini(authz_file)
+
+		# get all sections
+		for section in cp.sections():
+			if section == 'groups':
+				continue
+
+			repository = ''
+			path = ''
+			if ':' in section:
+				repository, path = section.split(':', 2)
+
+			for name in cp.options(section):
+				permission = cp.get(section, name)
+				if name[0] == '@':
+					name_type = 'group'
+					name = name[1:]
+				elif name == '*':
+					name_type = 'all'
+				else:
+					name_type = 'user'
+
+				p.add_permission(repository, path, name, name_type, permission)
+
 	def convert(self, old_config_file):
 		config = self.read_ini(old_config_file)
 		self.init_backend()
 		self.write_options(config)
 		self.write_users(config)
 		self.write_groups(config)
+		self.write_permissions(config)
 
 	def run(self):
 		if len(self.argv) != 1:
