@@ -9,7 +9,7 @@ sys.path.append(os.path.join(submin_dir, 'lib'))
 from bootstrap import SubminInstallationCheck
 check = SubminInstallationCheck(submin_dir)
 if not check.ok:
-	print "Status: 500\r\n\r\n"
+	print "Status: 500\r\n\r\n",
 	print check.error_page()
 	sys.exit(0)
 
@@ -29,7 +29,7 @@ except Exception, e:
 	trace = traceback.extract_tb(sys.exc_info()[2])
 	list = traceback.format_list(trace)
 	list.append(str(e))
-	print "Status: 500\r\n\r\n"
+	print "Status: 500\r\n\r\n",
 	print ''.join(list)
 
 backend.close()
