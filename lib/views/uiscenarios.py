@@ -1,4 +1,4 @@
-from template import evaluate
+from template.shortcuts import evaluate
 from dispatch.response import Response
 from dispatch.view import View
 from auth.decorators import *

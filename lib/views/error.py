@@ -1,5 +1,4 @@
-from template.shortcuts import evaluate_main
-from template import evaluate
+from template.shortcuts import evaluate
 from dispatch.response import Response
 
 class ErrorResponse(Response):

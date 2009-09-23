@@ -3,7 +3,7 @@ import os
 from dispatch.view import View
 from dispatch.response import Response, Redirect
 from views.error import ErrorResponse
-from template import evaluate
+from template.shortcuts import evaluate
 from config.authz.htpasswd import NoMD5PasswordError
 from models.user import User, UnknownUserError
 from models.options import Options
