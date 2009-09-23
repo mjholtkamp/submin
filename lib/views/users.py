@@ -161,14 +161,14 @@ class Users(View):
 	def setEmail(self, req, user):
 		try:
 			user.email = uc_str(req.post.get('email'))
-			return XMLStatusResponse('setEmail', True,
+			return XMLStatusResponse('email', True,
 				'Changed email address for user %s to %s' %
 				(user.name, user.email))
 		except validators.InvalidEmail:
-			return XMLStatusResponse('setEmail', False,
+			return XMLStatusResponse('email', False,
 				'Invalid characters in email-address. If you think this is an error, please report a bug')
 		except Exception, e:
-			return XMLStatusResponse('setEmail', False,
+			return XMLStatusResponse('email', False,
 				'Could not change email of user %s: %s' % (user.name, str(e)))
   
 	def setFullName(self, req, user):
