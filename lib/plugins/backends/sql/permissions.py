@@ -68,11 +68,21 @@ def change_permission(repos, path, subject, subjecttype, perm):
 	cur = backend.db.cursor()
 	subjectid = _subject_to_id(subject, subjecttype)
 
+	# testing for 'X = NULL' fails, should use 'X IS NULL'
+	# but if we use ? for that case, we get the following error:
+	#   OperationalError: near "?": syntax error
+	# so instead we use this horrid construction
+	test = "subjectid = ?"
+	variables = (perm, repos, path, subjectid, subjecttype)
+	if not subjectid:
+		test = "subjectid IS NULL"
+		variables = (perm, repos, path, subjecttype)
+
 	backend.execute(cur, """UPDATE permissions
 		SET type = ?
-		WHERE repository = ? AND path = ? AND subjectid = ?
-		AND subjecttype = ?""",
-		(perm, repos, path, subjectid, subjecttype))
+		WHERE repository = ? AND path = ? AND %s
+		AND subjecttype = ?""" % test,
+		variables)
 
 def remove_permission(repos, path, subject, subjecttype):
 	cur = backend.db.cursor()
