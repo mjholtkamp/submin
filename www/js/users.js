@@ -33,7 +33,8 @@ function sendEmail() {
 
 function sendEmailCB(response) {
  	// TODO: Before email is set, notifications are disabled
-	notificationRefreshAndLog(response);
+	LogResponse(response);
+	reloadNotifications();
 }
 
 function sendFullName() {
@@ -157,12 +158,12 @@ function groupSelectorInit() {
 
 function enableRepositoryAjax(repository) {
 	var erepository = escape_plus(repository);
-	return AjaxAsyncPostRequest(document.location, "setNotification=true&repository=" + erepository, notificationRefreshAndLog);
+	return AjaxAsyncPostRequest(document.location, "setNotification=true&repository=" + erepository);
 }
 
 function disableRepositoryAjax(repository) {
 	var erepository = escape_plus(repository);
-	return AjaxAsyncPostRequest(document.location, "setNotification=false&repository=" + erepository, notificationRefreshAndLog);
+	return AjaxAsyncPostRequest(document.location, "setNotification=false&repository=" + erepository);
 }
 
 function groupRefreshAndLog(response) {
