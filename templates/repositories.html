@@ -16,7 +16,7 @@
 				[else <div class="comment">trac_base_url not set in config</div>]</span></li>]
 			[else
 				[test:trac_config_ok [test:session_user.is_admin <li><label>Trac Environment</label><span><input type="submit" value="Create (not working yet)" onclick="javascript:trac_env_create()"></span></li>]]]
-			<li><label>Send notifications</label><span><input id="notifications" type="checkbox" [test:session_user.is_admin onclick="javascript:toggle_notifications_mailing()"][else disabled] [test:repository.notificationsEnabled checked]/>enabled</span>
+			<li><label>Send commit email</label><span><input id="commit_emails" type="checkbox" [test:session_user.is_admin onclick="javascript:toggle_commit_emails()"][else disabled] [test:repository.commitEmailsEnabled checked]/>enabled</span>
 			</li>
 		</ul>
 	</div>

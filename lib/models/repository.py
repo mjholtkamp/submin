@@ -58,7 +58,6 @@ class Repository(object):
 		backend.add(name)
 
 	def __init__(self, repositoryname):
-		"""Returns a Repository object"""
 		self.name = repositoryname
 		self._type = 'repository'
 
@@ -79,6 +78,13 @@ class Repository(object):
 	def subdirs(self, subdir):
 		return self._repository.subdirs(subdir)
 
+	def enableCommitEmails(self, enable):
+		"""Enables sending of commit messages if *enable* is True."""
+		self._repository.enableCommitEmails(enable)
+
+	def commitEmailsEnabled(self):
+		return self._repository.commitEmailsEnabled()
+
 __doc__ = """
 Backend contract
 ================
@@ -98,4 +104,10 @@ as some secondary tasks.
 * subdirs(subdir)
 	Get a list of subdirs of subdir *subdir* (root is "")
 	Each dir is a dict with at least a property 'name'.
+
+* enableCommitEmails(enable)
+	Enables sending of commit messages if *enable* is True.
+
+* commitEmailsEnabled()
+	Returns True if sendinf of commit messages is enabled.
 """

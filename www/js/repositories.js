@@ -472,8 +472,8 @@ ReposNode.prototype.findNodeById = function(id)
 }
 
 /* ask server to re-enable post-commit hook, this is called from an anchor */
-function toggle_notifications_mailing() {
-	var id = document.getElementById('notifications');
+function toggle_commit_emails() {
+	var id = document.getElementById('commit_emails');
 	if (!id)
 		return;
 	
@@ -481,14 +481,14 @@ function toggle_notifications_mailing() {
 	if (id.checked)
 		enable = "true";
 
-	AjaxAsyncPostRequest(document.location, 'setNotifications=' + enable,
-	 	toggle_notifications_mailingCB);
+	AjaxAsyncPostRequest(document.location, 'setCommitEmails=' + enable,
+	 	toggle_commit_emailsCB);
 	return false; // no following of link
 }
 
-function toggle_notifications_mailingCB(response) {
+function toggle_commit_emailsCB(response) {
 	LogResponse(response);
-	var command = FindResponse(response, 'setNotifications');
+	var command = FindResponse(response, 'setCommitEmails');
 	if (!command)
 		return;
 
@@ -496,7 +496,7 @@ function toggle_notifications_mailingCB(response) {
 	if (!enabled)
 		return;
 
-	var id = document.getElementById('notifications');
+	var id = document.getElementById('commit_emails');
 	if (!id)
 		return;
 	

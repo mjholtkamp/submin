@@ -151,10 +151,12 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 
 		return False
 
-	def notificationsEnabled(self):
+	def commitEmailsEnabled(self):
 		import os
+		from models.options import Options
+		o = Options()
 
-		reposdir = self.config.getpath('svn', 'repositories')
+		reposdir = o.env_path('dir_svn')
 		hook = reposdir + self.name + 'hooks' + 'post-commit'
 		try:
 			f = open(str(hook), 'r')
@@ -166,24 +168,21 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 			return True
 		return False
 
-	def changeNotifications(self, enable=True):
+	def enableCommitEmails(self, enable):
 		"""Add or remove our script to/from the post-commit hook"""
 		import os
-		config = Config()
+		from models.options import Options
+		o = Options()
 
 		line_altered = False
-		reposdir = self.config.getpath('svn', 'repositories')
+		reposdir = o.env_path('dir_svn')
 		hook = reposdir + self.name + 'hooks' + 'post-commit'
-		bindir = self.config.getpath('backend', 'bindir')
+		bindir = o.static_path('bin')
 		fullpath = bindir + 'post-commit.py'
-		# XXX ugly code :(
-		if config.version == 1:
-			config_file = os.environ['SUBMIN_CONF']
-		else:
-			config_file = os.environ['SUBMIN_ENV']
+		base_env = o.env_path()
 
 		new_hook = '/usr/bin/python %s "%s" "$1" "$2"\n' % \
-				(str(fullpath), config_file)
+				(str(fullpath), base_env)
 
 		f = open(str(hook), 'a+')
 		f.seek(0, 2) # seek to end of file, not all systems do this

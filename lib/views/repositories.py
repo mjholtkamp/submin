@@ -112,7 +112,8 @@ class Repositories(View):
 				pass
 
 			try:
-				# XXX hardcode 'vcs-type' now to 'svn'
+				# TODO(michiel): Hardcode 'vcs-type' to 'svn' until vcs
+				# subsystem is working properly.
 				Repository.add('svn', repository)
 			except PermissionError:
 				return ErrorResponse('could not create repository',
@@ -196,27 +197,27 @@ class Repositories(View):
 			(('user', 'group')[type == 'group'], name, permission))
 
 	@admin_required
-	def setNotifications(self, req, repository):
-		enable = req.post['setNotifications'].value.lower() == "true"
+	def setCommitEmails(self, req, repository):
+		enable = req.post['setCommitEmails'].value.lower() == "true"
 		change_msg = 'enabled'
 		if not enable:
 			change_msg = 'disabled'
 			
-		repository.changeNotifications(enable)
-		message = 'Notifications %s' % change_msg
-		templatevars = {'command': 'setNotifications',
+		repository.enableCommitEmails(enable)
+		message = 'Sending of commit emails is %s' % change_msg
+		templatevars = {'command': 'setCommitEmails',
 				'enabled': str(enable), 'message': message}
 		return XMLTemplateResponse('ajax/repositorynotifications.xml', 
 				templatevars)
 
 	@admin_required
-	def getNotifications(self, req, repository):
-		enabled = repository.notificationsEnabled()
+	def commitEmailsEnabled(self, req, repository):
+		enabled = repository.commitEmailsEnabled()
 		change_msg = 'enabled'
 		if not enabled:
 			change_msg = 'disabled'
 		message = 'Notifications %s' % change_msg
-		templatevars = {'command': 'getNotifications',
+		templatevars = {'command': 'commitEmailsEnabled',
 				'enabled': str(enabled), 'message': message}
 		return XMLTemplateResponse('ajax/repositorynotifications.xml', 
 				templatevars)
@@ -269,11 +270,11 @@ class Repositories(View):
 		if 'setPermission' in req.post:
 			return self.setpermission(req, repository)
 
-		if 'setNotifications' in req.post:
-			return self.setNotifications(req, repository)
+		if 'setCommitEmails' in req.post:
+			return self.setCommitEmails(req, repository)
 
-		if 'getNotifications' in req.post:
-			return self.getNotifications(req, repository)
+		if 'commitEmailsEnabled' in req.post:
+			return self.commitEmailsEnabled(req, repository)
 
 		if 'tracEnvCreate' in req.post:
 			return self.tracEnvCreate(req, repository)
