@@ -11,22 +11,13 @@ class WSGIRequest(Request):
 
 		self.url = environ['REQUEST_URI']
 		self.method = environ['REQUEST_METHOD']
-		self.post = ''
-		self.get = ''
-		if self.method == 'POST':
-			try:
-				# CONTENT_LENGTH might be absent if POST doesn't have 
-				# content at all (lighttpd)
-				content_length = int(environ.get('CONTENT_LENGTH', 0))
-			except ValueError:
-				# if CONTENT_LENGTH was empty string or not an integer
-				content_length = 0
+		input = environ['wsgi.input']
+		self.post = WSGIFieldStorage(input, environ=environ, keep_blank_values=1)
+		self.get = WSGIGet(self.__environ['QUERY_STRING'])
 
-			if content_length > 0:
-				input = environ['wsgi.input']#.read(content_length)
-				self.post = WSGIFieldStorage(input, environ=environ, keep_blank_values=1)
-		else:
-			self.get = WSGIGet(self.__environ['QUERY_STRING'])
+		# Mimic CGI behaviour
+		for key, value in self.get.variables.iteritems():
+			self.post[key] = value
 
 		if self.__environ.get('HTTP_COOKIE'):
 			self._incookies.load(self.__environ.get('HTTP_COOKIE', '')) 
