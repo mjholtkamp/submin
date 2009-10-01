@@ -1,3 +1,9 @@
+submin (1.2.8-2) testing; urgency=low
+
+  * Fix debian packaging
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Thu, 01 Oct 2009 12:20:40 +0200
+
 submin (1.2.8-1) testing; urgency=low
 
   * Warn about different subversion versions
