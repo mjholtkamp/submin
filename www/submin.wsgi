@@ -23,7 +23,7 @@ def application(environ, start_response):
 
 	try:
 		from dispatch.wsgirequest import WSGIRequest
-		from dispatch import dispatcher
+		from dispatch.dispatcher import dispatcher
 
 		req = WSGIRequest(environ)
 		response = dispatcher(req)

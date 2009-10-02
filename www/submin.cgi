@@ -19,7 +19,7 @@ backend.open()
 try:
 	import cgitb; cgitb.enable()
 	from dispatch.cgirequest import CGIRequest
-	from dispatch import dispatcher
+	from dispatch.dispatcher import dispatcher
 
 	req = CGIRequest()
 	response = dispatcher(req)
