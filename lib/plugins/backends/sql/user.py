@@ -64,12 +64,12 @@ def remove_from_groups(userid):
 		WHERE userid=?""", (userid,))
 
 def remove_permissions_repository(userid):
-	backend.execute(backend.db.cursor(), """DELETE FROM permissions_repository
+	backend.execute(backend.db.cursor(), """DELETE FROM permissions
 		WHERE subjecttype="user" AND subjectid=?""", (userid,))
 
 def remove_permissions_submin(userid):
-	backend.execute(backend.db.cursor(), """DELETE FROM permissions_submin
-		WHERE subjecttype="user" AND subjectid=?""", (userid,))
+	backend.execute(backend.db.cursor(), """DELETE FROM managers
+		WHERE managertype="user" AND managerid=?""", (userid,))
 
 def remove_notifications(userid):
 	backend.execute(backend.db.cursor(), """DELETE FROM notifications
