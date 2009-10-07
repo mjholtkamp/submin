@@ -20,10 +20,15 @@ def itoa(obj):
 	errors. Using str() rather than unicode() gives a significant speedup, so
 	we use str() instead of unicode().
 	"""
-	if not isinstance(obj, bool) and hasattr(obj, '__int__'):
+	if isinstance(obj, basestring):
+		# str/unicode
+		return obj
+	if hasattr(obj, '__int__'):
+		# bool/int/float
 		return str(obj)
 
-	return obj
+	# all the rest
+	return unicode(obj)
 
 class Node(object):
 	"""Represents a piece of template-text.
@@ -76,7 +81,7 @@ class CommandNode(Node):
 	def evaluate(self, template):
 		library = Library()
 		if library.has_command(self.command):
-			return library.execute(self, template)
+			return itoa(library.execute(self, template))
 		raise UnknownCommandError, self.command
 	
 	def __str__(self):
@@ -253,16 +258,6 @@ class Template(object):
 		and returns it. Next it checks if attribute is a digit, for a 
 		list-lookup.
 		If that that all fails, it returns None.
-		
-		Make sure that everything we return is either:
-		 - an iterable (for the [iter] command)
-		 - a unicode object (rather than string)
-		 - a str object (if the variable was int/float)
-
-		Because converting everything to unicode would be the right thing
-		to do, it is also very very slow for larger datasets. That is why
-		we assume all variables are unicode when they are string and convert
-		to string in case of int/float (see also itoa()).
 		"""
 		if '.' in key:
 			key, attr = key.split('.', 1)
@@ -278,7 +273,7 @@ class Template(object):
 		
 		# No attribute, just return the variable
 		if not attr:
-			return itoa(variable)
+			return variable
 		
 		if '.' in attr:
 			# recurse until we have it all broken down!
@@ -288,13 +283,13 @@ class Template(object):
 		if hasattr(variable, attr):
 			attr = getattr(variable, attr)
 			if hasattr(attr, '__call__'):
-				return itoa(attr())
-			return itoa(attr)
+				return attr()
+			return attr
 		if hasattr(variable, 'has_key') and variable.has_key(attr):
-			return itoa(variable[attr])
+			return variable[attr]
 		if attr.isdigit():
 			if len(variable) <= int(attr):
 				return None
-			return itoa(variable[int(attr)])
+			return variable[int(attr)]
 		
 		return None
