@@ -30,15 +30,15 @@ class Ajax(View):
 	def listUsers(self, req):
 		session_user = req.session['user']
 		try:
-			users = User.list(session_user)
-			return XMLTemplateResponse("ajax/listusers.xml", {'users': users})
+			usernames = User.list(session_user)
+			return XMLTemplateResponse("ajax/listusers.xml", {'usernames': usernames})
 		except Exception, e:
 			return XMLStatusResponse('listUsers', False, 'Failed to get a list: %s' % e)
 
 	def listGroups(self, req):
 		try:
-			groups = Group.list(req.session['user'])
-			return XMLTemplateResponse("ajax/listgroups.xml", {'groups': groups})
+			groupnames = Group.list(req.session['user'])
+			return XMLTemplateResponse("ajax/listgroups.xml", {'groupnames': groupnames})
 		except Exception, e:
 			raise
 			return XMLStatusResponse('listGroups', False, 'Failed to get a list: %s' % e)

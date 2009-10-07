@@ -118,13 +118,12 @@ class Groups(View):
 
 	def listGroupUsers(self, req, group):
 		members_names = list(group.members())
-		members = [User(x) for x in members_names]
 		if req.session['user'].is_admin:
 			nonmembers = []
-			users = User.list(req.session['user'])
-			for user in users:
-				if user.name not in members_names:
-					nonmembers.append(user)
+			usernames = User.list(req.session['user'])
+			for username in usernames:
+				if username not in members_names:
+					nonmembers.append(username)
 
 			return XMLTemplateResponse("ajax/groupmembers.xml",
 					{"members": members, "nonmembers": nonmembers,

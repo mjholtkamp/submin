@@ -9,7 +9,7 @@ class Group(object):
 		groups = []
 		for group in all_groups:
 			if session_user.is_admin or session_user.name in group.members():
-				groups.append(group)
+				groups.append(group.name)
 		
 		return groups
 

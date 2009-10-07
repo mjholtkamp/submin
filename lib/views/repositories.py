@@ -143,14 +143,14 @@ class Repositories(View):
 
 		users = []
 		if 'userlist' in req.post:
-			users = User.list(session_user)
+			usernames = User.list(session_user)
 
 		groups = []
 		if 'grouplist' in req.post:
 			groups = Group.list(session_user)
 
 		templatevars = {'perms': perms, 'repository': repository.name,
-			'path': svn_path, 'users': users, 'groups': groups}
+			'path': svn_path, 'usernames': usernames, 'groups': groups}
 		return XMLTemplateResponse('ajax/repositoryperms.xml', templatevars)
 
 	@admin_required

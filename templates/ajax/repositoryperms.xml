@@ -5,7 +5,7 @@
 			]
 		</permissions>
 		<users>
-			[iter:users <user name="[ival.name]" />]
+			[iter:usernames <user name="[ival]" />]
 		</users>
 		<groups>
 			[iter:groups <group name="[ival.name]" />]

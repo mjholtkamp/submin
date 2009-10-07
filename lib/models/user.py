@@ -14,16 +14,16 @@ class FakeAdminUser(object):
 class User(object):
 	@staticmethod
 	def list(session_user):
-		"""Returns a (sorted) list of users
+		"""Returns a (sorted) list of usernames
 
 		list expects a session_user argument: this is the user requesting the
 		user list. If the user is not an admin, it will only get to see
 		herself.
 		"""
 		if not session_user.is_admin: # only admins get to see the entire list
-			return [session_user]     # users only see themselves
+			return [session_user.name]     # users only see themselves
 
-		return [User(raw_data=user) for user in backend.list()]
+		return [user['name'] for user in backend.list()]
 
 	@staticmethod
 	def add(username, password=None):

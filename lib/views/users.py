@@ -208,17 +208,16 @@ class Users(View):
 
 	def listUserGroups(self, req, user):
 		member_of_names = list(user.member_of())
-		member_of = [Group(x) for x in member_of_names]
 		session_user = req.session['user']
 		if session_user.is_admin:
 			nonmember_of = []
-			groups = Group.list(session_user)
-			for group in groups:
-				if group.name not in member_of_names:
-					nonmember_of.append(group)
+			groupnames = Group.list(session_user)
+			for groupname in groupnames:
+				if groupname not in member_of_names:
+					nonmember_of.append(groupname)
 			
 			return XMLTemplateResponse("ajax/usermemberof.xml",
-					{"memberof": member_of,
+					{"memberof": member_of_names,
 						"nonmemberof": nonmember_of, "user": user.name})
 
 		if req.session['user'].name != user.name:
@@ -244,7 +243,7 @@ class Users(View):
 
 		# sort on name
 		notifications.sort(cmp=lambda x,y: cmp(x['name'], y['name']))
-		
+
 		return XMLTemplateResponse("ajax/usernotifications.xml",
 				{"notifications": notifications, "username": user.name,
 				"session_user": session_user})
