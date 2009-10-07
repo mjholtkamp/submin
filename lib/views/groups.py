@@ -117,12 +117,12 @@ class Groups(View):
 		return XMLStatusResponse('', False, 'Unknown command')
 
 	def listGroupUsers(self, req, group):
-		members_names = list(group.members())
+		members = list(group.members())
 		if req.session['user'].is_admin:
 			nonmembers = []
 			usernames = User.list(req.session['user'])
 			for username in usernames:
-				if username not in members_names:
+				if username not in members:
 					nonmembers.append(username)
 
 			return XMLTemplateResponse("ajax/groupmembers.xml",
