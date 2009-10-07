@@ -241,10 +241,7 @@ class Template(object):
 		
 	def evaluate(self):
 		"""Returns the evaluated template as a string"""
-		evaluated_string = ''
-		for node in self.nodes:
-			evaluated_string += node.evaluate(self)
-		return evaluated_string
+		return ''.join([node.evaluate(self) for node in self.nodes])
 
 	def variable_value(self, key='', attr=None, variable=None, recursing=False):
 		"""Looks up a key in a variable.

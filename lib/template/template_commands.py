@@ -129,7 +129,6 @@ def iter(node, tpl):
 			(tpl.filename, node.line)
 	else:
 		value = tpl.variable_value(node.arguments)
-	evaluated_string = ''
 	if not value:
 		return ''
 	tpl.node_variables['iseq'][-1] = value
@@ -143,6 +142,7 @@ def iter(node, tpl):
 			'Variable "%s" not iterable in template "%s", at line %d' % \
 			 	(node.arguments, tpl.filename, node.line)
 
+	evals = []
 	for index, item in enumerate(value):
 		tpl.node_variables['iindex'][-1] = index
 		tpl.node_variables['ikey'][-1] = item
@@ -151,13 +151,13 @@ def iter(node, tpl):
 		else:
 			tpl.node_variables['ival'][-1] = value[item]
 
-		evaluated_string += ''.join([x.evaluate(tpl) for x in node.nodes])
+		evals.append(''.join([x.evaluate(tpl) for x in node.nodes]))
 
 	tpl.node_variables['ival'].pop()
 	tpl.node_variables['iindex'].pop()
 	tpl.node_variables['iseq'].pop()
 	tpl.node_variables['ikey'].pop()
-	return evaluated_string
+	return ''.join(evals)
 
 @register.register('ival')
 def ival(node, tpl):
