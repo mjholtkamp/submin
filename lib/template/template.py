@@ -288,7 +288,7 @@ class Template(object):
 			attr = getattr(variable, attr)
 			if hasattr(attr, '__call__'):
 				return itoa(attr())
-			return attr
+			return itoa(attr)
 		if hasattr(variable, 'has_key') and variable.has_key(attr):
 			return itoa(variable[attr])
 		if attr.isdigit():
