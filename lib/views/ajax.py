@@ -4,7 +4,6 @@ from auth.decorators import *
 from models.user import User
 from models.group import Group
 from models.repository import Repository
-from template.shortcuts import evaluate
 from models.options import Options
 
 class Ajax(View):
