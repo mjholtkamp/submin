@@ -20,8 +20,9 @@ def itoa(obj):
 	errors. Using str() rather than unicode() gives a significant speedup, so
 	we use str() instead of unicode().
 	"""
-	if hasattr(obj, '__int__'):
+	if not isinstance(obj, bool) and hasattr(obj, '__int__'):
 		return str(obj)
+
 	return obj
 
 class Node(object):
