@@ -9,7 +9,6 @@ import os
 
 from library import Library
 from template import Template
-from unicode import uc_str
 from types import * # for ikey/ival
 register = Library()
 
@@ -67,7 +66,7 @@ def val(node, tpl):
 	text = node.nodes[0].evaluate()
 	value = tpl.variable_value(text)
 	if value:
-		return uc_str(value, 'utf-8')
+		return value
 	return ''
 
 @register.register('include')
@@ -153,6 +152,7 @@ def iter(node, tpl):
 			tpl.node_variables['ival'][-1] = value[item]
 
 		evaluated_string += ''.join([x.evaluate(tpl) for x in node.nodes])
+
 	tpl.node_variables['ival'].pop()
 	tpl.node_variables['iindex'].pop()
 	tpl.node_variables['iseq'].pop()
@@ -165,7 +165,7 @@ def ival(node, tpl):
 	if not args:
 		args = None
 	if tpl.node_variables.has_key('ival') and len(tpl.node_variables['ival']) >= 1:
-		return uc_str(tpl.variable_value('', args, tpl.node_variables['ival'][-1]), 'utf-8')
+		return tpl.variable_value('', args, tpl.node_variables['ival'][-1])
 	raise IvalOutsideIter,\
 		"Ival without enclosing iter at file %s, line %d" % \
 		(tpl.filename, node.line)
@@ -176,7 +176,7 @@ def ikey(node, tpl):
 	if not args:
 		args = None
 	if tpl.node_variables.has_key('ikey') and len(tpl.node_variables['ikey']) >= 1:
-		return uc_str(tpl.variable_value('', args, tpl.node_variables['ikey'][-1]), 'utf-8')
+		return tpl.variable_value('', args, tpl.node_variables['ikey'][-1])
 	raise IkeyOutsideIter,\
 		"Ikey without enclosing iter at file %s, line %d" % \
 		(tpl.filename, node.line)

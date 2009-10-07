@@ -9,6 +9,21 @@ from library import Library
 class UnknownCommandError(Exception):
 	pass
 
+def itoa(obj):
+	"""Helper function to only convert int/float types to str. This is
+	necessary because template commands expect everything to return string
+	type object and tries to concatenate them. Concatenating int/floats with
+	strings does not work.
+	
+	Actually, template expect everything to be unicode, but concatenating str
+	with unicode results in unicode and numbers do not give us encoding
+	errors. Using str() rather than unicode() gives a significant speedup, so
+	we use str() instead of unicode().
+	"""
+	if hasattr(obj, '__int__'):
+		return str(obj)
+	return obj
+
 class Node(object):
 	"""Represents a piece of template-text.
 	This is the most basic node and basically does not convey meaning."""
@@ -224,7 +239,7 @@ class Template(object):
 		for node in self.nodes:
 			evaluated_string += node.evaluate(self)
 		return evaluated_string
-		
+
 	def variable_value(self, key='', attr=None, variable=None, recursing=False):
 		"""Looks up a key in a variable.
 		If the variable is not provided, it is found in self.variables
@@ -237,6 +252,16 @@ class Template(object):
 		and returns it. Next it checks if attribute is a digit, for a 
 		list-lookup.
 		If that that all fails, it returns None.
+		
+		Make sure that everything we return is either:
+		 - an iterable (for the [iter] command)
+		 - a unicode object (rather than string)
+		 - a str object (if the variable was int/float)
+
+		Because converting everything to unicode would be the right thing
+		to do, it is also very very slow for larger datasets. That is why
+		we assume all variables are unicode when they are string and convert
+		to string in case of int/float (see also itoa()).
 		"""
 		if '.' in key:
 			key, attr = key.split('.', 1)
@@ -252,7 +277,7 @@ class Template(object):
 		
 		# No attribute, just return the variable
 		if not attr:
-			return variable
+			return itoa(variable)
 		
 		if '.' in attr:
 			# recurse until we have it all broken down!
@@ -262,13 +287,13 @@ class Template(object):
 		if hasattr(variable, attr):
 			attr = getattr(variable, attr)
 			if hasattr(attr, '__call__'):
-				return attr()
+				return itoa(attr())
 			return attr
 		if hasattr(variable, 'has_key') and variable.has_key(attr):
-			return variable[attr]
+			return itoa(variable[attr])
 		if attr.isdigit():
 			if len(variable) <= int(attr):
 				return None
-			return variable[int(attr)]
+			return itoa(variable[int(attr)])
 		
 		return None
