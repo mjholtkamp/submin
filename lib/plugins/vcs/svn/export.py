@@ -21,7 +21,6 @@ def export_auth(authtype):
 
 	# Write all repositories and their permissions
 	for repository in list_repos():
-		print "Exporting authz for", repository["name"]," (status: %s)" % repository["status"]
 		if repository["status"] != "ok":
 			continue
 
