@@ -28,7 +28,7 @@ def createTracEnv(repository):
 
 	tracenv = basedir + repository
 	projectname = repository
-	svnbasedir = o.env_path('dir_svn')
+	svnbasedir = o.env_path('svn_dir')
 	svndir = svnbasedir + repository
 	try:
 		path = o.value('path')

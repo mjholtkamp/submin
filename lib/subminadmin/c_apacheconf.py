@@ -279,9 +279,9 @@ Apache file created: %(output)s
 			'submin base url': o.value('base_url_submin'),
 			'svn base url': o.value('base_url_svn'),
 			'trac base url': o.value('base_url_trac'),
-			'svn dir': o.env_path('dir_svn'),
-			'trac dir': o.env_path('dir_trac'),
-			'authz file': o.env_path('auth_authz_file'),
+			'svn dir': o.env_path('svn_dir'),
+			'trac dir': o.env_path('trac_dir'),
+			'authz file': o.env_path('svn_authz_file'),
 		}
 		self.auth_type = o.value('auth_type')
 

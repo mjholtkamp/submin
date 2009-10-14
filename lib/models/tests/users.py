@@ -35,7 +35,7 @@ class UserTests(unittest.TestCase):
 
 	def addRepository(self, reposname):
 		svndir = self.makeTempDir()
-		self.o.set_value('dir_svn', svndir)
+		self.o.set_value('svn_dir', svndir)
 		Repository.add('svn', reposname)
 
 	def setEmail(self, u, email):

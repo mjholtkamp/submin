@@ -32,12 +32,12 @@ Usage:
 			'base_url_submin': ('www', 'base_url'),
 			'base_url_svn': ('www', 'svn_base_url'),
 			'base_url_trac': ('www', 'trac_base_url'),
-			'dir_svn': ('svn', 'repositories'),
-			'dir_trac': ('trac', 'basedir'),
+			'svn_dir': ('svn', 'repositories'),
+			'trac_dir': ('trac', 'basedir'),
 			'dir_bin': ('backend', 'bindir'),
 			'session_salt': ('generated', 'session_salt'),
 			'env_path': ('backend', 'path'),
-			'auth_authz_file': ('svn', 'authz_file'),
+			'svn_authz_file': ('svn', 'authz_file'),
 		}
 		for (key, section_option) in options.iteritems():
 			value = config.get(section_option[0], section_option[1])

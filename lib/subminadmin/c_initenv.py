@@ -137,9 +137,9 @@ If you use Trac, it will be accessible from <http base>/trac.
 			'base_url_svn': self._get_url('svn_url'),
 			'base_url_trac': self._get_url('trac_url'),
 			'auth_type': 'sql',
-			'dir_svn': str(self.init_vars['svn_dir']),
-			'dir_trac': str(self.init_vars['trac_dir']),
-			'auth_authz_file': str(self.init_vars['authz']),
+			'svn_dir': str(self.init_vars['svn_dir']),
+			'trac_dir': str(self.init_vars['trac_dir']),
+			'svn_authz_file': str(self.init_vars['authz']),
 		}
 		for (key, value) in options.iteritems():
 			o.set_value(key, value)
