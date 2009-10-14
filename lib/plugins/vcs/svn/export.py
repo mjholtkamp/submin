@@ -1,3 +1,5 @@
+import codecs
+
 from models.options import Options
 from models.group import Group
 from repository import list as list_repos
@@ -10,7 +12,7 @@ def export_auth(authtype):
 
 	o = Options()
 	authz_filename = o.env_path("svn_authz_file")
-	authz = open(str(authz_filename), "w+")
+	authz = codecs.open(str(authz_filename), "w+", "utf-8")
 
 	# Write all groups
 	authz.write("[groups]\n")
