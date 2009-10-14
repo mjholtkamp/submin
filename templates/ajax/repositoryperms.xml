@@ -8,7 +8,7 @@
 			[iter:usernames <user name="[ival]" />]
 		</users>
 		<groups>
-			[iter:groups <group name="[ival.name]" />]
+			[iter:groupnames <group name="[ival]" />]
 		</groups>
 	</command>
 </response>
