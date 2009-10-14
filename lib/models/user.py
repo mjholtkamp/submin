@@ -37,6 +37,7 @@ class User(object):
 			raise validators.InvalidUsername(username)
 
 		backend.add(username, password)
+		models.vcs.export_auth_user()
 		return User(username)
 
 	def __init__(self, username=None, raw_data=None):
@@ -71,6 +72,7 @@ class User(object):
 
 	def set_password(self, password):
 		backend.set_password(self._id, password)
+		models.vcs.export_auth_user()
 
 	def set_md5_password(self, password):
 		backend.set_md5_password(self._id, password)
@@ -92,6 +94,7 @@ class User(object):
 		backend.remove_permissions_submin(self._id)
 		backend.remove_notifications(self._id)
 		backend.remove(self._id)
+		models.vcs.export_auth_user()
 
 	def member_of(self):
 		return backend.member_of(self._id)
@@ -140,6 +143,7 @@ class User(object):
 		if not validators.validate_username(name):
 			raise validators.InvalidUsername(name)
 		backend.set_name(self._id, name)
+		models.vcs.export_auth_user()
 
 	def _getEmail(self):
 		return self._email

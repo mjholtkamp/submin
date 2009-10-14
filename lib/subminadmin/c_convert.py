@@ -154,7 +154,7 @@ Usage:
 				else:
 					name_type = 'user'
 
-				p.add_permission(repository, path, name, name_type, permission)
+				p.add_permission(repository, "svn", path, name, name_type, permission)
 
 	def convert(self, old_config_file):
 		config = self.read_ini(old_config_file)

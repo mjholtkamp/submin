@@ -10,22 +10,27 @@ class Permissions(object):
 	def list_permissions(self, repos, path):
 		return backend.list_permissions(repos, path)
 
-	def add_permission(self, repos, path, subject, subjecttype, perm):
+	def add_permission(self, repos, repostype, path,
+			subject, subjecttype, perm):
 		"""Sets permission for repos:path, raises a
 		Repository.DoesNotExistError if repos does not exist."""
 		if repos != "":
 			r = Repository(repos) # check if exists
 
 		backend.add_permission(repos, path, subject, subjecttype, perm)
+		models.vcs.export_auth_repository(repostype)
 
-	def change_permission(self, repos, path, subject, subjecttype, perm):
+	def change_permission(self, repos, repostype, path,
+			subject, subjecttype, perm):
 		"""Changes permission for repos:path, raises a
 		Repository.DoesNotExistError if repos does not exist."""
 		r = Repository(repos) # just for the exception
 		backend.change_permission(repos, path, subject, subjecttype, perm)
+		models.vcs.export_auth_repository(repostype)
 
-	def remove_permission(self, repos, path, subject, subjecttype):
+	def remove_permission(self, repos, repostype, path, subject, subjecttype):
 		backend.remove_permission(repos, path, subject, subjecttype)
+		models.vcs.export_auth_repository(repostype)
 
 __doc__ = """
 Backend Contract

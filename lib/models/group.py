@@ -17,6 +17,7 @@ class Group(object):
 	def add(name):
 		"""Add a new, empty group"""
 		backend.add(name)
+		models.vcs.export_auth_group()
 		return Group(name)
 
 	def __init__(self, groupname=None, raw_data=None):
@@ -44,15 +45,18 @@ class Group(object):
 		backend.remove_permissions_submin(self._id)
 		backend.remove_members_from_group(self._id)
 		backend.remove(self._id)
+		models.vcs.export_auth_group()
 
 	def members(self):
 		return backend.members(self._id)
 
 	def add_member(self, user):
 		backend.add_member(self._id, user.id)
+		models.vcs.export_auth_group()
 
 	def remove_member(self, user):
 		backend.remove_member(self._id, user.id)
+		models.vcs.export_auth_group()
 
 	# Properties
 	def _getId(self):
