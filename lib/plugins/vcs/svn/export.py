@@ -25,12 +25,12 @@ def export_auth(authtype):
 		if repository["status"] != "ok":
 			continue
 
-		perm = Permissions()
+		perms = Permissions()
 
-		for path in perm.list_paths(repository["name"]):
+		for path in perms.list_paths(repository["name"]):
 			authz.write("[%s:%s]\n" % (repository["name"], path))
 
-			for perm in perm.list_permissions(repository["name"], path):
+			for perm in perms.list_permissions(repository["name"], path):
 				if perm["type"] == "group":
 					authz.write("@")
 				authz.write("%s = %s\n" % (perm["name"], perm["permission"]))
