@@ -28,7 +28,7 @@ def itoa(obj):
 		return str(obj)
 
 	# all the rest
-	return unicode(obj)
+	return uc_str(obj)
 
 class Node(object):
 	"""Represents a piece of template-text.
