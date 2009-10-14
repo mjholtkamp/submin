@@ -45,7 +45,7 @@ def setup():
 		CREATE TABLE options
 		(
 			key   text primary key not null unique,
-			value text not null unique
+			value text not null
 		);
 
 		CREATE TABLE notifications
