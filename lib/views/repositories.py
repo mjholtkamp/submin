@@ -141,11 +141,11 @@ class Repositories(View):
 		p = Permissions()
 		perms = p.list_permissions(repository.name, str(svn_path))
 
-		users = []
+		usernames = []
 		if 'userlist' in req.post:
 			usernames = User.list(session_user)
 
-		groups = []
+		groupnames = []
 		if 'grouplist' in req.post:
 			groupnames = Group.list(session_user)
 
