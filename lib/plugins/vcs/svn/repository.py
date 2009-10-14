@@ -32,7 +32,7 @@ def _repositoriesOnDisk():
 	"""Returns all repositories that are found on disk"""
 	import glob, os.path
 	o = Options()
-	reposdir = o.env_path('dir_svn')
+	reposdir = o.env_path('svn_dir')
 	reps = glob.glob(str(reposdir + '*'))
 	repositories = []
 	for rep in reps:
@@ -43,7 +43,7 @@ def _repositoriesOnDisk():
 
 def add(name):
 	o = Options()
-	reposdir = o.env_path('dir_svn')
+	reposdir = o.env_path('svn_dir')
 	newrepos = reposdir + name
 	cmd = 'svnadmin create "%s"' % str(newrepos)
 	(exitstatus, outtext) = commands.getstatusoutput(cmd)
@@ -71,7 +71,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		self.name = name
 		self.signature = "### SUBMIN AUTOCONFIG, DO NOT ALTER FOLLOWING LINE ###\n"
 
-		reposdir = o.env_path('dir_svn')
+		reposdir = o.env_path('svn_dir')
 		self.url = str(reposdir + self.name)
 
 		self.initialized = False
@@ -156,7 +156,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		from models.options import Options
 		o = Options()
 
-		reposdir = o.env_path('dir_svn')
+		reposdir = o.env_path('svn_dir')
 		hook = reposdir + self.name + 'hooks' + 'post-commit'
 		try:
 			f = open(str(hook), 'r')
@@ -175,7 +175,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		o = Options()
 
 		line_altered = False
-		reposdir = o.env_path('dir_svn')
+		reposdir = o.env_path('svn_dir')
 		hook = reposdir + self.name + 'hooks' + 'post-commit'
 		bindir = o.static_path('bin')
 		fullpath = bindir + 'post-commit.py'
@@ -220,7 +220,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 
 	def remove(self):
 		o = Options()
-		reposdir = o.env_path('dir_svn')
+		reposdir = o.env_path('svn_dir')
 		newrepos = reposdir + self.name
 		if not newrepos.absolute:
 			raise Exception("Error, repository path is relative, this should be fixed")

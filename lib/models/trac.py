@@ -14,7 +14,7 @@ class MissingConfig(Exception):
 def tracBaseDir():
 	o = Options()
 	try:
-		basedir = o.env_path('dir_trac')
+		basedir = o.env_path('trac_dir')
 	except UnknownKeyError:
 		raise MissingConfig('No Trac directory specified in options')
 
