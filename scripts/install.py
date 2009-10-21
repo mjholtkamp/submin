@@ -98,7 +98,7 @@ Usage: %s <installdir> [--force] [--final=<installdir2>]
 
 		for src in ["www/submin.wsgi", "www/submin.cgi"]:
 			self.install(src, os.path.join(self.share, "www/"), mode=0755)
-		for src in ["bin/commit-email.pl", "bin/post-commit.py"]:
+		for src in ["bin/svn/commit-email.pl", "bin/svn/post-commit.py"]:
 			self.install(src, os.path.join(self.share, src), mode=0755)
 
 		# fix hardcoded paths in binaries
@@ -108,7 +108,7 @@ Usage: %s <installdir> [--force] [--final=<installdir2>]
 				"lib/subminadmin/subminadmin.py"),
 			"_SUBMIN_SHARE_DIR_",
 			self.final_share)
-		self.filereplace(os.path.join(self.share, "bin/post-commit.py"),
+		self.filereplace(os.path.join(self.share, "bin/svn/post-commit.py"),
 			"_SUBMIN_LIB_DIR_",
 			os.path.join(self.final_share, "lib"))
 
