@@ -17,16 +17,23 @@ from models.repository import Repository
 class UserTests(unittest.TestCase):
 	def setUp(self):
 		backend.open(mock_settings)
+		self.o = Options()
+		self.o.set_value('svn_authz_file', '/tmp/submin-authz') # needed for export
+		self.o.set_value('svn_dir', '/tmp/submin-svn') # needed for export
+		self.tmp_dirs = []
 		User.add("test")
 		self.u = User("test")
-		self.o = Options()
-		self.tmp_dirs = []
 
 	def tearDown(self):
+		import os
 		self.u.remove()
 		backend.close()
 		for tmp_dir in self.tmp_dirs:
 			shutil.rmtree(tmp_dir)
+		try:
+			os.unlink('/tmp/submin-authz')
+		except OSError:
+			pass
 
 	def makeTempDir(self):
 		tmp_dir = tempfile.mkdtemp(prefix="tmp-%s-" % self.__class__.__name__)

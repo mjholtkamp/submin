@@ -3,17 +3,27 @@ from pmock import *
 
 mock_settings = Mock()
 mock_settings.backend = "mock"
+mock_settings.base_dir = "/tmp/submin"
 
 from models import backend
 from models.group import Group
+from models.options import Options
 from models.exceptions import GroupExistsError, UnknownGroupError
 
 class GroupTests(unittest.TestCase):
 	def setUp(self):
 		backend.open(mock_settings)
+		o = Options()
+		o.set_value('svn_authz_file', '/tmp/submin-authz') # needed for export
+		o.set_value('svn_dir', '/tmp/submin-svn') # needed for export
 
 	def tearDown(self):
+		import os
 		backend.close()
+		try:
+			os.unlink('/tmp/submin-authz')
+		except OSError:
+			pass
 
 	def testEmptyList(self):
 		fake_admin = Mock()
