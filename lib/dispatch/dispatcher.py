@@ -8,7 +8,8 @@ from views.authviews import Login, Logout
 from views.repositories import Repositories
 from views.intro import Intro
 from views.ajax import Ajax
-
+from models.options import Options
+from models.exceptions import UnknownKeyError
 from dispatch.session import Session
 
 classes = {
@@ -26,10 +27,12 @@ def init_tests():
 	"""Initialize url-coupling to test-views
 	Only loaded if config-options in section "tests" are present
 	"""
-	return
-	config = Config()
-	if not config.cp.has_section("tests"):
+	o = Options()
+	try:
+		o.value("tests_scenario_file")
+	except UnknownKeyError:
 		return
+
 	from views.uiscenarios import UIScenarios
 	classes["uiscenarios"] = UIScenarios
 
