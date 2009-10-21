@@ -24,7 +24,7 @@ class GroupTests(unittest.TestCase):
 		Group.add("test")
 		fake_admin = Mock()
 		fake_admin.is_admin = True
-		self.assertEquals([g.name for g in Group.list(fake_admin)], ["test"])
+		self.assertEquals([g for g in Group.list(fake_admin)], ["test"])
 
 	def testGetGroup(self):
 		Group.add("foo")

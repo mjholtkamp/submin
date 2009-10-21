@@ -99,7 +99,7 @@ class UserTests(unittest.TestCase):
 		mock_user = Mock()
 		mock_user.is_admin = True
 		User.add("foo")
-		users = [x.name for x in User.list(mock_user)]
+		users = [x for x in User.list(mock_user)]
 		users.sort()
 		self.assertEquals(users, ["foo", "test"])
 
@@ -108,7 +108,7 @@ class UserTests(unittest.TestCase):
 		mock_user.is_admin = False
 		mock_user.name = "foo"
 		User.add("foo")
-		users = [x.name for x in User.list(mock_user)]
+		users = [x for x in User.list(mock_user)]
 		users.sort()
 		self.assertEquals(users, ["foo"])
 
@@ -118,7 +118,7 @@ class UserTests(unittest.TestCase):
 		User.add("foo")
 		foo = User("foo")
 		foo.remove()
-		self.assert_("foo" not in [x.name for x in User.list(mock_user)])
+		self.assert_("foo" not in [x for x in User.list(mock_user)])
 
 	def testUserName(self):
 		self.assertEquals(self.u.name, "test")
