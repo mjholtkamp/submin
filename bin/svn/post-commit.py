@@ -2,20 +2,16 @@
 
 def buildNotifications(users):
 	notifications = {}
-	for user in users:
-		u_notif = user.notifications()
-		if not u_notif:
+	for user in users.itervalues():
+		if not user.has_key('notifications_enabled'):
 			continue
-		for repo in u_notif:
-			if not u_notif[repo]["enabled"]:
-				continue
-
-			if not notifications.has_key(repo):
-				notifications[repo] = []
+		for path in [x.strip() for x in user['notifications_enabled'].split(',')]:
+			if not notifications.has_key(path):
+				notifications[path] = []
 
 			# check if user has email, if not, ignore
-			if user.email:
-				notifications[repo].append(user.email)
+			if user.has_key('email'):
+				notifications[path].append(user['email'])
 	return notifications
 
 def main():
@@ -32,21 +28,24 @@ def main():
 		print "Usage: %s <configfile> <repository path> <revision>" % argv[0]
 		return
 
-	os.environ['SUBMIN_ENV'] = argv[1]
 	repospath = argv[2]
 	rev = argv[3]
+	if argv[1].endswith('.conf'):
+		os.environ['SUBMIN_CONF'] = argv[1]
+	else:
+		os.environ['SUBMIN_ENV'] = argv[1]
 
-	from models import backend
-	backend.open()
+	try:
+		from config.config import Config
+	except ImportError, e:
+		print e
+		print "is environment %s set?" % env
+		return
 
-	from models.options import Options
-	opts = Options()
-	bindir = opts.static_path("bin")
-
-	from models.user import User, FakeAdminUser
-	userlist = [User(name) for name in User.list(FakeAdminUser())]
-
-	n = buildNotifications(userlist)
+	config = Config()
+	bindir = config.getpath('backend', 'bindir')
+	a = config.authz
+	n = buildNotifications(a.users())
 	repos = os.path.basename(repospath)
 	if not n.has_key(repos):
 		print "no such repository"
