@@ -1,6 +1,6 @@
 import plugins.backends.sql.common as backend
 from models.exceptions import UserExistsError, NoMD5PasswordError
-from config.authz import md5crypt
+from auth import md5crypt
 
 def row_dict(cursor, row):
 	# description returns a tuple; the first entry is the name of the field
