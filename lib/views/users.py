@@ -225,7 +225,7 @@ class Users(View):
 					"view this user.")
 
 		return XMLTemplateResponse("ajax/usermemberof.xml",
-				{"memberof": member_of, "nonmemberof": [],
+				{"memberof": member_of_names, "nonmemberof": [],
 					"user": user.name})
 
 	def listNotifications(self, req, user):
