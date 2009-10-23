@@ -5,6 +5,7 @@ from views.error import ErrorResponse
 from models.user import User
 from models.group import Group
 from models.exceptions import GroupExistsError, MemberExistsError
+from models.exceptions import UnknownGroupError
 from auth.decorators import *
 from models.options import Options
 
