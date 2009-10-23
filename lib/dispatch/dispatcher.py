@@ -29,7 +29,7 @@ def init_tests():
 	"""
 	o = Options()
 	try:
-		o.value("tests_scenario_file")
+		o.value("tests_scenarios_file")
 	except UnknownKeyError:
 		return
 
