@@ -41,8 +41,8 @@ class Group(object):
 		return self.name
 
 	def remove(self):
-		backend.remove_permissions_repository(self._id)
-		backend.remove_permissions_submin(self._id)
+		backend.remove_permissions(self._id)
+		backend.remove_managers(self._id)
 		backend.remove_members_from_group(self._id)
 		backend.remove(self._id)
 		models.vcs.export_auth_group()
@@ -91,11 +91,11 @@ Username is unique and primary key.
 	remove_-functions below must have been called. This happens in the model,
 	so backend designers need not worry about this restriction.
 
-* remove_permissions_repository(groupid)
+* remove_permissions(groupid)
 	Removes repository permissions for group with id *groupid*
 
-* remove_permissions_submin(groupid)
-	Removes submin permissions for group with id *groupid*
+* remove_managers(groupid)
+	Removes group managers with id *groupid*
 
 * remove_members_from_group(groupid)
 	Removes all members of group with id *groupid*

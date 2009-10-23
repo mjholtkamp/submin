@@ -40,13 +40,13 @@ def group_data(groupname):
 
 	return row_dict(cur, row)
 
-def remove_permissions_repository(groupid):
-	backend.execute(backend.db.cursor(), """DELETE FROM permissions_repository
+def remove_permissions(groupid):
+	backend.execute(backend.db.cursor(), """DELETE FROM permissions
 		WHERE subjecttype="group" AND subjectid=?""", (groupid,))
 
-def remove_permissions_submin(groupid):
-	backend.execute(backend.db.cursor(), """DELETE FROM permissions_submin
-		WHERE subjecttype="group" AND subjectid=?""", (groupid,))
+def remove_managers(groupid):
+	backend.execute(backend.db.cursor(), """DELETE FROM managers
+		WHERE managertype="group" AND managerid=?""", (groupid,))
 
 def remove_members_from_group(groupid):
 	backend.execute(backend.db.cursor(), """DELETE FROM group_members
