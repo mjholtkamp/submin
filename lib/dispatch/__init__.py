@@ -63,8 +63,7 @@ def dispatcher(request):
 				details = '<pre>' + details + '</pre>'
 				response = ErrorResponse(str(e), request=request, details=details)
 			else:
-				list = ['<err>' + x + '</err>' for x in list]
-				details = '\n'.join(details)
+				details = '<err>' + details + '</err>'
 				response = XMLStatusResponse('', False, str(e) + details)
 
 	else:
