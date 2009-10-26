@@ -1,5 +1,5 @@
 from ConfigParser import NoOptionError, NoSectionError
-from config.config import Config
+from config.config import Config, MissingConfigData
 import exceptions
 import commands
 import os
@@ -32,7 +32,7 @@ def createTracEnv(repository):
 	svndir = svnbasedir + repository
 	try:
 		path = config.get('backend', 'path')
-	except NoOptionError:
+	except (MissingConfigData, NoOptionError):
 		path = "/bin:/usr/bin:/usr/local/bin:/opt/local/bin"
 
 	cmd =  "PATH='%s' trac-admin '%s' initenv '%s' 'sqlite:db/trac.db' 'svn' '%s'" % \
