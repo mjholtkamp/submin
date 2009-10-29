@@ -1,4 +1,4 @@
-from models.exceptions import UserExistsError
+from submin.models.exceptions import UserExistsError
 
 mock_users = [] # [{'id': 0, 'name': 'test'}]
 mock_notifications = {} # {'reposname': {'allowed': True, 'enabled': False}}

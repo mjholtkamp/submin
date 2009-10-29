@@ -1,14 +1,14 @@
-from dispatch.view import View
-from template.shortcuts import evaluate_main
-from dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse
-from views.error import ErrorResponse
-from models.user import User
-from models.exceptions import UserExistsError, UserPermissionError
-from models.group import Group
-from auth.decorators import *
-from models.options import Options
-from models import validators
-from unicode import uc_str
+from submin.dispatch.view import View
+from submin.template.shortcuts import evaluate_main
+from submin.dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse
+from submin.views.error import ErrorResponse
+from submin.models.user import User
+from submin.models.exceptions import UserExistsError, UserPermissionError
+from submin.models.group import Group
+from submin.auth.decorators import *
+from submin.models.options import Options
+from submin.models import validators
+from submin.unicode import uc_str
 
 class Users(View):
 	@login_required

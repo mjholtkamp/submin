@@ -1,6 +1,6 @@
 mock_groups = {} # {"mock": {'id': 0, 'name': 'mock', 'members': []}}
 
-from models.exceptions import GroupExistsError
+from submin.models.exceptions import GroupExistsError
 ids = 0
 
 def clear_groups():

@@ -1,6 +1,6 @@
-from models.exceptions import UnknownUserError
-from models.options import Options
-from template import Template
+from submin.models.exceptions import UnknownUserError
+from submin.models.options import Options
+from submin.template.template import Template
 import template_commands
 
 def evaluate(templatename, localvars={}):

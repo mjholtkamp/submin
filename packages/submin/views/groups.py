@@ -1,13 +1,13 @@
-from dispatch.view import View
-from template.shortcuts import evaluate_main
-from dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse
-from views.error import ErrorResponse
-from models.user import User
-from models.group import Group
-from models.exceptions import GroupExistsError, MemberExistsError
-from models.exceptions import UnknownGroupError
-from auth.decorators import *
-from models.options import Options
+from submin.dispatch.view import View
+from submin.template.shortcuts import evaluate_main
+from submin.dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse
+from submin.views.error import ErrorResponse
+from submin.models.user import User
+from submin.models.group import Group
+from submin.models.exceptions import GroupExistsError, MemberExistsError
+from submin.models.exceptions import UnknownGroupError
+from submin.auth.decorators import *
+from submin.models.options import Options
 
 class Groups(View):
 	@login_required

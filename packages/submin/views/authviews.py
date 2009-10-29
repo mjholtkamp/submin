@@ -1,12 +1,12 @@
 import os
 
-from dispatch.view import View
-from dispatch.response import Response, Redirect
-from views.error import ErrorResponse
-from template.shortcuts import evaluate
-from config.authz.htpasswd import NoMD5PasswordError
-from models.user import User, UnknownUserError
-from models.options import Options
+from submin.dispatch.view import View
+from submin.dispatch.response import Response, Redirect
+from submin.views.error import ErrorResponse
+from submin.template.shortcuts import evaluate
+from submin.config.authz.htpasswd import NoMD5PasswordError
+from submin.models.user import User, UnknownUserError
+from submin.models.options import Options
 
 class Login(View):
 	def handler(self, request, path):

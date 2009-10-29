@@ -1,5 +1,5 @@
-from template.shortcuts import evaluate
-from dispatch.response import Response
+from submin.template.shortcuts import evaluate
+from submin.dispatch.response import Response
 
 class ErrorResponse(Response):
 	def __init__(self, errormsg, request=None, details=None):

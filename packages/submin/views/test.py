@@ -1,5 +1,5 @@
-from dispatch.view import View
-from dispatch.response import Response
+from submin.dispatch.view import View
+from submin.dispatch.response import Response
 
 class Test(View):
 	def handler(self, req, path):

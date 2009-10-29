@@ -3,7 +3,7 @@ import os
 import sys
 import string
 
-from unicode import uc_str
+from submin.unicode import uc_str
 from library import Library
 
 class UnknownCommandError(Exception):

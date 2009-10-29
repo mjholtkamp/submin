@@ -7,12 +7,12 @@ mock_settings = Mock()
 mock_settings.backend = "mock"
 mock_settings.base_dir = "/"
 
-from models import backend
-from models.user import User
-from models.options import Options
-from models.exceptions import UserExistsError, UnknownUserError, UserPermissionError
-from models.validators import *
-from models.repository import Repository
+from submin.models import backend
+from submin.models.user import User
+from submin.models.options import Options
+from submin.models.exceptions import UserExistsError, UnknownUserError, UserPermissionError
+from submin.models.validators import *
+from submin.models.repository import Repository
 
 class UserTests(unittest.TestCase):
 	def setUp(self):

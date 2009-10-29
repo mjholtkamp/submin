@@ -1,4 +1,4 @@
-from path.path import Path
+from submin.path.path import Path
 import os
 
 class c_apacheconf():
@@ -262,7 +262,7 @@ Apache file created: %(output)s
 
 	def run(self):
 		os.environ['SUBMIN_ENV'] = self.sa.env
-		from models.options import Options
+		from submin.models.options import Options
 		o = Options()
 
 		if len(self.argv) < 1:

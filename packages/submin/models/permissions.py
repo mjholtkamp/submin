@@ -1,7 +1,7 @@
-import models
+from submin import models
 backend = models.backend.get("permissions")
 
-from models.repository import Repository
+from submin.models.repository import Repository
 
 class Permissions(object):
 	def list_paths(self, repository):

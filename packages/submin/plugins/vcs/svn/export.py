@@ -1,10 +1,10 @@
 import codecs
 
-from models.options import Options
-from models.group import Group
+from submin.models.options import Options
+from submin.models.group import Group
 from repository import list as list_repos
-from models.permissions import Permissions
-from models.user import FakeAdminUser
+from submin.models.permissions import Permissions
+from submin.models.user import FakeAdminUser
 
 def export_auth(authtype):
 	"""Export authorization/authentication info for authtype:

@@ -1,6 +1,5 @@
 import os
-from path.path import Path
-from config.authz.authz import UnknownGroupError
+from submin.path.path import Path
 
 class c_initenv():
 	'''Initialize a new enviroment
@@ -129,8 +128,8 @@ If you use Trac, it will be accessible from <http base>/trac.
 			self.init_vars['http_base'] = Path("/")
 
 		# write changes to config
-		import models.options
-		o = models.options.Options()
+		import submin.models.options
+		o = submin.models.options.Options()
 
 		options = {
 			'base_url_submin': self._get_url('submin_url'),
@@ -145,8 +144,8 @@ If you use Trac, it will be accessible from <http base>/trac.
 			o.set_value(key, value)
 
 		# add a user
-		from models.user import User
-		from models.group import Group
+		from submin.models.user import User
+		from submin.models.group import Group
 		
 		if self.init_vars['create_user'] == "yes":
 			# add an admin user

@@ -1,16 +1,16 @@
 from dispatch.response import Response, HTTP404, XMLStatusResponse
 
-from views.error import ErrorResponse
-from views.test import Test
-from views.users import Users
-from views.groups import Groups
-from views.authviews import Login, Logout
-from views.repositories import Repositories
-from views.intro import Intro
-from views.ajax import Ajax
-from models.options import Options
-from models.exceptions import UnknownKeyError
-from dispatch.session import Session
+from submin.views.error import ErrorResponse
+from submin.views.test import Test
+from submin.views.users import Users
+from submin.views.groups import Groups
+from submin.views.authviews import Login, Logout
+from submin.views.repositories import Repositories
+from submin.views.intro import Intro
+from submin.views.ajax import Ajax
+from submin.models.options import Options
+from submin.models.exceptions import UnknownKeyError
+from submin.dispatch.session import Session
 
 classes = {
 	'test': Test,
@@ -33,7 +33,7 @@ def init_tests():
 	except UnknownKeyError:
 		return
 
-	from views.uiscenarios import UIScenarios
+	from submin.views.uiscenarios import UIScenarios
 	classes["uiscenarios"] = UIScenarios
 
 init_tests()

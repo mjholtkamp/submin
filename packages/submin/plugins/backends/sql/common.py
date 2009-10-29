@@ -1,5 +1,5 @@
 import sqlite3
-from models.exceptions import BackendAlreadySetup
+from submin.models.exceptions import BackendAlreadySetup
 
 db = None
 backend_debug = False

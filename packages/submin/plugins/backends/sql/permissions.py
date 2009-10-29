@@ -1,4 +1,4 @@
-import plugins.backends.sql.common as backend
+import submin.plugins.backends.sql.common as backend
 
 def list_paths(repository):
 	cur = backend.db.cursor()

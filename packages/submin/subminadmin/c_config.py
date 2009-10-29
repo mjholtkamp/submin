@@ -1,5 +1,5 @@
-from path.path import Path
-from models.exceptions import BackendAlreadySetup
+from submin.path.path import Path
+from submin.models.exceptions import BackendAlreadySetup
 import os, sys
 
 class c_config():
@@ -27,8 +27,8 @@ Usage:
 	def subcmd_get(self, argv):
 		self.sa.ensure_backend()
 
-		import models.options
-		o = models.options.Options()
+		import submin.models.options
+		o = submin.models.options.Options()
 		if len(argv) == 1:
 			value = o.value(argv[0])
 			self._printkeyvalue(o, argv[0], value, len(argv[0]))
@@ -49,8 +49,8 @@ Usage:
 			self.sa.execute(['help', 'config'])
 			return
 
-		import models.options
-		o = models.options.Options()
+		import submin.models.options
+		o = submin.models.options.Options()
 		o.set_value(argv[0], argv[1])
 
 	def session_salt(self):
@@ -82,7 +82,7 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 
 		# after writing the bootstrap file, we setup all models
 		self.sa.ensure_backend()
-		from models import backend
+		from submin.models import backend
 		try:
 			backend.setup()
 		except BackendAlreadySetup:
@@ -90,9 +90,9 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 
 		# And now we can use the models
 		#from models.options import Options
-		import models.options
+		import submin.models.options
 
-		o = models.options.Options()
+		o = submin.models.options.Options()
 		http_base = ''
 		options = {
 			'base_url_submin': http_base + '/submin',

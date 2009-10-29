@@ -1,6 +1,6 @@
-import models
+from submin import models
 backend = models.backend.get("group")
-from models.exceptions import UnknownGroupError
+from submin.models.exceptions import UnknownGroupError
 
 class Group(object):
 	@staticmethod

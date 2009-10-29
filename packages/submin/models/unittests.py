@@ -6,16 +6,16 @@ from pmock import *
 mock_settings = Mock()
 mock_settings.backend = "mock"
 
-from bootstrap import setSettings
+from submin.bootstrap import setSettings
 setSettings(mock_settings)
 
 model_tests = ["users.UserTests", "groups.GroupTests", "options.OptionTests"]
 
 def suite():
 	s = unittest.TestSuite()
-	import models.tests.options
+	import submin.models.tests.options
 	map(s.addTest, map(unittest.defaultTestLoader.loadTestsFromName,
-		["models.tests.%s" % x for x in model_tests]))
+		["submin.models.tests.%s" % x for x in model_tests]))
 	return s
 
 if False:

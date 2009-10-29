@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from path.path import Path
+from submin.path.path import Path
 import os
-from unicode import uc_str, uc_to_svn, uc_from_svn
+from submin.unicode import uc_str, uc_to_svn, uc_from_svn
 import commands
 import exceptions
-from models.options import Options
+from submin.models.options import Options
 
-from models.repository import DoesNotExistError, PermissionError, VersionError, VCSImportError
+from submin.models.repository import DoesNotExistError, PermissionError, VersionError, VCSImportError
 
 def list():
 	repositories = []
@@ -153,7 +153,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 
 	def commitEmailsEnabled(self):
 		import os
-		from models.options import Options
+		from submin.models.options import Options
 		o = Options()
 
 		reposdir = o.env_path('svn_dir')
@@ -171,7 +171,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 	def enableCommitEmails(self, enable):
 		"""Add or remove our script to/from the post-commit hook"""
 		import os
-		from models.options import Options
+		from submin.models.options import Options
 		o = Options()
 
 		line_altered = False

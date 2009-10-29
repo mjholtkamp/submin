@@ -41,7 +41,7 @@ class XMLResponse(Response):
 
 class XMLStatusResponse(XMLResponse):
 	def __init__(self, command, success, text):
-		from template.shortcuts import evaluate
+		from submin.template.shortcuts import evaluate
 		tvars = {'command': command, 'success': str(success), 'text': text}
 		content = evaluate('ajax/response.xml', tvars)
 
@@ -49,7 +49,7 @@ class XMLStatusResponse(XMLResponse):
 
 class XMLTemplateResponse(XMLResponse):
 	def __init__(self, template, templatevariables):
-		from template.shortcuts import evaluate
+		from submin.template.shortcuts import evaluate
 		content = evaluate(template, templatevariables)
 
 		XMLResponse.__init__(self, content)

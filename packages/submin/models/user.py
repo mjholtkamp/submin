@@ -1,8 +1,8 @@
-import models
+from submin import models
 import validators
 backend = models.backend.get("user")
 
-from models.exceptions import UnknownUserError, UserPermissionError
+from submin.models.exceptions import UnknownUserError, UserPermissionError
 
 class FakeAdminUser(object):
 	"""Sometimes you have no session_user but you want to make a change to

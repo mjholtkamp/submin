@@ -1,5 +1,5 @@
-import plugins.backends.sql.common as backend
-from models.exceptions import UnknownKeyError
+import submin.plugins.backends.sql.common as backend
+from submin.models.exceptions import UnknownKeyError
 
 def value(key):
 	cur = backend.db.cursor()

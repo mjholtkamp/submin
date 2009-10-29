@@ -1,4 +1,4 @@
-from path.path import Path
+from submin.path.path import Path
 import os
 
 class c_unixperms():
@@ -30,7 +30,7 @@ This should also remove possible following warnings.
 		self._fix('')
 
 	def _fix(self, unixuser):
-		from models.options import Options
+		from submin.models.options import Options
 		o = Options()
 
  # 		base_dir = Path(self.sa.env)

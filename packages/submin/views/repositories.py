@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
-from template.shortcuts import evaluate_main
-from dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse, Redirect
-from views.error import ErrorResponse
-from dispatch.view import View
-from models.user import User
-from models.group import Group
-from models.repository import Repository, DoesNotExistError, PermissionError
-from models.trac import Trac, UnknownTrac, createTracEnv
-from models.options import Options
-from models.exceptions import UnknownKeyError
-from models.permissions import Permissions
-from auth.decorators import login_required, admin_required
-from path.path import Path
-from unicode import uc_url_decode
+from submin.template.shortcuts import evaluate_main
+from submin.dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse, Redirect
+from submin.views.error import ErrorResponse
+from submin.dispatch.view import View
+from submin.models.user import User
+from submin.models.group import Group
+from submin.models.repository import Repository, DoesNotExistError, PermissionError
+from submin.models.trac import Trac, UnknownTrac, createTracEnv
+from submin.models.options import Options
+from submin.models.exceptions import UnknownKeyError
+from submin.models.permissions import Permissions
+from submin.auth.decorators import login_required, admin_required
+from submin.path.path import Path
+from submin.unicode import uc_url_decode
 
 class Repositories(View):
 	@login_required

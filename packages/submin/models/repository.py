@@ -1,5 +1,5 @@
 import os
-import models
+from submin import models
 systems = models.vcs.list()
 
 class DoesNotExistError(Exception):

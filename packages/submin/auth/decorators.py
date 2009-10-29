@@ -1,7 +1,7 @@
 import os
-from dispatch.response import Response, Redirect
-from views.error import ErrorResponse
-from models.options import Options
+from submin.dispatch.response import Response, Redirect
+from submin.views.error import ErrorResponse
+from submin.models.options import Options
 
 class Unauthorized(Exception):
 	pass

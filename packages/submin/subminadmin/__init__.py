@@ -1,1 +1,1 @@
-from subminadmin import SubminAdmin
+from submin.subminadmin.subminadmin import SubminAdmin

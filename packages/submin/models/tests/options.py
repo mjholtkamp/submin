@@ -5,8 +5,8 @@ mock_settings = Mock()
 mock_settings.backend = "mock"
 mock_settings.base_dir = "/submin"
 
-from models import backend
-from models.options import Options
+from submin.models import backend
+from submin.models.options import Options
 
 class OptionTests(unittest.TestCase):
 	def setUp(self):

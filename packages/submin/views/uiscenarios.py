@@ -1,8 +1,8 @@
-from template.shortcuts import evaluate
-from dispatch.response import Response
-from dispatch.view import View
-from auth.decorators import *
-from models.uiscenarios import UIScenarios as UIScenariosModel
+from submin.template.shortcuts import evaluate
+from submin.dispatch.response import Response
+from submin.dispatch.view import View
+from submin.auth.decorators import *
+from submin.models.uiscenarios import UIScenarios as UIScenariosModel
 
 class UIScenarios(View):
 	@admin_required

@@ -1,7 +1,7 @@
 import os
-import models
-from path.path import Path
-from models.exceptions import UnknownKeyError
+from submin import models
+from submin.path.path import Path
+from submin.models.exceptions import UnknownKeyError
 
 backend = models.backend.get("options")
 
@@ -19,7 +19,7 @@ class Options(object):
 		return Path(self.value(key), append_slash=True)
 
 	def env_path(self, key=None):
-		from bootstrap import settings # for base_dir
+		from submin.bootstrap import settings # for base_dir
 		base = Path(settings.base_dir)
 		if key == None:
 			return base

@@ -1,7 +1,7 @@
 import os
-from models.exceptions import UserExistsError, GroupExistsError
-from models.exceptions import MemberExistsError
-from models.user import FakeAdminUser
+from submin.models.exceptions import UserExistsError, GroupExistsError
+from submin.models.exceptions import MemberExistsError
+from submin.models.user import FakeAdminUser
 
 class c_convert():
 	'''Create a new configuration from an old-style config
@@ -25,7 +25,7 @@ Usage:
 		self.sa.execute(['config', 'defaults'])
 
 	def write_options(self, config):
-		from models.options import Options
+		from submin.models.options import Options
 		o = Options()
 
 		options = {
@@ -44,7 +44,7 @@ Usage:
 			o.set_value(key, value)
 
 	def write_users(self, config):
-		from models.user import User
+		from submin.models.user import User
 
 		# get filename
 		htpasswd_file = config.get('svn', 'access_file')
@@ -97,8 +97,8 @@ Usage:
 						u.set_notification(repos, allowed, enabled, fake_admin)
 
 	def write_groups(self, config):
-		from models.group import Group
-		from models.user import User
+		from submin.models.group import Group
+		from submin.models.user import User
 
 		# get filename
 		authz_file = config.get('svn', 'authz_file')
@@ -125,7 +125,7 @@ Usage:
 					u.is_admin = True
 
 	def write_permissions(self, config):
-		from models.permissions import Permissions
+		from submin.models.permissions import Permissions
 		p = Permissions()
 
 		# get filename

@@ -5,10 +5,10 @@ mock_settings = Mock()
 mock_settings.backend = "mock"
 mock_settings.base_dir = "/tmp/submin"
 
-from models import backend
-from models.group import Group
-from models.options import Options
-from models.exceptions import GroupExistsError, UnknownGroupError
+from submin.models import backend
+from submin.models.group import Group
+from submin.models.options import Options
+from submin.models.exceptions import GroupExistsError, UnknownGroupError
 
 class GroupTests(unittest.TestCase):
 	def setUp(self):
@@ -62,7 +62,7 @@ class GroupTests(unittest.TestCase):
 		self.assertEquals(foo.members(), [])
 
 	def testAddMember(self):
-		from models.user import User
+		from submin.models.user import User
 		User.add("testUser")
 		Group.add("testGroup")
 		u = User("testUser")
@@ -72,7 +72,7 @@ class GroupTests(unittest.TestCase):
 		self.assert_("testUser" in g.members())
 
 	def testRemoveMember(self):
-		from models.user import User
+		from submin.models.user import User
 		User.add("testUser1")
 		User.add("testUser2")
 		Group.add("testGroup")

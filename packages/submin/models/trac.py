@@ -1,8 +1,8 @@
 import exceptions
 import commands
 import os
-from models.options import Options
-from models.exceptions import UnknownKeyError
+from submin.models.options import Options
+from submin.models.exceptions import UnknownKeyError
 
 class UnknownTrac(Exception):
 	def __init__(self, name):

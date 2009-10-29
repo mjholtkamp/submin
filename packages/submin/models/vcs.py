@@ -1,4 +1,4 @@
-from bootstrap import fimport
+from submin.bootstrap import fimport
 
 class VCSException(Exception):
 	pass
@@ -13,8 +13,8 @@ def list():
 def get(vcstype, model):
 	"""Gets the vcs-backend for a certain type and model."""
 	try:
-		backend = fimport("plugins.vcs.%s.%s" % (vcstype, model),
-			       "plugins.vcs.%s" % vcstype)
+		backend = fimport("submin.plugins.vcs.%s.%s" % (vcstype, model),
+			       "submin.plugins.vcs.%s" % vcstype)
 	except ImportError, e:
 		raise VCSException(e)
 
@@ -38,10 +38,10 @@ def export_auth_repository(vcstype):
 	export_auth(vcstype, "repository")
 	
 def export_auth(vcstype, authtype):
-	try:
-		backend = fimport("plugins.vcs.%s.%s" % (vcstype, "export"),
-			       "plugins.vcs.%s" % vcstype)
-	except ImportError, e:
-		raise VCSException(e)
+	#try:
+	backend = fimport("submin.plugins.vcs.%s.%s" % (vcstype, "export"),
+			   "submin.plugins.vcs.%s" % vcstype)
+	#except ImportError, e:
+	#	raise VCSException(e)
 
 	backend.export_auth(authtype)

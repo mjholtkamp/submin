@@ -1,7 +1,7 @@
-from template.shortcuts import evaluate_main
-from dispatch.response import Response, XMLStatusResponse
-from dispatch.view import View
-from auth.decorators import *
+from submin.template.shortcuts import evaluate_main
+from submin.dispatch.response import Response, XMLStatusResponse
+from submin.dispatch.view import View
+from submin.auth.decorators import *
 
 class Intro(View):
 	@login_required

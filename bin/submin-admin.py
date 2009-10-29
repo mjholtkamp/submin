@@ -19,7 +19,8 @@ class App(object):
 
 		path.append(self.systemlibdir())
 
-		from subminadmin import SubminAdmin
+		import submin
+		from submin.subminadmin import SubminAdmin
 
 		sa = SubminAdmin(argv)
 		sa.run()

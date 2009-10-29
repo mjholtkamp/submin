@@ -1,8 +1,8 @@
 import sys
 import os
 
-from path.path import Path
-from models import backend
+from submin.path.path import Path
+from submin.models import backend
 
 class SubminAdmin:
 	def __init__(self, argv):

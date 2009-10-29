@@ -1,10 +1,10 @@
-from dispatch.view import View
-from dispatch.response import *
-from auth.decorators import *
-from models.user import User
-from models.group import Group
-from models.repository import Repository
-from models.options import Options
+from submin.dispatch.view import View
+from submin.dispatch.response import *
+from submin.auth.decorators import *
+from submin.models.user import User
+from submin.models.group import Group
+from submin.models.repository import Repository
+from submin.models.options import Options
 
 class Ajax(View):
 	"""Ajax view, for global ajax requests, like list users/groups/repositories"""

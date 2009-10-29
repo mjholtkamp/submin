@@ -1,8 +1,8 @@
 import cPickle
 from distutils.dep_util import newer
 
-from models.options import Options
-from path.path import Path
+from submin.models.options import Options
+from submin.path.path import Path
 
 class UIScenarios(object):
 	"""Create a list of sections with lists of options.
