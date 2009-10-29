@@ -13,7 +13,7 @@ import os
 import sys
 import shutil
 
-class Main():
+class Main(object):
 	def __init__(self):
 		if len(sys.argv) < 2:
 			self.usage()
