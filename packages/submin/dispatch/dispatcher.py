@@ -1,4 +1,4 @@
-from dispatch.response import Response, HTTP404, XMLStatusResponse
+from submin.dispatch.response import Response, HTTP404, XMLStatusResponse
 
 from submin.views.error import ErrorResponse
 from submin.views.test import Test

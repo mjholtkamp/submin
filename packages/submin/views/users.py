@@ -190,7 +190,7 @@ class Users(View):
 				'Changed password for user %s' % user.name)
 		except Exception, e:
 			return XMLStatusResponse('setPassword', False,
-				'Could not change password of user %s' % user.name)
+				'Could not change password of user %s: %s' % (user.name, e))
 
 	@admin_required
 	def addToGroup(self, req, user):
