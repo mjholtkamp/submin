@@ -9,7 +9,7 @@ def application(environ, start_response):
 	sys.path.append(os.path.join(submin_dir, 'lib'))
 	os.chdir(submin_www_dir) # same behaviour as CGI script
 
-	from bootstrap import SubminInstallationCheck
+	from submin.bootstrap import SubminInstallationCheck
 	check = SubminInstallationCheck(submin_dir)
 	if not check.ok:
 		start_response("500", [])
@@ -18,12 +18,12 @@ def application(environ, start_response):
 
 	os.environ['SUBMIN_ENV'] = environ['SUBMIN_ENV']
 
-	from models import backend
+	from submin.models import backend
 	backend.open()
 
 	try:
-		from dispatch.wsgirequest import WSGIRequest
-		from dispatch.dispatcher import dispatcher
+		from submin.dispatch.wsgirequest import WSGIRequest
+		from submin.dispatch.dispatcher import dispatcher
 
 		req = WSGIRequest(environ)
 		response = dispatcher(req)

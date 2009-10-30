@@ -6,20 +6,20 @@ submin_www_dir = os.path.dirname(__file__)
 submin_dir = os.path.dirname(submin_www_dir)
 sys.path.append(os.path.join(submin_dir, 'lib'))
 
-from bootstrap import SubminInstallationCheck
+from submin.bootstrap import SubminInstallationCheck
 check = SubminInstallationCheck(submin_dir)
 if not check.ok:
 	print "Status: 500\r\n\r\n",
 	print check.error_page()
 	sys.exit(0)
 
-from models import backend
+from submin.models import backend
 backend.open()
 
 try:
 	import cgitb; cgitb.enable()
-	from dispatch.cgirequest import CGIRequest
-	from dispatch.dispatcher import dispatcher
+	from submin.dispatch.cgirequest import CGIRequest
+	from submin.dispatch.dispatcher import dispatcher
 
 	req = CGIRequest()
 	response = dispatcher(req)
