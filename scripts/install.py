@@ -15,7 +15,7 @@ import shutil
 
 class Main(object):
 	def __init__(self):
-		if len(sys.argv) < 2:
+		if len(sys.argv) < 3:
 			self.usage()
 			sys.exit(1)
 
@@ -24,23 +24,26 @@ class Main(object):
 			self.root = True
 
 		self.prefix = sys.argv[1]
+		self.python_dest_dir = sys.argv[2]
 		self.final_prefix = self.prefix
 		self.force = False
 		for argv in sys.argv[2:]:
-			if argv.startswith("--final="):
-				self.final_prefix = argv[len("--final="):]
-
 			if argv == "--force":
 				self.force = True
 
 		self.share = os.path.join(self.prefix, "share/submin")
-		self.final_share = os.path.join(self.final_prefix, "share/submin")
 		self.submin_admin = os.path.join(self.prefix, "bin/submin-admin")
 
 		# check paths
-		if (os.path.exists(self.share) or os.path.exists(self.submin_admin)) \
+		if (os.path.exists(self.share) or os.path.exists(self.submin_admin) \
+					or os.path.exists(self.python_dest_dir)) \
 					and not self.force:
-			print "Found previous installation at %s" % self.prefix
+			print "Found previous installation in one of these places:"
+			to_be_deleted = [self.share, self.python_dest_dir]
+			for dir in to_be_deleted:
+				print "  ", dir
+			print
+				
 			print "To overwrite use: ",
 			for argv in sys.argv:
 				print argv,
@@ -63,23 +66,30 @@ class Main(object):
 			os.chown(dst, uid, gid)
 
 	def usage(self):
-		print """
-Usage: %s <installdir> [--force] [--final=<installdir2>]
-	   --force     install, even if <installdir> exists
-	   --replace   install into installdir, but prepare files because their
-				   final installation directory is installdir2. This is used
-				   for example by creating a debian package.
+		print """Usage: %s <prefix> <python-dir> [--force]
+
+   Install static files in <prefix>/share/man, <prefix>/share/submin and
+   <prefix>/bin. Install python modules in <python-dir> (whole path needed).
+
+Example values:
+       <prefix>     /usr
+       <python-dir> /usr/local/pythonX.Y/python-submin
+
+Options:
+       --force      install, even if <installdir> exists
 	""" % sys.argv[0]
 
-	def filereplace(self, name, searchstring, replacestring):
-		f = file(name, "r")
-		lines = f.readlines()
-		f.close()
-		f = file(name, "w")
-		for line in lines:
-			f.write(line.replace(searchstring, replacestring))
-
 	def copy_paths(self):
+		if self.force:
+			try:
+				shutil.rmtree(self.share)
+			except OSError:
+				pass
+			try:
+				shutil.rmtree(self.python_dest_dir)
+			except OSError:
+				pass
+
 		self.dirname = os.path.dirname(sys.argv[0])
 		srcdir = os.path.join(self.dirname, "..")
 		os.chdir(srcdir)
@@ -89,33 +99,22 @@ Usage: %s <installdir> [--force] [--final=<installdir2>]
 		if os.path.exists(self.share):
 			shutil.rmtree(self.share)
 
-		for d in ["css", "img", "js"]:
-			shutil.copytree(os.path.join("www", d), \
-							os.path.join(self.share, "www", d))
+		for d in ["www", "templates", "hooks"]:
+			shutil.copytree(os.path.join("static", d), \
+							os.path.join(self.share, d))
 
-		for d in ["lib", "templates"]:
-			shutil.copytree(d, os.path.join(self.share, d))
+		shutil.copytree("packages/submin", self.python_dest_dir)
 
-		for src in ["www/submin.wsgi", "www/submin.cgi"]:
-			self.install(src, os.path.join(self.share, "www/"), mode=0755)
-		for src in ["bin/svn/commit-email.pl", "bin/svn/post-commit.py"]:
-			self.install(src, os.path.join(self.share, src), mode=0755)
-
-		# fix hardcoded paths in binaries
-		self.filereplace(self.submin_admin, "_SUBMIN_LIB_DIR_",
-			os.path.join(self.final_share, "lib"))
-		self.filereplace(os.path.join(self.share,
-				"lib/subminadmin/subminadmin.py"),
-			"_SUBMIN_SHARE_DIR_",
-			self.final_share)
-		self.filereplace(os.path.join(self.share, "bin/svn/post-commit.py"),
-			"_SUBMIN_LIB_DIR_",
-			os.path.join(self.final_share, "lib"))
+#		for src in ["www/submin.wsgi", "www/submin.cgi"]:
+#			self.install(src, os.path.join(self.share, "www/"), mode=0755)
+#		for src in ["bin/svn/commit-email.pl", "bin/svn/post-commit.py"]:
+#			self.install(src, os.path.join(self.share, src), mode=0755)
 
 		self.remove_unwanted()
 
 	def remove_unwanted(self):
 		os.path.walk(self.share, self.remover, self)
+		os.path.walk(self.python_dest_dir, self.remover, self)
 
 	def remover(self, arg, dirname, names):
 		if ".svn" in names:
