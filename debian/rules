@@ -10,6 +10,8 @@ clean:
 	dh_testroot
 	dh_clean
 
+	python setup.py clean --all
+
 install: build
 	dh_testdir
 	dh_testroot
