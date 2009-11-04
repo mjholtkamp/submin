@@ -116,20 +116,28 @@ Apache file created: %(output)s
 		apache_conf_cgi = '''
     <IfModule mod_cgi.c>
         Alias "%(submin base url)s" "%(www dir)s"
+		ScriptAlias "/submin.cgi" "%(cgi-bin dir)s/submin.cgi"
+		<Directory "%(cgi-bin dir)s">
+            Order allow,deny
+            Allow from all
+
+            Options ExecCGI FollowSymLinks
+            AddHandler cgi-script py cgi pl
+
+            SetEnv SUBMIN_ENV %(submin env)s
+		</Directory>
         <Directory "%(www dir)s">
             Order allow,deny
             Allow from all
-            Options ExecCGI FollowSymLinks
-            AddHandler cgi-script py cgi pl
-            SetEnv SUBMIN_ENV %(submin env)s
+            Options FollowSymLinks
 
             RewriteEngine on
             RewriteBase %(submin base url)s
 
             RewriteCond %(REQ_FILENAME)s !-f
-            RewriteRule ^(.+)$ submin.cgi/$1
+            RewriteRule ^(.+)$ /submin.cgi/$1
 
-            RewriteRule ^/?$ submin.cgi/
+            RewriteRule ^/?$ /submin.cgi/
         </Directory>
     </IfModule>
     <IfModule !mod_cgi.c>
@@ -276,6 +284,7 @@ Apache file created: %(output)s
 		self.init_vars = {
 			'submin env': self.sa.env,
 			'www dir': self.sa.basedir_www,
+			'cgi-bin dir': os.path.join(self.sa.env, 'cgi-bin'),
 			'submin base url': o.value('base_url_submin'),
 			'svn base url': o.value('base_url_svn'),
 			'trac base url': o.value('base_url_trac'),

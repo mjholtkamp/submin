@@ -104,6 +104,27 @@ If you use Trac, it will be accessible from <http base>/trac.
 						str(directory)
 				raise e
 
+	def generate_cgi(self):
+		fname = self.env + "cgi-bin" + "submin.cgi"
+		fp = open(str(fname), "w+")
+
+		suggestion = '/path/to/submin'
+		if os.environ.has_key("PYTHONPATH"):
+			suggestion = os.path.abspath(os.environ["PYTHONPATH"].split(":")[0])
+
+		fp.write("""#!/usr/bin/env python
+
+# If you installed submin in a non-standard path, uncomment the two lines below
+# and insert your submin path.
+#import sys
+#sys.path.append("%s")
+
+from submin.dispatch.cgirunner import run
+run()
+""" % suggestion)
+		fp.close()
+		os.chmod(str(fname), 0755)
+
 	def create_env(self):
 		"""This is called when all info is gathered"""
 		for key, value in self.defaults.iteritems():
@@ -116,10 +137,11 @@ If you use Trac, it will be accessible from <http base>/trac.
 			self.create_dir(self.init_vars['conf_dir'])
 			self.create_dir(self.init_vars['trac_dir'])
 			self.create_dir(Path('auth'))
-			self.create_dir(Path('static'))
+			self.create_dir(Path('cgi-bin'))
 		except OSError:
 			return # already printed error message
 
+		self.generate_cgi()
 		self.sa.execute(['config', 'defaults'])
 
 		# check http_base
