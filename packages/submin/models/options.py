@@ -27,14 +27,14 @@ class Options(object):
 		path = Path(self.value(key))
 		if path.absolute:
 			return path
-		
+
 		return base + path
 
 	def static_path(self, subdir):
 		# __file__ returns <submin-static-dir>/lib/models/options.py
-		base_lib = os.path.dirname(os.path.dirname(__file__))
-		base = Path(os.path.dirname(base_lib))
-		
+		base_lib = os.path.dirname(__file__)
+		base = Path(os.path.dirname(base_lib)) + 'static'
+
 		return base + subdir
 
 __doc__ = """

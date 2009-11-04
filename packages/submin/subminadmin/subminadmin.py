@@ -124,7 +124,7 @@ Use '?' or 'help' for help on commands.
 		# Basefile will contain <basedir>/lib/subminadmin/__init__.py
 		subminadmin_basedir = basefile.dirname()
 		basedir_lib = os.path.dirname(subminadmin_basedir)
-		basedir = Path(os.path.dirname(basedir_lib))
+		basedir = Path(basedir_lib) + 'static'
 		basedir_www = basedir + 'www'
 		self.basedir = basedir
 		self.basedir_lib = Path(basedir_lib)

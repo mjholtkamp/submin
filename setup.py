@@ -40,6 +40,17 @@ def find_data_files(directory, exclude_dirs=()):
 				[os.path.join(path, name) for name in files]))
 	return data_files
 
+def find_package_data(directory, exclude_dirs=()):
+	data_files = []
+	for path, dirs, files in os.walk(directory):
+		if any(fnmatch.fnmatchcase(path, pattern) for pattern in exclude_dirs):
+			continue
+		if files:
+			share_name = path.replace(directory.rstrip(os.path.sep),
+					"static", 1) # Hack to force correct install path
+			data_files += [os.path.join(share_name, name) for name in files]
+	return data_files
+
 def get_version():
 	sys.path.append("packages")
 	version = __import__("submin").VERSION
@@ -54,7 +65,10 @@ setup(name='Submin',
 	url='http://www.supermind.nl/submin/',
 	packages=find_packages("packages", exclude=[".svn"]),
 	package_dir={"submin": "packages/submin"},
-	data_files=find_data_files("static", exclude_dirs=["*.svn*"]) + [
+	package_data={
+		"submin": find_package_data("packages/submin/static", ["*.svn*"]),
+	},
+	data_files=[
 		("share/man/man1", ("man/submin-admin.1",)),
 	],
 	scripts=["bin/submin-admin.py"],
