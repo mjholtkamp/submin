@@ -3,20 +3,19 @@ import sys
 import os
 
 def application(environ, start_response):
-	# __file__ contains <submin-dir>/www/submin.wsgi
+	# __file__ contains <submin-dir>/static/www/submin.wsgi
 	submin_www_dir = os.path.dirname(__file__)
-	submin_dir = os.path.dirname(submin_www_dir)
-	sys.path.append(os.path.join(submin_dir, 'lib'))
+	submin_static_dir = os.path.dirname(submin_www_dir)
+	submin_dir = os.path.dirname(submin_static_dir)
 	os.chdir(submin_www_dir) # same behaviour as CGI script
+
+	os.environ['SUBMIN_ENV'] = environ['SUBMIN_ENV']
 
 	from submin.bootstrap import SubminInstallationCheck
 	check = SubminInstallationCheck(submin_dir)
 	if not check.ok:
-		start_response("500", [])
-		return check.error_page()
-		sys.exit(0)
-
-	os.environ['SUBMIN_ENV'] = environ['SUBMIN_ENV']
+		start_response("500 Not Ok", [])
+		return check.error_page().encode("utf-8")
 
 	from submin.models import backend
 	backend.open()
