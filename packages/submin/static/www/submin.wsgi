@@ -9,13 +9,13 @@ def application(environ, start_response):
 	submin_dir = os.path.dirname(submin_static_dir)
 	os.chdir(submin_www_dir) # same behaviour as CGI script
 
-	os.environ['SUBMIN_ENV'] = environ['SUBMIN_ENV']
-
 	from submin.bootstrap import SubminInstallationCheck
-	check = SubminInstallationCheck(submin_dir)
+	check = SubminInstallationCheck(submin_dir, environ)
 	if not check.ok:
 		start_response("500 Not Ok", [])
 		return check.error_page().encode("utf-8")
+
+	os.environ['SUBMIN_ENV'] = environ['SUBMIN_ENV']
 
 	from submin.models import backend
 	backend.open()

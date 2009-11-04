@@ -48,18 +48,21 @@ def setSettings(new_settings):
 	settings.setSettings(new_settings)
 
 class SubminInstallationCheck(object):
-	def __init__(self, submin_dir):
+	def __init__(self, submin_dir, environ=None):
 		self.submin_dir = submin_dir
 		self.new_env = None
 		self.old_env = None
 		self.check_env()
 		self.ok = self.new_env and not self.old_env
+		self.environ = os.environ
+		if environ:
+			self.environ = environ
 	
 	def check_env(self):
-		if os.environ.has_key('SUBMIN_ENV'):
-			self.new_env = os.environ['SUBMIN_ENV']
-		if os.environ.has_key('SUBMIN_CONF'):
-			self.old_env = os.environ['SUBMIN_CONF']
+		if self.environ.has_key('SUBMIN_ENV'):
+			self.new_env = self.environ['SUBMIN_ENV']
+		if self.environ.has_key('SUBMIN_CONF'):
+			self.old_env = self.environ['SUBMIN_CONF']
 
 	def error_page(self):
 		from template.template import Template
