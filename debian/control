@@ -6,10 +6,11 @@ Standards-Version: 3.6.1
 Build-Depends: python-central, debhelper(>= 5)
 XS-Python-Version: all
 
-Package: submin
+Package: submin2
 Architecture: all
 Depends: python-subversion, libapache2-svn, ${python:Depends}
 Recommends: libapache2-mod-python | libapache2-mod-wsgi
+Conflicts: submin
 XB-Python-Version: ${python:Versions}
 Description: A web admin interface for local svn repositories
  Submin provides a web-based admin interface to your svn repositories.
