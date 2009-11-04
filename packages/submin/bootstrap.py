@@ -52,11 +52,13 @@ class SubminInstallationCheck(object):
 		self.submin_dir = submin_dir
 		self.new_env = None
 		self.old_env = None
-		self.check_env()
-		self.ok = self.new_env and not self.old_env
+
 		self.environ = os.environ
 		if environ:
 			self.environ = environ
+
+		self.check_env()
+		self.ok = self.new_env and not self.old_env
 	
 	def check_env(self):
 		if self.environ.has_key('SUBMIN_ENV'):
