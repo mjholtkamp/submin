@@ -4,7 +4,7 @@ from submin.dispatch.view import View
 from submin.dispatch.response import Response, Redirect
 from submin.views.error import ErrorResponse
 from submin.template.shortcuts import evaluate
-from submin.config.authz.htpasswd import NoMD5PasswordError
+from submin.models.exceptions import NoMD5PasswordError
 from submin.models.user import User, UnknownUserError
 from submin.models.options import Options
 
