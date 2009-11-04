@@ -15,7 +15,8 @@ install: build
 	dh_testroot
 	dh_installdirs
 
-	python scripts/install.py debian/submin/usr debian/submin/usr/share/pyshared/submin --force
+	python setup.py install \
+        --root=$(CURDIR)/debian/submin
 
 binary-indep: build install
 	dh_testdir
