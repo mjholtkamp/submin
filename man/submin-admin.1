@@ -1,23 +1,35 @@
-.TH Submin-admin 1 "March 2008" "Submin admin tool" "User Manuals"
+.TH Submin-admin 1 "November 2009" "Submin admin tool" "User Manuals"
 .SH NAME 
 submin-admin \- Submin administration tool
 .SH SYNOPSIS
 .B submin-admin
-.I command
-[
-.I options
-]
+.I env
 
 .B submin-admin
+.I env
 help
 [
 .I command
+]
+
+.B submin-admin
+.I env
+.I command
+[
+.I options
 ]
 
 .SH OVERVIEW
 Submin is a web-based adminstration interface for subversion. Submin-admin
 is the administration tool to create a new Submin environment.
 
-Please use the `help' command of submin-admin to access the built-in tool
+The directory
+.I env
+is the Submin environment, default /var/lib/submin. Without any arguments, this
+enters an interactive shell. The `help' command shows a list of commands and
+their usage. The `help' command also accepts optional arguments, to give
+detailed information about that argument.
+
+Please use the `help' command of submin-admin to access the built-in
 documentation.
 
