@@ -214,7 +214,7 @@ Apache file created: %(output)s
 		conf = '''
             # Authentication
             AuthBasicProvider dbd
-            AuthDBDUserPWQuery "SELECT password FROM users WHERE name='%%s'"
+            AuthDBDUserPWQuery "SELECT password FROM users WHERE name=%%s"
 ''' % vars
 		return conf
 
