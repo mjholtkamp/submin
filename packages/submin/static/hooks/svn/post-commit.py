@@ -22,6 +22,7 @@ def main():
 	from sys import argv, path
 	import os
 	path.append('_SUBMIN_LIB_DIR_')
+	interpreter = "perl"
 	scriptname = 'commit-email.pl'
 	scriptdir = os.path.dirname(argv[0])
 	env = 'SUBMIN_LIB_DIR'
@@ -36,14 +37,14 @@ def main():
 	repospath = argv[2]
 	rev = argv[3]
 
-	from models import backend
+	from submin.models import backend
 	backend.open()
 
-	from models.options import Options
+	from submin.models.options import Options
 	opts = Options()
-	bindir = opts.static_path("bin")
+	bindir = opts.static_path("hooks") + 'svn'
 
-	from models.user import User, FakeAdminUser
+	from submin.models.user import User, FakeAdminUser
 	userlist = [User(name) for name in User.list(FakeAdminUser())]
 
 	n = buildNotifications(userlist)
@@ -54,7 +55,7 @@ def main():
 
 	mailer = bindir + scriptname
 	for email in  n[repos]:
-		os.system("%s '%s' '%s' -s '[%s]' '%s'" % (mailer, repospath, rev, repos, email))
+		os.system("%s %s '%s' '%s' -s '[%s]' '%s'" % (interpreter, mailer, repospath, rev, repos, email))
 
 if __name__ == "__main__":
 	main()

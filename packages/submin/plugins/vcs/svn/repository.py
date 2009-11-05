@@ -177,7 +177,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		line_altered = False
 		reposdir = o.env_path('svn_dir')
 		hook = reposdir + self.name + 'hooks' + 'post-commit'
-		bindir = o.static_path('bin')
+		bindir = o.static_path('hooks') + 'svn'
 		fullpath = bindir + 'post-commit.py'
 		base_env = o.env_path()
 
