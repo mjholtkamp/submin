@@ -40,17 +40,18 @@ else:
 	del sys.argv[idx]
 
 def main():
-	paths = "lib"
+	libprefix = "packages"
+	paths = libprefix
 	if len(sys.argv) > 1:
 		paths = ''
 		for path in sys.argv[1:]:
-			paths += "%s " % (path.startswith("lib") and path or os.path.join("lib", path))
+			paths += "%s " % (path.startswith(libprefix) and path or os.path.join(libprefix, path))
 
 	cmd = "find %s -name unittests.py" % paths
 	(exitstatus, outtext) = commands.getstatusoutput(cmd)
 
 	# Most modules assume they have lib in the import-path.
-	sys.path.insert(0, "lib")
+	sys.path.insert(0, libprefix)
 
 	if use_coverage:
 		cov.start() # Starting here to avoid bin/runtest to show up in coverage-report
@@ -61,7 +62,7 @@ def main():
 		print "Adding %s to the test-suite" % file
 
 		# transform filename to module name
-		modname = file.replace('/', '.')[4:-3] # skip `lib.', up till `.py'
+		modname = file.replace('/', '.')[len(libprefix + "."):-3] # skip `libprefix.', up till `.py'
 		module = __import__(modname, [], [], '.'.join(modname.split('.')[:-1]))
 		if hasattr(module, 'suite'):
 			suite.addTest(module.suite())
