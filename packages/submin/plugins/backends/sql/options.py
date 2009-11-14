@@ -20,6 +20,6 @@ def options():
 	backend.execute(cur, "SELECT key, value FROM options")
 	row = cur.fetchall()
 	if not row:
-		return {}
+		return []
 
 	return row
