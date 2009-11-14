@@ -23,10 +23,10 @@ def group_data(groupname):
 		return None
 	return mock_groups[groupname]
 
-def remove_permissions_repository(groupid):
+def remove_permissions(groupid):
 	pass
 
-def remove_permissions_submin(groupid):
+def remove_managers(groupid):
 	pass
 
 def remove_members_from_group(groupid):
