@@ -178,6 +178,11 @@ run()
 			print "\nAdded an admin user with password '%s'\n" % password
 
 		self.sa.execute(['unixperms', 'fix'])
+		confdir = self.env + 'conf'
+		cgiconf = self.env + 'conf' + 'apache.cgi.conf'
+		wsgiconf = self.env + 'conf' + 'apache.wsgi.conf'
+		self.sa.execute(['apacheconf', 'create', 'cgi', str(cgiconf)])
+		self.sa.execute(['apacheconf', 'create', 'wsgi', str(wsgiconf)])
 
 	def _get_url(self, key):
 		p = self.init_vars[key]
