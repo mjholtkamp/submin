@@ -113,10 +113,17 @@ Apache file created: %(output)s
 ''' % self.init_vars
 
 	def _apache_conf_cgi(self, vars):
+		import os
+		if os.environ.has_key('PYTHONPATH'):
+			vars['setenv_pythonpath'] = 'SetEnv PYTHONPATH %s' % os.environ['PYTHONPATH']
+		else:
+			vars['setenv_pythonpath'] = ''
+
 		apache_conf_cgi = '''
     <IfModule mod_cgi.c>
-        Alias "%(submin base url)s" "%(www dir)s"
-		ScriptAlias "/submin.cgi" "%(cgi-bin dir)s/submin.cgi"
+		# first define scriptalias, otherwise the Alias will override all
+		ScriptAlias "%(submin base url)s/submin.cgi" "%(cgi-bin dir)s/submin.cgi"
+		Alias "%(submin base url)s" "%(www dir)s"
 		<Directory "%(cgi-bin dir)s">
             Order allow,deny
             Allow from all
@@ -125,6 +132,7 @@ Apache file created: %(output)s
             AddHandler cgi-script py cgi pl
 
             SetEnv SUBMIN_ENV %(submin env)s
+			%(setenv_pythonpath)s
 		</Directory>
         <Directory "%(www dir)s">
             Order allow,deny
@@ -135,9 +143,9 @@ Apache file created: %(output)s
             RewriteBase %(submin base url)s
 
             RewriteCond %(REQ_FILENAME)s !-f
-            RewriteRule ^(.+)$ /submin.cgi/$1
+            RewriteRule ^(.+)$ submin.cgi/$1
 
-            RewriteRule ^/?$ /submin.cgi/
+            RewriteRule ^$ submin.cgi/
         </Directory>
     </IfModule>
     <IfModule !mod_cgi.c>
