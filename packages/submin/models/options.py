@@ -3,17 +3,17 @@ from submin import models
 from submin.path.path import Path
 from submin.models.exceptions import UnknownKeyError
 
-backend = models.backend.get("options")
+storage = models.storage.get("options")
 
 class Options(object):
 	def value(self, key):
-		return backend.value(key)
+		return storage.value(key)
 
 	def set_value(self, key, value):
-		backend.set_value(key, value)
+		storage.set_value(key, value)
 
 	def options(self):
-		return backend.options()
+		return storage.options()
 
 	def url_path(self, key):
 		return Path(self.value(key), append_slash=True)
@@ -38,7 +38,7 @@ class Options(object):
 		return base + subdir
 
 __doc__ = """
-Backend contract
+Storage contract
 ================
 
 Options consists of a key and a value pair

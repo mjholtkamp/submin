@@ -1,8 +1,8 @@
-import submin.plugins.backends.sql.common as backend
+import submin.plugins.storage.sql.common as storage
 
 def list_paths(repository):
-	cur = backend.db.cursor()
-	backend.execute(cur, """SELECT path FROM permissions WHERE repository = ?
+	cur = storage.db.cursor()
+	storage.execute(cur, """SELECT path FROM permissions WHERE repository = ?
 		GROUP BY path""", (repository,))
 	rows = cur.fetchall()
 	if not rows:
@@ -11,7 +11,7 @@ def list_paths(repository):
 	return [x[0] for x in rows]
 
 def list_permissions(repos, path):
-	cur = backend.db.cursor()
+	cur = storage.db.cursor()
 
 	queries = [
 		"""SELECT users.name, subjecttype, type FROM permissions
@@ -26,24 +26,24 @@ def list_permissions(repos, path):
 
 	rows = []
 	for query in queries:
-		backend.execute(cur, query, (repos, path))
+		storage.execute(cur, query, (repos, path))
 
 		current_rows = cur.fetchall()
 		if current_rows:
 			rows.extend(current_rows)
 
 	if not rows:
-		return {}
+		return []
 
 	return [{'name': row[0], 'type': row[1], 'permission': row[2]} for row in rows]
 
 def _subject_to_id(subject, subjecttype):
-	cur = backend.db.cursor()
+	cur = storage.db.cursor()
 	tables = {'user': 'users', 'group': 'groups', 'all': None}
 	table = tables[subjecttype]
 
 	if table != None:
-		backend.execute(cur, "SELECT id FROM %s WHERE name = ?" % table,
+		storage.execute(cur, "SELECT id FROM %s WHERE name = ?" % table,
 			(subject,))
 		row = cur.fetchone()
 		if not row:
@@ -56,16 +56,16 @@ def _subject_to_id(subject, subjecttype):
 	return subjectid
 
 def add_permission(repos, path, subject, subjecttype, perm):
-	cur = backend.db.cursor()
+	cur = storage.db.cursor()
 	subjectid = _subject_to_id(subject, subjecttype)
 
-	backend.execute(cur, """INSERT INTO permissions
+	storage.execute(cur, """INSERT INTO permissions
 		(repository, path, subjectid, subjecttype, type)
 		VALUES (?, ?, ?, ?, ?)""",
 		(repos, path, subjectid, subjecttype, perm))
 
 def change_permission(repos, path, subject, subjecttype, perm):
-	cur = backend.db.cursor()
+	cur = storage.db.cursor()
 	subjectid = _subject_to_id(subject, subjecttype)
 
 	# testing for 'X = NULL' fails, should use 'X IS NULL'
@@ -78,14 +78,14 @@ def change_permission(repos, path, subject, subjecttype, perm):
 		test = "subjectid IS NULL"
 		variables = (perm, repos, path, subjecttype)
 
-	backend.execute(cur, """UPDATE permissions
+	storage.execute(cur, """UPDATE permissions
 		SET type = ?
 		WHERE repository = ? AND path = ? AND %s
 		AND subjecttype = ?""" % test,
 		variables)
 
 def remove_permission(repos, path, subject, subjecttype):
-	cur = backend.db.cursor()
+	cur = storage.db.cursor()
 	subjectid = _subject_to_id(subject, subjecttype)
 
 	# testing for 'X = NULL' fails, should use 'X IS NULL'
@@ -98,5 +98,5 @@ def remove_permission(repos, path, subject, subjecttype):
 		test = "subjectid IS NULL"
 		variables = (repos, path, subjecttype)
 
-	backend.execute(cur, """DELETE FROM permissions WHERE repository = ?
+	storage.execute(cur, """DELETE FROM permissions WHERE repository = ?
 		AND path = ? AND %s AND subjecttype = ?""" % test, variables)

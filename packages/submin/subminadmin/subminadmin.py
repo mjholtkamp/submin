@@ -2,7 +2,7 @@ import sys
 import os
 
 from submin.path.path import Path
-from submin.models import backend
+from submin.models import storage
 
 class SubminAdmin:
 	def __init__(self, argv):
@@ -11,20 +11,20 @@ class SubminAdmin:
 		self.prompt = ""
 		self.quit = False
 		self.cmd_aliases = [('?', 'help'), ('exit', 'quit')]
-		self.backend_opened = False
+		self.storage_opened = False
 		self._set_systemdirs()
 
 	def __del__(self):
-		if self.backend_opened:
+		if self.storage_opened:
 			try:
-				backend.close()
-			except backend.BackendException:
+				storage.close()
+			except storage.StorageException:
 				pass # this only happens if initenv is not called yet
 
-	def ensure_backend(self):
-		if not self.backend_opened:
-			backend.open()
-			self.backend_opened = True
+	def ensure_storage(self):
+		if not self.storage_opened:
+			storage.open()
+			self.storage_opened = True
 
 	def run(self):
 		if len(self.argv) < 2:
@@ -37,7 +37,7 @@ class SubminAdmin:
 
 		self.prompt = self.prompt_fmt % self.env
 
-		# setup backend plugins
+		# setup storage plugins
 		os.environ['SUBMIN_ENV'] = self.env
 
 		if len(self.argv) < 3:
@@ -105,13 +105,13 @@ Use '?' or 'help' for help on commands.
 			print "Unknown command"
 			return True
 
-		if not self.backend_opened:
+		if not self.storage_opened:
 			if not hasattr(Class, "needs_env") or Class.needs_env:
 				if not os.path.exists(self.env):
 					print 'environment does not exist, use initenv'
 					return True
 
-				self.ensure_backend()
+				self.ensure_storage()
 
 		rc = Class.run()
 

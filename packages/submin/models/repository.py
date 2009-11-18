@@ -16,8 +16,8 @@ class Repository(object):
 	def list_all():
 		repositories = []
 		for system in systems:
-			backend = models.vcs.get(system, "repository")
-			repositories += backend.list()
+			vcs = models.vcs.get(system, "repository")
+			repositories += vcs.list()
 
 		return repositories
 
@@ -54,17 +54,17 @@ class Repository(object):
 
 	@staticmethod
 	def add(system, name):
-		backend = models.vcs.get(system, "repository")
-		backend.add(name)
+		vcs = models.vcs.get(system, "repository")
+		vcs.add(name)
 
 	def __init__(self, repositoryname):
 		self.name = repositoryname
 		self._type = 'repository'
 
 		for system in systems:
-			backend = models.vcs.get(system, "repository")
+			vcs = models.vcs.get(system, "repository")
 			try:
-				self._repository = backend.Repository(repositoryname)
+				self._repository = vcs.Repository(repositoryname)
 				return # we found one, no need to check other systems
 			except DoesNotExistError:
 				pass
@@ -86,7 +86,7 @@ class Repository(object):
 		return self._repository.commitEmailsEnabled()
 
 __doc__ = """
-Backend contract
+VCS contract
 ================
 
 Repository takes care of creating/deleting/listing repositories as well

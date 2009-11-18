@@ -4,7 +4,7 @@ import unittest
 from pmock import *
 
 mock_settings = Mock()
-mock_settings.backend = "mock"
+mock_settings.storage = "mock"
 
 from submin.bootstrap import setSettings
 setSettings(mock_settings)

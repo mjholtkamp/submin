@@ -1,8 +1,8 @@
 import sqlite3
-from submin.models.exceptions import BackendAlreadySetup
+from submin.models.exceptions import StorageAlreadySetup
 
 db = None
-backend_debug = False
+storage_debug = False
 database_version = 1
 
 def close():
@@ -10,9 +10,9 @@ def close():
 		db.close()
 
 def open(settings):
-	global db, backend_debug
+	global db, storage_debug
 	db = sqlite3.connect(settings.sqlite_path)
-	backend_debug = hasattr(settings, "db_debug") and settings.db_debug
+	storage_debug = hasattr(settings, "db_debug") and settings.db_debug
 
 def setup():
 	"""Creates all necessary tables"""
@@ -82,7 +82,7 @@ def setup():
 			"INSERT INTO options (key, value) VALUES ('database_version', ?)",
 			(database_version,))
 	except sqlite3.OperationalError, e:
-		raise BackendAlreadySetup(str(e))
+		raise StorageAlreadySetup(str(e))
 
 # sqlite3 specific variables / functions
 
@@ -104,5 +104,5 @@ def debug_execute(cursor, query, args=(), commit=True):
 	default_execute(cursor, query, args, commit=commit)
 
 execute = default_execute
-if backend_debug:
+if storage_debug:
 	execute = debug_execute

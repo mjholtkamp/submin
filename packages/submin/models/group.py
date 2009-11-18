@@ -1,11 +1,11 @@
 from submin import models
-backend = models.backend.get("group")
+storage = models.storage.get("group")
 from submin.models.exceptions import UnknownGroupError
 
 class Group(object):
 	@staticmethod
 	def list(session_user):
-		all_groups = [Group(raw_data=group) for group in backend.list()]
+		all_groups = [Group(raw_data=group) for group in storage.list()]
 		groups = []
 		for group in all_groups:
 			if session_user.is_admin or session_user.name in group.members():
@@ -16,20 +16,20 @@ class Group(object):
 	@staticmethod
 	def add(name):
 		"""Add a new, empty group"""
-		backend.add(name)
+		storage.add(name)
 		models.vcs.export_auth_group()
 		return Group(name)
 
 	def __init__(self, groupname=None, raw_data=None):
 		"""Constructor, either takes a groupname or raw data
 
-		If groupname is provided, the backend is used to get the required data.
-		If raw_data is provided, the backend is not used.
+		If groupname is provided, the storage is used to get the required data.
+		If raw_data is provided, the storage is not used.
 		"""
 		db_group = raw_data
 
 		if not raw_data:
-			db_group = backend.group_data(groupname)
+			db_group = storage.group_data(groupname)
 			if not db_group:
 				raise UnknownGroupError(groupname)
 
@@ -41,21 +41,21 @@ class Group(object):
 		return self.name
 
 	def remove(self):
-		backend.remove_permissions(self._id)
-		backend.remove_managers(self._id)
-		backend.remove_members_from_group(self._id)
-		backend.remove(self._id)
+		storage.remove_permissions(self._id)
+		storage.remove_managers(self._id)
+		storage.remove_members_from_group(self._id)
+		storage.remove(self._id)
 		models.vcs.export_auth_group()
 
 	def members(self):
-		return backend.members(self._id)
+		return storage.members(self._id)
 
 	def add_member(self, user):
-		backend.add_member(self._id, user.id)
+		storage.add_member(self._id, user.id)
 		models.vcs.export_auth_group()
 
 	def remove_member(self, user):
-		backend.remove_member(self._id, user.id)
+		storage.remove_member(self._id, user.id)
 		models.vcs.export_auth_group()
 
 	# Properties
@@ -69,7 +69,7 @@ class Group(object):
 	name = property(_getName) # name is read-only
 
 __doc__ = """
-Backend contract
+Storage contract
 ================
 
 Username is unique and primary key.
@@ -89,7 +89,7 @@ Username is unique and primary key.
 * remove(groupid)
 	Removes group with id *groupid*. Before a group can be removed, all
 	remove_-functions below must have been called. This happens in the model,
-	so backend designers need not worry about this restriction.
+	so storage designers need not worry about this restriction.
 
 * remove_permissions(groupid)
 	Removes repository permissions for group with id *groupid*

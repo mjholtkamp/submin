@@ -21,7 +21,7 @@ Usage:
 		cp.read(filename)
 		return cp
 
-	def init_backend(self):
+	def init_storage(self):
 		self.sa.execute(['config', 'defaults'])
 
 	def write_options(self, config):
@@ -158,7 +158,7 @@ Usage:
 
 	def convert(self, old_config_file):
 		config = self.read_ini(old_config_file)
-		self.init_backend()
+		self.init_storage()
 		self.write_options(config)
 		self.write_users(config)
 		self.write_groups(config)

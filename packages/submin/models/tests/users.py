@@ -4,10 +4,10 @@ import tempfile # for temporary dir
 from pmock import *
 
 mock_settings = Mock()
-mock_settings.backend = "mock"
+mock_settings.storage = "mock"
 mock_settings.base_dir = "/"
 
-from submin.models import backend
+from submin.models import storage
 from submin.models.user import User
 from submin.models.options import Options
 from submin.models.exceptions import UserExistsError, UnknownUserError, UserPermissionError
@@ -16,7 +16,7 @@ from submin.models.repository import Repository
 
 class UserTests(unittest.TestCase):
 	def setUp(self):
-		backend.open(mock_settings)
+		storage.open(mock_settings)
 		self.o = Options()
 		self.o.set_value('svn_authz_file', '/tmp/submin-authz') # needed for export
 		self.o.set_value('svn_dir', '/tmp/submin-svn') # needed for export
@@ -27,7 +27,7 @@ class UserTests(unittest.TestCase):
 	def tearDown(self):
 		import os
 		self.u.remove()
-		backend.close()
+		storage.close()
 		for tmp_dir in self.tmp_dirs:
 			shutil.rmtree(tmp_dir)
 		try:

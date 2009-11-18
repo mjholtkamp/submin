@@ -1,6 +1,6 @@
 from submin import models
 import validators
-backend = models.backend.get("user")
+storage = models.storage.get("user")
 
 from submin.models.exceptions import UnknownUserError, UserPermissionError
 
@@ -23,7 +23,7 @@ class User(object):
 		if not session_user.is_admin: # only admins get to see the entire list
 			return [session_user.name]     # users only see themselves
 
-		return [user['name'] for user in backend.list()]
+		return [user['name'] for user in storage.list()]
 
 	@staticmethod
 	def add(username, password=None):
@@ -36,20 +36,20 @@ class User(object):
 		if not validators.validate_username(username):
 			raise validators.InvalidUsername(username)
 
-		backend.add(username, password)
+		storage.add(username, password)
 		models.vcs.export_auth_user()
 		return User(username)
 
 	def __init__(self, username=None, raw_data=None):
 		"""Constructor, either takes a username or raw data
 
-		If username is provided, the backend is used to get the required data.
-		If raw_data is provided, the backend is not used.
+		If username is provided, the storage plugin is used to get the
+		required data. If raw_data is provided, the storage plugin is not used.
 		"""
 		db_user = raw_data
 
 		if not raw_data:
-			db_user = backend.user_data(username)
+			db_user = storage.user_data(username)
 			if not db_user:
 				raise UnknownUserError(username)
 
@@ -68,14 +68,14 @@ class User(object):
 
 	def check_password(self, password):
 		"""Return True if password is correct, can raise NoMD5PasswordError"""
-		return backend.check_password(self._id, password)
+		return storage.check_password(self._id, password)
 
 	def set_password(self, password):
-		backend.set_password(self._id, password)
+		storage.set_password(self._id, password)
 		models.vcs.export_auth_user()
 
 	def set_md5_password(self, password):
-		backend.set_md5_password(self._id, password)
+		storage.set_md5_password(self._id, password)
 
 	def generate_password(self):
 		"""generate and return a random password"""
@@ -89,22 +89,22 @@ class User(object):
 		return password
 
 	def remove(self):
-		backend.remove_from_groups(self._id)
-		backend.remove_permissions_repository(self._id)
-		backend.remove_permissions_submin(self._id)
-		backend.remove_notifications(self._id)
-		backend.remove(self._id)
+		storage.remove_from_groups(self._id)
+		storage.remove_permissions_repository(self._id)
+		storage.remove_permissions_submin(self._id)
+		storage.remove_notifications(self._id)
+		storage.remove(self._id)
 		models.vcs.export_auth_user()
 
 	def member_of(self):
-		return backend.member_of(self._id)
+		return storage.member_of(self._id)
 
 	def nonmember_of(self):
-		return backend.nonmember_of(self._id)
+		return storage.nonmember_of(self._id)
 
 	def set_notification(self, repository, allowed, enabled, session_user):
 		if not session_user.is_admin:
-			permissions = backend.notification(self._id, repository)
+			permissions = storage.notification(self._id, repository)
 			if not permissions or not permissions['allowed']:
 				raise UserPermissionError
 
@@ -112,7 +112,7 @@ class User(object):
 		if enabled:
 			allowed = True
 
-		backend.set_notification(self._id, repository, allowed, enabled)
+		storage.set_notification(self._id, repository, allowed, enabled)
 
 	def notifications(self):
 		"""Returns a dict of dicts, in the following layout:
@@ -124,7 +124,7 @@ class User(object):
 		from repository import Repository
 		notifications = {}
 		for repository in Repository.list_all():
-			notification = backend.notification(self._id, repository['name'])
+			notification = storage.notification(self._id, repository['name'])
 			if notification == None:
 				notification = {'allowed': False, 'enabled': False}
 			notifications[repository['name']] = notification
@@ -142,7 +142,7 @@ class User(object):
 		self._name = name
 		if not validators.validate_username(name):
 			raise validators.InvalidUsername(name)
-		backend.set_name(self._id, name)
+		storage.set_name(self._id, name)
 		models.vcs.export_auth_user()
 
 	def _getEmail(self):
@@ -152,7 +152,7 @@ class User(object):
 		self._email = email
 		if not validators.validate_email(email):
 			raise validators.InvalidEmail(email)
-		backend.set_email(self._id, email)
+		storage.set_email(self._id, email)
 
 	def _getFullname(self):
 		return self._fullname
@@ -161,14 +161,14 @@ class User(object):
 		self._fullname = fullname
 		if not validators.validate_fullname(fullname):
 			raise validators.InvalidFullname(fullname)
-		backend.set_fullname(self._id, fullname)
+		storage.set_fullname(self._id, fullname)
 
 	def _getIsAdmin(self):
 		return self._is_admin
 
 	def _setIsAdmin(self, is_admin):
 		self._is_admin = is_admin
-		backend.set_is_admin(self._id, is_admin)
+		storage.set_is_admin(self._id, is_admin)
 
 	id       = property(_getId)   # id is read-only
 	name     = property(_getName,     _setName)
@@ -177,7 +177,7 @@ class User(object):
 	is_admin = property(_getIsAdmin,  _setIsAdmin)
 
 __doc__ = """
-Backend contract
+Storage contract
 ================
 
 * list()
@@ -197,19 +197,19 @@ Backend contract
 	Checks whether the supplied password is valid for a user with userid *id*
 
 * set_password(id, password)
-	Sets the password for a user with userid *id* to *password*, in backends'
-    native format.
+	Sets the password for a user with userid *id* to *password*, in storage's
+	native format.
 	
 * set_md5_password(id, password)
 	Sets the md5 password for a user with userid *id* to *password*. If this is
-    not supported by the module, it raises an MD5NotSupported error. This
-    method is mainly used to convert htpasswd files to backends that also
-    use md5 to encrypt passwords.
+	not supported by the module, it raises an MD5NotSupported error. This
+	method is mainly used to convert htpasswd files to storage plugins that
+	also use md5 to encrypt passwords.
 	
 * remove(userid)
 	Removes user with id *userid*. Before a user can be removed, all
 	remove_-functions below must have been called. This happens in the model,
-	so backend designers need not worry about this restriction.
+	so storage plugin designers need not worry about this restriction.
 
 * remove_from_groups(userid)
 	Removes user with id *userid* from groups

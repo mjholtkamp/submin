@@ -1,14 +1,14 @@
 from submin import models
-backend = models.backend.get("permissions")
+storage = models.storage.get("permissions")
 
 from submin.models.repository import Repository
 
 class Permissions(object):
 	def list_paths(self, repository):
-		return backend.list_paths(repository)
+		return storage.list_paths(repository)
 
 	def list_permissions(self, repos, path):
-		return backend.list_permissions(repos, path)
+		return storage.list_permissions(repos, path)
 
 	def add_permission(self, repos, repostype, path,
 			subject, subjecttype, perm):
@@ -17,7 +17,7 @@ class Permissions(object):
 		if repos != "":
 			r = Repository(repos) # check if exists
 
-		backend.add_permission(repos, path, subject, subjecttype, perm)
+		storage.add_permission(repos, path, subject, subjecttype, perm)
 		models.vcs.export_auth_repository(repostype)
 
 	def change_permission(self, repos, repostype, path,
@@ -25,15 +25,15 @@ class Permissions(object):
 		"""Changes permission for repos:path, raises a
 		Repository.DoesNotExistError if repos does not exist."""
 		r = Repository(repos) # just for the exception
-		backend.change_permission(repos, path, subject, subjecttype, perm)
+		storage.change_permission(repos, path, subject, subjecttype, perm)
 		models.vcs.export_auth_repository(repostype)
 
 	def remove_permission(self, repos, repostype, path, subject, subjecttype):
-		backend.remove_permission(repos, path, subject, subjecttype)
+		storage.remove_permission(repos, path, subject, subjecttype)
 		models.vcs.export_auth_repository(repostype)
 
 __doc__ = """
-Backend Contract
+Storage Contract
 ================
 
 * list_paths(repos)

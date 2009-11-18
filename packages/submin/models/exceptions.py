@@ -8,14 +8,14 @@ class UnknownKeyError(Exception):
 	pass
 
 
-####### Backend exceptions ###################################################
+####### Storage exceptions ###################################################
 
-class BackendAlreadySetup(Exception):
-	"""When a backend is already setup"""
+class StorageAlreadySetup(Exception):
+	"""When a storage is already setup"""
 	pass
 
-class BackendError(Exception):
-	"""Generic backend exception, probably settings are incorrect"""
+class StorageError(Exception):
+	"""Generic storage exception, probably settings are incorrect"""
 	pass
 
 

@@ -13,8 +13,8 @@ def run():
 		print check.error_page()
 		sys.exit(0)
 
-	from submin.models import backend
-	backend.open()
+	from submin.models import storage
+	storage.open()
 
 	try:
 		import cgitb; cgitb.enable()
@@ -32,4 +32,4 @@ def run():
 		print "Status: 500\r\n\r\n",
 		print ''.join(list)
 
-	backend.close()
+	storage.close()

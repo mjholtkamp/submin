@@ -22,7 +22,7 @@ class Manager(object):
 		else:
 			_id = other._id
 
-		perm = backend.get_permission(self._id, self._type, _id, _name, other._type)
+		perm = storage.get_permission(self._id, self._type, _id, _name, other._type)
 		if perm:
 			return True
 
@@ -30,7 +30,7 @@ class Manager(object):
 		if self._type == 'user':
 			for group_name in self.member_of():
 				group = Group(group_name)
-				perm = backend.get_permissions(group._id, group._type,
+				perm = storage.get_permissions(group._id, group._type,
 					_id, _name, other._type)
 				if perm:
 					return True

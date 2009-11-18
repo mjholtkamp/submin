@@ -1,4 +1,4 @@
-import submin.plugins.backends.sql.common as backend
+import submin.plugins.storage.sql.common as storage
 from submin.models.exceptions import UserExistsError, NoMD5PasswordError
 from submin.auth import md5crypt
 
@@ -12,8 +12,8 @@ all_fields = "id, name, email, fullname, is_admin"
 
 def list():
 	"""Generator for sorted list of users"""
-	cur = backend.db.cursor()
-	backend.execute(cur, """
+	cur = storage.db.cursor()
+	storage.execute(cur, """
 		SELECT %s
 		FROM users
 		ORDER BY name ASC
@@ -33,16 +33,16 @@ def add(username, password):
 	else:
 		password = ""
 
-	cur = backend.db.cursor()
+	cur = storage.db.cursor()
 	try:
-		backend.execute(cur, "INSERT INTO users (name, password) VALUES (?, ?)",
+		storage.execute(cur, "INSERT INTO users (name, password) VALUES (?, ?)",
 				(username, password))
-	except backend.SQLIntegrityError, e:
+	except storage.SQLIntegrityError, e:
 		raise UserExistsError("User `%s' already exists" % username)
 
 def check_password(userid, password):
-	cur = backend.db.cursor()
-	backend.execute(cur, "SELECT password FROM users WHERE id=?", (userid,))
+	cur = storage.db.cursor()
+	storage.execute(cur, "SELECT password FROM users WHERE id=?", (userid,))
 	row = cur.fetchone()
 	vals = row[0][1:].split('$')
 	if not len(vals) == 3:
@@ -55,33 +55,33 @@ def set_password(userid, password):
 	set_md5_password(userid, password)
 
 def set_md5_password(userid, password):
-	backend.execute(backend.db.cursor(), """UPDATE users
+	storage.execute(storage.db.cursor(), """UPDATE users
 		SET password=? WHERE id=?""", (password, userid))
 
 # Remove functions, removes users from various tables
 def remove_from_groups(userid):
-	backend.execute(backend.db.cursor(), """DELETE FROM group_members
+	storage.execute(storage.db.cursor(), """DELETE FROM group_members
 		WHERE userid=?""", (userid,))
 
 def remove_permissions_repository(userid):
-	backend.execute(backend.db.cursor(), """DELETE FROM permissions
+	storage.execute(storage.db.cursor(), """DELETE FROM permissions
 		WHERE subjecttype="user" AND subjectid=?""", (userid,))
 
 def remove_permissions_submin(userid):
-	backend.execute(backend.db.cursor(), """DELETE FROM managers
+	storage.execute(storage.db.cursor(), """DELETE FROM managers
 		WHERE managertype="user" AND managerid=?""", (userid,))
 
 def remove_notifications(userid):
-	backend.execute(backend.db.cursor(), """DELETE FROM notifications
+	storage.execute(storage.db.cursor(), """DELETE FROM notifications
 		WHERE userid=?""", (userid,))
 
 def remove(userid):
-	backend.execute(backend.db.cursor(), """DELETE FROM users
+	storage.execute(storage.db.cursor(), """DELETE FROM users
 		WHERE id=?""", (userid,))
 
 def notification(userid, repository):
-	cur = backend.db.cursor()
-	backend.execute(cur, """
+	cur = storage.db.cursor()
+	storage.execute(cur, """
 		SELECT allowed, enabled
 		FROM notifications
 		WHERE userid=? AND repository=?""", (userid, repository))
@@ -93,18 +93,18 @@ def notification(userid, repository):
 
 def set_notification(userid, repository, allowed, enabled):
 	try:
-		backend.execute(backend.db.cursor(), """INSERT INTO notifications
+		storage.execute(storage.db.cursor(), """INSERT INTO notifications
 		(userid, repository, allowed, enabled) VALUES (?, ?, ?, ?)""", 
 			(userid, repository, allowed, enabled))
-	except backend.SQLIntegrityError:
+	except storage.SQLIntegrityError:
 		# already exists?
-		backend.execute(backend.db.cursor(), """UPDATE notifications
+		storage.execute(storage.db.cursor(), """UPDATE notifications
 		SET allowed = ?, enabled = ? WHERE userid = ? AND repository = ? """,
 		 (allowed, enabled, userid, repository))
 
 def user_data(username):
-	cur = backend.db.cursor()
-	backend.execute(cur, """
+	cur = storage.db.cursor()
+	storage.execute(cur, """
 		SELECT %s
 		FROM users
 		WHERE name=?""" % all_fields, (username,))
@@ -116,9 +116,9 @@ def user_data(username):
 
 def field_setter(field):
 	def set_field(userid, value):
-		cur = backend.db.cursor()
+		cur = storage.db.cursor()
 		sql = "UPDATE users SET %s=? WHERE id=?" % field
-		backend.execute(cur, sql, (value, userid))
+		storage.execute(cur, sql, (value, userid))
 	return set_field
 
 def field_setter_bool(field):
@@ -128,9 +128,9 @@ def field_setter_bool(field):
 		else:
 			value = 0
 
-		cur = backend.db.cursor()
+		cur = storage.db.cursor()
 		sql = "UPDATE users SET %s=? WHERE id=?" % field
-		backend.execute(cur, sql, (value, userid))
+		storage.execute(cur, sql, (value, userid))
 	return set_field_bool
 
 set_name     = field_setter("name")
@@ -148,15 +148,15 @@ member_query = """
 
 def member_of(userid):
 	"""Returns list of groups a user is a member of"""
-	cur = backend.db.cursor()
-	backend.execute(cur, member_query % "=", (userid,))
+	cur = storage.db.cursor()
+	storage.execute(cur, member_query % "=", (userid,))
 
 	return [row[0] for row in cur]
 
 def nonmember_of(userid):
 	"""Returns list of groups a user is not a member of"""
-	cur = backend.db.cursor()
-	backend.execute(cur, member_query % "!=", (userid,))
+	cur = storage.db.cursor()
+	storage.execute(cur, member_query % "!=", (userid,))
 
 	return [row[0] for row in cur]
 

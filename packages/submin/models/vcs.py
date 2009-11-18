@@ -11,14 +11,14 @@ def list():
 	return [name for _, name, _ in pkgutil.iter_modules([vcsdir])]
 
 def get(vcstype, model):
-	"""Gets the vcs-backend for a certain type and model."""
+	"""Gets the vcs-plugin for a certain type and model."""
 	try:
-		backend = fimport("submin.plugins.vcs.%s.%s" % (vcstype, model),
+		vcs_plugin = fimport("submin.plugins.vcs.%s.%s" % (vcstype, model),
 			       "submin.plugins.vcs.%s" % vcstype)
 	except ImportError, e:
 		raise VCSException(e)
 
-	return backend
+	return vcs_plugin
 
 def export_auth_user():
 	"""Export vcs-specific authorization/authentication information.
@@ -39,9 +39,9 @@ def export_auth_repository(vcstype):
 	
 def export_auth(vcstype, authtype):
 	#try:
-	backend = fimport("submin.plugins.vcs.%s.%s" % (vcstype, "export"),
+	vcs_plugin = fimport("submin.plugins.vcs.%s.%s" % (vcstype, "export"),
 			   "submin.plugins.vcs.%s" % vcstype)
 	#except ImportError, e:
 	#	raise VCSException(e)
 
-	backend.export_auth(authtype)
+	vcs_plugin.export_auth(authtype)

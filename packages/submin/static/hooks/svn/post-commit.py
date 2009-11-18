@@ -37,8 +37,8 @@ def main():
 	repospath = argv[2]
 	rev = argv[3]
 
-	from submin.models import backend
-	backend.open()
+	from submin.models import storage
+	storage.open()
 
 	from submin.models.options import Options
 	opts = Options()

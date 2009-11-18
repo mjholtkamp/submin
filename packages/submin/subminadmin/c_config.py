@@ -1,5 +1,5 @@
 from submin.path.path import Path
-from submin.models.exceptions import BackendAlreadySetup
+from submin.models.exceptions import StorageAlreadySetup
 import os, sys
 
 class c_config():
@@ -25,7 +25,7 @@ Usage:
 		print formatstring % (key, value)
 
 	def subcmd_get(self, argv):
-		self.sa.ensure_backend()
+		self.sa.ensure_storage()
 
 		import submin.models.options
 		o = submin.models.options.Options()
@@ -43,7 +43,7 @@ Usage:
 				self._printkeyvalue(o, arg[0], arg[1], maxlen)
 
 	def subcmd_set(self, argv):
-		self.sa.ensure_backend()
+		self.sa.ensure_storage()
 
 		if len(argv) != 2:
 			self.sa.execute(['help', 'config'])
@@ -67,7 +67,7 @@ Usage:
 		# write the bootstrap settings file
 		submin_settings = '''
 import os
-backend = "sql"
+storage = "sql"
 sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 '''
 
@@ -81,11 +81,11 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 		file(filename, 'w').write(submin_settings)
 
 		# after writing the bootstrap file, we setup all models
-		self.sa.ensure_backend()
-		from submin.models import backend
+		self.sa.ensure_storage()
+		from submin.models import storage
 		try:
-			backend.setup()
-		except BackendAlreadySetup:
+			storage.setup()
+		except StorageAlreadySetup:
 			pass # silently ignore and continue setting defaults
 
 		# And now we can use the models

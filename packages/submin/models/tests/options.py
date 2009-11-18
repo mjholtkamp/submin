@@ -2,19 +2,19 @@ import unittest
 from pmock import *
 
 mock_settings = Mock()
-mock_settings.backend = "mock"
+mock_settings.storage = "mock"
 mock_settings.base_dir = "/submin"
 
-from submin.models import backend
+from submin.models import storage
 from submin.models.options import Options
 
 class OptionTests(unittest.TestCase):
 	def setUp(self):
-		backend.open(mock_settings)
+		storage.open(mock_settings)
 		self.o = Options()
 
 	def tearDown(self):
-		backend.close()
+		storage.close()
 
 	def testNoOptions(self):
 		self.assertEquals(self.o.options(), {})
