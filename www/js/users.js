@@ -15,11 +15,20 @@ window.onload = function() {
 	$('password_button').parentNode.onsubmit = verifyPassword;
 	$('email').focus();
 
+	var content = document.getElementById('content');
+	setupCollapsables(content, "usershowhide", users_collapse, users_expand);
+
 	// Initialize the select-dropdown
 	//selectInit();
 	userSelectorInit();
 	reloadNotifications();
 	$('savenotifications').parentNode.onsubmit = saveNotifications;
+}
+
+function users_collapse(me) {
+}
+
+function users_expand(me) {
 }
 
 function sendEmail() {
@@ -131,7 +140,7 @@ function userSelectorInit() {
 			"initCallback": initGroups,
 			"addCallback": addMemberToGroupAjax,
 			"removeCallback": removeMemberFromGroupAjax,
-			"canLink": function(user) { return is_admin; }
+			"canLink": function(user) { return true; }
 	});
 }
 
@@ -188,8 +197,11 @@ function redrawNotifications(notifications) {
 		input.value = notifications[i].name + "_enabled";
 		input.checked = (notifications[i].enabled == "True");
 		input.defaultChecked = input.checked; // IE7 quirk
-		if (!email || email == "")
+		if (!email || email == "") {
 			input.disabled = "disabled";
+			input.title = "Please fill in an email address to enable this control";
+			input.setAttribute("class", "disabled")
+		}
 
 		var td_enabled = $c("td");
 		td_enabled.appendChild(input);

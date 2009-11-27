@@ -48,7 +48,7 @@ class PathTests(unittest.TestCase):
 		self.assertEquals(str(p), "/home/jeanpaul")
 
 	def testAbsoluteFix(self):
-		p = Path("home/michiel")
+		p = Path("home/michiel", absolute=True)
 		self.assertEquals(str(p), "/home/michiel")
 
 	def testRoot(self):

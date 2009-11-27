@@ -28,7 +28,6 @@ class Ajax(View):
 
 		return XMLStatusResponse('', False, 'Unknown command')
 
-	@admin_required
 	def listAll(self, req):
 		session_user = req.session['user']
 		try:
@@ -58,8 +57,9 @@ class Ajax(View):
 	def listRepositories(self, req):
 		try:
 			repos = listRepositories(req.session['user'])
-			variables = {'repositories': repos}
+			invalid = listRepositories(req.session['user'], only_invalid=True)
+			variables = {'repositories': repos, 'invalid_repositories': invalid}
 			return XMLTemplateResponse("ajax/listrepositories.xml", variables)
 		except Exception, e:
-			return XMLStatusResponse('listGroups', False, 'Failed to get a list: %s' % e)
+			return XMLStatusResponse('listRepositories', False, 'Failed to get a list: %s' % e)
 

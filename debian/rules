@@ -15,7 +15,7 @@ install: build
 	dh_testroot
 	dh_installdirs
 
-	sh bin/install.sh debian/submin/usr /usr
+	python bin/install.py debian/submin/usr --final=/usr --force
 
 binary-indep:
 	dh_testdir

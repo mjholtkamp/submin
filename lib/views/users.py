@@ -85,23 +85,20 @@ class Users(View):
 				return self.showAddForm(req, username, email, fullname,
 					'User already exists')
 
-			if email != '' and not isEmailValid(email):
+			if email == '':
+				return self.showAddForm(req, username, email, fullname,
+					'Email must be supplied')
+
+			if not isEmailValid(email):
 				return self.showAddForm(req, username, email, fullname,
 					"Email is not valid")
 
 			try:
 				addUser(username)
-				if email != '':
-					User(username).setEmail(email)
+				User(username).setEmail(email)
 				User(username).setFullName(fullname)
-			except (IOError, OSError):
-				details = """Please check if the htpasswd file is owned by the
-				webserver user, and if user read and write permissions are
-				set. The directory should also be owned and writable by the
-				webserver user. If SELinux is active, please check if it
-				blocks access to the htpasswd file."""
-				return ErrorResponse('File permission denied', request=req,
-					details=details)
+			except IOError:
+				return ErrorResponse('File permission denied', request=req)
 			except UserExists:
 				return self.showAddForm(req, username, email, fullname,
 					'User %s already exists' % username)

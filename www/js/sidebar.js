@@ -2,8 +2,6 @@
 var sidebar_old_load = window.onload;
 window.onload = function() {
 	if (sidebar_old_load) sidebar_old_load()
-	if (!is_admin)
-		return;
 
 	setupSidebarImages();
 	var sidebar = document.getElementById('sidebar');
@@ -63,11 +61,7 @@ function reloadX(response, X, Xplural, Xcapital) {
 	var Xs = list.xml.getElementsByTagName(X);
 	for (var i = 0; i < Xs.length; ++i) {
 		var name = Xs[i].getAttribute("name");
-		var status = Xs[i].getAttribute("status");
-		// status not included? user or group, always ok
-		if (!status) {
-			status = "ok";
-		}
+		var valid = Xs[i].getAttribute("valid") != "False";
 		var special_group = false;
 		// CRUFT after we convert not to abuse submin-admins
 		if (X == "group" && name == "submin-admins")
@@ -88,20 +82,14 @@ function reloadX(response, X, Xplural, Xcapital) {
 		} else {
 			link.appendChild(nameNode);
 		}
-		if (status == "ok") {
+		if (valid) {
 			li.appendChild(link);
 		} else {
-			if (status == "permission denied") {
-				nameNode.setAttribute("title", "please check permissions");
-				nameNode.setAttribute("class", "err_permission");
-			}
-			if (status == "wrong version") {
-				nameNode.setAttribute("title", "Wrong repository version: please check if python subversion library is up-to-date");
-				nameNode.setAttribute("class", "err_version");
-			}
+			nameNode.setAttribute("class", "invalid");
+			nameNode.setAttribute("title", "This repository is invalid (please check permissions)");
 			li.appendChild(nameNode);
 		}
-		if (is_admin && !special_group && status == "ok") {
+		if (is_admin && !special_group && valid) {
 			var span = $c("span");
 			addClassName(span, "delete" + X);
 			span.setAttribute("name", name);

@@ -17,7 +17,12 @@ def which(filename):
 	return None
 
 def main():
-	cmd = "find lib -name unittests.py"
+	paths = "lib"
+	if len(sys.argv) > 1:
+		paths = map(os.path.join, ["lib"], sys.argv[1:])
+		paths = ' '.join(paths)
+
+	cmd = "find %s -name unittests.py" % paths
 	(exitstatus, outtext) = commands.getstatusoutput(cmd)
 	use_coverage = False
 	python_cmd = "python"
@@ -28,7 +33,7 @@ def main():
 			python_cmd = pc
 
 	if use_coverage:
-		os.environ['COVERAGE_FILE'] = "coverage-tmp/.converage"
+		os.environ['COVERAGE_FILE'] = "coverage-tmp/.coverage"
 		try:
 			os.mkdir("coverage-tmp")
 			os.mkdir("coverage-annotate")
@@ -49,8 +54,9 @@ def main():
 		omit = ["/usr/lib", "/System/Library"]
 		# touch coverage.py, it tries to find itself while annotating, sigh
 		open("coverage.py", "w")
+		open("pmock.py", "w")
 		os.system("%s -a -o %s -d coverage-annotate" % (python_cmd, ','.join(omit)))
-		os.system("rm -rf coverage-tmp coverage.py")
+		os.system("rm -rf coverage-tmp coverage.py pmock.py")
 
 if __name__ == "__main__":
 	main()

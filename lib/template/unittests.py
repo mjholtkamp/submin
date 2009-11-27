@@ -2,7 +2,7 @@ import unittest
 from tempfile import mkstemp
 import os
 
-from template import Template
+from template import Template, UnknownCommandError
 # import template
 import template_commands
 template_commands.DEBUG = False
@@ -11,7 +11,23 @@ def evaluate(tpl_string, variables={}):
 	'Helper function for the tests.'
 	tpl = Template(tpl_string, variables)
 	return (tpl, tpl.evaluate())
+	
+class LibraryTest(unittest.TestCase):
+	def testUnknownCommand(self):
+		self.assertRaises(UnknownCommandError, evaluate, \
+			'[unknowncommand this should raise an exception]')
 
+class ParserTest(unittest.TestCase):
+	def testEscape(self):
+		expected = "[escaped!]"
+		tpl, ev = evaluate('\[escaped!\]')
+		self.assertEquals(ev, expected)
+
+	# this test fails, because the code is not good enough to handle this
+	# def testNonEscapeEscape(self):
+	# 	expected = "\n\[newline\]"
+	# 	tpl, ev = evaluate('\n\[newline\]')
+	# 	self.assertEquals(ev, expected)
 
 class SetTagTest(unittest.TestCase):
 	'Testcase for the set-tag which can set a template variable'
@@ -51,6 +67,21 @@ class ValTagTest(unittest.TestCase):
 		tpl = Template('[val]')
 		self.assertRaises(template_commands.MissingRequiredArguments, tpl.evaluate)
 
+	def testListIndex(self):
+		tpl, ev = evaluate('[val l.0]', {'l': [1, 2, 3]})
+		self.assertEquals(ev, '1')
+
+	def testListIndexOOB(self):
+		tpl, ev = evaluate('[val l.3]', {'l': [1, 2, 3]})
+		self.assertEquals(ev, '')
+
+	def testRecursive(self):
+		class Answer:
+			value = 42
+		o = {'answer': Answer()}
+		tpl, ev = evaluate('[val o.answer.value]', {'o': o})
+		self.assertEquals(ev, '42')
+
 class IterTagTest(unittest.TestCase):
 	'Testcase for the iter-tag, which iterates over a sequence'
 	def testCorrectValue(self):
@@ -89,6 +120,48 @@ class IvalTagTest(unittest.TestCase):
 		for i in l:
 			correctValue += str(i.attr)
 		self.assertEquals(ev, correctValue)
+
+	def testEmptyList(self):
+		tpl, ev = evaluate('[iter:range [ival]]', {'range': []})
+		correctValue = ''
+		self.assertEquals(ev, correctValue)
+
+	def testIvalAsIterValue(self):
+		l = [['a', 'b', 'c'], ['1', '2', '3']]
+		tpl, ev = evaluate('[iter:l [iter:ival [ival]]]', {'l': l})
+		correctValue = ''.join([''.join(x) for x in l])
+		self.assertEquals(ev, correctValue)
+
+	def testIvalObjectAsIterValue(self):
+		class ObjectWithList:
+			def __init__(self, l):
+				self.list = l
+
+		l = []
+		l.append(ObjectWithList(['a', 'b', 'c']))
+		l.append(ObjectWithList(['1', '2', '3']))
+		tpl, ev = evaluate('[iter:l [iter:ival.list [ival]]]', {'l': l})
+		correctValue = ''.join([''.join(x.list) for x in l])
+		self.assertEquals(ev, correctValue)
+
+	def testWithoutIter(self):
+		self.assertRaises(template_commands.IvalOutsideIter, evaluate, '[ival]')
+
+class IkeyTagTest(unittest.TestCase):
+	def testCorrectValue(self):
+		kv = {'key1': 'val1', 'key2': 'val2'}
+		tpl, ev = evaluate('[iter:kv [ikey]]', {'kv': kv})
+		correctValue = ''.join(kv.iterkeys())
+		self.assertEquals(ev, correctValue)
+
+	def testIKeyAsIterValue(self):
+		"""Iterating over a key is impossible in python"""
+		l = {'key': 'value'}
+		self.assertRaises(template_commands.IteratingIkey, evaluate, \
+		 	'[iter:l [iter:ikey [ival]]]', {'l': l})
+
+	def testWithoutIter(self):
+		self.assertRaises(template_commands.IkeyOutsideIter, evaluate, '[ikey]')
 
 class TestTest(unittest.TestCase):
 	'Testcase for the test-tag.'
@@ -179,6 +252,17 @@ class ElseTest(unittest.TestCase):
 		tpl, ev = evaluate('[set:range [test:foo evals true][else evals false]]')
 		self.assertEquals(ev, '')
 
+class EqualsTest(unittest.TestCase):
+	def testEqualsBeforeElseFalse(self):
+		tpl, ev = evaluate('[set:empty ][equals:errormsg:empty][else evals false]')
+		self.assertEquals(ev, 'evals false')
+
+	def testEqualsBeforeElseTrue(self):
+		tpl, ev = evaluate('[set:one 1][set:een 1][equals:een:one evals true][else evals false]')
+		self.assertEquals(ev, 'evals true')
+
+	def testEqualsWithoutArgument(self):
+		self.assertRaises(template_commands.MissingRequiredArguments, evaluate, '[equals]')
 
 class VariableValueTests(unittest.TestCase):
 	'''Testcase for the variable_value function of a template-object
@@ -235,6 +319,9 @@ class IncludeTests(unittest.TestCase):
 		tpl, ev = evaluate('[test:do_include [include %s]]' % self.filename,
 				{'do_include': True})
 		self.assertEquals(ev, self.text)
+
+	def testInvalidInclude(self):
+		self.assertRaises(template_commands.UnknownTemplateError, evaluate, '[include nonexistent.filename]')
 
 def runtests():
 	unittest.main()

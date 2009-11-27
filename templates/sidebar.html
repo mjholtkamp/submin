@@ -3,7 +3,6 @@
 	<div class="logout">
 	<ul><li><a href="[val main_base_url]logout">Logout ([val main_user.name])</a></li></ul>
 	</div>
-	[test:is_admin
 	<div class="showhide">
 	[set:type users]
 	<h2 class="showhide-trigger"><img class="showhide-icon" src="[val main_base_url]img/arrow-[equals:selected_type:type expanded][else collapsed].png" />Users</h2>
@@ -28,5 +27,4 @@
 		<li><a href="[val main_base_url]groups/add/" title="Add a group"><img src="[val main_base_url]img/add-group.png" id="sidebar_add_group_img"/></a></li>
 		<li><a href="[val main_base_url]repositories/add/" title="Add a repository"><img src="[val main_base_url]img/add-repository.png" id="sidebar_add_repository_img"/></a></li>
 	</ul>
-	]
 </div>

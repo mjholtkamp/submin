@@ -6,25 +6,39 @@ from unicode import uc_str, uc_to_svn, uc_from_svn
 import commands
 import exceptions
 
-def listRepositories(session_user):
+def listRepositories(session_user, only_invalid=False):
 	config = Config()
 	repositories = []
-	if session_user.is_admin:
-		repository_names = config.repositories()
-		repository_names.sort()
+	repository_names = repositoriesOnDisk()
+	repository_names.sort()
 
-		for repos in repository_names:
-			try:
-				r = Repository(repos)
-				status = "ok"
-			except Repository.DoesNotExist:
-				pass
-			except Repository.PermissionDenied:
-				status = "permission denied"
-			except Repository.WrongVersion:
-				status = "wrong version"
+	for repos in repository_names:
+		try:
+			r = Repository(repos)
+			if not only_invalid:
+				if session_user.is_admin:
+					repositories.append(repos)
+				else:
+					if r.userHasReadPermissions(session_user):
+						repositories.append(repos)
+		except (Repository.DoesNotExist, Repository.PermissionDenied):
+			if only_invalid:
+				repositories.append(repos)
 
-			repositories.append({"name": repos, "status": status})
+	return repositories
+
+def repositoriesOnDisk():
+	"""Returns all repositories that are found on disk"""
+	import glob, os.path
+	config = Config()
+	reposdir = config.getpath('svn', 'repositories')
+	reps = glob.glob(str(reposdir + '*'))
+	repositories = []
+	for rep in reps:
+		if os.path.isdir(rep):
+			repositories.append(rep[rep.rfind('/') + 1:])
+
+	repositories.sort()
 
 	return repositories
 
@@ -35,8 +49,6 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 	class DoesNotExist(Exception):
 		pass
 	class PermissionDenied(Exception):
-		pass
-	class WrongVersion(Exception):
 		pass
 	class ImportError(Exception):
 		def __init__(self, msg):
@@ -90,20 +102,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		try:
 			repository = repos.svn_repos_open(root_path_utf8)
 		except SubversionException, e:
-			errstr = str(e)
-			# check for messages like the following:
-			# "Expected FS Format 'x'; found format 'y'"
-			# they differ for each version, so do a string match instead of
-			# errorcode match
-
-			if "Expected" in errstr and "format" in errstr and "found" in errstr:
-				raise self.WrongVersion("""Wrong Subversion version.
-Differing versions between the program that created the repository (svnadmin)
-and the subversion library that is currently installed on your computer.
-Please check if your installed subversion library is up-to-date.""")
-
-			raise self.PermissionDenied("""Permission denied.
-Please check if the webserver can read and write the repositories.""")
+			raise self.PermissionDenied
 
 		fs_ptr = repos.svn_repos_fs(repository)
 
@@ -140,14 +139,14 @@ Please check if the webserver can read and write the repositories.""")
 				return True # only one is enough
 
 		return False
-	
+
 	def notificationsEnabled(self):
 		import os
 
-		reposdir = self.config.get('svn', 'repositories')
-		hook = os.path.join(reposdir, self.name, 'hooks', 'post-commit')
+		reposdir = self.config.getpath('svn', 'repositories')
+		hook = reposdir + self.name + 'hooks' + 'post-commit'
 		try:
-			f = open(hook, 'r')
+			f = open(str(hook), 'r')
 		except IOError:
 			return False # assume it does not exist
 		
@@ -162,13 +161,20 @@ Please check if the webserver can read and write the repositories.""")
 		config = Config()
 
 		line_altered = False
-		reposdir = self.config.get('svn', 'repositories')
-		hook = os.path.join(reposdir, self.name, 'hooks', 'post-commit')
-		bindir = self.config.get('backend', 'bindir')
-		fullpath = os.path.join(bindir, 'post-commit.py')
-		config_file = os.environ['SUBMIN_CONF']
-		new_hook = '/usr/bin/python %s "%s" "$1" "$2"\n' % (fullpath, config_file)
-		f = open(hook, 'a+')
+		reposdir = self.config.getpath('svn', 'repositories')
+		hook = reposdir + self.name + 'hooks' + 'post-commit'
+		bindir = self.config.getpath('backend', 'bindir')
+		fullpath = bindir + 'post-commit.py'
+		# XXX ugly code :(
+		if config.version == 1:
+			config_file = os.environ['SUBMIN_CONF']
+		else:
+			config_file = os.environ['SUBMIN_ENV']
+
+		new_hook = '/usr/bin/python %s "%s" "$1" "$2"\n' % \
+				(str(fullpath), config_file)
+
+		f = open(str(hook), 'a+')
 		f.seek(0, 2) # seek to end of file, not all systems do this
 
 		if f.tell() != 0:
@@ -200,17 +206,28 @@ Please check if the webserver can read and write the repositories.""")
 			f.write(self.signature)
 			f.write(new_hook)
 		f.close()
-		os.chmod(hook, 0755)
+		os.chmod(str(hook), 0755)
 
 	def remove(self):
 		config = Config()
-		reposdir = config.get('svn', 'repositories')
-		newrepos = Path(reposdir) + self.name
+		reposdir = config.getpath('svn', 'repositories')
+		newrepos = reposdir + self.name
+		if not newrepos.absolute:
+			raise Exception("Error, repository path is relative, this should be fixed")
+
 		cmd = 'rm -rf "%s"' % newrepos
 		(exitstatus, outtext) = commands.getstatusoutput(cmd)
 		if exitstatus == 0:
 			return
 		raise Exception("could not remove repository %s" % self.name)
+
+	def userHasReadPermissions(self, session_user):
+		if session_user.notifications.has_key(self.name):
+			perm = session_user.notifications[self.name]
+			if perm['allowed']:
+				return True
+
+		return False
 
 	def __str__(self):
 		return self.name

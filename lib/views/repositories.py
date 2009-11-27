@@ -6,8 +6,10 @@ from dispatch.view import View
 from models.user import User
 from models.group import Group
 from models.repository import *
+from models.trac import *
 from auth.decorators import *
 from path.path import Path
+from config.config import MissingConfigData
 from unicode import url_uc_decode
 from ConfigParser import NoOptionError
 
@@ -38,15 +40,38 @@ class Repositories(View):
 
 		return ErrorResponse('Unknown path', request=req)
 
-	@admin_required
 	def show(self, req, path, localvars):
 		import os.path
+		config = Config()
+
 		try:
 			repository = Repository(path[0])
 		except Repository.DoesNotExist:
 			return ErrorResponse('This repository does not exist.', request=req)
 
-		config = Config()
+		user = req.session['user']
+		if not user.is_admin and not repository.userHasReadPermissions(user):
+			return ErrorResponse('This repository does not exist.', request=req)
+
+		trac_enabled = False
+		try:
+			trac_enabled = config.get('trac', 'enabled')
+		except MissingConfigData:
+			pass
+
+		if trac_enabled:
+			localvars['trac_config_ok'] = True
+			localvars['trac_exists'] = False
+			try:
+				trac = Trac(path[0])
+				localvars['trac_exists'] = True
+			except UnknownTrac, e:
+				pass
+			except MissingConfig, e:
+				localvars['trac_config_ok'] = False
+				localvars['trac_msg'] = \
+					'There is something missing in your config: %s' % str(e)
+
 		try:
 			svn_base_url = config.get('www', 'svn_base_url')
 			svn_http_url = os.path.join(svn_base_url, repository.name)
@@ -96,9 +121,9 @@ class Repositories(View):
 
 			url = base_url + '/repositories/show/' + repository
 
-			reposdir = config.get('svn', 'repositories')
-			newrepos = reposdir + '/' + repository
-			cmd = 'svnadmin create %s' % newrepos
+			reposdir = config.getpath('svn', 'repositories')
+			newrepos = reposdir + repository
+			cmd = 'svnadmin create %s' % str(newrepos)
 			(exitstatus, outtext) = commands.getstatusoutput(cmd)
 			if exitstatus == 0:
 				repos = Repository(repository)
@@ -216,6 +241,13 @@ class Repositories(View):
 		repository.remove()
 		return XMLStatusResponse('removeRepository', True, 'Repository %s deleted' % repository.name)
 
+	@admin_required
+	def tracEnvCreate(self, req, repository):
+		(s, m) = createTracEnv(repository.name)
+		if s:
+			m = ""
+		return XMLStatusResponse('tracEnvCreate', s, 'Trac environment "%s" created. %s' % (repository.name, m))
+
 	def ajaxhandler(self, req, path):
 		repositoryname = ''
 
@@ -257,7 +289,9 @@ class Repositories(View):
 
 		if 'getNotifications' in req.post:
 			return self.getNotifications(req, repository)
-		
+
+		if 'tracEnvCreate' in req.post:
+			return self.tracEnvCreate(req, repository)
 
 		return XMLStatusResponse('', False, 'Unknown command')
 

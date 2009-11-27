@@ -1,7 +1,7 @@
 import os.path
 
 class Path(object):
-	def __init__(self, path, append_slash=False, absolute=True):
+	def __init__(self, path, append_slash=False, absolute=None):
 		self.append_slash = append_slash
 		self.absolute = absolute
 		self.path = self.canonicalize(path)
@@ -32,6 +32,13 @@ class Path(object):
 
 	def canonicalize(self, path):
 		'''Return canonical form of path, depending on options'''
+		# autodetect absolute/relative paths
+		if self.absolute == None:
+			if len(path) > 0 and path[0] == '/':
+				self.absolute = True
+			else:
+				self.absolute = False
+
 		path = path.rstrip('/')
 
 		if not self.absolute:

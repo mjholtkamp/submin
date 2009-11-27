@@ -3,9 +3,11 @@
 var Log_timeout;
 
 function Log(message, success) {
-	if (message == "") {
+	if (message == "")
 		return;
-	}
+
+	if (!document.body)
+		return;
 
 	// first remove previous logs
 	RemoveLog()
