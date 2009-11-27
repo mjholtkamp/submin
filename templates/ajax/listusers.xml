@@ -1,7 +1,0 @@
-<response>
-	<command name="listUsers" success="True">
-		<users>
-			[iter:users <user name="[ival]" />]
-		</users>
-	</command>
-</response>

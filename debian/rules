@@ -10,18 +10,22 @@ clean:
 	dh_testroot
 	dh_clean
 
+	python setup.py clean --all
+
 install: build
 	dh_testdir
 	dh_testroot
 	dh_installdirs
 
-	python bin/install.py debian/submin/usr --final=/usr --force
+	python setup.py install \
+        --root=$(CURDIR)/debian/submin2
 
-binary-indep:
+binary-indep: build install
 	dh_testdir
 	dh_testroot
 	dh_installman man/submin-admin.1
-	dh_compress
+	dh_pycentral
+	dh_compress -X.py
 	dh_fixperms
 	dh_installdeb
 	dh_gencontrol

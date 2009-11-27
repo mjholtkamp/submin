@@ -1,0 +1,18 @@
+<response>
+	<command name="listNotifications" success="True">
+		<notifications user="[val username]">
+			[test:session_user.is_admin
+				[iter:notifications
+			<notification name="[ival.name]" allowed="[ival.allowed]" enabled="[ival.enabled]"/>
+				]
+			]
+			[else
+				[iter:notifications
+					[test:ival.allowed
+			<notification name="[ival.name]" allowed="True" enabled="[ival.enabled]"/>
+					]
+				]
+			]
+		</notifications>
+	</command>
+</response>

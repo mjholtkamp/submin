@@ -1,0 +1,14 @@
+<response>
+	<command name="getRepositoryPerms" success="True">
+		<permissions repository="[val repository]" path="[val path]">
+			[iter:perms <member name="[ival.name]" permission="[ival.permission]" type="[ival.type]"/>
+			]
+		</permissions>
+		<users>
+			[iter:usernames <user name="[ival]" />]
+		</users>
+		<groups>
+			[iter:groupnames <group name="[ival]" />]
+		</groups>
+	</command>
+</response>

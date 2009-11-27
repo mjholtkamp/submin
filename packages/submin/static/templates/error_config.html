@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Language" content="en-us" />
+		<title>Submin - Main screen turn on</title>
+		<style type="text/css">
+			body { font-family: Verdana; background: #eee}
+			div.errormsg { font-family: Arial; padding: 10px; margin: 10px; background: #c33; }
+		</style>
+	</head>
+	<body>
+		<h1>Configuration Error</h1>
+		<div class="errormsg">If you are not the administrator of this site, please warn the
+			administrator</div>
+		<div>The following problems were found.</div>
+		<div>
+		<ul>
+			[test:new_env][else <li>No SUBMIN_ENV environment variable was found</li>]
+			[test:old_env <li>an old SUBMIN_CONF environment variable was found</li>]
+		</ul>
+		[test:new_env][else
+			[test:old_env
+		<p>
+			It looks like you upgraded your submin installation from 1.x to 2.x!
+		</p>
+		<p>
+			To update your configuration, execute the following commands:
+			<pre>
+	submin-admin <em>env</em> convert [val old_env]
+	submin-admin <em>env</em> apacheconf create
+			</pre>
+			Where <em>env</em> is the submin directory (default: /var/lib/submin).
+		</p>
+
+		<p>
+			The first command will convert the data from the old config file
+			and some other files to a single database. The second command will
+			recreate a new apache config file that you can include in your
+			apache config. These commands will give instructions where needed.
+		</p>
+			]
+		]
+		</div>
+	</body>
+</html>

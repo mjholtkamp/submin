@@ -1,8 +1,0 @@
-<response>
-	<command name="listRepositories" success="True">
-		<repositories>
-			[iter:repositories <repository valid="True" name="[ival]" />]
-			[iter:invalid_repositories <repository valid="False" name="[ival]" />]	
-		</repositories>
-	</command>
-</response>

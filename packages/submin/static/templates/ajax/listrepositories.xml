@@ -1,0 +1,7 @@
+<response>
+	<command name="listRepositories" success="True">
+		<repositories>
+			[iter:repositories <repository status="[ival.status]" name="[ival.name]" />]
+		</repositories>
+	</command>
+</response>

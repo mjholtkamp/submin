@@ -1,7 +1,0 @@
-<response>
-	<command name="listGroups" success="True">
-		<groups>
-			[iter:groups <group name="[ival]" />]
-		</groups>
-	</command>
-</response>
