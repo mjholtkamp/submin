@@ -1,16 +1,87 @@
-submin (2.0-1) testing; urgency=low
+submin (1.2.8-2) testing; urgency=low
 
-  * Preparation for version 2.0
-  * Simplify javascript (closes #136), html cleanup, css cleanup
-  * Other small bugfixes
-  * Fixed listing of repositories when permissions were incorrect (#143)
-  * Used libsvn in favor of pysvn/executing svn command-line tools
-  * Improved support for non-ASCII characters (refs #145)
-  * Improved support for non-ASCII characters in templates (#149)
+  * Fix debian packaging
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Thu, 01 Oct 2009 12:20:40 +0200
+
+submin (1.2.8-1) testing; urgency=low
+
+  * Warn about different subversion versions
+  * Less complex and more verbose traceback in case of errors
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Thu, 01 Oct 2009 11:36:31 +0200
+
+submin (1.2.7-1) testing; urgency=low
+
   * Give suggestions to fix permission problems.
   * Sort subdirectories in repository trees
 
- -- Michiel Holtkamp <submin@supermind.nl>  Sun, 19 Oct 2008 09:54:21 +0200
+ -- Michiel Holtkamp <submin@supermind.nl>  Sun, 16 Aug 2009 14:50:45 +0200
+
+submin (1.2.6-2) testing; urgency=low
+
+  * UPPERCASE usernames are now allowed
+  * Allowed dots in usernames
+
+ -- Michiel Holtkamp <michiel@supermind.nl>  Tue, 04 Aug 2009 20:55:26 +0200
+
+submin (1.2.5-1) testing; urgency=low
+
+  * Improved support for non-ASCII characters in templates (#149)
+
+ -- Michiel Holtkamp <michiel@supermind.nl>  Tue, 31 Mar 2009 13:26:22 +0200
+
+submin (1.2.4-1) testing; urgency=low
+
+  * Used libsvn in favor of executing svn command-line tools
+  * Improved support for non-ASCII characters (was broken in 1.2.3)
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Thu, 19 Mar 2009 17:49:21 +0100
+
+submin (1.2.3-1) testing; urgency=low
+
+  * Added better support for non-ASCII characters
+
+ -- Michiel Holtkamp  <michiel@supermind.nl>  Wed, 18 Mar 2009 07:54:43 +0100
+
+submin (1.2.2-1) testing; urgency=low
+
+  * Fixed listing of repositories when permissions were incorrect (#143)
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Fri, 20 Feb 2009 04:30:38 +0100
+
+submin (1.2.1-1) testing; urgency=low
+
+  * Simplify javascript (closes #136), html cleanup, css cleanup
+  * Other small bugfixes
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Fri, 16 Jan 2009 06:40:43 +0100
+
+submin (1.2.0-1) testing; urgency=low
+
+  * Users can choose to receive email notifications of commits
+  * Allow deletion of repositories
+  * Small bugfixes
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Tue, 13 Jan 2009 13:20:08 +0100
+
+submin (1.1.2-1) testing; urgency=low
+
+  * Fixed WSGI redirect bug (#126)
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Tue, 09 Dec 2008 02:46:43 +0100
+
+submin (1.1.1-1) testing; urgency=low
+
+  * Fixed IE layout
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Mon, 20 Oct 2008 03:45:08 +0200
+
+submin (1.1.0-1) testing; urgency=low
+
+  * Released version 1.1.0-1
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Sun, 19 Oct 2008 09:46:13 +0200
 
 submin (1.0-1) testing; urgency=low
 
