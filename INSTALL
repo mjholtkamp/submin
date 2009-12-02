@@ -1,5 +1,32 @@
 Submin Installation
 -------------------
 
-Sorry, this file is out-of-date. A ticket #186 is open that describes this:
-https://ssl.supermind.nl/collab/projects/submin/ticket/186
+Installing from debian package: 
+
+    see http://supermind.nl/submin/download.html
+
+
+Installing from source:
+
+    Download tarball from http://supermind.nl/submin/download.html
+    Extract the tarball
+    execute: python setup.py install
+    => submin will be installed in site-packages, an executable submin-admin
+       will be installed in /usr/bin
+
+
+Create submin environment
+-------------------------
+
+Multiple submin installations can co-exist on the same server. Therefore, for
+each installation, an environment must be created. All data (repositories,
+configuration, etc) are located in one directory, for example /var/lib/submin.
+
+To create a submin environment, follow instructions after executing:
+
+    submin-admin /var/lib/submin initenv
+
+For help on submin-admin, execute the following command:
+
+    submin-admin <anything> help
+
