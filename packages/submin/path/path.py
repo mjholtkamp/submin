@@ -6,6 +6,9 @@ class Path(object):
 		self.absolute = absolute
 		self.path = self.canonicalize(path)
 
+	def exists(self):
+		return os.path.exists(self.path)
+
 	def basename(self):
 		return os.path.basename(self.path)
 
