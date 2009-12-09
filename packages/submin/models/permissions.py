@@ -10,6 +10,21 @@ class Permissions(object):
 	def list_permissions(self, repos, path):
 		return storage.list_permissions(repos, path)
 
+	def list_readable_user_paths(self, repository, user):
+		"""Return a list of paths for this *repository* that the *user* is
+		   able to read. The *user* is a User object."""
+		groups = user.member_of()
+		user_paths = []
+		for path in self.list_paths(repository):
+			for perm in self.list_permissions(repository, path):
+				user_paths.append(path)
+				if (perm['type'] == 'user' and perm['name'] == user) or \
+						(perm['type'] == 'group' and perm['name'] in groups):
+					if perm['permission'] in ['r', 'rw']:
+						user_paths.append(path)
+
+		return set(user_paths) # remove double entries
+
 	def add_permission(self, repos, repostype, path,
 			subject, subjecttype, perm):
 		"""Sets permission for repos:path, raises a
