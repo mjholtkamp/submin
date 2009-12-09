@@ -38,3 +38,37 @@ def export_auth(authtype):
 			authz.write("\n")
 
 	authz.close()
+
+def export_notifications():
+	o = Options()
+	bindir = o.static_path("hooks") + 'svn'
+	
+	# get a list of all users
+	from submin.models.user import User, FakeAdminUser
+	users = [User(name) for name in User.list(FakeAdminUser())]
+
+	# write a group-section for each user, for each repos, for each path
+	from submin.models.permissions import Permissions
+	p = Permissions()
+	groups = []
+	for user in users:
+		if not user.email:
+			continue
+
+		u_notif = user.notifications()
+
+		for repos in u_notif:
+			if not u_notif[repos]["enabled"]:
+				continue
+
+			for_paths = ",".join(p.list_readable_user_paths(repos, user))
+			group = {"for_repos": repos, "email": user.email,
+				"for_paths": for_paths}
+			groups.append(group)
+
+	templatevariables = {"groups": groups}
+
+	from submin.template.shortcuts import evaluate
+	content = evaluate("plugins/vcs/svn/mailer.conf", templatevariables)
+
+	print content
