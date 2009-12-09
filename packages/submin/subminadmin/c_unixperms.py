@@ -50,7 +50,11 @@ This should also remove possible following warnings.
 		success = True
 		try:
 			permission = 0640
-			if os.path.isdir(item):
+			if os.path.basename(os.path.dirname(os.path.dirname(item))) == \
+					"hooks" and os.path.isfile(item):
+				# Make all files in the hooks-directory executable
+				permission = 0750
+			elif os.path.isdir(item):
 				permission = 0750
 			(root, ext) = os.path.splitext(item)
 			if ext == '.cgi' or ext == '.wsgi':

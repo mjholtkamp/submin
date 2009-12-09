@@ -1,0 +1,85 @@
+import os
+import glob
+import shutil
+
+from submin.path.path import Path
+from submin.models.options import Options
+
+class c_upgrade():
+	'''Upgrades your environment to the latest version
+Usage:
+    upgrade hooks         - Upgrade all by submin provided hooks to the
+                            latest version'''
+
+	def __init__(self, sa, argv):
+		self.sa = sa
+		self.argv = argv
+
+		self.env = Path(self.sa.env)
+		self.o = Options()
+
+	def find_hook_dirs(self):
+		hooks_dir = self.o.static_path("hooks") + "submin"
+		event_dirs = glob.glob(str(hooks_dir + "*"))
+		event_dirs = [os.path.basename(x) for x in event_dirs
+				if os.path.isdir(x)]
+		return event_dirs
+
+	def create_dir(self, directory):
+		"""Create a relative or absulute directory, if it doesn't exist already"""
+		if not directory.absolute:
+			directory = self.env + directory
+
+		if not os.path.exists(str(directory)):
+			try:
+				os.makedirs(str(directory), mode=0700)
+			except OSError, e:
+				print 'making dir %s failed, do you have permissions?' % \
+						str(directory)
+				raise e
+
+	def remove_system_hooks(self):
+		env_event_dir = self.o.env_path() + "hooks"
+		for script in glob.glob(str(env_event_dir + "*/[3-6]*")):
+			try:
+				os.unlink(script)
+			except OSError, e:
+				print 'updating hook %s failed, do you have permissions?' % \
+						script
+				raise e
+
+	def copy_system_hooks(self, event_dir):
+		sys_event_dir = self.o.static_path("hooks") + "submin" + event_dir
+		env_event_dir = self.o.env_path() + "hooks" + event_dir
+		for script in glob.glob(str(sys_event_dir + "[3-6]*")):
+			try:
+				shutil.copy(script, str(env_event_dir))
+			except IOError, e:
+				print 'updating hook %s failed, do you have permissions?' % \
+						script
+
+	def subcmd_hooks(self, argv):
+		# The upgrade hooks command just copies the hooks to the environment
+		# directory. It does not check if the system-provided hooks are
+		# modified and thus overwritten.
+		event_dirs = self.find_hook_dirs()
+		self.remove_system_hooks()
+		for event_dir in event_dirs:
+			self.create_dir(self.env + "hooks" + event_dir)
+			self.copy_system_hooks(event_dir)
+
+		if "no-fix-unixperms" not in argv:
+			self.sa.execute(['unixperms', 'fix'])
+
+	def run(self):
+		if len(self.argv) < 1:
+			self.sa.execute(['help', 'upgrade'])
+			return
+
+		try:
+			subcmd = getattr(self, 'subcmd_%s' % self.argv[0])
+		except AttributeError:
+			self.sa.execute(['help', 'upgrade'])
+			return
+
+		subcmd(self.argv[1:])

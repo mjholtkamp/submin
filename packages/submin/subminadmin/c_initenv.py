@@ -38,6 +38,7 @@ Notes:
 		}
 		self.init_vars = {
 			'conf_dir': Path('conf'),
+			'hooks_dir': Path('hooks'),
 		}
 		self.init_vars.update({
 			'authz': self.init_vars['conf_dir'] + Path('authz'),
@@ -136,6 +137,7 @@ run()
 			self.create_dir(self.init_vars['svn_dir'])
 			self.create_dir(self.init_vars['conf_dir'])
 			self.create_dir(self.init_vars['trac_dir'])
+			self.create_dir(self.init_vars['hooks_dir'])
 			self.create_dir(Path('auth'))
 			self.create_dir(Path('cgi-bin'))
 		except OSError:
@@ -177,6 +179,7 @@ run()
 
 			print "\nAdded an admin user with password '%s'\n" % password
 
+		self.sa.execute(['upgrade', 'hooks', 'no-fix-unixperms'])
 		self.sa.execute(['unixperms', 'fix'])
 		confdir = self.env + 'conf'
 		cgiconf = self.env + 'conf' + 'apache.cgi.conf'
