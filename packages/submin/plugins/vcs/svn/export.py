@@ -44,7 +44,8 @@ def export_notifications():
 	For each user/repository pair, a config group is created. Only if a user
 	has read or read/write permission to one or multiple paths in that
 	repository, _and_ if the user has notifications enabled for that
-	repository, _and_ if the user has a non-empty email-address."""
+	repository, _and_ if the user has a non-empty email-address. Multiple
+	paths are grouped together by a regexp group (multiple|paths)"""
 	o = Options()
 	bindir = o.static_path("hooks") + 'svn'
 	
