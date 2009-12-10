@@ -17,9 +17,10 @@ class Permissions(object):
 		user_paths = []
 		for path in self.list_paths(repository):
 			for perm in self.list_permissions(repository, path):
-				user_paths.append(path)
-				if (perm['type'] == 'user' and perm['name'] == user) or \
-						(perm['type'] == 'group' and perm['name'] in groups):
+				# due to lazy evaluation, user perms overrule group and 'all'
+				if (perm['type'] == 'user' and perm['name'] == user.name) or \
+						(perm['type'] == 'group' and perm['name'] in groups) or \
+						(perm['type'] == 'all'):
 					if perm['permission'] in ['r', 'rw']:
 						user_paths.append(path)
 

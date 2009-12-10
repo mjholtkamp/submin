@@ -40,6 +40,11 @@ def export_auth(authtype):
 	authz.close()
 
 def export_notifications():
+	"""Export a mailer.py config file
+	For each user/repository pair, a config group is created. Only if a user
+	has read or read/write permission to one or multiple paths in that
+	repository, _and_ if the user has notifications enabled for that
+	repository, _and_ if the user has a non-empty email-address."""
 	o = Options()
 	bindir = o.static_path("hooks") + 'svn'
 	
@@ -47,7 +52,6 @@ def export_notifications():
 	from submin.models.user import User, FakeAdminUser
 	users = [User(name) for name in User.list(FakeAdminUser())]
 
-	# write a group-section for each user, for each repos, for each path
 	from submin.models.permissions import Permissions
 	p = Permissions()
 	groups = []
@@ -61,9 +65,17 @@ def export_notifications():
 			if not u_notif[repos]["enabled"]:
 				continue
 
-			for_paths = ",".join(p.list_readable_user_paths(repos, user))
+			# strip leading /
+			paths = [x[1:] for x in p.list_readable_user_paths(repos, user)]
+			if len(paths) == 0:
+				continue
+			elif len(paths) == 1:
+				for_paths = paths[0]
+			elif len(paths) > 0:
+				for_paths = "(" + "|".join(paths) + ")"
+
 			group = {"for_repos": repos, "email": user.email,
-				"for_paths": for_paths}
+				"for_paths": for_paths, "username": user.name}
 			groups.append(group)
 
 	templatevariables = {"groups": groups}
