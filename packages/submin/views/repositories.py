@@ -229,10 +229,8 @@ class Repositories(View):
 
 	@admin_required
 	def tracEnvCreate(self, req, repository):
-		(s, m) = createTracEnv(repository.name)
-		if s:
-			m = ""
-		return XMLStatusResponse('tracEnvCreate', s, 'Trac environment "%s" created. %s' % (repository.name, m))
+		createTracEnv(repository.name, req.session['user'])
+		return XMLStatusResponse('tracEnvCreate', True, 'Trac environment "%s" created.' % repository.name)
 
 	def ajaxhandler(self, req, path):
 		repositoryname = ''

@@ -11,6 +11,11 @@ class UnknownTrac(Exception):
 class MissingConfig(Exception):
 	pass
 
+class TracAdminError(Exception):
+	def __init__(self, exitstatus, outtext):
+		Exception.__init__(self,
+				"trac-admin exited with exit status %d. Output from the command: %s" % (exitstatus, outtext))
+
 def tracBaseDir():
 	o = Options()
 	try:
@@ -20,7 +25,7 @@ def tracBaseDir():
 
 	return basedir
 
-def createTracEnv(repository):
+def createTracEnv(repository, adminUser):
 	o = Options()
 	basedir = tracBaseDir()
 	if not os.path.isdir(str(basedir)):
@@ -38,7 +43,14 @@ def createTracEnv(repository):
 	cmd =  "PATH='%s' trac-admin '%s' initenv '%s' 'sqlite:db/trac.db' 'svn' '%s'" % \
 		(path, tracenv, projectname, svndir)
 	(exitstatus, outtext) = commands.getstatusoutput(cmd)
-	return (exitstatus == 0, outtext)
+	if exitstatus != 0:
+		raise TracAdminError(exitstatus, outtext)
+
+	cmd = "PATH='%s' trac-admin '%s' permission add '%s' TRAC_ADMIN" % \
+			(path, tracenv, adminUser.name)
+	(exitstatus, outtext) = commands.getstatusoutput(cmd)
+	if exitstatus != 0:
+		raise TracAdminError(exitstatus, outtext)
 
 class Trac(object):
 	def __init__(self, name):
