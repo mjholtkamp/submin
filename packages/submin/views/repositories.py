@@ -115,9 +115,9 @@ class Repositories(View):
 				# TODO(michiel): Hardcode 'vcs-type' to 'svn' until vcs
 				# subsystem is working properly.
 				Repository.add('svn', repository)
-			except PermissionError:
+			except PermissionError, e:
 				return ErrorResponse('could not create repository',
-					request=req, details=outtext)
+					request=req, details=str(e))
 
 			url = base_url + '/repositories/show/' + repository
 			return Redirect(url)
