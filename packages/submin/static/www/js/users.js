@@ -38,7 +38,7 @@ function sendEmailCB(response) {
 }
 
 function sendFullName() {
-	AjaxAsyncPostLog(document.location, "fullname=" + $('fullname').value);
+	AjaxAsyncPostLog(document.location, "fullname=" + escape_plus($('fullname').value));
 }
 
 // global variable to temporarily store the password to be verified
@@ -104,7 +104,7 @@ function checkPasswords() {
 }
 
 function sendPassword(password) {
-	AjaxAsyncPostLog(document.location, "password=" + password);
+	AjaxAsyncPostLog(document.location, "password=" + escape_plus(password));
 }
 
 
