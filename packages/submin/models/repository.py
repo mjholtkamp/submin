@@ -1,5 +1,6 @@
 import os
 from submin import models
+from submin.hooks.common import trigger_hook
 systems = models.vcs.list()
 
 class DoesNotExistError(Exception):
@@ -53,37 +54,34 @@ class Repository(object):
 		return False
 
 	@staticmethod
-	def add(system, name):
-		vcs = models.vcs.get(system, "repository")
+	def add(vcs_type, name, session_user):
+		vcs = models.vcs.get(vcs_type, "repository")
 		vcs.add(name)
+		trigger_hook('repository-create', admin_username=session_user,
+			repositoryname=name, vcs_type=vcs_type)
 
-	def __init__(self, repositoryname):
+	def __init__(self, repositoryname, vcs_type):
 		self.name = repositoryname
-		self._type = 'repository'
+		self.vcs_type = vcs_type
 
-		for system in systems:
-			vcs = models.vcs.get(system, "repository")
-			try:
-				self._repository = vcs.Repository(repositoryname)
-				return # we found one, no need to check other systems
-			except DoesNotExistError:
-				pass
-
-		raise DoesNotExistError
+		vcs = models.vcs.get(vcs_type, "repository")
+		self.repository = vcs.Repository(repositoryname)
 
 	def remove(self):
 		"""Removes a Repository from disk (NO UNDO)"""
-		self._repository.remove()
+		self.repository.remove()
+		trigger_hook('repository-delete', repositoryname=self.name,
+				vcs_type=self.vcs_type)
 
 	def subdirs(self, subdir):
-		return self._repository.subdirs(subdir)
+		return self.repository.subdirs(subdir)
 
 	def enableCommitEmails(self, enable):
 		"""Enables sending of commit messages if *enable* is True."""
-		self._repository.enableCommitEmails(enable)
+		self.repository.enableCommitEmails(enable)
 
 	def commitEmailsEnabled(self):
-		return self._repository.commitEmailsEnabled()
+		return self.repository.commitEmailsEnabled()
 
 __doc__ = """
 VCS contract

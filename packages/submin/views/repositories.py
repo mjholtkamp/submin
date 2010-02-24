@@ -44,7 +44,8 @@ class Repositories(View):
 
 		user = req.session['user']
 		try:
-			repository = Repository(path[0])
+			# TODO: hardcoded svn
+			repository = Repository(path[0], 'svn')
 
 			# Lie if user cannot see permission
 			if not user.is_admin and not Repository.userHasReadPermissions(path[0], user):
@@ -106,7 +107,7 @@ class Repositories(View):
 				return self.showAddForm(req, repository, 'Repository name not supplied')
 
 			try:
-				a = Repository(repository)
+				a = Repository(repository, 'svn')
 				return self.showAddForm(req, repository, 'Repository %s already exists' % repository)
 			except DoesNotExistError:
 				pass
@@ -114,7 +115,7 @@ class Repositories(View):
 			try:
 				# TODO(michiel): Hardcode 'vcs-type' to 'svn' until vcs
 				# subsystem is working properly.
-				Repository.add('svn', repository)
+				Repository.add('svn', repository, req.session['user'])
 			except PermissionError, e:
 				return ErrorResponse('could not create repository',
 					request=req, details=str(e))
@@ -242,7 +243,7 @@ class Repositories(View):
 		repositoryname = path[1]
 		
 		try:
-			repository = Repository(repositoryname)
+			repository = Repository(repositoryname, 'svn')
 		except (IndexError, DoesNotExistError):
 			return XMLStatusResponse('', False,
 				'Repository %s does not exist.' % repositoryname)

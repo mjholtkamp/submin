@@ -1,4 +1,5 @@
 from submin import models
+from submin.hooks.common import trigger_hook
 storage = models.storage.get("group")
 from submin.models.exceptions import UnknownGroupError
 
@@ -17,6 +18,7 @@ class Group(object):
 	def add(name):
 		"""Add a new, empty group"""
 		storage.add(name)
+		trigger_hook('group-create', groupname=name)
 		models.vcs.export_auth_group()
 		return Group(name)
 
@@ -41,10 +43,12 @@ class Group(object):
 		return self.name
 
 	def remove(self):
+		oldmembers=self.members()
 		storage.remove_permissions(self._id)
 		storage.remove_managers(self._id)
 		storage.remove_members_from_group(self._id)
 		storage.remove(self._id)
+		trigger_hook('group-delete', groupname=name, group_oldmembers=oldmembers)
 		models.vcs.export_auth_group()
 
 	def members(self):
@@ -52,10 +56,12 @@ class Group(object):
 
 	def add_member(self, user):
 		storage.add_member(self._id, user.id)
+		trigger_hook('group-add-member', groupname=self._name, username=user.name)
 		models.vcs.export_auth_group()
 
 	def remove_member(self, user):
 		storage.remove_member(self._id, user.id)
+		trigger_hook('group-delete-member', groupname=self._name, username=user.name)
 		models.vcs.export_auth_group()
 
 	# Properties

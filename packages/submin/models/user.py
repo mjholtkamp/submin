@@ -1,4 +1,5 @@
 from submin import models
+from submin.hooks.common import trigger_hook
 import validators
 storage = models.storage.get("user")
 
@@ -37,6 +38,7 @@ class User(object):
 			raise validators.InvalidUsername(username)
 
 		storage.add(username, password)
+		trigger_hook('user-create', username=username, user_passwd=password)
 		models.vcs.export_auth_user()
 		return User(username)
 
@@ -64,7 +66,7 @@ class User(object):
 		                              # default value
 
 	def __str__(self):
-		return self.name
+		return self._name
 
 	def check_password(self, password):
 		"""Return True if password is correct, can raise NoMD5PasswordError"""
@@ -72,6 +74,7 @@ class User(object):
 
 	def set_password(self, password):
 		storage.set_password(self._id, password)
+		trigger_hook('user-update', username=self._name, user_passwd=password)
 		models.vcs.export_auth_user()
 
 	def set_md5_password(self, password):
@@ -94,6 +97,7 @@ class User(object):
 		storage.remove_permissions_submin(self._id)
 		storage.remove_notifications(self._id)
 		storage.remove(self._id)
+		trigger_hook('user-delete', username=self._name)
 		models.vcs.export_auth_user()
 
 	def member_of(self):
@@ -139,10 +143,12 @@ class User(object):
 		return self._name
 
 	def _setName(self, name):
-		self._name = name
 		if not validators.validate_username(name):
 			raise validators.InvalidUsername(name)
+		oldname = self._name
+		self._name = name
 		storage.set_name(self._id, name)
+		trigger_hook('user-update', username=self._name, user_oldname=oldname)
 		models.vcs.export_auth_user()
 
 	def _getEmail(self):
