@@ -45,7 +45,8 @@ def trigger_user_hook(event, **args):
 	cwd = os.getcwd()
 	os.chdir(str(o.env_path()))
 
-	env = dict([(key.upper(), value) for key, value in args.iteritems()])
+	env = dict([(key.upper(), value) for key, value in args.iteritems()
+			if value])
 	for hook in user_hooks:
 		try:
 			# XXX What to do with system hooks which are not executable?
