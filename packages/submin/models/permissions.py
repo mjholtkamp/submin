@@ -37,7 +37,6 @@ class Permissions(object):
 		storage.add_permission(repos, path, subject, subjecttype, perm)
 		trigger_hook('permission-update', repositoryname=repos,
 				repository_path=path, vcs_type=repostype)
-		models.vcs.export_auth_repository(repostype)
 
 	def change_permission(self, repos, repostype, path,
 			subject, subjecttype, perm):
@@ -47,13 +46,11 @@ class Permissions(object):
 		storage.change_permission(repos, path, subject, subjecttype, perm)
 		trigger_hook('permission-update', repositoryname=repos,
 				repository_path=path, vcs_type=repostype)
-		models.vcs.export_auth_repository(repostype)
 
 	def remove_permission(self, repos, repostype, path, subject, subjecttype):
 		storage.remove_permission(repos, path, subject, subjecttype)
 		trigger_hook('permission-update', repositoryname=repos,
 				repository_path=path, vcs_type=repostype)
-		models.vcs.export_auth_repository(repostype)
 
 __doc__ = """
 Storage Contract

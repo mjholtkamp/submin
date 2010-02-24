@@ -39,7 +39,6 @@ class User(object):
 
 		storage.add(username, password)
 		trigger_hook('user-create', username=username, user_passwd=password)
-		models.vcs.export_auth_user()
 		return User(username)
 
 	def __init__(self, username=None, raw_data=None):
@@ -75,7 +74,6 @@ class User(object):
 	def set_password(self, password):
 		storage.set_password(self._id, password)
 		trigger_hook('user-update', username=self._name, user_passwd=password)
-		models.vcs.export_auth_user()
 
 	def set_md5_password(self, password):
 		storage.set_md5_password(self._id, password)
@@ -98,7 +96,6 @@ class User(object):
 		storage.remove_notifications(self._id)
 		storage.remove(self._id)
 		trigger_hook('user-delete', username=self._name)
-		models.vcs.export_auth_user()
 
 	def member_of(self):
 		return storage.member_of(self._id)
@@ -149,7 +146,6 @@ class User(object):
 		self._name = name
 		storage.set_name(self._id, name)
 		trigger_hook('user-update', username=self._name, user_oldname=oldname)
-		models.vcs.export_auth_user()
 
 	def _getEmail(self):
 		return self._email

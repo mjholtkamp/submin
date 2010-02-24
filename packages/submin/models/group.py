@@ -19,7 +19,6 @@ class Group(object):
 		"""Add a new, empty group"""
 		storage.add(name)
 		trigger_hook('group-create', groupname=name)
-		models.vcs.export_auth_group()
 		return Group(name)
 
 	def __init__(self, groupname=None, raw_data=None):
@@ -48,8 +47,7 @@ class Group(object):
 		storage.remove_managers(self._id)
 		storage.remove_members_from_group(self._id)
 		storage.remove(self._id)
-		trigger_hook('group-delete', groupname=name, group_oldmembers=oldmembers)
-		models.vcs.export_auth_group()
+		trigger_hook('group-delete', groupname=self._name, group_oldmembers=oldmembers)
 
 	def members(self):
 		return storage.members(self._id)
@@ -57,12 +55,10 @@ class Group(object):
 	def add_member(self, user):
 		storage.add_member(self._id, user.id)
 		trigger_hook('group-add-member', groupname=self._name, username=user.name)
-		models.vcs.export_auth_group()
 
 	def remove_member(self, user):
 		storage.remove_member(self._id, user.id)
 		trigger_hook('group-delete-member', groupname=self._name, username=user.name)
-		models.vcs.export_auth_group()
 
 	# Properties
 	def _getId(self):

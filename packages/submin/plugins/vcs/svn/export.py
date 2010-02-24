@@ -6,9 +6,8 @@ from repository import list as list_repos
 from submin.models.permissions import Permissions
 from submin.models.user import FakeAdminUser
 
-def export_auth(authtype):
-	"""Export authorization/authentication info for authtype:
-	"user", "group", "repository"."""
+def export_authz(**args):
+	"""Export authorization/authentication info"""
 
 	o = Options()
 	authz_filename = o.env_path("svn_authz_file")
@@ -39,7 +38,7 @@ def export_auth(authtype):
 
 	authz.close()
 
-def export_notifications():
+def export_notifications(**args):
 	"""Export a mailer.py config file
 	For each user/repository pair, a config group is created. Only if a user
 	has read or read/write permission to one or multiple paths in that
@@ -84,4 +83,4 @@ def export_notifications():
 	from submin.template.shortcuts import evaluate
 	content = evaluate("plugins/vcs/svn/mailer.conf", templatevariables)
 
-	print content
+#	raise Exception(content.encode('utf-8'))
