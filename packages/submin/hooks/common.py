@@ -8,12 +8,12 @@ def trigger_hook(event, **args):
 	#log(event, **args)
 	# call our own hooks
 	# first compose a list of all hooks
-	from submin.bootstrap import settings
 	from submin.hooks import system_hooks
-
+	from submin.models.options import Options
+	o = Options()
 	hooks = system_hooks.hooks.copy()
 
-	for vcs_plugin in settings.vcs_plugins:
+	for vcs_plugin in o.value('vcs_plugins').split(','):
 		plugin_hooks = _get_vcs_plugin_hooks(vcs_plugin)
 		for key in plugin_hooks:
 			hooks[key] = hooks.get(key, []) + plugin_hooks[key]

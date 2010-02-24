@@ -63,6 +63,13 @@ Usage:
 
 		return salt
 
+	def vcs_plugins(self):
+		import pkgutil, os
+		# __file__ returns <submin-dir>/subminadmin/c_config.py
+		libdir = os.path.dirname(os.path.dirname(__file__))
+		vcsdir = os.path.join(libdir, 'plugins', 'vcs')
+		return [name for _, name, _ in pkgutil.iter_modules([vcsdir])]
+
 	def settings_defaults(self, filename):
 		# write the bootstrap settings file
 		submin_settings = '''
@@ -105,6 +112,7 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 			'enabled_trac': 'no',
 			'session_salt': self.session_salt(),
 			'env_path': '/bin:/usr/bin:/usr/local/bin:/opt/local/bin',
+			'vcs_plugins': ','.join(self.vcs_plugins()),
 		}
 		for (key, value) in options.iteritems():
 			o.set_value(key, value)
