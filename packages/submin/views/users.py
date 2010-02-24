@@ -3,7 +3,8 @@ from submin.template.shortcuts import evaluate_main
 from submin.dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse
 from submin.views.error import ErrorResponse
 from submin.models.user import User
-from submin.models.exceptions import UserExistsError, UserPermissionError
+from submin.models.exceptions import UnknownUserError, UserExistsError, \
+		UserPermissionError, MemberExistsError
 from submin.models.group import Group
 from submin.auth.decorators import *
 from submin.models.options import Options
