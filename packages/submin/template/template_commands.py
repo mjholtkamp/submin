@@ -10,7 +10,7 @@ import os
 from library import Library
 from template import Template
 from types import * # for ikey/ival
-register = Library()
+commands = Library()
 
 class ElseError(Exception):
 	pass
@@ -36,7 +36,7 @@ class IvalOutsideIter(Exception):
 class IkeyOutsideIter(Exception):
 	pass
 
-@register.register('set')
+@commands.register('set')
 def set(node, tpl):
 	"""Sets a variable to a value, local to the template.
 	Don't use a period (.) in your variable-name, because the [val] tag will
@@ -55,7 +55,7 @@ def set(node, tpl):
 	tpl.variables[args] = text
 	return ''
 
-@register.register('val')
+@commands.register('val')
 def val(node, tpl):
 	if not node.nodes:
 		raise MissingRequiredArguments, \
@@ -69,7 +69,7 @@ def val(node, tpl):
 		return value
 	return ''
 
-@register.register('include')
+@commands.register('include')
 def include(node, tpl):
 	to_include = ''
 	for n in node.nodes:
@@ -93,7 +93,7 @@ def include(node, tpl):
 		os.chdir(oldcwd)
 	return evaluated_string
 	
-@register.register('iter')
+@commands.register('iter')
 def iter(node, tpl):
 	if not node.arguments:
 		raise MissingRequiredArguments, \
@@ -159,7 +159,7 @@ def iter(node, tpl):
 	tpl.node_variables['ikey'].pop()
 	return ''.join(evals)
 
-@register.register('ival')
+@commands.register('ival')
 def ival(node, tpl):
 	args = node.arguments
 	if not args:
@@ -170,7 +170,7 @@ def ival(node, tpl):
 		"Ival without enclosing iter at file %s, line %d" % \
 		(tpl.filename, node.line)
 
-@register.register('ikey')
+@commands.register('ikey')
 def ikey(node, tpl):
 	args = node.arguments
 	if not args:
@@ -220,7 +220,7 @@ def testEquals(node, tpl):
 	value2 = tpl.variable_value(args[1])
 	return value1 == value2
 
-@register.register('equals')
+@commands.register('equals')
 def equals(node, tpl):
 	args = node.arguments
 	value = testEquals(node, tpl)
@@ -228,14 +228,14 @@ def equals(node, tpl):
 		return ''
 	return ''.join([x.evaluate(tpl) for x in node.nodes])
 
-@register.register('test')
+@commands.register('test')
 def test(node, tpl):
 	value = testTrue(node, tpl)
 	if not value: # value is None or not value:
 		return ''
 	return ''.join([x.evaluate(tpl) for x in node.nodes])
 
-@register.register('else')
+@commands.register('else')
 def else_tag(node, tpl):
 	prev = node.previous_node
 	if prev.type == 'text' and prev.content.isspace():
