@@ -61,7 +61,7 @@ Usage:
 		for line in htpasswd:
 			(user, password) = line.strip('\n').split(':')
 			try:
-				u = User.add(user, None)
+				u = User.add(user)
 			except UserExistsError:
 				u = User(user)
 
