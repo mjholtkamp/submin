@@ -20,6 +20,7 @@ class UserTests(unittest.TestCase):
 		self.o = Options()
 		self.o.set_value('svn_authz_file', '/tmp/submin-authz') # needed for export
 		self.o.set_value('svn_dir', '/tmp/submin-svn') # needed for export
+		self.o.set_value('vcs_plugins', 'svn')
 		self.tmp_dirs = []
 		User.add("test")
 		self.u = User("test")
@@ -41,9 +42,10 @@ class UserTests(unittest.TestCase):
 		return tmp_dir
 
 	def addRepository(self, reposname):
+		from submin.models.user import FakeAdminUser
 		svndir = self.makeTempDir()
 		self.o.set_value('svn_dir', svndir)
-		Repository.add('svn', reposname)
+		Repository.add('svn', reposname, FakeAdminUser())
 
 	def setEmail(self, u, email):
 		u.email = email

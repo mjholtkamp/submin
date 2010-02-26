@@ -16,6 +16,7 @@ class GroupTests(unittest.TestCase):
 		o = Options()
 		o.set_value('svn_authz_file', '/tmp/submin-authz') # needed for export
 		o.set_value('svn_dir', '/tmp/submin-svn') # needed for export
+		o.set_value('vcs_plugins', 'svn')
 
 	def tearDown(self):
 		import os
