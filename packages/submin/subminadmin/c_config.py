@@ -27,7 +27,7 @@ Usage:
 	def subcmd_get(self, argv):
 		self.sa.ensure_storage()
 
-		import submin.models.options
+		from submin.models import options
 		o = submin.models.options.Options()
 		if len(argv) == 1:
 			value = o.value(argv[0])
@@ -49,7 +49,7 @@ Usage:
 			self.sa.execute(['help', 'config'])
 			return
 
-		import submin.models.options
+		from submin.models import options
 		o = submin.models.options.Options()
 		o.set_value(argv[0], argv[1])
 
@@ -97,7 +97,7 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 
 		# And now we can use the models
 		#from models.options import Options
-		import submin.models.options
+		from submin.models import options
 
 		o = submin.models.options.Options()
 		http_base = ''

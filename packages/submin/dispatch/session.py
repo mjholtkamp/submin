@@ -116,8 +116,7 @@ class Session(PickleDict):
 	
 	def generateSessionID(self):
 		"""Really an MD5-sum of the current time and a salt"""
-		from submin.models.options import Options
-		o = Options()
-		salt = o.value('session_salt')
+		from submin.models import options
+		salt = options.value('session_salt')
 		return md5.md5(salt + \
 				md5.md5(str(time.time())).hexdigest()).hexdigest()

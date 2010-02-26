@@ -1,12 +1,11 @@
 from submin.models.exceptions import UnknownUserError
-from submin.models.options import Options
+from submin.models import options
 from submin.template.template import Template
 import template_commands
 
 def evaluate(templatename, localvars={}):
 	import os
-	o = Options()
-	template_path = o.static_path('templates')
+	template_path = options.static_path('templates')
 	templatename = str(template_path + templatename)
 	oldcwd = os.getcwd()
 	if os.path.dirname(templatename):
@@ -29,8 +28,6 @@ def evaluate(templatename, localvars={}):
 def evaluate_main(templatename, templatevariables={}, request=None):
 	templatevariables['main_include'] = templatename
 
-	o = Options()
-
 	is_admin = False
 	session_user = None
 	if not request or 'user' not in request.session:
@@ -38,7 +35,7 @@ def evaluate_main(templatename, templatevariables={}, request=None):
 
 	session_user = request.session['user']
 
-	templatevariables['main_base_url'] = str(o.url_path('base_url_submin'))
+	templatevariables['main_base_url'] = str(options.url_path('base_url_submin'))
 	templatevariables['session_user'] = session_user
 
 	return evaluate('main.html', templatevariables)

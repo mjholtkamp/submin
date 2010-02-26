@@ -1,6 +1,6 @@
 import codecs
 
-from submin.models.options import Options
+from submin.models import options
 from submin.models.group import Group
 from repository import list as list_repos
 from submin.models.permissions import Permissions
@@ -9,8 +9,7 @@ from submin.models.user import FakeAdminUser
 def export_authz(**args):
 	"""Export authorization/authentication info"""
 
-	o = Options()
-	authz_filename = o.env_path("svn_authz_file")
+	authz_filename = options.env_path("svn_authz_file")
 	authz = codecs.open(str(authz_filename), "w+", "utf-8")
 
 	# Write all groups
@@ -45,8 +44,7 @@ def export_notifications(**args):
 	repository, _and_ if the user has notifications enabled for that
 	repository, _and_ if the user has a non-empty email-address. Multiple
 	paths are grouped together by a regexp group (multiple|paths)"""
-	o = Options()
-	bindir = o.static_path("hooks") + 'svn'
+	bindir = options.static_path("hooks") + 'svn'
 	
 	# get a list of all users
 	from submin.models.user import User, FakeAdminUser

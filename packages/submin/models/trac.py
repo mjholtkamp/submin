@@ -1,7 +1,7 @@
 import exceptions
 import commands
 import os
-from submin.models.options import Options
+from submin.models import options
 from submin.models.exceptions import UnknownKeyError
 
 class UnknownTrac(Exception):
@@ -17,26 +17,24 @@ class TracAdminError(Exception):
 				"trac-admin exited with exit status %d. Output from the command: %s" % (exitstatus, outtext))
 
 def tracBaseDir():
-	o = Options()
 	try:
-		basedir = o.env_path('trac_dir')
+		basedir = options.env_path('trac_dir')
 	except UnknownKeyError:
 		raise MissingConfig('No Trac directory specified in options')
 
 	return basedir
 
 def createTracEnv(repository, adminUser):
-	o = Options()
 	basedir = tracBaseDir()
 	if not os.path.isdir(str(basedir)):
 		os.makedirs(str(basedir))
 
 	tracenv = basedir + repository
 	projectname = repository
-	svnbasedir = o.env_path('svn_dir')
+	svnbasedir = options.env_path('svn_dir')
 	svndir = svnbasedir + repository
 	try:
-		path = o.value('path')
+		path = options.value('path')
 	except UnknownKeyError:
 		path = "/bin:/usr/bin:/usr/local/bin:/opt/local/bin"
 

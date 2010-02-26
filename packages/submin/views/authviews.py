@@ -6,13 +6,12 @@ from submin.views.error import ErrorResponse
 from submin.template.shortcuts import evaluate
 from submin.models.exceptions import NoMD5PasswordError
 from submin.models.user import User, UnknownUserError
-from submin.models.options import Options
+from submin.models import options
 
 class Login(View):
 	def handler(self, request, path):
-		o = Options()
 		if not request.post:
-			return self.evaluate_form(o)
+			return self.evaluate_form()
 		username = request.post.get('username', '')
 		password = request.post.get('password', '')
 
@@ -25,12 +24,12 @@ class Login(View):
 
 		try:
 			if not user.check_password(password):
-				return self.evaluate_form(o, 'Not a valid username and password combination')
+				return self.evaluate_form('Not a valid username and password combination')
 		except NoMD5PasswordError, e:
 			return self.evaluate_form(config, str(e))
 
 		if invalid_login:
-			return self.evaluate_form(o, 'Not a valid username and password combination')
+			return self.evaluate_form('Not a valid username and password combination')
 
 
 		url = '/'
@@ -43,7 +42,7 @@ class Login(View):
 		return Redirect(url)
 
 
-	def evaluate_form(self, options, msg=''):
+	def evaluate_form(self, msg=''):
 		localvalues = {}
 		localvalues['msg'] = msg
 		base_url = options.value('base_url_submin')

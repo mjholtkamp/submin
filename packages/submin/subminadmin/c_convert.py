@@ -25,10 +25,9 @@ Usage:
 		self.sa.execute(['config', 'defaults'])
 
 	def write_options(self, config):
-		from submin.models.options import Options
-		o = Options()
+		from submin.models import options
 
-		options = {
+		cfg = {
 			'base_url_submin': ('www', 'base_url'),
 			'base_url_svn': ('www', 'svn_base_url'),
 			'base_url_trac': ('www', 'trac_base_url'),
@@ -39,9 +38,9 @@ Usage:
 			'env_path': ('backend', 'path'),
 			'svn_authz_file': ('svn', 'authz_file'),
 		}
-		for (key, section_option) in options.iteritems():
+		for (key, section_option) in cfg.iteritems():
 			value = config.get(section_option[0], section_option[1])
-			o.set_value(key, value)
+			options.set_value(key, value)
 
 	def write_users(self, config):
 		from submin.models.user import User

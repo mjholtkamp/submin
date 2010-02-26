@@ -8,7 +8,7 @@ from submin.views.authviews import Login, Logout
 from submin.views.repositories import Repositories
 from submin.views.intro import Intro
 from submin.views.ajax import Ajax
-from submin.models.options import Options
+from submin.models import options
 from submin.models.exceptions import UnknownKeyError
 from submin.dispatch.session import Session
 
@@ -27,9 +27,8 @@ def init_tests():
 	"""Initialize url-coupling to test-views
 	Only loaded if config-options in section "tests" are present
 	"""
-	o = Options()
 	try:
-		o.value("tests_scenarios_file")
+		options.value("tests_scenarios_file")
 	except UnknownKeyError:
 		return
 

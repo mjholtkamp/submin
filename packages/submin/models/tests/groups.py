@@ -7,16 +7,15 @@ mock_settings.base_dir = "/tmp/submin"
 
 from submin.models import storage
 from submin.models.group import Group
-from submin.models.options import Options
+from submin.models import options
 from submin.models.exceptions import GroupExistsError, UnknownGroupError
 
 class GroupTests(unittest.TestCase):
 	def setUp(self):
 		storage.open(mock_settings)
-		o = Options()
-		o.set_value('svn_authz_file', '/tmp/submin-authz') # needed for export
-		o.set_value('svn_dir', '/tmp/submin-svn') # needed for export
-		o.set_value('vcs_plugins', 'svn')
+		options.set_value('svn_authz_file', '/tmp/submin-authz') # needed for export
+		options.set_value('svn_dir', '/tmp/submin-svn') # needed for export
+		options.set_value('vcs_plugins', 'svn')
 
 	def tearDown(self):
 		import os

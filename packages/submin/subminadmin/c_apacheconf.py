@@ -278,8 +278,7 @@ Apache file created: %(output)s
 
 	def run(self):
 		os.environ['SUBMIN_ENV'] = self.sa.env
-		from submin.models.options import Options
-		o = Options()
+		from submin.models import options
 
 		if len(self.argv) < 1:
 			self.sa.execute(['help', 'apacheconf'])
@@ -287,27 +286,27 @@ Apache file created: %(output)s
 
 		self.defaults = {
 			'type': 'wsgi',
-			'output': o.env_path() + 'conf' + 'apache.conf'
+			'output': options.env_path() + 'conf' + 'apache.conf'
 		}
 		self.init_vars = {
 			'submin env': self.sa.env,
 			'www dir': self.sa.basedir_www,
 			'cgi-bin dir': os.path.join(self.sa.env, 'cgi-bin'),
-			'submin base url': o.value('base_url_submin'),
-			'svn base url': o.value('base_url_svn'),
-			'trac base url': o.value('base_url_trac'),
-			'svn dir': o.env_path('svn_dir'),
-			'trac dir': o.env_path('trac_dir'),
-			'authz file': o.env_path('svn_authz_file'),
+			'submin base url': options.value('base_url_submin'),
+			'svn base url': options.value('base_url_svn'),
+			'trac base url': options.value('base_url_trac'),
+			'svn dir': options.env_path('svn_dir'),
+			'trac dir': options.env_path('trac_dir'),
+			'authz file': options.env_path('svn_authz_file'),
 		}
-		self.auth_type = o.value('auth_type')
+		self.auth_type = options.value('auth_type')
 
 		# variables depending on auth type
 		if self.auth_type == "sql":
 			pass
-		elif o.value('auth_type') == "htaccess":
+		elif options.value('auth_type') == "htaccess":
 			self.init_vars.update({
-				'access file': o.value('auth_access_file'),
+				'access file': options.value('auth_access_file'),
 			})
 
 		try:

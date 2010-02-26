@@ -152,7 +152,7 @@ run()
 			self.init_vars['http_base'] = Path("/")
 
 		# write changes to config
-		import submin.models.options
+		from submin.models import options
 		o = submin.models.options.Options()
 
 		options = {

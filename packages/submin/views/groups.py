@@ -7,13 +7,12 @@ from submin.models.group import Group
 from submin.models.exceptions import GroupExistsError, MemberExistsError
 from submin.models.exceptions import UnknownGroupError
 from submin.auth.decorators import *
-from submin.models.options import Options
+from submin.models import options
 
 class Groups(View):
 	@login_required
 	def handler(self, req, path):
 		localvars = {}
-		o = Options()
 
 		if req.is_ajax():
 			return self.ajaxhandler(req, path)
@@ -32,7 +31,7 @@ class Groups(View):
 			if path[0] == 'add':
 				return self.add(req, path[1:], localvars)
 		except Unauthorized:
-			return Redirect(o.url_path('base_url_submin'))
+			return Redirect(options.url_path('base_url_submin'))
 
 		return ErrorResponse('Unknown path', request=req)
 
@@ -65,8 +64,7 @@ class Groups(View):
 
 	@admin_required
 	def add(self, req, path, localvars):
-		o = Options()
-		base_url = o.url_path('base_url_submin')
+		base_url = options.url_path('base_url_submin')
 		groupname = ''
 
 		if req.post and req.post['groupname']:

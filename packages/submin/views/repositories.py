@@ -7,7 +7,7 @@ from submin.models.user import User
 from submin.models.group import Group
 from submin.models.repository import Repository, DoesNotExistError, PermissionError
 from submin.models.trac import Trac, UnknownTrac, createTracEnv
-from submin.models.options import Options
+from submin.models import options
 from submin.models.exceptions import UnknownKeyError
 from submin.models.permissions import Permissions
 from submin.auth.decorators import login_required, admin_required
@@ -18,7 +18,6 @@ class Repositories(View):
 	@login_required
 	def handler(self, req, path):
 		localvars = {}
-		o = Options()
 
 		if req.is_ajax():
 			return self.ajaxhandler(req, path)
@@ -40,7 +39,6 @@ class Repositories(View):
 
 	def show(self, req, path, localvars):
 		import os.path
-		o = Options()
 
 		user = req.session['user']
 		try:
@@ -54,7 +52,7 @@ class Repositories(View):
 			return ErrorResponse('This repository does not exist.', request=req)
 
 		try:
-			trac_enabled = o.value('enabled_trac')
+			trac_enabled = options.value('enabled_trac')
 		except UnknownKeyError:
 			trac_enabled = False
 
@@ -71,11 +69,11 @@ class Repositories(View):
 				localvars['trac_msg'] = \
 					'There is something missing in your config: %s' % str(e)
 
-			trac_base_url = o.url_path('base_url_trac')
+			trac_base_url = options.url_path('base_url_trac')
 			trac_http_url = str(trac_base_url + repository.name)
 			localvars['trac_http_url'] = trac_http_url
 
-		svn_base_url = o.url_path('base_url_svn')
+		svn_base_url = options.url_path('base_url_svn')
 		svn_http_url = str(svn_base_url + repository.name)
 
 		localvars['svn_http_url'] = svn_http_url
@@ -92,8 +90,7 @@ class Repositories(View):
 
 	@admin_required
 	def add(self, req, path, localvars):
-		o = Options()
-		base_url = o.url_path('base_url_submin')
+		base_url = options.url_path('base_url_submin')
 		repository = ''
 
 		if req.post and req.post['repository']:

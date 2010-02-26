@@ -7,7 +7,7 @@ from submin.models.exceptions import UnknownUserError, UserExistsError, \
 		UserPermissionError, MemberExistsError
 from submin.models.group import Group
 from submin.auth.decorators import *
-from submin.models.options import Options
+from submin.models import options
 from submin.models import validators
 from submin.unicode import uc_str
 
@@ -15,7 +15,6 @@ class Users(View):
 	@login_required
 	def handler(self, req, path):
 		localvars = {}
-		o = Options()
 
 		if req.is_ajax():
 			return self.ajaxhandler(req, path)
@@ -34,7 +33,7 @@ class Users(View):
 			if path[0] == 'add':
 				return self.add(req, path[1:], localvars)
 		except Unauthorized:
-			return Redirect(o.value('base_url_submin'))
+			return Redirect(options.value('base_url_submin'))
 
 		return ErrorResponse('Unknown path', request=req)
 
@@ -66,8 +65,7 @@ class Users(View):
 
 	@admin_required
 	def add(self, req, path, localvars):
-		o = Options()
-		base_url = o.url_path('base_url_submin')
+		base_url = options.url_path('base_url_submin')
 		username = ''
 		email = ''
 		fullname = ''

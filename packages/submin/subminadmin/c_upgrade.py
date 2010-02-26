@@ -3,7 +3,7 @@ import glob
 import shutil
 
 from submin.path.path import Path
-from submin.models.options import Options
+from submin.models import options
 
 class c_upgrade():
 	'''Upgrades your environment to the latest version
@@ -16,10 +16,9 @@ Usage:
 		self.argv = argv
 
 		self.env = Path(self.sa.env)
-		self.o = Options()
 
 	def find_hook_dirs(self):
-		hooks_dir = self.o.static_path("hooks") + "submin"
+		hooks_dir = options.static_path("hooks") + "submin"
 		event_dirs = glob.glob(str(hooks_dir + "*"))
 		event_dirs = [os.path.basename(x) for x in event_dirs
 				if os.path.isdir(x)]
@@ -39,7 +38,7 @@ Usage:
 				raise e
 
 	def remove_system_hooks(self):
-		env_event_dir = self.o.env_path() + "hooks"
+		env_event_dir = options.env_path() + "hooks"
 		for script in glob.glob(str(env_event_dir + "*/[3-6]*")):
 			try:
 				os.unlink(script)
@@ -49,8 +48,8 @@ Usage:
 				raise e
 
 	def copy_system_hooks(self, event_dir):
-		sys_event_dir = self.o.static_path("hooks") + "submin" + event_dir
-		env_event_dir = self.o.env_path() + "hooks" + event_dir
+		sys_event_dir = options.static_path("hooks") + "submin" + event_dir
+		env_event_dir = options.env_path() + "hooks" + event_dir
 		for script in glob.glob(str(sys_event_dir + "[3-6]*")):
 			try:
 				shutil.copy(script, str(env_event_dir))

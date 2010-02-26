@@ -1,7 +1,7 @@
 import cPickle
 from distutils.dep_util import newer
 
-from submin.models.options import Options
+from submin.models import options
 from submin.path.path import Path
 
 class UIScenarios(object):
@@ -15,8 +15,7 @@ class UIScenarios(object):
 	"""
 	def __init__(self, filename=None):
 		if filename is None:
-			o = Options()
-			filename = o.value("tests_scenarios_file")
+			filename = options.value("tests_scenarios_file")
 		self.filename = filename
 
 		# Don't randomly change this order! Code below uses indexes to refer

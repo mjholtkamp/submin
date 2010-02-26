@@ -2,18 +2,16 @@ import os
 import glob
 from subprocess import Popen
 
-from submin.models.options import Options
+from submin.models import options
 
 def trigger_hook(event, **args):
 	#log(event, **args)
 	# call our own hooks
 	# first compose a list of all hooks
 	from submin.hooks import system_hooks
-	from submin.models.options import Options
-	o = Options()
 	hooks = system_hooks.hooks.copy()
 
-	for vcs_plugin in o.value('vcs_plugins').split(','):
+	for vcs_plugin in options.value('vcs_plugins').split(','):
 		plugin_hooks = _get_vcs_plugin_hooks(vcs_plugin)
 		for key in plugin_hooks:
 			hooks[key] = hooks.get(key, []) + plugin_hooks[key]
@@ -34,8 +32,7 @@ def _get_vcs_plugin_hooks(plugin):
 		return {}
 
 def trigger_user_hook(event, **args):
-	o = Options()
-	user_hooks_path = o.env_path() + "hooks" + event
+	user_hooks_path = options.env_path() + "hooks" + event
 	if not user_hooks_path.exists():
 		return
 
@@ -43,7 +40,7 @@ def trigger_user_hook(event, **args):
 	user_hooks.sort()
 
 	cwd = os.getcwd()
-	os.chdir(str(o.env_path()))
+	os.chdir(str(options.env_path()))
 
 	env = dict([(key.upper(), value) for key, value in args.iteritems()
 			if value])

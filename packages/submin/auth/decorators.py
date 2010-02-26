@@ -1,14 +1,13 @@
 import os
 from submin.dispatch.response import Response, Redirect
 from submin.views.error import ErrorResponse
-from submin.models.options import Options
+from submin.models import options
 
 class Unauthorized(Exception):
 	pass
 
 def login_required(fun):
-	o = Options()
-	login_url = os.path.join(str(o.env_path('base_url_submin')), 'login')
+	login_url = os.path.join(str(options.env_path('base_url_submin')), 'login')
 
 	def _decorator(self, *args, **kwargs):
 		if not self.request.is_ajax():

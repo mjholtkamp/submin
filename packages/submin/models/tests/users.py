@@ -9,7 +9,7 @@ mock_settings.base_dir = "/"
 
 from submin.models import storage
 from submin.models.user import User
-from submin.models.options import Options
+from submin.models import options
 from submin.models.exceptions import UserExistsError, UnknownUserError, UserPermissionError
 from submin.models.validators import *
 from submin.models.repository import Repository
@@ -17,10 +17,9 @@ from submin.models.repository import Repository
 class UserTests(unittest.TestCase):
 	def setUp(self):
 		storage.open(mock_settings)
-		self.o = Options()
-		self.o.set_value('svn_authz_file', '/tmp/submin-authz') # needed for export
-		self.o.set_value('svn_dir', '/tmp/submin-svn') # needed for export
-		self.o.set_value('vcs_plugins', 'svn')
+		options.set_value('svn_authz_file', '/tmp/submin-authz') # needed for export
+		options.set_value('svn_dir', '/tmp/submin-svn') # needed for export
+		options.set_value('vcs_plugins', 'svn')
 		self.tmp_dirs = []
 		User.add("test")
 		self.u = User("test")
@@ -44,7 +43,7 @@ class UserTests(unittest.TestCase):
 	def addRepository(self, reposname):
 		from submin.models.user import FakeAdminUser
 		svndir = self.makeTempDir()
-		self.o.set_value('svn_dir', svndir)
+		options.set_value('svn_dir', svndir)
 		Repository.add('svn', reposname, FakeAdminUser())
 
 	def setEmail(self, u, email):

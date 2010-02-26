@@ -5,37 +5,36 @@ from submin.models.exceptions import UnknownKeyError
 
 storage = models.storage.get("options")
 
-class Options(object):
-	def value(self, key):
-		return storage.value(key)
+def value(key):
+	return storage.value(key)
 
-	def set_value(self, key, value):
-		storage.set_value(key, value)
+def set_value(key, value):
+	storage.set_value(key, value)
 
-	def options(self):
-		return storage.options()
+def options():
+	return storage.options()
 
-	def url_path(self, key):
-		return Path(self.value(key), append_slash=True)
+def url_path(key):
+	return Path(value(key), append_slash=True)
 
-	def env_path(self, key=None):
-		from submin.bootstrap import settings # for base_dir
-		base = Path(settings.base_dir)
-		if key == None:
-			return base
+def env_path(key=None):
+	from submin.bootstrap import settings # for base_dir
+	base = Path(settings.base_dir)
+	if key == None:
+		return base
 
-		path = Path(self.value(key))
-		if path.absolute:
-			return path
+	path = Path(value(key))
+	if path.absolute:
+		return path
 
-		return base + path
+	return base + path
 
-	def static_path(self, subdir):
-		# __file__ returns <submin-static-dir>/lib/models/options.py
-		base_lib = os.path.dirname(__file__)
-		base = Path(os.path.dirname(base_lib)) + 'static'
+def static_path(subdir):
+	# __file__ returns <submin-static-dir>/lib/models/options.py
+	base_lib = os.path.dirname(__file__)
+	base = Path(os.path.dirname(base_lib)) + 'static'
 
-		return base + subdir
+	return base + subdir
 
 __doc__ = """
 Storage contract

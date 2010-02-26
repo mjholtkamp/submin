@@ -4,7 +4,7 @@ import os
 from submin.unicode import uc_str, uc_to_svn, uc_from_svn
 import commands
 import exceptions
-from submin.models.options import Options
+from submin.models import options
 
 from submin.models.repository import DoesNotExistError, PermissionError, VersionError, VCSImportError
 
@@ -31,8 +31,7 @@ def list():
 def _repositoriesOnDisk():
 	"""Returns all repositories that are found on disk"""
 	import glob, os.path
-	o = Options()
-	reposdir = o.env_path('svn_dir')
+	reposdir = options.env_path('svn_dir')
 	reps = glob.glob(str(reposdir + '*'))
 	repositories = []
 	for rep in reps:
@@ -42,8 +41,7 @@ def _repositoriesOnDisk():
 	return repositories
 
 def add(name):
-	o = Options()
-	reposdir = o.env_path('svn_dir')
+	reposdir = options.env_path('svn_dir')
 	newrepos = reposdir + name
 	cmd = 'svnadmin create "%s"' % str(newrepos)
 	(exitstatus, outtext) = commands.getstatusoutput(cmd)
@@ -66,12 +64,10 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		except ImportError:
 			raise VCSImportError("Failed to import python 'svn' module, please install")
 
-		o = Options()
-
 		self.name = name
 		self.signature = "### SUBMIN AUTOCONFIG, DO NOT ALTER FOLLOWING LINE ###\n"
 
-		reposdir = o.env_path('svn_dir')
+		reposdir = options.env_path('svn_dir')
 		self.url = str(reposdir + self.name)
 
 		self.initialized = False
@@ -153,10 +149,8 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 
 	def commitEmailsEnabled(self):
 		import os
-		from submin.models.options import Options
-		o = Options()
 
-		reposdir = o.env_path('svn_dir')
+		reposdir = options.env_path('svn_dir')
 		hook = reposdir + self.name + 'hooks' + 'post-commit'
 		try:
 			f = open(str(hook), 'r')
@@ -171,15 +165,13 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 	def enableCommitEmails(self, enable):
 		"""Add or remove our script to/from the post-commit hook"""
 		import os
-		from submin.models.options import Options
-		o = Options()
 
 		line_altered = False
-		reposdir = o.env_path('svn_dir')
+		reposdir = options.env_path('svn_dir')
 		hook = reposdir + self.name + 'hooks' + 'post-commit'
-		bindir = o.static_path('hooks') + 'svn'
+		bindir = options.static_path('hooks') + 'svn'
 		fullpath = bindir + 'post-commit.py'
-		base_env = o.env_path()
+		base_env = options.env_path()
 
 		new_hook = '/usr/bin/python %s "%s" "$1" "$2"\n' % \
 				(str(fullpath), base_env)
@@ -219,8 +211,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		os.chmod(str(hook), 0755)
 
 	def remove(self):
-		o = Options()
-		reposdir = o.env_path('svn_dir')
+		reposdir = options.env_path('svn_dir')
 		newrepos = reposdir + self.name
 		if not newrepos.absolute:
 			raise Exception("Error, repository path is relative, this should be fixed")

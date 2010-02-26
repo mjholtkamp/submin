@@ -4,17 +4,15 @@ from submin.auth.decorators import *
 from submin.models.user import User
 from submin.models.group import Group
 from submin.models.repository import Repository
-from submin.models.options import Options
+from submin.models import options
 
 class Ajax(View):
 	"""Ajax view, for global ajax requests, like list users/groups/repositories"""
 	@login_required
 	def handler(self, req, path):
-		o = Options()
-
 		# we only handle ajax requests
 		if not req.is_ajax():
-			return Redirect(o.url_path('base_url_submin'))
+			return Redirect(options.url_path('base_url_submin'))
 
 		if 'listAll' in req.post:
 			return self.listAll(req)
