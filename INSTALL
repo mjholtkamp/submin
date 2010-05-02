@@ -3,17 +3,24 @@ Submin Installation
 
 When installing from tarball, please run:
 
-  sh bin/install.sh /usr/local
+  python bin/install.py <installdir>
 
-to install submin in /usr/local. You can then run /usr/local/bin/submin-admin
-to create your submin project (multiple seperate projects are possible). This
-program will show some help, but for a quick start, just run:
+  (Use the '--help' option to get more options)
+
+To install submin in /usr/local, fill in /usr/local for <installdir>. You can
+then run /usr/local/bin/submin-admin to create your submin project (multiple
+seperate projects are possible). This program will show some help, but for a
+quick start, just run:
 
   /usr/local/bin/submin-admin create default
 
 and it will create files in /etc/submin, /var/lib/submin. Please note that
 you have to include one of the generated apache files in /etc/submin/ to your
-apache2 config.
+apache2 config. You can use the "Include" directive for that if you want
+to include it in only a specific virtual host.
+
+Then restart apache, go to http://[your webserver]/submin, and log in as user
+admin with password admin.
 
 If any instructions are not clear, please file a bug (see 'development' on the
 website).
