@@ -90,7 +90,6 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 		storage.database_evolve()
 
 		# And now we can use the models
-		#from models.options import Options
 		from submin.models import options
 
 		http_base = ''
