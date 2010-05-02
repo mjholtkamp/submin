@@ -3,6 +3,7 @@ import time
 import os
 import thread
 import md5
+from submin.models import options
 
 class SessionDestroyedError(Exception):
 	"""If a session is destroyed, it cannot be opened or accessed anymore
@@ -76,7 +77,8 @@ class Session(PickleDict):
 	def __getfilename(self):
 		if self.destroyed():
 			raise SessionDestroyedError
-		return '/tmp/sm-sess%s' % self.sessionid
+		suffix = md5.md5(str(options.url_path('base_url_submin'))).hexdigest()
+		return '/tmp/sm-sess%s-%s' % (self.sessionid, suffix)
 
 	def __setitem__(self, *args):
 		if self.destroyed():
