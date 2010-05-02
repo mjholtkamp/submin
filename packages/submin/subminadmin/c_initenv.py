@@ -153,9 +153,8 @@ run()
 
 		# write changes to config
 		from submin.models import options
-		o = submin.models.options.Options()
 
-		options = {
+		default_options = {
 			'base_url_submin': self._get_url('submin_url'),
 			'base_url_svn': self._get_url('svn_url'),
 			'base_url_trac': self._get_url('trac_url'),
@@ -164,8 +163,8 @@ run()
 			'trac_dir': str(self.init_vars['trac_dir']),
 			'svn_authz_file': str(self.init_vars['authz']),
 		}
-		for (key, value) in options.iteritems():
-			o.set_value(key, value)
+		for (key, value) in default_options.iteritems():
+			options.set_value(key, value)
 
 		# add a user
 		from submin.models.user import User

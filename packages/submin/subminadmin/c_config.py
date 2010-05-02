@@ -99,9 +99,8 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 		#from models.options import Options
 		from submin.models import options
 
-		o = submin.models.options.Options()
 		http_base = ''
-		options = {
+		default_options = {
 			'base_url_submin': http_base + '/submin',
 			'base_url_svn': http_base + '/svn',
 			'base_url_trac': http_base + '/trac',
@@ -114,8 +113,8 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 			'env_path': '/bin:/usr/bin:/usr/local/bin:/opt/local/bin',
 			'vcs_plugins': ','.join(self.vcs_plugins()),
 		}
-		for (key, value) in options.iteritems():
-			o.set_value(key, value)
+		for (key, value) in default_options.iteritems():
+			options.set_value(key, value)
 
 	def run(self):
 		if len(self.argv) < 1:
