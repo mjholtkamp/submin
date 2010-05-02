@@ -80,6 +80,7 @@ Usage: %s <installdir> [--force] [--final=<installdir2>]
 			f.write(line.replace(searchstring, replacestring))
 
 	def copy_paths(self):
+		from distutils.dir_util import copy_tree
 		self.dirname = os.path.dirname(sys.argv[0])
 		srcdir = os.path.join(self.dirname, "..")
 		os.chdir(srcdir)
@@ -90,11 +91,11 @@ Usage: %s <installdir> [--force] [--final=<installdir2>]
 			shutil.rmtree(self.share)
 
 		for d in ["css", "img", "js"]:
-			shutil.copytree(os.path.join("www", d), \
-							os.path.join(self.share, "www", d))
+			copy_tree(os.path.join("www", d), \
+					os.path.join(self.share, "www", d))
 
 		for d in ["lib", "templates"]:
-			shutil.copytree(d, os.path.join(self.share, d))
+			copy_tree(d, os.path.join(self.share, d))
 
 		for src in ["www/submin.wsgi", "www/submin.cgi"]:
 			self.install(src, os.path.join(self.share, "www/"), mode=0755)
