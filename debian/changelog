@@ -1,3 +1,12 @@
+submin (1.2.10-1) testing; urgency=low
+
+  * Better separation between different instances of submin (#206)
+  * Several python 2.4 compatibility fixes
+  * Fixed executable bit at installation (#200)
+  * Clarified INSTALL instructions (#200,#211)
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Sun, 02 May 2010 22:36:14 +0200
+
 submin (1.2.9-1) testing; urgency=low
 
   * Copied version from nightly, replaced the nightly by the sql branch
