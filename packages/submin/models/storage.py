@@ -11,11 +11,18 @@ def get(model):
 
 	return storage
 
+def _database_backup():
+	from shutil import copyfile
+	from time import strftime
+	backupname = settings.sqlite_path + "-" + strftime("%Y%m%d%H%M%S")
+	copyfile(settings.sqlite_path, backupname)
+
 def database_evolve(*args, **kwargs):
 	"""Calls database_evolve, this is usually only done when initialising the
 	environment or a new storage is used, or if the code suggests there is a
 	new version of the database, which is not reflected in the production
 	database yet."""
+	_database_backup()
 	# Calls plugins.storage.<storage>.database_evolve()
 	try:
 		fimport("submin.plugins.storage.%s" % settings.storage,
