@@ -16,6 +16,7 @@ class Login(View):
 		password = request.post.get('password', '')
 
 		invalid_login = True
+		user = None
 		try:
 			user = User(username)
 			invalid_login = False
@@ -23,7 +24,7 @@ class Login(View):
 			pass
 
 		try:
-			if not user.check_password(password):
+			if not user or not user.check_password(password):
 				return self.evaluate_form('Not a valid username and password combination')
 		except NoMD5PasswordError, e:
 			return self.evaluate_form(config, str(e))
