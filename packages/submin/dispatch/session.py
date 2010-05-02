@@ -77,7 +77,7 @@ class Session(PickleDict):
 	def __getfilename(self):
 		if self.destroyed():
 			raise SessionDestroyedError
-		suffix = md5.md5(str(options.url_path('base_url_submin'))).hexdigest()
+		suffix = md5(str(options.url_path('base_url_submin'))).hexdigest()
 		return '/tmp/sm-sess%s-%s' % (self.sessionid, suffix)
 
 	def __setitem__(self, *args):
@@ -121,5 +121,5 @@ class Session(PickleDict):
 		"""Really an MD5-sum of the current time and a salt"""
 		from submin.models import options
 		salt = options.value('session_salt')
-		return md5.md5(salt + \
-				md5.md5(str(time.time())).hexdigest()).hexdigest()
+		return md5(salt + \
+				md5(str(time.time())).hexdigest()).hexdigest()
