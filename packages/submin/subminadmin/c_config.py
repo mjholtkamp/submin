@@ -1,4 +1,5 @@
 from submin.path.path import Path
+from submin.models import options
 from submin.models.exceptions import StorageAlreadySetup
 import os, sys
 
@@ -20,27 +21,25 @@ Usage:
 	def subcmd_defaults(self, argv):
 		self.settings_defaults(self.settings_path)
 
-	def _printkeyvalue(self, options, key, value, width):
+	def _printkeyvalue(self, key, value, width):
 		formatstring = "%%-%us %%s" % (width + 1)
 		print formatstring % (key, value)
 
 	def subcmd_get(self, argv):
 		self.sa.ensure_storage()
 
-		from submin.models import options
-		o = submin.models.options.Options()
 		if len(argv) == 1:
 			value = o.value(argv[0])
-			self._printkeyvalue(o, argv[0], value, len(argv[0]))
+			self._printkeyvalue(argv[0], value, len(argv[0]))
 		else:
-			options = o.options()
-			options.sort()
+			all_options = options.options()
+			all_options.sort()
 			maxlen = 0
-			for arg in options:
+			for arg in all_options:
 				if len(arg[0]) > maxlen: maxlen = len(arg[0])
 
-			for arg in options:
-				self._printkeyvalue(o, arg[0], arg[1], maxlen)
+			for arg in all_options:
+				self._printkeyvalue(arg[0], arg[1], maxlen)
 
 	def subcmd_set(self, argv):
 		self.sa.ensure_storage()
@@ -49,9 +48,7 @@ Usage:
 			self.sa.execute(['help', 'config'])
 			return
 
-		from submin.models import options
-		o = submin.models.options.Options()
-		o.set_value(argv[0], argv[1])
+		options.set_value(argv[0], argv[1])
 
 	def session_salt(self):
 		import random
