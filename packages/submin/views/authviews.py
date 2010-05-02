@@ -7,6 +7,7 @@ from submin.template.shortcuts import evaluate
 from submin.models.exceptions import NoMD5PasswordError
 from submin.models.user import User, UnknownUserError
 from submin.models import options
+from submin.models.storage import database_isuptodate
 
 class Login(View):
 	def handler(self, request, path):
@@ -32,14 +33,22 @@ class Login(View):
 		if invalid_login:
 			return self.evaluate_form('Not a valid username and password combination')
 
-
-		url = '/'
+		url = options.url_path('base_url_submin')
 		if 'redirected_from' in request.session:
 			url = request.session['redirected_from']
+
+		if not database_isuptodate():
+			localvalues = {}
+			request.session['upgrade_user'] = True
+			base_url = options.value('base_url_submin')
+			localvalues['base_url'] = base_url
+			localvalues['session_user'] = user
+			return Response(evaluate('database_upgrade.html', localvalues))
 
 		user.is_authenticated = True
 		request.session['user'] = user
 		request.session.save()
+
 		return Redirect(url)
 
 

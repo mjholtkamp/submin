@@ -6,6 +6,10 @@ db = None
 storage_debug = False
 schema_version = schema.sql_scripts[0][0]
 
+class FutureDatabaseException(Exception):
+	def __init__(self):
+		Exception.__init__(self, "Database is newer than code, please upgrade the code. Aborting to prevent data loss")
+
 def close():
 	if db:
 		db.close()
@@ -27,11 +31,25 @@ def live_database_version():
 	except sqlite3.OperationalError, e:
 		return 0
 
+def database_isuptodate():
+	data_version = live_database_version()
+	if data_version > schema_version:
+		raise FutureDatabaseException()
+	return schema_version == data_version
+
+def database_backup(settings):
+	from shutil import copyfile
+	from time import strftime
+	backupname = settings.sqlite_path + "-" + strftime("%Y%m%d%H%M%S")
+	copyfile(settings.sqlite_path, backupname)
+
 def database_evolve(verbose=False):
 	"""Upgrades the database to the latest version."""
 	live_version = live_database_version()
 	start = live_version
 	end = schema_version
+	if (start > end):
+		raise FutureDatabaseException()
 
 	cursor = db.cursor()
 	for version, script in list(reversed(schema.sql_scripts))[start:end]:

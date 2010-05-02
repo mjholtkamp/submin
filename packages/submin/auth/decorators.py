@@ -7,7 +7,7 @@ class Unauthorized(Exception):
 	pass
 
 def login_required(fun):
-	login_url = os.path.join(str(options.env_path('base_url_submin')), 'login')
+	login_url = options.url_path('base_url_submin') + 'login'
 
 	def _decorator(self, *args, **kwargs):
 		if not self.request.is_ajax():
@@ -28,5 +28,21 @@ def admin_required(fun):
 	def _decorator(self, *args, **kwargs):
 		if not self.request.session['user'].is_admin:
 			raise Unauthorized("Admin privileges are required.")
+		return fun(self, *args, **kwargs)
+	return _decorator
+
+def upgrade_user_required(fun):
+	"""Test if the upgrade_user is set (by the login view), otherwise
+	redirect to login, or if the user is logged in, redirect to main url"""
+	login_url = options.url_path('base_url_submin') + 'login'
+	main_url = options.url_path('base_url_submin')
+
+	def _decorator(self, *args, **kwargs):
+		if not 'upgrade_user' in self.request.session:
+			if 'user' in self.request.session:
+				return Redirect(main_url)
+
+			return Redirect(login_url)
+
 		return fun(self, *args, **kwargs)
 	return _decorator
