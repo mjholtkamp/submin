@@ -114,7 +114,8 @@ class Session(PickleDict):
 		return self.__destroyed or self.sessionid == 'xx'
 
 	def updateCookie(self):
-		self.request.setCookie('SubminSessionID', self.sessionid)
+		self.request.setCookie('SubminSessionID', self.sessionid, \
+			str(options.url_path('base_url_submin')))
 	
 	def generateSessionID(self):
 		"""Really an MD5-sum of the current time and a salt"""
