@@ -84,7 +84,7 @@ Usage: %s <installdir> [--force] [--final=<installdir2>]
 		srcdir = os.path.join(self.dirname, "..")
 		os.chdir(srcdir)
 
-		self.install("bin/submin-admin.py", self.submin_admin)
+		self.install("bin/submin-admin.py", self.submin_admin, mode=0755)
 
 		if os.path.exists(self.share):
 			shutil.rmtree(self.share)
