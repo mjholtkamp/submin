@@ -14,6 +14,34 @@
 				</ul>
 			</div>
 		</div>
+
+		<div class="usershowhide">
+			<h3 class="usershowhide-trigger">
+				<img class="usershowhide-icon" src="[val main_base_url]img/arrow-expanded.png" />SSH Keys
+			</h3>
+			<div class="usershowhide-object">
+				<ul id="ssh_keys">
+				</ul>
+				<p><a href="" id="ssh_key_add_link">Add SSH Key</a></p>
+				<form onSubmit="addSSHKey(); return false;" style="display: none" id="ssh_key_add_form">
+					<ul>
+						<li><label for="title">Title</label>
+							<input type="text" value="" name="title" id="title"/>
+						</li>
+						<li><label for="ssh_key">SSH Key</label>
+							<textarea name="ssh_key" id="ssh_key" rows="10" cols="50"></textarea>
+							<div class="help">SSH saves it's public keys in
+								<code>~/.ssh</code> by default, with the
+								extension <code>.pub</code>. Typical names are
+								<code>id_dsa.pub</code> and
+								<code>id_rsa.pub</code></div>
+						</li>
+						<li><input type="submit" value="Add SSH Key" /></li>
+					</ul>
+				</form>
+			</div>
+		</div>
+
 		<div class="usershowhide">
 			<h3 class="usershowhide-trigger">
 				<img class="usershowhide-icon" src="[val main_base_url]img/arrow-expanded.png" />Notices from repositories

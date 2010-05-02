@@ -75,6 +75,10 @@ def remove_notifications(userid):
 	storage.execute(storage.db.cursor(), """DELETE FROM notifications
 		WHERE userid=?""", (userid,))
 
+def remove_all_ssh_keys(userid):
+	storage.execute(storage.db.cursor(), """DELETE FROM ssh_keys
+		WHERE userid=?""", (userid,))
+
 def remove(userid):
 	storage.execute(storage.db.cursor(), """DELETE FROM users
 		WHERE id=?""", (userid,))
@@ -101,6 +105,28 @@ def set_notification(userid, repository, allowed, enabled):
 		storage.execute(storage.db.cursor(), """UPDATE notifications
 		SET allowed = ?, enabled = ? WHERE userid = ? AND repository = ? """,
 		 (allowed, enabled, userid, repository))
+
+def ssh_keys(userid):
+	cur = storage.db.cursor()
+	storage.execute(cur,
+		"SELECT id, ssh_key, title FROM ssh_keys WHERE userid=?",
+		(userid,))
+	keys = []
+	for key in cur:
+		keys.append({"id": key[0], "key": key[1], "title": key[2]})
+	return keys
+
+def add_ssh_key(userid, ssh_key, title):
+	sql = """
+		INSERT INTO ssh_keys
+		(userid, ssh_key, title)
+		VALUES (?, ?, ?)
+	"""
+	storage.execute(storage.db.cursor(), sql, (userid, ssh_key, title))
+
+def remove_ssh_key(ssh_key_id):
+	storage.execute(storage.db.cursor(), "DELETE FROM ssh_keys WHERE id=?",
+			(ssh_key_id,))
 
 def user_data(username):
 	cur = storage.db.cursor()

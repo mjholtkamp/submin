@@ -5,6 +5,13 @@ schema are first in the list. The first entry in this list is always the
 current schema version.
 """
 sql_scripts = [
+	(2, """CREATE TABLE ssh_keys
+		(
+			id      integer primary key autoincrement,
+			userid  integer not null references user(id),
+			title   text,
+			ssh_key text not null
+		);"""),
 	(1, """CREATE TABLE users
 		(
 			id       integer primary key autoincrement,

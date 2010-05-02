@@ -1,0 +1,9 @@
+<response>
+	<command name="listSSHKeys" success="True">
+		<ssh_keys user="[val username]">
+			[iter:ssh_keys
+			<ssh_key id="[ival.id]" title="[ival.title]" key="[ival.key]"/>
+			]
+		</ssh_keys>
+	</command>
+</response>

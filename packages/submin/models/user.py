@@ -94,6 +94,7 @@ class User(object):
 		storage.remove_permissions_repository(self._id)
 		storage.remove_permissions_submin(self._id)
 		storage.remove_notifications(self._id)
+		storage.remove_all_ssh_keys(self._id)
 		storage.remove(self._id)
 		trigger_hook('user-delete', username=self._name)
 
@@ -131,6 +132,24 @@ class User(object):
 			notifications[repository['name']] = notification
 
 		return notifications
+
+	def ssh_keys(self):
+		"""Returns a list of tuples, containing the title and public key of
+		each stored SSH key"""
+		return storage.ssh_keys(self._id)
+
+	def add_ssh_key(self, ssh_key, title=None):
+		if title is None:
+			title = ssh_key.strip().split()[-1]
+		# XXX validator for ssh_key on front-end side, disallowing anything
+		# coming before the key type (ssh-XXX)
+
+		if not validators.validate_ssh_key(ssh_key):
+			raise validators.InvalidSSHKey(ssh_key)
+		storage.add_ssh_key(self._id, ssh_key, title)
+
+	def remove_ssh_key(self, ssh_key_id):
+		storage.remove_ssh_key(ssh_key_id)
 
 	# Properties
 	def _getId(self):
@@ -225,6 +244,9 @@ Storage contract
 * remove_notifications(userid)
 	Removes a user's notifications
 
+* remove_all_ssh_keys(userid)
+	Removes a user's ssh_keys (all of them)
+
 * member_of(userid)
 	Returns sorted list of groups a user is member of.
 
@@ -238,6 +260,16 @@ Storage contract
 * set_notification(userid, repository, allowed, enabled)
 	Set notification to *allowed*, *enabled* (both booleans) for user *userid*
 	on repository *repository*.
+
+* ssh_keys(userid)
+	Returns a list of ssh_keys (dicts like
+	{'id': id, 'title': title, 'key': key})
+
+* add_ssh_key(userid, ssh_key, title)
+	Adds an ssh key for user with id *userid*.
+
+* remove_ssh_key(ssh_key_id)
+	Removes a single ssh_key with id *ssh_key_id*.
 
 * set_email(id, email)
 	Sets the email for user with id *id*

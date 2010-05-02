@@ -148,9 +148,18 @@ class Users(View):
 
 		if 'listNotifications' in req.post:
 			return self.listNotifications(req, user)
+
+		if 'addSSHKey' in req.post:
+			return self.addSSHKey(req, user)
+
+		if 'removeSSHKey' in req.post:
+			return self.removeSSHKey(req, user)
 		
 		if 'saveNotifications' in req.post:
 			return self.saveNotifications(req, user)
+
+		if 'listSSHKeys' in req.post:
+			return self.listSSHKeys(req, user)
 		
 		if 'setIsAdmin' in req.post:
 			return self.setIsAdmin(req, user)
@@ -246,6 +255,52 @@ class Users(View):
 		return XMLTemplateResponse("ajax/usernotifications.xml",
 				{"notifications": notifications, "username": user.name,
 				"session_user": session_user})
+
+	def listSSHKeys(self, req, user):
+		session_user = req.session['user']
+		if not session_user.is_admin and session_user.name != user.name:
+			return XMLStatusResponse('listSSHKeys', False, "You do not have permission to "
+					"view this user.")
+
+		ssh_keys = user.ssh_keys()
+
+		return XMLTemplateResponse("ajax/usersshkeys.xml",
+				{"ssh_keys": ssh_keys, "username": user.name,
+				"session_user": session_user})
+
+	def addSSHKey(self, req, user):
+		session_user = req.session['user']
+		if not session_user.is_admin and session_user.name != user.name:
+			return XMLStatusResponse('addSSHKey', False,
+				"You do not have permission to add SSH Keys for this user.")
+		title = req.post.get("title", None)
+		if not title:
+			title = None # user.add_ssh_key will deduct the correct title
+		ssh_key = req.post.get("ssh_key")
+		if not ssh_key:
+			return XMLStatusResponse("addSSHKey", False,
+					"Please provide an SSH Key")
+
+		try:
+			user.add_ssh_key(ssh_key, title)
+			return XMLStatusResponse("addSSHKey", True,
+					"SSH Key successfully added.")
+		except validators.InvalidSSHKey:
+			return XMLStatusResponse('addSSHKey', False,
+				'Invalid SSH Key provided. If you think this is an error, please report a bug')
+
+	def removeSSHKey(self, req, user):
+		session_user = req.session['user']
+		if not session_user.is_admin and session_user.name != user.name:
+			return XMLStatusResponse('addSSHKey', False,
+				"You do not have permission to add SSH Keys for this user.")
+		ssh_key_id = req.post.get("removeSSHKey")
+		if not ssh_key_id:
+			return XMLStatusResponse('removeSSHKey', False,
+				"Something went wrong with passing the key id to the server.")
+		user.remove_ssh_key(ssh_key_id)
+		return XMLStatusResponse("removeSSHKey", True,
+				"SSH Key successfully removed.")
 
 	def saveNotifications(self, req, user):
 		session_user = req.session['user']

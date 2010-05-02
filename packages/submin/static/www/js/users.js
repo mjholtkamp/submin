@@ -10,6 +10,7 @@ window.onload = function() {
 	$('password_button').parentNode.onsubmit = verifyPassword;
 	$('email').focus();
 	$('is_admin').onclick = setIsAdmin;
+	$('ssh_key_add_link').onclick = toggleSSHKeyAddForm;
 
 	var content = document.getElementById('content');
 	setupCollapsables(content, "usershowhide", users_collapse, users_expand);
@@ -17,6 +18,7 @@ window.onload = function() {
 	// Initialize the select-dropdowns
 	groupSelectorInit();
 	reloadNotifications();
+	reloadSSHKeys();
 	$('savenotifications').parentNode.onsubmit = saveNotifications;
 }
 
@@ -275,4 +277,93 @@ function saveNotificationsCB(response) {
 	LogResponse(response);
 
 	reloadNotifications();
+}
+
+function toggleSSHKeyAddForm() {
+	var ssh_key_parent = $('ssh_key_add_link').parentNode;
+	var ssh_key_add_form = $('ssh_key_add_form');
+	ssh_key_parent.style.display = ssh_key_parent.style.display == "none" ? "block" : "none";
+	ssh_key_add_form.style.display = ssh_key_add_form.style.display == "none" ? "block" : "none";
+	if (ssh_key_add_form.style.display != "none")
+		$("ssh_key").focus();
+	return false;
+}
+
+function reloadSSHKeys() {
+	AjaxAsyncPostRequest(document.location, "listSSHKeys", reloadSSHKeysCB);
+	return false;
+}
+
+function reloadSSHKeysCB(response) {
+	list = FindResponse(response, "listSSHKeys");
+	LogResponse(response);
+
+	var ssh_keys = list.xml.getElementsByTagName("ssh_key");
+	var n = [];
+	for (var i = 0; i < ssh_keys.length; ++i) {
+		id = ssh_keys[i].getAttribute("id");
+		title = ssh_keys[i].getAttribute("title");
+		key = ssh_keys[i].getAttribute("key");
+		n[n.length] = {"id": id, "title": title, "key": key};
+	}
+	redrawSSHKeys(n);
+}
+
+function redrawSSHKeys(ssh_keys) {
+	var list = document.getElementById('ssh_keys');
+
+	for (var item_idx = list.childNodes.length - 1; item_idx > 0; --item_idx)
+		list.removeChild(list.childNodes[item_idx]);
+
+	for (var i = 0; i < ssh_keys.length; ++i) {
+		var li = $c("li");
+		li.ssh_key_id = ssh_keys[i].id;
+
+		var a = $c("a", {href: "#"});
+		a.appendChild(document.createTextNode(ssh_keys[i].title));
+		a.ssh_key = ssh_keys[i].key;
+		a.ssh_title = ssh_keys[i].title;
+		a.onclick = function() {
+			alert("SSH Key `" + this.ssh_title + "':\n" + this.ssh_key);
+			return false;
+		}
+		li.appendChild(a);
+
+		var img = $c("img", {src: base_url + "img/min.png",
+				className: "remover"});
+		img.setAttribute("title", "Delete " + ssh_keys[i].title);
+		img.onclick = removeSSHKey;
+		li.appendChild(img);
+
+		list.appendChild(li);
+	}
+}
+
+function addSSHKey() {
+	post_vars = "addSSHKey=true&title=" + escape_plus($("title").value);
+	post_vars += "&ssh_key=" + escape_plus($("ssh_key").value);
+	AjaxAsyncPostRequest(document.location, post_vars, addSSHKeyCB);
+}
+
+function addSSHKeyCB(response) {
+	LogResponse(response);
+	if (response[0].success)
+	{
+		toggleSSHKeyAddForm();
+		$("title").value = "";
+		$("ssh_key").value = "";
+
+		reloadSSHKeys();
+	}
+}
+
+function removeSSHKey() {
+	AjaxAsyncPostRequest(document.location,
+			"removeSSHKey=" + this.parentNode.ssh_key_id,
+			removeSSHKeyCB);
+}
+
+function removeSSHKeyCB(response) {
+	LogResponse(response);
+	reloadSSHKeys();
 }
