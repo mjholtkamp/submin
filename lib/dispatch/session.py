@@ -78,7 +78,8 @@ class Session(PickleDict):
 	def __getfilename(self):
 		if self.destroyed():
 			raise SessionDestroyedError
-		return '/tmp/sm-sess%s' % self.sessionid
+		suffix = md5.md5(str(Config().base_url)).hexdigest()
+		return '/tmp/sm-sess%s-%s' % (self.sessionid, suffix)
 
 	def __setitem__(self, *args):
 		if self.destroyed():
