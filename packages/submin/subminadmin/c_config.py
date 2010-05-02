@@ -29,7 +29,7 @@ Usage:
 		self.sa.ensure_storage()
 
 		if len(argv) == 1:
-			value = o.value(argv[0])
+			value = options.value(argv[0])
 			self._printkeyvalue(argv[0], value, len(argv[0]))
 		else:
 			all_options = options.options()
