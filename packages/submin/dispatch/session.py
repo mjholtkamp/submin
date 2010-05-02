@@ -2,7 +2,7 @@ import cPickle
 import time
 import os
 import thread
-import md5
+from hashlib import md5
 from submin.models import options
 
 class SessionDestroyedError(Exception):

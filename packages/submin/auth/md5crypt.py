@@ -7,7 +7,7 @@
 # * can do whatever you want with this stuff. If we meet some day, and you think
 # * this stuff is worth it, you can buy me a beer in return.   Poul-Henning Kamp
 
-import md5
+from hashlib import md5
 import random
 
 def md5crypt(password, salt, magic='$1$'):
