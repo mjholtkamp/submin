@@ -8,6 +8,7 @@ from submin.models import options
 class c_upgrade():
 	'''Upgrades your environment to the latest version
 Usage:
+	upgrade database      - Upgrade the database to the latest version
     upgrade hooks         - Upgrade all by submin provided hooks to the
                             latest version'''
 
@@ -56,6 +57,10 @@ Usage:
 			except IOError, e:
 				print 'updating hook %s failed, do you have permissions?' % \
 						script
+
+	def subcmd_database(self, argv):
+		from submin.models import storage
+		new_version = storage.database_evolve(verbose=True)
 
 	def subcmd_hooks(self, argv):
 		# The upgrade hooks command just copies the hooks to the environment

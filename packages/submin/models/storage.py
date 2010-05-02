@@ -11,14 +11,15 @@ def get(model):
 
 	return storage
 
-def setup():
-	"""Calls setup, this is usually only done when initialising the environment
-	or a new storage is used."""
-
-	# Calls plugins.storage.<storage>.setup()
+def database_evolve(*args, **kwargs):
+	"""Calls database_evolve, this is usually only done when initialising the
+	environment or a new storage is used, or if the code suggests there is a
+	new version of the database, which is not reflected in the production
+	database yet."""
+	# Calls plugins.storage.<storage>.database_evolve()
 	try:
 		fimport("submin.plugins.storage.%s" % settings.storage,
-				"submin.plugins.storage").setup()
+				"submin.plugins.storage").database_evolve(*args, **kwargs)
 	except SettingsException, e:
 		raise StorageError(str(e))
 

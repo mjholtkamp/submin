@@ -1,9 +1,10 @@
 import sqlite3
 from submin.models.exceptions import StorageAlreadySetup
+from submin.plugins.storage.sql import schema
 
 db = None
 storage_debug = False
-database_version = 1
+schema_version = schema.sql_scripts[0][0]
 
 def close():
 	if db:
@@ -14,75 +15,46 @@ def open(settings):
 	db = sqlite3.connect(settings.sqlite_path)
 	storage_debug = hasattr(settings, "db_debug") and settings.db_debug
 
-def setup():
-	"""Creates all necessary tables"""
+def live_database_version():
+	"""Returns the version of the database which is currently in production"""
 
+	cursor = db.cursor()
 	try:
-		db.cursor().executescript("""
-		CREATE TABLE users
-		(
-			id       integer primary key autoincrement,
-			name     text not null unique,
-			password text not null,
-			email    text,
-			fullname text,
-			is_admin bool default 0
-		);
-
-		CREATE TABLE groups
-		(
-			id   integer primary key autoincrement,
-			name text not null unique
-		);
-
-		CREATE TABLE group_members
-		(
-			groupid integer not null references groups(id),
-			userid  integer not null references user(id),
-			PRIMARY KEY(groupid, userid)
-		);
-
-		CREATE TABLE options
-		(
-			key   text primary key not null unique,
-			value text not null
-		);
-
-		CREATE TABLE notifications
-		(
-			userid       integer references users(id),
-			repository   text,
-			allowed      bool default 0,
-			enabled      bool default 0,
-			PRIMARY KEY(userid, repository)
-		);
-
-		CREATE TABLE permissions
-		(
-			repository     text,
-			repositorytype text,
-			path           text not null,
-			subjecttype    text not null,   -- user, group or all
-			subjectid      integer,         -- only null if subjecttype is all
-			type           text default '', -- '', 'r' or 'rw'
-			UNIQUE(repository, path, subjecttype, subjectid)
-		);
-
-		CREATE TABLE managers
-		(
-			id          integer primary key autoincrement,
-			managertype text not null, -- user or group
-			managerid   integer,
-			objecttype  text not null, -- group or repository
-			objectid    integer, -- groupid if objecttype is group
-			objectname  text -- name of repository if objecttype is repository
-		);
-		""")
-		db.cursor().execute(
-			"INSERT INTO options (key, value) VALUES ('database_version', ?)",
-			(database_version,))
+		cursor.execute(
+			"SELECT value from options where key=?", ("database_version",))
+		row = cursor.fetchone()
+		return int(row[0])
 	except sqlite3.OperationalError, e:
-		raise StorageAlreadySetup(str(e))
+		return 0
+
+def database_evolve(verbose=False):
+	"""Upgrades the database to the latest version."""
+	live_version = live_database_version()
+	start = live_version
+	end = schema_version
+
+	cursor = db.cursor()
+	for version, script in list(reversed(schema.sql_scripts))[start:end]:
+		if verbose:
+			print "Evolving database from version", (version - 1), "to", version
+		try:
+			cursor.executescript(script)
+		except Exception, e:
+			print "Error while evolving database to version", version
+			print "Now rolling back to", start
+			db.rollback()
+			raise
+	if start > 0:
+		cursor.execute(
+				"UPDATE options SET value=? WHERE key='database_version'",
+				(schema_version,))
+	else:
+		cursor.execute(
+			"INSERT INTO options (key, value) VALUES ('database_version', ?)",
+			(schema_version,))
+	db.commit()
+	if verbose:
+		print "Database is now at version", schema_version
 
 # sqlite3 specific variables / functions
 

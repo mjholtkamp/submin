@@ -90,10 +90,7 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 		# after writing the bootstrap file, we setup all models
 		self.sa.ensure_storage()
 		from submin.models import storage
-		try:
-			storage.setup()
-		except StorageAlreadySetup:
-			pass # silently ignore and continue setting defaults
+		storage.database_evolve()
 
 		# And now we can use the models
 		#from models.options import Options
