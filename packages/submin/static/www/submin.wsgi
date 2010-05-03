@@ -17,8 +17,8 @@ def application(environ, start_response):
 
 	os.environ['SUBMIN_ENV'] = environ['SUBMIN_ENV']
 
-	from submin.models import backend
-	backend.open()
+	from submin.models import storage
+	storage.open()
 
 	try:
 		from submin.dispatch.wsgirequest import WSGIRequest
@@ -36,5 +36,5 @@ def application(environ, start_response):
 		start_response('500 Not Ok', [])
 		content = ''.join(list)
 	
-	backend.close()
+	storage.close()
 	return content
