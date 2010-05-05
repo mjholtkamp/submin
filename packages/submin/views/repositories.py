@@ -10,6 +10,7 @@ from submin.models.trac import Trac, UnknownTrac, createTracEnv
 from submin.models import options
 from submin.models.exceptions import UnknownKeyError
 from submin.models.permissions import Permissions
+from submin.models import vcs
 from submin.auth.decorators import login_required, admin_required
 from submin.path.path import Path
 from submin.unicode import uc_url_decode
@@ -37,12 +38,12 @@ class Repositories(View):
 
 		return ErrorResponse('Unknown path', request=req)
 
-	def show(self, req, vcs, path, templatevars):
+	def show(self, req, vcs_type, path, templatevars):
 		import os.path
 
 		u = req.session['user']
 		try:
-			repository = Repository(path[0], vcs)
+			repository = Repository(path[0], vcs_type)
 
 			# Lie if user has no permission to read
 			if not u.is_admin and not Repository.userHasReadPermissions(path[0], u):
@@ -72,10 +73,14 @@ class Repositories(View):
 			trac_http_url = str(trac_base_url + repository.name)
 			templatevars['trac_http_url'] = trac_http_url
 
-		svn_base_url = options.url_path('base_url_svn')
-		svn_http_url = str(svn_base_url + repository.name)
+		vcs_http_url = ""
+		try:
+			vcs_base_url = options.url_path('base_url_%s' % repository.vcs_type)
+			vcs_http_url = str(vcs_base_url + repository.name)
+		except UnknownKeyError:
+			pass
 
-		templatevars['svn_http_url'] = svn_http_url
+		templatevars['vcs_http_url'] = vcs_http_url
 		templatevars['repository'] = repository
 		formatted = evaluate_main('repositories.html', templatevars, request=req)
 		return Response(formatted)
@@ -84,6 +89,7 @@ class Repositories(View):
 		templatevars = {}
 		templatevars['errormsg'] = errormsg
 		templatevars['repository'] = reposname
+		templatevars["systems"] = vcs.list()
 		formatted = evaluate_main('newrepository.html', templatevars, request=req)
 		return Response(formatted)
 
@@ -99,24 +105,31 @@ class Repositories(View):
 			if re.findall('[^a-zA-Z0-9_-]', repository):
 				return self.showAddForm(req, repository, 'Invalid characters in repository name')
 
+			if "vcs" not in req.post or req.post["vcs"].value.strip() == "":
+				return self.showAddForm(req, repository, "No repository type selected. Please select a repository type.")
+
+			vcs_type = req.post["vcs"].value.strip()
+
 			if repository == '':
 				return self.showAddForm(req, repository, 'Repository name not supplied')
 
+			if vcs_type not in vcs.list():
+				return self.showAddForm(req, repository, "Invalid repository type supplied.")
+
 			try:
-				a = Repository(repository, 'svn')
+				a = Repository(repository, vcs_type)
 				return self.showAddForm(req, repository, 'Repository %s already exists' % repository)
 			except DoesNotExistError:
 				pass
 
 			try:
-				# TODO(michiel): Hardcode 'vcs-type' to 'svn' until vcs
-				# subsystem is working properly.
-				Repository.add('svn', repository, req.session['user'])
+				Repository.add(vcs_type, repository, req.session['user'])
 			except PermissionError, e:
 				return ErrorResponse('could not create repository',
 					request=req, details=str(e))
 
-			url = base_url + '/repositories/show/' + repository
+			url = '%s/repositories/show/%s/%s' % (base_url, vcs_type,
+					repository)
 			return Redirect(url)
 
 		return self.showAddForm(req, repository)
@@ -236,11 +249,12 @@ class Repositories(View):
 			return XMLStatusResponse('', False, 'Invalid path')
 
 		action = path[0]
-		vcs = path[1]
+		vcs_type = path[1]
 		repositoryname = path[2]
-		
+
+		repository = None
 		try:
-			repository = Repository(repositoryname, vcs)
+			repository = Repository(repositoryname, vcs_type)
 		except (IndexError, DoesNotExistError):
 			return XMLStatusResponse('', False,
 				'Repository %s does not exist.' % repositoryname)

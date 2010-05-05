@@ -8,6 +8,8 @@ from submin.models import options
 
 from submin.models.repository import DoesNotExistError, PermissionError, VersionError, VCSImportError
 
+display_name = "Subversion"
+
 def list():
 	repositories = []
 	repository_names = _repositoriesOnDisk()
@@ -73,6 +75,9 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		self.initialized = False
 		self.dirs = self.subdirs("")
 		self.initialized = True
+
+	def display_name(self):
+		return self.name
 
 	def subdirs(self, path):
 		'''Return subdirs (not recursive) of 'path' relative to our reposdir

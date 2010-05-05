@@ -12,6 +12,9 @@ class VersionError(Exception):
 class VCSImportError(Exception):
 	pass
 
+def _vcs_display_name(vcs_type):
+	return models.vcs.get(vcs_type, "repository").display_name
+
 class Repository(object):
 	@staticmethod
 	def list_all():
@@ -71,6 +74,18 @@ class Repository(object):
 		vcs = models.vcs.get(vcs_type, "repository")
 		self.repository = vcs.Repository(repositoryname)
 
+		if hasattr(self.repository, "name"):
+			# for example, we may want to add .git to repo.name, and leave the
+			# .git part off the display_name
+			self.name = self.repository.name
+
+	def vcs_display_name(self):
+		return _vcs_display_name(self.vcs_type)
+
+	def display_name(self):
+		"""Returns the human-readable name of the repository *repo*"""
+		return self.repository.display_name()
+
 	def remove(self):
 		"""Removes a Repository from disk (NO UNDO)"""
 		self.repository.remove()
@@ -94,22 +109,28 @@ VCS contract
 Repository takes care of creating/deleting/listing repositories as well
 as some secondary tasks.
 
+* display_name
+	The human-readable name of the vcs type
+
 * list()
 	Returns a list of repositories
 
 * add(name)
 	Create a new repository with name *name*
 
-* remove(name)
-	Removes repository *name*
+* repo.display_name()
+	Returns the human-readable name of the repository *repo*
 
-* subdirs(subdir)
+* repo.remove(name)
+	Removes repository *repo*
+
+* repo.subdirs(subdir)
 	Get a list of subdirs of subdir *subdir* (root is "")
 	Each dir is a dict with at least a property 'name'.
 
-* enableCommitEmails(enable)
+* repo.enableCommitEmails(enable)
 	Enables sending of commit messages if *enable* is True.
 
-* commitEmailsEnabled()
+* repo.commitEmailsEnabled()
 	Returns True if sendinf of commit messages is enabled.
 """

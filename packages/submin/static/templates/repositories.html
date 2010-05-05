@@ -1,5 +1,5 @@
 <div id="content">
-	<h1 class="content">Repository [val repository.name]</h1>
+	<h1 class="content">Repository [val repository.display_name]</h1>
 	<div id="tabs">
 		<ul class="tabs">
 			<li id="tab_info">info</li>
@@ -8,7 +8,7 @@
 	</div>
 	<div id="info" class="settings">
 		<ul>
-			<li><label>Subversion URL</label><span>[test:svn_http_url <a class="external" href="[val svn_http_url]">[val svn_http_url]</a>][else <div class="comment">svn_base_url not set in config</div>]</span>
+			<li><label>[val repository.vcs_display_name] URL</label><span>[test:vcs_http_url <a class="external" href="[val vcs_http_url]">[val vcs_http_url]</a>][else <div class="comment">base_url_[val repository.vcs_type] not set in config</div>]</span>
 			</li>
 			[test:trac_msg <li><label>Trac Environment</label><span>[val trac_msg]<span></li>]
 			[test:trac_exists <li><label>Trac URL</label><span>

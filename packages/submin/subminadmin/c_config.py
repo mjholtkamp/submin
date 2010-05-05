@@ -97,6 +97,7 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 		default_options = {
 			'base_url_submin': http_base + '/submin',
 			'base_url_svn': http_base + '/svn',
+			'base_url_git': http_base + '/git',
 			'base_url_trac': http_base + '/trac',
 			'auth_type': 'sql',
 			'svn_dir': 'svn',
