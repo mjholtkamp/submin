@@ -63,6 +63,10 @@ function reloadX(response, X, Xplural, Xcapital) {
 	for (var i = 0; i < Xs.length; ++i) {
 		var name = Xs[i].getAttribute("name");
 		var vcs = Xs[i].getAttribute("vcs");
+		var vcs_to_url = "";
+		if (vcs)
+			vcs_to_url = vcs + "/";
+
 		var status = Xs[i].getAttribute("status");
 		if (!status)
 			status = "ok";
@@ -72,7 +76,7 @@ function reloadX(response, X, Xplural, Xcapital) {
 			addClassName(li, "selected");
 
 		var link = $c("a", {href: base_url + Xplural + "/show/"
-				+ vcs + "/" + name});
+				+ vcs_to_url + name});
 
 		var nameNode = $c("span");
 		nameNode.appendChild(document.createTextNode(name));
