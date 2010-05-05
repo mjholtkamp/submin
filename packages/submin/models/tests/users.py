@@ -19,6 +19,7 @@ class UserTests(unittest.TestCase):
 		storage.open(mock_settings)
 		options.set_value('svn_authz_file', '/tmp/submin-authz') # needed for export
 		options.set_value('svn_dir', '/tmp/submin-svn') # needed for export
+		options.set_value('git_dir', '/tmp/submin-git') # needed for export
 		options.set_value('vcs_plugins', 'svn')
 		self.tmp_dirs = []
 		user.add("test")

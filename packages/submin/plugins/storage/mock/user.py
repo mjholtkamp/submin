@@ -44,6 +44,9 @@ def remove_notifications(userid):
 	global mock_notifications
 	mock_notifications = {}
 
+def remove_all_ssh_keys(userid):
+	pass
+
 def notification(userid, repository):
 	global mock_notifications
 	if not mock_notifications.has_key(repository):
@@ -56,6 +59,15 @@ def set_notification(userid, repository, allowed, enabled):
 
 def remove(userid):
 	del mock_users[userid]
+
+def ssh_keys(userid):
+	pass
+
+def add_ssh_key(userid, ssh_key, title):
+	pass
+
+def remove_ssh_key(ssh_key_id):
+	pass
 
 def user_data(username):
 	for user in mock_users:
