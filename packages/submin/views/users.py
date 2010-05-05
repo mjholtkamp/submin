@@ -5,7 +5,7 @@ from submin.views.error import ErrorResponse
 from submin.models import user
 from submin.models.exceptions import UnknownUserError, UserExistsError, \
 		UserPermissionError, MemberExistsError
-from submin.models.group import Group
+from submin.models import group
 from submin.auth.decorators import *
 from submin.models import options
 from submin.models import validators
@@ -202,15 +202,15 @@ class Users(View):
 
 	@admin_required
 	def addToGroup(self, req, u):
-		group = Group(req.post.get('addToGroup'))
+		g = group.Group(req.post.get('addToGroup'))
 		success = True
 		try:
-			group.add_member(u)
+			g.add_member(u)
 		except MemberExistsError:
 			success = False
 
-		msgs = {True: 'User %s added to group %s' % (u.name, group.name),
-				False: 'User %s already in group %s' % (u.name, group.name)
+		msgs = {True: 'User %s added to group %s' % (u.name, g.name),
+				False: 'User %s already in group %s' % (u.name, g.name)
 				}
 		return XMLStatusResponse('addToGroup', success, msgs[success])
 
@@ -219,7 +219,7 @@ class Users(View):
 		session_user = req.session['user']
 		if session_user.is_admin:
 			nonmember_of = []
-			groupnames = Group.list(session_user)
+			groupnames = group.list(session_user)
 			for groupname in groupnames:
 				if groupname not in member_of_names:
 					nonmember_of.append(groupname)
@@ -322,15 +322,15 @@ class Users(View):
 
 	@admin_required
 	def removeFromGroup(self, req, u):
-		group = Group(req.post.get('removeFromGroup'))
+		g = group.Group(req.post.get('removeFromGroup'))
 		success = True
 		try:
-			group.remove_member(u)
+			g.remove_member(u)
 		except: # XXX except what?!
 			succes = False
 
-		msgs = {True: 'User %s removed from group %s' % (u.name, group.name),
-				False: 'User %s is not a member of %s' % (u.name, group.name)
+		msgs = {True: 'User %s removed from group %s' % (u.name, g.name),
+				False: 'User %s is not a member of %s' % (u.name, g.name)
 				}
 		return XMLStatusResponse('removeFromGroup', success, msgs[success])
 

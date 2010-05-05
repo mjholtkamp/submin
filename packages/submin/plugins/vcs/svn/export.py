@@ -1,7 +1,7 @@
 import codecs
 
 from submin.models import options
-from submin.models.group import Group
+from submin.models import group
 from repository import list as list_repos
 from submin.models.permissions import Permissions
 from submin.models.user import FakeAdminUser
@@ -14,9 +14,9 @@ def export_authz(**args):
 
 	# Write all groups
 	authz.write("[groups]\n")
-	for groupname in Group.list(FakeAdminUser()):
-		group = Group(groupname)
-		authz.write("%s = %s\n" % (groupname, ', '.join(group.members())))
+	for groupname in group.list(FakeAdminUser()):
+		g = group.Group(groupname)
+		authz.write("%s = %s\n" % (groupname, ', '.join(g.members())))
 	authz.write("\n")
 
 	# Write all repositories and their permissions
@@ -72,9 +72,9 @@ def export_notifications(**args):
 			elif len(paths) > 0:
 				for_paths = "(" + "|".join(paths) + ")"
 
-			group = {"for_repos": repos, "email": u.email,
+			g = {"for_repos": repos, "email": u.email,
 				"for_paths": for_paths, "username": u.name}
-			groups.append(group)
+			groups.append(g)
 
 	templatevariables = {"groups": groups}
 

@@ -2,7 +2,7 @@ from submin.dispatch.view import View
 from submin.dispatch.response import *
 from submin.auth.decorators import *
 from submin.models import user
-from submin.models.group import Group
+from submin.models import group
 from submin.models.repository import Repository
 from submin.models import options
 
@@ -35,7 +35,7 @@ class Ajax(View):
 
 	def listGroups(self, req):
 		try:
-			groupnames = Group.list(req.session['user'])
+			groupnames = group.list(req.session['user'])
 			return XMLTemplateResponse("ajax/listgroups.xml", {'groupnames': groupnames})
 		except Exception, e:
 			raise

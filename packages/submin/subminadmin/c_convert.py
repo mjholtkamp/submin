@@ -96,7 +96,7 @@ Usage:
 						u.set_notification(repos, allowed, enabled, fake_admin)
 
 	def write_groups(self, config):
-		from submin.models.group import Group
+		from submin.models import group
 		from submin.models import user
 
 		# get filename
@@ -107,12 +107,12 @@ Usage:
 
 		# get groups
 		groups = cp.options('groups')
-		for group in groups:
-			members = [x.strip() for x in cp.get('groups', group).split(',')]
+		for groupname in groups:
+			members = [x.strip() for x in cp.get('groups', groupname).split(',')]
 			try:
-				g = Group.add(group)
+				g = group.add(groupname)
 			except GroupExistsError:
-				g = Group(group)
+				g = group.Group(groupname)
 
 			for member in members:
 				u = user.User(member)
@@ -120,7 +120,7 @@ Usage:
 					g.add_member(u)
 				except MemberExistsError:
 					pass
-				if group == "submin-admins":
+				if groupname == "submin-admins":
 					u.is_admin = True
 
 	def write_permissions(self, config):

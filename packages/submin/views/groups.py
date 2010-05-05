@@ -3,7 +3,7 @@ from submin.template.shortcuts import evaluate_main
 from submin.dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse
 from submin.views.error import ErrorResponse
 from submin.models import user
-from submin.models.group import Group
+from submin.models import group
 from submin.models.exceptions import GroupExistsError, MemberExistsError
 from submin.models.exceptions import UnknownGroupError
 from submin.auth.decorators import *
@@ -41,17 +41,17 @@ class Groups(View):
 
 		is_admin = req.session['user'].is_admin
 		try:
-			group = Group(path[0])
+			g = group.Group(path[0])
 		except (IndexError, UnknownGroupError):
 			if not is_admin:
 				return ErrorResponse('Not permitted', request=req)
 
 			return ErrorResponse('This group does not exist.', request=req)
 
-		if not is_admin and req.session['user'].name not in group.members():
+		if not is_admin and req.session['user'].name not in g.members():
 			return ErrorResponse('Not permitted', request=req)
 
-		localvars['group'] = group
+		localvars['group'] = g
 		formatted = evaluate_main('groups.html', localvars, request=req)
 		return Response(formatted)
 
@@ -79,7 +79,7 @@ class Groups(View):
 			url = base_url + '/groups/show/' + groupname
 
 			try:
-				Group.add(groupname)
+				group.add(groupname)
 			except IOError:
 				return ErrorResponse('File permission denied', request=req)
 			except GroupExistsError:
@@ -111,12 +111,12 @@ class Groups(View):
 			return self.addMember(req, groupname)
 
 		if 'listGroupUsers' in req.post:
-			return self.listGroupUsers(req, Group(groupname))
+			return self.listGroupUsers(req, group.Group(groupname))
 
 		return XMLStatusResponse('', False, 'Unknown command')
 
-	def listGroupUsers(self, req, group):
-		members = list(group.members())
+	def listGroupUsers(self, req, g):
+		members = list(g.members())
 		if req.session['user'].is_admin:
 			nonmembers = []
 			usernames = user.list(req.session['user'])
@@ -126,23 +126,23 @@ class Groups(View):
 
 			return XMLTemplateResponse("ajax/groupmembers.xml",
 					{"members": members, "nonmembers": nonmembers,
-						"group": group.name})
+						"group": g.name})
 
-		if req.session['user'].name not in group.members():
+		if req.session['user'].name not in g.members():
 			return XMLStatusResponse('listGroupUsers', False,
 				"You do not have permission to view this group.")
 
 		return XMLTemplateResponse("ajax/groupmembers.xml",
 				{"members": members, "nonmembers": [],
-					"group": group.name})
+					"group": g.name})
 
 	@admin_required
 	def removeMember(self, req, groupname):
-		group = Group(groupname)
+		g = group.Group(groupname)
 		username = req.post['removeMember'].value
 		success = True
 		try:
-			Group(groupname).remove_member(user.User(username))
+			g.remove_member(user.User(username))
 		except:
 			success = False
 
@@ -155,7 +155,7 @@ class Groups(View):
 		username = req.post['addMember'].value
 		success = True
 		try:
-			Group(groupname).add_member(user.User(username))
+			group.Group(groupname).add_member(user.User(username))
 		except MemberExistsError:
 			success = False
 
@@ -166,13 +166,13 @@ class Groups(View):
 	@admin_required
 	def removeGroup(self, groupname):
 		try:
-			group = Group(groupname)
-			group.remove()
+			g = group.Group(groupname)
+			g.remove()
 		except IOError:
 			return XMLStatusResponse('removeGroup', False, 'File permisson denied')
 		except UnknownGroupError:
 			return XMLStatusResponse('removeGroup', False,
 				'Group %s does not exist' % groupname)
 
-		return XMLStatusResponse('removeGroup', True, 'Group %s deleted' % group)
+		return XMLStatusResponse('removeGroup', True, 'Group %s deleted' % g)
 

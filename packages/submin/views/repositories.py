@@ -4,7 +4,7 @@ from submin.dispatch.response import Response, XMLStatusResponse, XMLTemplateRes
 from submin.views.error import ErrorResponse
 from submin.dispatch.view import View
 from submin.models import user
-from submin.models.group import Group
+from submin.models import group
 from submin.models.repository import Repository, DoesNotExistError, PermissionError
 from submin.models.trac import Trac, UnknownTrac, createTracEnv
 from submin.models import options
@@ -144,7 +144,7 @@ class Repositories(View):
 
 		groupnames = []
 		if 'grouplist' in req.post:
-			groupnames = Group.list(session_user)
+			groupnames = group.list(session_user)
 
 		templatevars = {'perms': perms, 'repository': repository.name,
 			'path': svn_path, 'usernames': usernames, 'groupnames': groupnames}

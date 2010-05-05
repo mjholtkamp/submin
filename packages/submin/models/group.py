@@ -3,24 +3,22 @@ from submin.hooks.common import trigger_hook
 storage = models.storage.get("group")
 from submin.models.exceptions import UnknownGroupError
 
+def list(session_user):
+	all_groups = [Group(raw_data=g) for g in storage.list()]
+	groups = []
+	for g in all_groups:
+		if session_user.is_admin or session_user.name in g.members():
+			groups.append(g.name)
+	
+	return groups
+
+def add(name):
+	"""Add a new, empty group"""
+	storage.add(name)
+	trigger_hook('group-create', groupname=name)
+	return Group(name)
+
 class Group(object):
-	@staticmethod
-	def list(session_user):
-		all_groups = [Group(raw_data=group) for group in storage.list()]
-		groups = []
-		for group in all_groups:
-			if session_user.is_admin or session_user.name in group.members():
-				groups.append(group.name)
-		
-		return groups
-
-	@staticmethod
-	def add(name):
-		"""Add a new, empty group"""
-		storage.add(name)
-		trigger_hook('group-create', groupname=name)
-		return Group(name)
-
 	def __init__(self, groupname=None, raw_data=None):
 		"""Constructor, either takes a groupname or raw data
 

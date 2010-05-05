@@ -29,7 +29,7 @@ class Manager(object):
 		# maybe we doesn't have permission as user, but as a group?
 		if self._type == 'user':
 			for group_name in self.member_of():
-				group = Group(group_name)
+				g = group.Group(group_name)
 				perm = storage.get_permissions(group._id, group._type,
 					_id, _name, other._type)
 				if perm:
