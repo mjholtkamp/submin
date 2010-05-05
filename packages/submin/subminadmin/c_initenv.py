@@ -9,6 +9,7 @@ Usage:
 
 Options:
     svn_dir=<path>           - base path for svn repositories (default: svn)
+    git_dir=<path>           - base path for git repositories (default: git)
     trac_dir=<path>          - dir for trac environments (default: trac)
     http_base=<url>          - base url (default: /)
     trac_url=<url>           - url to trac (default: trac)
@@ -29,6 +30,7 @@ Notes:
 		self.argv = argv
 		self.defaults = {
 			'svn_dir': Path('svn'),
+			'git_dir': Path('git'),
 			'trac_dir': Path('trac'),
 			'http_base': Path('/'),
 			'trac_url': Path('trac'),
@@ -73,6 +75,14 @@ repository, please provide the full pathname to the Subversion parent
 directory (ie. /var/lib/svn).
 '''
 		self.prompt_user("Path to the repository?", 'svn_dir')
+
+		print '''
+Please provide a location for the git repositories. For new git repositories,
+the default setting is ok. If the path is not absolute, it will be relative to
+the submin environment. If you want to use an existing repository, please
+provide the full pathname to the git parent directory (ie. /var/lib/git).
+'''
+		self.prompt_user("Path to the git repositories?", 'git_dir')
 
 		print '''
 Please provide a location for the parent dir of Trac environments. For a new
@@ -135,6 +145,7 @@ run()
 		try:
 			self.create_dir(self.env)
 			self.create_dir(self.init_vars['svn_dir'])
+			self.create_dir(self.init_vars['git_dir'])
 			self.create_dir(self.init_vars['conf_dir'])
 			self.create_dir(self.init_vars['trac_dir'])
 			self.create_dir(self.init_vars['hooks_dir'])
@@ -160,6 +171,7 @@ run()
 			'base_url_trac': self._get_url('trac_url'),
 			'auth_type': 'sql',
 			'svn_dir': str(self.init_vars['svn_dir']),
+			'git_dir': str(self.init_vars['git_dir']),
 			'trac_dir': str(self.init_vars['trac_dir']),
 			'svn_authz_file': str(self.init_vars['authz']),
 		}

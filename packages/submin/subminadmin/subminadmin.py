@@ -102,7 +102,7 @@ Use '?' or 'help' for help on commands.
 		cmd = self.cmd_alias(argv[0])
 		Class = self.cmd_instance(cmd, argv[1:])
 		if not Class:
-			print "Unknown command"
+			print "Unknown command: %s" % ' '.join(argv)
 			return True
 
 		if not self.storage_opened:

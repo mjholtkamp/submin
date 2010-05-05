@@ -1,5 +1,4 @@
 from submin.path.path import Path
-from submin.models import options
 from submin.models.exceptions import StorageAlreadySetup
 import os, sys
 
@@ -26,6 +25,7 @@ Usage:
 		print formatstring % (key, value)
 
 	def subcmd_get(self, argv):
+		from submin.models import options
 		self.sa.ensure_storage()
 
 		if len(argv) == 1:
@@ -42,6 +42,7 @@ Usage:
 				self._printkeyvalue(arg[0], arg[1], maxlen)
 
 	def subcmd_set(self, argv):
+		from submin.models import options
 		self.sa.ensure_storage()
 
 		if len(argv) != 2:
@@ -99,6 +100,7 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 			'base_url_trac': http_base + '/trac',
 			'auth_type': 'sql',
 			'svn_dir': 'svn',
+			'git_dir': 'git',
 			'trac_dir': 'trac',
 			'dir_bin': 'static/bin',
 			'enabled_trac': 'no',

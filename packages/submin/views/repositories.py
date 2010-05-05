@@ -17,35 +17,34 @@ from submin.unicode import uc_url_decode
 class Repositories(View):
 	@login_required
 	def handler(self, req, path):
-		localvars = {}
+		templatevars = {}
 
 		if req.is_ajax():
 			return self.ajaxhandler(req, path)
 
-		if len(path) < 1:
+		if len(path) < 1 or (path[0] == "show" and len(path) < 3):
 			return ErrorResponse('Invalid path', request=req)
 
 		if len(path) > 0:
-			localvars['selected_type'] = 'repositories'
-		if len(path) > 1:
-			localvars['selected_object'] = path[1]
+			templatevars['selected_type'] = 'repositories'
+		if len(path) > 2:
+			templatevars['selected_object'] = path[2]
 
 		if path[0] == 'show':
-			return self.show(req, path[1:], localvars)
+			return self.show(req, path[1], path[2:], templatevars)
 		if path[0] == 'add':
-			return self.add(req, path[1:], localvars)
+			return self.add(req, path[1:], templatevars)
 
 		return ErrorResponse('Unknown path', request=req)
 
-	def show(self, req, path, localvars):
+	def show(self, req, vcs, path, templatevars):
 		import os.path
 
 		u = req.session['user']
 		try:
-			# TODO: hardcoded svn
-			repository = Repository(path[0], 'svn')
+			repository = Repository(path[0], vcs)
 
-			# Lie if user cannot see permission
+			# Lie if user has no permission to read
 			if not u.is_admin and not Repository.userHasReadPermissions(path[0], u):
 				raise DoesNotExistError
 		except DoesNotExistError:
@@ -57,39 +56,39 @@ class Repositories(View):
 			trac_enabled = False
 
 		if trac_enabled:
-			localvars['trac_config_ok'] = True
-			localvars['trac_exists'] = False
+			templatevars['trac_config_ok'] = True
+			templatevars['trac_exists'] = False
 			try:
 				trac = Trac(path[0])
-				localvars['trac_exists'] = True
+				templatevars['trac_exists'] = True
 			except UnknownTrac, e:
 				pass
 			except MissingConfig, e:
-				localvars['trac_config_ok'] = False
-				localvars['trac_msg'] = \
+				templatevars['trac_config_ok'] = False
+				templatevars['trac_msg'] = \
 					'There is something missing in your config: %s' % str(e)
 
 			trac_base_url = options.url_path('base_url_trac')
 			trac_http_url = str(trac_base_url + repository.name)
-			localvars['trac_http_url'] = trac_http_url
+			templatevars['trac_http_url'] = trac_http_url
 
 		svn_base_url = options.url_path('base_url_svn')
 		svn_http_url = str(svn_base_url + repository.name)
 
-		localvars['svn_http_url'] = svn_http_url
-		localvars['repository'] = repository
-		formatted = evaluate_main('repositories.html', localvars, request=req)
+		templatevars['svn_http_url'] = svn_http_url
+		templatevars['repository'] = repository
+		formatted = evaluate_main('repositories.html', templatevars, request=req)
 		return Response(formatted)
 
 	def showAddForm(self, req, reposname, errormsg=''):
-		localvars = {}
-		localvars['errormsg'] = errormsg
-		localvars['repository'] = reposname
-		formatted = evaluate_main('newrepository.html', localvars, request=req)
+		templatevars = {}
+		templatevars['errormsg'] = errormsg
+		templatevars['repository'] = reposname
+		formatted = evaluate_main('newrepository.html', templatevars, request=req)
 		return Response(formatted)
 
 	@admin_required
-	def add(self, req, path, localvars):
+	def add(self, req, path, templatevars):
 		base_url = options.url_path('base_url_submin')
 		repository = ''
 
@@ -233,14 +232,15 @@ class Repositories(View):
 	def ajaxhandler(self, req, path):
 		repositoryname = ''
 
-		if len(path) < 2:
+		if len(path) < 3:
 			return XMLStatusResponse('', False, 'Invalid path')
 
 		action = path[0]
-		repositoryname = path[1]
+		vcs = path[1]
+		repositoryname = path[2]
 		
 		try:
-			repository = Repository(repositoryname, 'svn')
+			repository = Repository(repositoryname, vcs)
 		except (IndexError, DoesNotExistError):
 			return XMLStatusResponse('', False,
 				'Repository %s does not exist.' % repositoryname)

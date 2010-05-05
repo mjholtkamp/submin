@@ -62,6 +62,7 @@ function reloadX(response, X, Xplural, Xcapital) {
 	var Xs = list.xml.getElementsByTagName(X);
 	for (var i = 0; i < Xs.length; ++i) {
 		var name = Xs[i].getAttribute("name");
+		var vcs = Xs[i].getAttribute("vcs");
 		var status = Xs[i].getAttribute("status");
 		if (!status)
 			status = "ok";
@@ -70,7 +71,8 @@ function reloadX(response, X, Xplural, Xcapital) {
 		if (selected_type == Xplural && selected_object == name)
 			addClassName(li, "selected");
 
-		var link = $c("a", {href: base_url + Xplural + "/show/" + name});
+		var link = $c("a", {href: base_url + Xplural + "/show/"
+				+ vcs + "/" + name});
 
 		var nameNode = $c("span");
 		nameNode.appendChild(document.createTextNode(name));

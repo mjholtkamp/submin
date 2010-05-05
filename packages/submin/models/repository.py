@@ -18,7 +18,10 @@ class Repository(object):
 		repositories = []
 		for system in systems:
 			vcs = models.vcs.get(system, "repository")
-			repositories += vcs.list()
+			vcs_repos = vcs.list()
+			for r in vcs_repos:
+				r.update({"vcs": system})
+			repositories += vcs_repos
 
 		return repositories
 
@@ -33,7 +36,8 @@ class Repository(object):
 				name = repository['name']
 				status = repository['status']
 				if Repository.userHasReadPermissions(name, session_user):
-					filtered.append({"name": name, "status": status})
+					filtered.append({"name": name, "status": status,
+						"vcs": repository["vcs"]})
 			repositories = filtered
 
 		return repositories

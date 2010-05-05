@@ -5,6 +5,7 @@ schema are first in the list. The first entry in this list is always the
 current schema version.
 """
 sql_scripts = [
+	(3, """INSERT OR IGNORE INTO options VALUES ('git_dir', 'git');"""),
 	(2, """CREATE TABLE ssh_keys
 		(
 			id      integer primary key autoincrement,
