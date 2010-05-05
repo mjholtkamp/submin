@@ -43,7 +43,7 @@ Usage:
 			options.set_value(key, value)
 
 	def write_users(self, config):
-		from submin.models.user import User
+		from submin.models import user
 
 		# get filename
 		htpasswd_file = config.get('svn', 'access_file')
@@ -58,24 +58,24 @@ Usage:
 
 		# add users
 		for line in htpasswd:
-			(user, password) = line.strip('\n').split(':')
+			(username, password) = line.strip('\n').split(':')
 			try:
-				u = User.add(user)
+				u = user.add(username)
 			except UserExistsError:
-				u = User(user)
+				u = user.User(username)
 
 			u.set_md5_password(password)
 
-			if userprop.has_section(user):
-				if userprop.has_option(user, 'email'):
-					u.email = userprop.get(user, 'email')
-				if userprop.has_option(user, 'notifications_allowed'):
-					allowed = userprop.get(user, 'notifications_allowed')
+			if userprop.has_section(username):
+				if userprop.has_option(username, 'email'):
+					u.email = userprop.get(username, 'email')
+				if userprop.has_option(username, 'notifications_allowed'):
+					allowed = userprop.get(username, 'notifications_allowed')
 					allowed = [x.strip() for x in allowed.split(',')]
 
 					enabled = []
-					if userprop.has_option(user, 'notifications_enabled'):
-						enabled = userprop.get(user, 'notifications_enabled')
+					if userprop.has_option(username, 'notifications_enabled'):
+						enabled = userprop.get(username, 'notifications_enabled')
 						enabled =  [x.strip() for x in enabled.split(',')]
 
 					repositories = {}
@@ -97,7 +97,7 @@ Usage:
 
 	def write_groups(self, config):
 		from submin.models.group import Group
-		from submin.models.user import User
+		from submin.models import user
 
 		# get filename
 		authz_file = config.get('svn', 'authz_file')
@@ -115,7 +115,7 @@ Usage:
 				g = Group(group)
 
 			for member in members:
-				u = User(member)
+				u = user.User(member)
 				try:
 					g.add_member(u)
 				except MemberExistsError:

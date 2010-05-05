@@ -1,7 +1,7 @@
 from submin.dispatch.view import View
 from submin.dispatch.response import *
 from submin.auth.decorators import *
-from submin.models.user import User
+from submin.models import user
 from submin.models.group import Group
 from submin.models.repository import Repository
 from submin.models import options
@@ -28,7 +28,7 @@ class Ajax(View):
 	def listUsers(self, req):
 		session_user = req.session['user']
 		try:
-			usernames = User.list(session_user)
+			usernames = user.list(session_user)
 			return XMLTemplateResponse("ajax/listusers.xml", {'usernames': usernames})
 		except Exception, e:
 			return XMLStatusResponse('listUsers', False, 'Failed to get a list: %s' % e)

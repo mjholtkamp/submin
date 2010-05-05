@@ -12,35 +12,33 @@ class FakeAdminUser(object):
 	def __init__(self):
 		self.is_admin = True
 
+def list(session_user):
+	"""Returns a (sorted) list of usernames
+
+	list expects a session_user argument: this is the user requesting the
+	user list. If the user is not an admin, it will only get to see
+	herself.
+	"""
+	if not session_user.is_admin: # only admins get to see the entire list
+		return [session_user.name]     # users only see themselves
+
+	return [user['name'] for user in storage.list()]
+
+def add(username, password=None):
+	"""Adds a new user with a no password.
+
+	To generate a password, call generate_password()
+	Raises UserExistsError if a user with this username already exists.
+	"""
+
+	if not validators.validate_username(username):
+		raise validators.InvalidUsername(username)
+
+	storage.add(username, password)
+	trigger_hook('user-create', username=username, user_passwd=password)
+	return User(username)
+
 class User(object):
-	@staticmethod
-	def list(session_user):
-		"""Returns a (sorted) list of usernames
-
-		list expects a session_user argument: this is the user requesting the
-		user list. If the user is not an admin, it will only get to see
-		herself.
-		"""
-		if not session_user.is_admin: # only admins get to see the entire list
-			return [session_user.name]     # users only see themselves
-
-		return [user['name'] for user in storage.list()]
-
-	@staticmethod
-	def add(username, password=None):
-		"""Adds a new user with a no password.
-
-		To generate a password, call generate_password()
-		Raises UserExistsError if a user with this username already exists.
-		"""
-
-		if not validators.validate_username(username):
-			raise validators.InvalidUsername(username)
-
-		storage.add(username, password)
-		trigger_hook('user-create', username=username, user_passwd=password)
-		return User(username)
-
 	def __init__(self, username=None, raw_data=None):
 		"""Constructor, either takes a username or raw data
 

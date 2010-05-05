@@ -3,7 +3,7 @@ from submin.template.shortcuts import evaluate_main
 from submin.dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse, Redirect
 from submin.views.error import ErrorResponse
 from submin.dispatch.view import View
-from submin.models.user import User
+from submin.models import user
 from submin.models.group import Group
 from submin.models.repository import Repository, DoesNotExistError, PermissionError
 from submin.models.trac import Trac, UnknownTrac, createTracEnv
@@ -40,13 +40,13 @@ class Repositories(View):
 	def show(self, req, path, localvars):
 		import os.path
 
-		user = req.session['user']
+		u = req.session['user']
 		try:
 			# TODO: hardcoded svn
 			repository = Repository(path[0], 'svn')
 
 			# Lie if user cannot see permission
-			if not user.is_admin and not Repository.userHasReadPermissions(path[0], user):
+			if not u.is_admin and not Repository.userHasReadPermissions(path[0], u):
 				raise DoesNotExistError
 		except DoesNotExistError:
 			return ErrorResponse('This repository does not exist.', request=req)
@@ -141,7 +141,7 @@ class Repositories(View):
 
 		usernames = []
 		if 'userlist' in req.post:
-			usernames = User.list(session_user)
+			usernames = user.list(session_user)
 
 		groupnames = []
 		if 'grouplist' in req.post:

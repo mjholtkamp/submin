@@ -4,8 +4,8 @@ from submin.dispatch.view import View
 from submin.dispatch.response import Response, Redirect
 from submin.views.error import ErrorResponse
 from submin.template.shortcuts import evaluate
-from submin.models.exceptions import NoMD5PasswordError
-from submin.models.user import User, UnknownUserError
+from submin.models.exceptions import NoMD5PasswordError, UnknownUserError
+from submin.models import user
 from submin.models import options
 from submin.models.storage import database_isuptodate
 
@@ -17,15 +17,15 @@ class Login(View):
 		password = request.post.get('password', '')
 
 		invalid_login = True
-		user = None
+		u = None
 		try:
-			user = User(username)
+			u = user.User(username)
 			invalid_login = False
 		except UnknownUserError, e:
 			pass
 
 		try:
-			if not user or not user.check_password(password):
+			if not u or not u.check_password(password):
 				return self.evaluate_form('Not a valid username and password combination')
 		except NoMD5PasswordError, e:
 			return self.evaluate_form(config, str(e))
@@ -42,11 +42,11 @@ class Login(View):
 			request.session['upgrade_user'] = True
 			base_url = options.value('base_url_submin')
 			localvalues['base_url'] = base_url
-			localvalues['session_user'] = user
+			localvalues['session_user'] = u
 			return Response(evaluate('database_upgrade.html', localvalues))
 
-		user.is_authenticated = True
-		request.session['user'] = user
+		u.is_authenticated = True
+		request.session['user'] = u
 		request.session.save()
 
 		return Redirect(url)

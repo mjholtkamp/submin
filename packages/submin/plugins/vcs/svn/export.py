@@ -47,24 +47,24 @@ def export_notifications(**args):
 	bindir = options.static_path("hooks") + 'svn'
 	
 	# get a list of all users
-	from submin.models.user import User, FakeAdminUser
-	users = [User(name) for name in User.list(FakeAdminUser())]
+	from submin.models import user
+	users = [user.User(name) for name in user.list(user.FakeAdminUser())]
 
 	from submin.models.permissions import Permissions
 	p = Permissions()
 	groups = []
-	for user in users:
-		if not user.email:
+	for u in users:
+		if not u.email:
 			continue
 
-		u_notif = user.notifications()
+		u_notif = u.notifications()
 
 		for repos in u_notif:
 			if not u_notif[repos]["enabled"]:
 				continue
 
 			# strip leading /
-			paths = [x[1:] for x in p.list_readable_user_paths(repos, user)]
+			paths = [x[1:] for x in p.list_readable_user_paths(repos, u)]
 			if len(paths) == 0:
 				continue
 			elif len(paths) == 1:
@@ -72,8 +72,8 @@ def export_notifications(**args):
 			elif len(paths) > 0:
 				for_paths = "(" + "|".join(paths) + ")"
 
-			group = {"for_repos": repos, "email": user.email,
-				"for_paths": for_paths, "username": user.name}
+			group = {"for_repos": repos, "email": u.email,
+				"for_paths": for_paths, "username": u.name}
 			groups.append(group)
 
 	templatevariables = {"groups": groups}

@@ -2,7 +2,7 @@ from submin.dispatch.view import View
 from submin.template.shortcuts import evaluate_main
 from submin.dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse
 from submin.views.error import ErrorResponse
-from submin.models.user import User
+from submin.models import user
 from submin.models.group import Group
 from submin.models.exceptions import GroupExistsError, MemberExistsError
 from submin.models.exceptions import UnknownGroupError
@@ -119,7 +119,7 @@ class Groups(View):
 		members = list(group.members())
 		if req.session['user'].is_admin:
 			nonmembers = []
-			usernames = User.list(req.session['user'])
+			usernames = user.list(req.session['user'])
 			for username in usernames:
 				if username not in members:
 					nonmembers.append(username)
@@ -142,7 +142,7 @@ class Groups(View):
 		username = req.post['removeMember'].value
 		success = True
 		try:
-			Group(groupname).remove_member(User(username))
+			Group(groupname).remove_member(user.User(username))
 		except:
 			success = False
 
@@ -155,7 +155,7 @@ class Groups(View):
 		username = req.post['addMember'].value
 		success = True
 		try:
-			Group(groupname).add_member(User(username))
+			Group(groupname).add_member(user.User(username))
 		except MemberExistsError:
 			success = False
 

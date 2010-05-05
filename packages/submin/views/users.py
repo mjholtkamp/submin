@@ -2,7 +2,7 @@ from submin.dispatch.view import View
 from submin.template.shortcuts import evaluate_main
 from submin.dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse
 from submin.views.error import ErrorResponse
-from submin.models.user import User
+from submin.models import user
 from submin.models.exceptions import UnknownUserError, UserExistsError, \
 		UserPermissionError, MemberExistsError
 from submin.models.group import Group
@@ -46,11 +46,11 @@ class Users(View):
 			raise Unauthorized('Permission denied to view this user')
 
 		try:
-			user = User(path[0])
+			u = user.User(path[0])
 		except (IndexError, UnknownUserError):
 			return ErrorResponse('This user does not exist.', request=req)
 
-		localvars['user'] = user
+		localvars['user'] = u
 		formatted = evaluate_main('users.html', localvars, request=req)
 		return Response(formatted)
 
@@ -97,7 +97,7 @@ class Users(View):
 					'Email must be supplied')
 
 			try:
-				u = User.add(username)
+				u = user.add(username)
 				u.email = email
 				u.fullname = fullname
 			except IOError:
@@ -126,28 +126,28 @@ class Users(View):
 		if action == 'delete':
 			return self.removeUser(req, username)
 
-		user = User(username)
+		u = user.User(username)
 		
 		if 'fullname' in req.post and req.post['fullname'].value.strip():
-			return self.setFullName(req, user)
+			return self.setFullName(req, u)
 		
 		if 'email' in req.post and req.post['email'].value.strip():
-			return self.setEmail(req, user)
+			return self.setEmail(req, u)
 
 		if 'password' in req.post and req.post['password'].value.strip():
-			return self.setPassword(req, user)
+			return self.setPassword(req, u)
 
 		if 'addToGroup' in req.post:
-			return self.addToGroup(req, user)
+			return self.addToGroup(req, u)
 
 		if 'removeFromGroup' in req.post:
-			return self.removeFromGroup(req, user)
+			return self.removeFromGroup(req, u)
 
 		if 'listUserGroups' in req.post:
-			return self.listUserGroups(req, user)
+			return self.listUserGroups(req, u)
 
 		if 'listNotifications' in req.post:
-			return self.listNotifications(req, user)
+			return self.listNotifications(req, u)
 
 		if 'addSSHKey' in req.post:
 			return self.addSSHKey(req, user)
@@ -156,66 +156,66 @@ class Users(View):
 			return self.removeSSHKey(req, user)
 		
 		if 'saveNotifications' in req.post:
-			return self.saveNotifications(req, user)
+			return self.saveNotifications(req, u)
 
 		if 'listSSHKeys' in req.post:
 			return self.listSSHKeys(req, user)
 		
 		if 'setIsAdmin' in req.post:
-			return self.setIsAdmin(req, user)
+			return self.setIsAdmin(req, u)
 
 		return XMLStatusResponse('', False, 'Unknown command')
 
-	def setEmail(self, req, user):
+	def setEmail(self, req, u):
 		try:
-			user.email = uc_str(req.post.get('email'))
+			u.email = uc_str(req.post.get('email'))
 			return XMLStatusResponse('email', True,
 				'Changed email address for user %s to %s' %
-				(user.name, user.email))
+				(u.name, u.email))
 		except validators.InvalidEmail:
 			return XMLStatusResponse('email', False,
 				'Invalid characters in email-address. If you think this is an error, please report a bug')
 		except Exception, e:
 			return XMLStatusResponse('email', False,
-				'Could not change email of user %s: %s' % (user.name, str(e)))
+				'Could not change email of user %s: %s' % (u.name, str(e)))
   
-	def setFullName(self, req, user):
+	def setFullName(self, req, u):
 		try:
-			user.fullname = uc_str(req.post.get('fullname'))
+			u.fullname = uc_str(req.post.get('fullname'))
 			return XMLStatusResponse('setFullName', True,
 				'Changed name for user %s to %s' %
-				(user.name, user.fullname))
+				(u.name, u.fullname))
 		except validators.InvalidFullname, e:
 			return XMLStatusResponse('setFullName', False, str(e))
 		except Exception, e:
 			return XMLStatusResponse('setFullName', False,
-				'Could not change name of user %s: %s' % (user.name, str(e)))
+				'Could not change name of user %s: %s' % (u.name, str(e)))
 
-	def setPassword(self, req, user):
+	def setPassword(self, req, u):
 		try:
-			user.set_password(req.post.get('password'))
+			u.set_password(req.post.get('password'))
 			return XMLStatusResponse('setPassword', True,
-				'Changed password for user %s' % user.name)
+				'Changed password for user %s' % u.name)
 		except Exception, e:
 			return XMLStatusResponse('setPassword', False,
-				'Could not change password of user %s: %s' % (user.name, e))
+				'Could not change password of user %s: %s' % (u.name, e))
 
 	@admin_required
-	def addToGroup(self, req, user):
+	def addToGroup(self, req, u):
 		group = Group(req.post.get('addToGroup'))
 		success = True
 		try:
-			group.add_member(user)
+			group.add_member(u)
 		except MemberExistsError:
 			success = False
 
-		msgs = {True: 'User %s added to group %s' % (user.name, group.name),
-				False: 'User %s already in group %s' % (user.name, group.name)
+		msgs = {True: 'User %s added to group %s' % (u.name, group.name),
+				False: 'User %s already in group %s' % (u.name, group.name)
 				}
 		return XMLStatusResponse('addToGroup', success, msgs[success])
 
-	def listUserGroups(self, req, user):
-		member_of_names = list(user.member_of())
+	def listUserGroups(self, req, u):
+		member_of_names = list(u.member_of())
 		session_user = req.session['user']
 		if session_user.is_admin:
 			nonmember_of = []
@@ -226,25 +226,25 @@ class Users(View):
 			
 			return XMLTemplateResponse("ajax/usermemberof.xml",
 					{"memberof": member_of_names,
-						"nonmemberof": nonmember_of, "user": user.name})
+						"nonmemberof": nonmember_of, "user": u.name})
 
-		if req.session['user'].name != user.name:
+		if req.session['user'].name != u.name:
 			return XMLStatusResponse('listUserGroups', False, "You do not have permission to "
 					"view this user.")
 
 		return XMLTemplateResponse("ajax/usermemberof.xml",
 				{"memberof": member_of_names, "nonmemberof": [],
-					"user": user.name})
+					"user": u.name})
 
-	def listNotifications(self, req, user):
+	def listNotifications(self, req, u):
 		session_user = req.session['user']
-		if not session_user.is_admin and session_user.name != user.name:
+		if not session_user.is_admin and session_user.name != u.name:
 			return XMLStatusResponse('listNotifications', False, "You do not have permission to "
 					"view this user.")
 
 		# rebuild notifications into a list so we can sort it
 		notifications = []
-		for (name, d) in user.notifications().iteritems():
+		for (name, d) in u.notifications().iteritems():
 			# add a 'name' key, leave the 'allowed' and 'enabled' keys
 			d['name'] = name
 			notifications.append(d)
@@ -253,24 +253,24 @@ class Users(View):
 		notifications.sort(cmp=lambda x,y: cmp(x['name'], y['name']))
 
 		return XMLTemplateResponse("ajax/usernotifications.xml",
-				{"notifications": notifications, "username": user.name,
+				{"notifications": notifications, "username": u.name,
 				"session_user": session_user})
 
-	def listSSHKeys(self, req, user):
+	def listSSHKeys(self, req, u):
 		session_user = req.session['user']
-		if not session_user.is_admin and session_user.name != user.name:
+		if not session_user.is_admin and session_user.name != u.name:
 			return XMLStatusResponse('listSSHKeys', False, "You do not have permission to "
 					"view this user.")
 
-		ssh_keys = user.ssh_keys()
+		ssh_keys = u.ssh_keys()
 
 		return XMLTemplateResponse("ajax/usersshkeys.xml",
-				{"ssh_keys": ssh_keys, "username": user.name,
+				{"ssh_keys": ssh_keys, "username": u.name,
 				"session_user": session_user})
 
-	def addSSHKey(self, req, user):
+	def addSSHKey(self, req, u):
 		session_user = req.session['user']
-		if not session_user.is_admin and session_user.name != user.name:
+		if not session_user.is_admin and session_user.name != u.name:
 			return XMLStatusResponse('addSSHKey', False,
 				"You do not have permission to add SSH Keys for this user.")
 		title = req.post.get("title", None)
@@ -289,9 +289,9 @@ class Users(View):
 			return XMLStatusResponse('addSSHKey', False,
 				'Invalid SSH Key provided. If you think this is an error, please report a bug')
 
-	def removeSSHKey(self, req, user):
+	def removeSSHKey(self, req, u):
 		session_user = req.session['user']
-		if not session_user.is_admin and session_user.name != user.name:
+		if not session_user.is_admin and session_user.name != u.name:
 			return XMLStatusResponse('addSSHKey', False,
 				"You do not have permission to add SSH Keys for this user.")
 		ssh_key_id = req.post.get("removeSSHKey")
@@ -302,7 +302,7 @@ class Users(View):
 		return XMLStatusResponse("removeSSHKey", True,
 				"SSH Key successfully removed.")
 
-	def saveNotifications(self, req, user):
+	def saveNotifications(self, req, u):
 		session_user = req.session['user']
 		
 		notifications_str = req.post.get('saveNotifications').split(':')
@@ -314,23 +314,23 @@ class Users(View):
 			try:
 				allowed = (n[1] == "true")
 				enabled = (n[2] == "true")
-				user.set_notification(n[0], allowed, enabled, session_user)
+				u.set_notification(n[0], allowed, enabled, session_user)
 			except UserPermissionError, e:
 				return XMLStatusResponse('saveNotifications', False, str(e))
 
-		return XMLStatusResponse("saveNotifications", True, "Saved notifications for user " + user.name)
+		return XMLStatusResponse("saveNotifications", True, "Saved notifications for user " + u.name)
 
 	@admin_required
-	def removeFromGroup(self, req, user):
+	def removeFromGroup(self, req, u):
 		group = Group(req.post.get('removeFromGroup'))
 		success = True
 		try:
-			group.remove_member(user)
+			group.remove_member(u)
 		except: # XXX except what?!
 			succes = False
 
-		msgs = {True: 'User %s removed from group %s' % (user.name, group.name),
-				False: 'User %s is not a member of %s' % (user.name, group.name)
+		msgs = {True: 'User %s removed from group %s' % (u.name, group.name),
+				False: 'User %s is not a member of %s' % (u.name, group.name)
 				}
 		return XMLStatusResponse('removeFromGroup', success, msgs[success])
 
@@ -340,8 +340,8 @@ class Users(View):
 			return XMLStatusResponse('removeUser', False,
 				'You are not allowed to delete yourself')
 		try:
-			user = User(username)
-			user.remove()
+			u = user.User(username)
+			u.remove()
 		except Exception, e:
 			return XMLStatusResponse('removeUser', False,
 				'User %s not deleted: %s' % (username, str(e)))
@@ -349,18 +349,18 @@ class Users(View):
 		return XMLStatusResponse('removeUser', True, 'User %s deleted' % username)
 
 	@admin_required
-	def setIsAdmin(self, req, user):
+	def setIsAdmin(self, req, u):
 		is_admin = req.post.get('setIsAdmin')
-		if user.name == req.session['user'].name:
+		if u.name == req.session['user'].name:
 			return XMLStatusResponse('setIsAdmin', False,
 				'You are not allowed to change admin rights for yourself')
 
 		try:
-			user.is_admin = is_admin
+			u.is_admin = is_admin
 		except Exception, e:
 			return XMLStatusResponse('setIsAdmin', False,
-				'Could not change admin status for user %s: %s' % (user.name, str(e)))
+				'Could not change admin status for user %s: %s' % (u.name, str(e)))
 
 		newstatus = {'false':'revoked', 'true':'granted'}[is_admin]
 		return XMLStatusResponse('setIsAdmin', True, 
-			'Admin rights for user %s %s' % (user.name, newstatus))
+			'Admin rights for user %s %s' % (u.name, newstatus))

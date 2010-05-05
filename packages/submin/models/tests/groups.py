@@ -62,22 +62,22 @@ class GroupTests(unittest.TestCase):
 		self.assertEquals(foo.members(), [])
 
 	def testAddMember(self):
-		from submin.models.user import User
-		User.add("testUser")
+		from submin.models import user
+		user.add("testUser")
 		Group.add("testGroup")
-		u = User("testUser")
+		u = user.User("testUser")
 		g = Group("testGroup")
 
 		g.add_member(u)
 		self.assert_("testUser" in g.members())
 
 	def testRemoveMember(self):
-		from submin.models.user import User
-		User.add("testUser1")
-		User.add("testUser2")
+		from submin.models import user
+		user.add("testUser1")
+		user.add("testUser2")
 		Group.add("testGroup")
-		u1 = User("testUser1")
-		u2 = User("testUser2")
+		u1 = user.User("testUser1")
+		u2 = user.User("testUser2")
 		g = Group("testGroup")
 		g.add_member(u1)
 		g.add_member(u2)

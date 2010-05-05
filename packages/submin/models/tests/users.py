@@ -8,7 +8,7 @@ mock_settings.storage = "mock"
 mock_settings.base_dir = "/"
 
 from submin.models import storage
-from submin.models.user import User
+from submin.models import user
 from submin.models import options
 from submin.models.exceptions import UserExistsError, UnknownUserError, UserPermissionError
 from submin.models.validators import *
@@ -21,8 +21,8 @@ class UserTests(unittest.TestCase):
 		options.set_value('svn_dir', '/tmp/submin-svn') # needed for export
 		options.set_value('vcs_plugins', 'svn')
 		self.tmp_dirs = []
-		User.add("test")
-		self.u = User("test")
+		user.add("test")
+		self.u = user.User("test")
 
 	def tearDown(self):
 		import os
@@ -92,10 +92,10 @@ class UserTests(unittest.TestCase):
 		self.assertTrue(self.u.check_password("foobar"))
 
 	def testAddDoubleUser(self):
-		self.assertRaises(UserExistsError, User.add, "test")
+		self.assertRaises(UserExistsError, user.add, "test")
 
 	def testUnknownUser(self):
-		self.assertRaises(UnknownUserError, User, "not a user")
+		self.assertRaises(UnknownUserError, user.User, "not a user")
 
 	def testUserName(self):
 		self.assertEquals(str(self.u), "test")
@@ -106,8 +106,8 @@ class UserTests(unittest.TestCase):
 	def testListUsersAdmin(self):
 		mock_user = Mock()
 		mock_user.is_admin = True
-		User.add("foo")
-		users = [x for x in User.list(mock_user)]
+		user.add("foo")
+		users = [x for x in user.list(mock_user)]
 		users.sort()
 		self.assertEquals(users, ["foo", "test"])
 
@@ -115,18 +115,18 @@ class UserTests(unittest.TestCase):
 		mock_user = Mock()
 		mock_user.is_admin = False
 		mock_user.name = "foo"
-		User.add("foo")
-		users = [x for x in User.list(mock_user)]
+		user.add("foo")
+		users = [x for x in user.list(mock_user)]
 		users.sort()
 		self.assertEquals(users, ["foo"])
 
 	def testRemoveUser(self):
 		mock_user = Mock()
 		mock_user.is_admin = True
-		User.add("foo")
-		foo = User("foo")
+		user.add("foo")
+		foo = user.User("foo")
 		foo.remove()
-		self.assert_("foo" not in [x for x in User.list(mock_user)])
+		self.assert_("foo" not in [x for x in user.list(mock_user)])
 
 	def testUserName(self):
 		self.assertEquals(self.u.name, "test")
@@ -165,7 +165,7 @@ class UserTests(unittest.TestCase):
 		mock_admin.is_admin = True
 		self.u.set_notification("repos", True, True, mock_admin)
 		self.u.set_notification("non-existing", True, True, mock_admin)
-		u2 = User("test")
+		u2 = user.User("test")
 		notifications = u2.notifications()
 		self.assertTrue(notifications['repos']['enabled'])
 		# should not have notification for non-existing repository

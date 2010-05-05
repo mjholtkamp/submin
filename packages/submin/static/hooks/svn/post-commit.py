@@ -44,8 +44,8 @@ def main():
 	opts = Options()
 	bindir = opts.static_path("hooks") + 'svn'
 
-	from submin.models.user import User, FakeAdminUser
-	userlist = [User(name) for name in User.list(FakeAdminUser())]
+	from submin.models import user
+	userlist = [user.User(name) for name in user.list(user.FakeAdminUser())]
 
 	n = buildNotifications(userlist)
 	repos = os.path.basename(repospath)
