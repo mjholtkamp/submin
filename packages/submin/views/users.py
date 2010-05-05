@@ -150,16 +150,16 @@ class Users(View):
 			return self.listNotifications(req, u)
 
 		if 'addSSHKey' in req.post:
-			return self.addSSHKey(req, user)
+			return self.addSSHKey(req, u)
 
 		if 'removeSSHKey' in req.post:
-			return self.removeSSHKey(req, user)
+			return self.removeSSHKey(req, u)
 		
 		if 'saveNotifications' in req.post:
 			return self.saveNotifications(req, u)
 
 		if 'listSSHKeys' in req.post:
-			return self.listSSHKeys(req, user)
+			return self.listSSHKeys(req, u)
 		
 		if 'setIsAdmin' in req.post:
 			return self.setIsAdmin(req, u)
