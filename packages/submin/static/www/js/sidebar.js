@@ -99,6 +99,7 @@ function reloadX(response, X, Xplural, Xcapital) {
 			var span = $c("span");
 			addClassName(span, "delete" + X);
 			span.setAttribute("name", name);
+			span.setAttribute("vcs", vcs);
 			var img = $c("img", {src: base_url + "img/min.png"});
 			addClassName(img, "remover");
 			span.appendChild(img);
@@ -183,7 +184,11 @@ function deleteObject()
 	var div = this.parentNode.parentNode;
 	var type = div.id;
 	var name = this.getAttribute("name");
-	var url = base_url + '' + type + '/delete/' + name
+	var vcs = this.getAttribute("vcs");
+	var vcs_to_url = "";
+	if (vcs)
+		vcs_to_url = vcs + "/";
+	var url = base_url + '' + type + '/delete/' + vcs_to_url + name
 
 	var answer = confirm('Really delete ' + name + '? There is no undo')
 	if (!answer)
