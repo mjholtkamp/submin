@@ -180,7 +180,6 @@ run()
 
 		# add a user
 		from submin.models import user
-		from submin.models.group import Group
 		
 		if self.init_vars['create_user'] == "yes":
 			# add an admin user
