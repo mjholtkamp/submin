@@ -10,23 +10,26 @@ def list_paths(repository):
 
 	return [x[0] for x in rows]
 
-def list_permissions(repos, path):
+def list_permissions(repos, repostype, path):
 	cur = storage.db.cursor()
 
 	queries = [
 		"""SELECT users.name, subjecttype, type FROM permissions
 			LEFT JOIN users ON permissions.subjectid = users.id
-			WHERE repository = ? AND path = ? AND subjecttype = 'user'""",
+			WHERE repository = ? AND repositorytype = ?
+				AND path = ? AND subjecttype = 'user'""",
 		"""SELECT groups.name, subjecttype, type FROM permissions
 			LEFT JOIN groups ON permissions.subjectid = groups.id
-			WHERE repository = ? AND path = ? AND subjecttype = 'group'""",
+			WHERE repository = ? AND repositorytype = ?
+				AND path = ? AND subjecttype = 'group'""",
 		"""SELECT '*', subjecttype, type FROM permissions
-			WHERE repository = ? AND path = ? AND subjecttype = 'all'"""
+			WHERE repository = ? AND repositorytype = ?
+				AND path = ? AND subjecttype = 'all'"""
 		]
 
 	rows = []
 	for query in queries:
-		storage.execute(cur, query, (repos, path))
+		storage.execute(cur, query, (repos, repostype, path))
 
 		current_rows = cur.fetchall()
 		if current_rows:
@@ -55,16 +58,16 @@ def _subject_to_id(subject, subjecttype):
 
 	return subjectid
 
-def add_permission(repos, path, subject, subjecttype, perm):
+def add_permission(repos, repostype, path, subject, subjecttype, perm):
 	cur = storage.db.cursor()
 	subjectid = _subject_to_id(subject, subjecttype)
 
 	storage.execute(cur, """INSERT INTO permissions
-		(repository, path, subjectid, subjecttype, type)
-		VALUES (?, ?, ?, ?, ?)""",
-		(repos, path, subjectid, subjecttype, perm))
+		(repository, repositorytype, path, subjectid, subjecttype, type)
+		VALUES (?, ?, ?, ?, ?, ?)""",
+		(repos, repostype, path, subjectid, subjecttype, perm))
 
-def change_permission(repos, path, subject, subjecttype, perm):
+def change_permission(repos, repostype, path, subject, subjecttype, perm):
 	cur = storage.db.cursor()
 	subjectid = _subject_to_id(subject, subjecttype)
 
@@ -73,18 +76,18 @@ def change_permission(repos, path, subject, subjecttype, perm):
 	#   OperationalError: near "?": syntax error
 	# so instead we use this horrid construction
 	test = "subjectid = ?"
-	variables = (perm, repos, path, subjectid, subjecttype)
+	variables = (perm, repos, repostype, path, subjectid, subjecttype)
 	if not subjectid:
 		test = "subjectid IS NULL"
-		variables = (perm, repos, path, subjecttype)
+		variables = (perm, repos, repostype, path, subjecttype)
 
 	storage.execute(cur, """UPDATE permissions
 		SET type = ?
-		WHERE repository = ? AND path = ? AND %s
+		WHERE repository = ? AND repositorytype = ? AND path = ? AND %s
 		AND subjecttype = ?""" % test,
 		variables)
 
-def remove_permission(repos, path, subject, subjecttype):
+def remove_permission(repos, repostype, path, subject, subjecttype):
 	cur = storage.db.cursor()
 	subjectid = _subject_to_id(subject, subjecttype)
 
@@ -93,10 +96,11 @@ def remove_permission(repos, path, subject, subjecttype):
 	#   OperationalError: near "?": syntax error
 	# so instead we use this horrid construction
 	test = "subjectid = ?"
-	variables = (repos, path, subjectid, subjecttype)
+	variables = (repos, repostype, path, subjectid, subjecttype)
 	if not subjectid:
 		test = "subjectid IS NULL"
-		variables = (repos, path, subjecttype)
+		variables = (repos, repostype, path, subjecttype)
 
 	storage.execute(cur, """DELETE FROM permissions WHERE repository = ?
-		AND path = ? AND %s AND subjecttype = ?""" % test, variables)
+		AND repositorytype = ? AND path = ?
+		AND %s AND subjecttype = ?""" % test, variables)

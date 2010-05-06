@@ -8,8 +8,8 @@ class Permissions(object):
 	def list_paths(self, repository):
 		return storage.list_paths(repository)
 
-	def list_permissions(self, repos, path):
-		return storage.list_permissions(repos, path)
+	def list_permissions(self, repos, vcs_type, path):
+		return storage.list_permissions(repos, vcs_type, path)
 
 	def list_readable_user_paths(self, repository, user):
 		"""Return a list of paths for this *repository* that the *user* is
@@ -34,7 +34,8 @@ class Permissions(object):
 		if repos != "":
 			r = Repository(repos, repostype) # check if exists
 
-		storage.add_permission(repos, path, subject, subjecttype, perm)
+		storage.add_permission(repos, repostype, path, subject, subjecttype,
+				perm)
 		trigger_hook('permission-update', repositoryname=repos,
 				repository_path=path, vcs_type=repostype)
 
@@ -43,12 +44,13 @@ class Permissions(object):
 		"""Changes permission for repos:path, raises a
 		Repository.DoesNotExistError if repos does not exist."""
 		r = Repository(repos, repostype) # just for the exception
-		storage.change_permission(repos, path, subject, subjecttype, perm)
+		storage.change_permission(repos, repostype, path, subject, subjecttype,
+				perm)
 		trigger_hook('permission-update', repositoryname=repos,
 				repository_path=path, vcs_type=repostype)
 
 	def remove_permission(self, repos, repostype, path, subject, subjecttype):
-		storage.remove_permission(repos, path, subject, subjecttype)
+		storage.remove_permission(repos, repostype, path, subject, subjecttype)
 		trigger_hook('permission-update', repositoryname=repos,
 				repository_path=path, vcs_type=repostype)
 
@@ -59,21 +61,21 @@ Storage Contract
 * list_paths(repos)
 	Returns an array of paths (strings) that have permissions set.
 
-* list_permissions(repos, path)
+* list_permissions(repos, repostype, path)
 	Returns a list of permissions of *path* in *repos*. Each permission is
 	in the following form:
 		{'name': 'testUser', 'type': 'user', 'permission': 'rw'}
 
-* add_permission(repos, path, subject, subjecttype, perm)
+* add_permission(repos, repostype, path, subject, subjecttype, perm)
 	Set the permission of *repos*:*path* to *subject* (user, group, all)
 	to *perm*. If the *subjecttype* is 'all', then an anonymous user is
 	assumed.
 
-* change_permission(repos, path, subject, subjecttype, perm)
+* change_permission(repos, repostype, path, subject, subjecttype, perm)
 	Change the permission of *repos*:*path* with *subject* and type
 	*subjecttype* to *perm*.
 
-* remove_permission(repos, path, subject, subjecttype)
+* remove_permission(repos, repostype, path, subject, subjecttype)
 	Removes the permission from *repos*:*path* for *subject* with type
 	*subjecttype*
 

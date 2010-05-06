@@ -146,10 +146,11 @@ class Repositories(View):
 	def getpermissions(self, req, repository):
 		session_user = req.session['user']
 		path = uc_url_decode(req.post['getPermissions'].value)
-		svn_path = Path(path.encode('utf-8'))
+		branch_or_path = Path(path.encode('utf-8'))
 
 		p = Permissions()
-		perms = p.list_permissions(repository.name, str(svn_path))
+		perms = p.list_permissions(repository.name, repository.vcs_type,
+				str(branch_or_path))
 
 		usernames = []
 		if 'userlist' in req.post:
@@ -160,7 +161,8 @@ class Repositories(View):
 			groupnames = group.list(session_user)
 
 		templatevars = {'perms': perms, 'repository': repository.name,
-			'path': svn_path, 'usernames': usernames, 'groupnames': groupnames}
+			'path': branch_or_path, 'usernames': usernames,
+			'groupnames': groupnames}
 		return XMLTemplateResponse('ajax/repositoryperms.xml', templatevars)
 
 	@admin_required
@@ -177,9 +179,11 @@ class Repositories(View):
 		type = req.post['type'].value
 		path = req.post['path'].value
 		path = uc_url_decode(path)
+		vcs_type = repository.vcs_type
 
 		# add member with no permissions (let the user select that)
-		perms.add_permission(repository.name, "svn", path, name, type, '')
+		perms.add_permission(repository.name, repository.vcs_type, path, name,
+				type, '')
 		return XMLStatusResponse('addPermission', True, ('User', 'Group')[type == 'group'] + ' %s added to path %s' % (name, path))
 
 	@admin_required
@@ -190,7 +194,8 @@ class Repositories(View):
 		path = req.post['path'].value
 		path = uc_url_decode(path)
 
-		perms.remove_permission(repository.name, "svn", path, name, type)
+		perms.remove_permission(repository.name, repository.vcs_type, path,
+				name, type)
 		return XMLStatusResponse('removePermission', True, ('User', 'Group')[type == 'group'] + ' %s removed from path %s' % (name, path))
 
 	@admin_required
@@ -202,7 +207,8 @@ class Repositories(View):
 		path = uc_url_decode(path)
 		permission = req.post['permission'].value
 
-		perms.change_permission(repository.name, "svn", path, name, type, permission)
+		perms.change_permission(repository.name, repository.vcs_type, path,
+				name, type, permission)
 		return XMLStatusResponse('setPermission', True, 'Permission for %s %s changed to %s' %
 			(('user', 'group')[type == 'group'], name, permission))
 

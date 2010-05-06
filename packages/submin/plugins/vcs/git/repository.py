@@ -96,7 +96,13 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 
 	def remove(self):
 		"""Removes repository *name*"""
-		pass
+		if not self.dir.absolute:
+			raise Exception("Error, repository path is relative, this should be fixed")
+
+		cmd = 'rm -rf "%s"' % self.dir
+		(exitstatus, outtext) = commands.getstatusoutput(cmd)
+		if exitstatus != 0:
+			raise Exception("could not remove repository %s" % self.display_name())
 
 	def enableCommitEmails(self, enable):
 		"""Enables sending of commit messages if *enable* is True."""
@@ -106,3 +112,5 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		"""Returns True if sendinf of commit messages is enabled."""
 		pass
 
+	def __str__(self):
+		return self.display_name()
