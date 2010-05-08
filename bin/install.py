@@ -36,6 +36,7 @@ class Main:
 		self.share = os.path.join(self.prefix, "share/submin")
 		self.final_share = os.path.join(self.final_prefix, "share/submin")
 		self.submin_admin = os.path.join(self.prefix, "bin/submin-admin")
+		self.manpage = os.path.join(self.prefix, "share/man/man1/submin-admin.1")
 
 		# check paths
 		if (os.path.exists(self.share) or os.path.exists(self.submin_admin)) \
@@ -86,6 +87,7 @@ Usage: %s <installdir> [--force] [--final=<installdir2>]
 		os.chdir(srcdir)
 
 		self.install("bin/submin-admin.py", self.submin_admin, mode=0755)
+		self.install("man/submin-admin.1", self.manpage, mode=0444)
 
 		if os.path.exists(self.share):
 			shutil.rmtree(self.share)
