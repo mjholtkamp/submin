@@ -168,7 +168,7 @@ class Repositories(View):
 	@admin_required
 	def getpermissionpaths(self, req, repository):
 		perms = Permissions()
-		paths = perms.list_paths(repository.name)
+		paths = perms.list_paths(repository.name, repository.vcs_type)
 		templatevars = {'repository': repository.name, 'paths': paths}
 		return XMLTemplateResponse('ajax/repositorypermpaths.xml', templatevars)
 

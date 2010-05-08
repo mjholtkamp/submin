@@ -5,19 +5,21 @@ storage = models.storage.get("permissions")
 from submin.models.repository import Repository
 
 class Permissions(object):
-	def list_paths(self, repository):
-		return storage.list_paths(repository)
+	def list_paths(self, repository, vcs_type):
+		return storage.list_paths(repository, vcs_type)
 
+	#def list_permissions(*args):
+	#	raise Exception(str(args))
 	def list_permissions(self, repos, vcs_type, path):
 		return storage.list_permissions(repos, vcs_type, path)
 
-	def list_readable_user_paths(self, repository, user):
+	def list_readable_user_paths(self, repository, vcs_type, user):
 		"""Return a list of paths for this *repository* that the *user* is
 		   able to read. The *user* is a User object."""
 		groups = user.member_of()
 		user_paths = []
-		for path in self.list_paths(repository):
-			for perm in self.list_permissions(repository, path):
+		for path in self.list_paths(repository, vcs_type):
+			for perm in self.list_permissions(repository, vcs_type, path):
 				# due to lazy evaluation, user perms overrule group and 'all'
 				if (perm['type'] == 'user' and perm['name'] == user.name) or \
 						(perm['type'] == 'group' and perm['name'] in groups) or \

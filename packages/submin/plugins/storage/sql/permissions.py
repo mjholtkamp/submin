@@ -1,9 +1,9 @@
 import submin.plugins.storage.sql.common as storage
 
-def list_paths(repository):
+def list_paths(repository, repostype):
 	cur = storage.db.cursor()
 	storage.execute(cur, """SELECT path FROM permissions WHERE repository = ?
-		GROUP BY path""", (repository,))
+		AND repositorytype = ? GROUP BY path""", (repository, repostype))
 	rows = cur.fetchall()
 	if not rows:
 		return []

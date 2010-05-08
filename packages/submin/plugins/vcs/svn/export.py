@@ -26,7 +26,7 @@ def export_authz(**args):
 
 		perms = Permissions()
 
-		for path in perms.list_paths(repository["name"]):
+		for path in perms.list_paths(repository["name"], "svn"):
 			authz.write("[%s:%s]\n" % (repository["name"], path))
 
 			for perm in perms.list_permissions(repository["name"], "svn",
@@ -65,7 +65,7 @@ def export_notifications(**args):
 				continue
 
 			# strip leading /
-			paths = [x[1:] for x in p.list_readable_user_paths(repos, u)]
+			paths = [x[1:] for x in p.list_readable_user_paths(repos, "svn", u)]
 			if len(paths) == 0:
 				continue
 			elif len(paths) == 1:
