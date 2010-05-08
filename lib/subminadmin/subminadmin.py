@@ -47,7 +47,7 @@ class SubminAdmin:
 		from pwd import getpwnam
 		users = []
 		# _www in OS X :)
-		for user in [preferred, 'www-data', 'httpd', 'apache', '_www']:
+		for user in [preferred, 'www-data', 'httpd', 'apache', '_www', 'www']:
 			pwd = ()
 			try:
 				pwd = getpwnam(user)
