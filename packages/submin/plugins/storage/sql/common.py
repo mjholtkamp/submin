@@ -1,8 +1,23 @@
 import sqlite3
+import threading
 from submin.models.exceptions import StorageAlreadySetup
 from submin.plugins.storage.sql import schema
 
-db = None
+class DBWrapper(threading.local):
+	def __init__(self):
+		self.con = None
+
+	def open(self, path):
+		self.con = sqlite3.connect(path)
+
+	def close(self):
+		if self.con:
+			self.con.close()
+
+	def cursor(self):
+		return self.con.cursor()
+
+db = DBWrapper()
 storage_debug = False
 schema_version = schema.sql_scripts[0][0]
 
@@ -11,12 +26,11 @@ class FutureDatabaseException(Exception):
 		Exception.__init__(self, "Database is newer than code, please upgrade the code. Aborting to prevent data loss")
 
 def close():
-	if db:
-		db.close()
+	db.close()
 
 def open(settings):
 	global db, storage_debug
-	db = sqlite3.connect(settings.sqlite_path)
+	db.open(settings.sqlite_path)
 	storage_debug = hasattr(settings, "db_debug") and settings.db_debug
 
 def live_database_version():
@@ -60,7 +74,7 @@ def database_evolve(verbose=False):
 		except Exception, e:
 			print "Error while evolving database to version", version
 			print "Now rolling back to", start
-			db.rollback()
+			db.con.rollback()
 			raise
 	if start > 0:
 		cursor.execute(
@@ -70,7 +84,7 @@ def database_evolve(verbose=False):
 		cursor.execute(
 			"INSERT INTO options (key, value) VALUES ('database_version', ?)",
 			(schema_version,))
-	db.commit()
+	db.con.commit()
 	if verbose:
 		print "Database is now at version", schema_version
 
@@ -82,11 +96,11 @@ def default_execute(cursor, query, args=(), commit=True):
 	try:
 		cursor.execute(query, args)
 	except:
-		db.rollback()
+		db.con.rollback()
 		raise
 
 	if commit:
-		db.commit()
+		db.con.commit()
 
 def debug_execute(cursor, query, args=(), commit=True):
 	dbg_sql = query.replace("?", '"%s"')
