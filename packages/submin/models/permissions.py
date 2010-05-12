@@ -29,6 +29,22 @@ class Permissions(object):
 
 		return set(user_paths) # remove double entries
 
+	def list_writeable_user_paths(self, repository, vcs_type, user):
+		"""Return a list of paths for this *repository* that the *user* is
+		   able to write. The *user* is a User object."""
+		groups = user.member_of()
+		user_paths = []
+		for path in self.list_paths(repository, vcs_type):
+			for perm in self.list_permissions(repository, vcs_type, path):
+				# due to lazy evaluation, user perms overrule group and 'all'
+				if (perm['type'] == 'user' and perm['name'] == user.name) or \
+						(perm['type'] == 'group' and perm['name'] in groups) or \
+						(perm['type'] == 'all'):
+					if perm['permission'] == 'rw':
+						user_paths.append(path)
+
+		return set(user_paths) # remove double entries
+
 	def add_permission(self, repos, repostype, path,
 			subject, subjecttype, perm):
 		"""Sets permission for repos:path, raises a
