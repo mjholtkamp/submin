@@ -2,6 +2,10 @@ import os
 import sys
 import pprint
 
+from submin.models import permissions
+from submin.models import options
+from submin.models import user
+
 READ_CMDS = [
 		"upload-pack",
 #		"upload-archive", # Apparently git-shell does not recognize it.
@@ -12,12 +16,6 @@ WRITE_CMDS = [
 ]
 
 def run(username):
-	# not on top of the file, since storage might not have been setup yet (for
-	# instance when using submin-admin help).
-	from submin.models import permissions
-	from submin.models import options
-	from submin.models import user
-
 	if not "SSH_ORIGINAL_COMMAND" in os.environ:
 		print >>sys.stderr, "No command provided. " \
 				+ "Expected something like git-receive-pack"
