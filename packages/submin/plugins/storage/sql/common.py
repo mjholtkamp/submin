@@ -25,6 +25,13 @@ class FutureDatabaseException(Exception):
 	def __init__(self):
 		Exception.__init__(self, "Database is newer than code, please upgrade the code. Aborting to prevent data loss")
 
+class DatabaseEvolveException(Exception):
+	def __init__(self, version, start, exception):
+		Exception.__init__(self, """An error occured while evolving to version %u
+Now rolling back to %u
+Error: %s""" % (version, start, str(exception)))
+
+
 def close():
 	db.close()
 
@@ -72,10 +79,8 @@ def database_evolve(verbose=False):
 		try:
 			cursor.executescript(script)
 		except Exception, e:
-			print "Error while evolving database to version", version
-			print "Now rolling back to", start
 			db.con.rollback()
-			raise
+			raise DatabaseEvolveException(version, start, e)
 	if start > 0:
 		cursor.execute(
 				"UPDATE options SET value=? WHERE key='database_version'",
