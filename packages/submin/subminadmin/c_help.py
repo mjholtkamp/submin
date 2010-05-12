@@ -24,7 +24,7 @@ Usage:
 			print "Commands:"
 			cmds = self.sa.commands()
 			for cmd in cmds:
-				instance = self.sa.cmd_instance(cmd, [])
+				instance = self.sa.cmd_instance(cmd, [], print_error=False)
 				if instance is None or instance.__doc__ is None:
 					continue
 

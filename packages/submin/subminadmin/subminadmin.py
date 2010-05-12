@@ -61,14 +61,15 @@ Use '?' or 'help' for help on commands.
 
 			self.execute(argv)
 
-	def cmd_instance(self, cmd, argv):
+	def cmd_instance(self, cmd, argv, print_error=True):
 		objname = "c_" + cmd
 		try:
 			X = __import__(objname, globals())
 			instance = getattr(X, objname)(self, argv)
 			return instance
 		except (ImportError, AttributeError), e:
-			print str(e)
+			if print_error:
+				print "Error while executing command %s:" % cmd, str(e)
 			return None
 
 	def commands(self):
