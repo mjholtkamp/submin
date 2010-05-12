@@ -282,7 +282,7 @@ class Users(View):
 					"Please provide an SSH Key")
 
 		try:
-			user.add_ssh_key(ssh_key, title)
+			u.add_ssh_key(ssh_key, title)
 			return XMLStatusResponse("addSSHKey", True,
 					"SSH Key successfully added.")
 		except validators.InvalidSSHKey:
@@ -298,7 +298,7 @@ class Users(View):
 		if not ssh_key_id:
 			return XMLStatusResponse('removeSSHKey', False,
 				"Something went wrong with passing the key id to the server.")
-		user.remove_ssh_key(ssh_key_id)
+		u.remove_ssh_key(ssh_key_id)
 		return XMLStatusResponse("removeSSHKey", True,
 				"SSH Key successfully removed.")
 
