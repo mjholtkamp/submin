@@ -1,4 +1,4 @@
-from submin.subminadmin.git import user, create
+from submin.subminadmin.git import user, create, update
 
 
-__all__ = ('user', 'create')
+__all__ = ('user', 'create', 'update')
