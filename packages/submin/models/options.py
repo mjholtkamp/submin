@@ -5,11 +5,25 @@ from submin.models.exceptions import UnknownKeyError
 
 storage = models.storage.get("options")
 
-def value(key):
-	return storage.value(key)
+def value(key, default=None):
+	"""Return value for option *key*. If the key does not exist and *default*
+	   is None, raises UnknownKeyError. If the key does not exist and *default*
+	   is not None, it will return *default*"""
+	try:
+		val = storage.value(key)
+	except UnknownKeyError:
+		if default == None:
+			raise # just pass on the exception
+
+		val = default
+
+	return val
 
 def set_value(key, value):
 	storage.set_value(key, value)
+
+def unset_value(key):
+	storage.unset_value(key)
 
 def options():
 	return storage.options()

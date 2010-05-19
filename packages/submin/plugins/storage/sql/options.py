@@ -15,6 +15,10 @@ def set_value(key, value):
 	storage.execute(storage.db.cursor(), """INSERT OR REPLACE INTO options
 		(key, value) VALUES (?, ?)""", (key, value))
 
+def unset_value(key):
+	storage.execute(storage.db.cursor(), """DELETE FROM options
+		WHERE key=?""", (key, ))
+
 def options():
 	cur = storage.db.cursor()
 	storage.execute(cur, "SELECT key, value FROM options")

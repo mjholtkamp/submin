@@ -8,7 +8,8 @@ Usage:
 	config defaults                 - create config with defaults
 	config get                      - list everything
 	config get <option>             - get config value in section
-	config set <option> <value>     - set config value in section'''
+	config set <option> <value>     - set config value in section
+	config unset <option>           - remove option'''
 
 	needs_env = False
 
@@ -50,6 +51,13 @@ Usage:
 			return
 
 		options.set_value(argv[0], argv[1])
+
+	def subcmd_unset(self, argv):
+		from submin.models import options
+		self.sa.ensure_storage()
+
+		if len(argv) == 1:
+			options.unset_value(argv[0])
 
 	def session_salt(self):
 		import random

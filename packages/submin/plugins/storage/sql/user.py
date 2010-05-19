@@ -58,6 +58,23 @@ def set_md5_password(userid, password):
 	storage.execute(storage.db.cursor(), """UPDATE users
 		SET password=? WHERE id=?""", (password, userid))
 
+def set_password_reset_key(userid, key):
+	storage.execute(storage.db.cursor(), """INSERT OR REPLACE INTO
+		password_reset (userid, expires, key) VALUES
+		(?, strftime('%s', 'now', '+1 days'), ?)""", (userid, key))
+
+def valid_password_reset_key(userid, key):
+	cur = storage.db.cursor()
+	storage.execute(cur, """SELECT count(key) FROM password_reset 
+		WHERE userid=? AND key=? AND expires > strftime('%s', 'now')""",
+		(userid, key))
+	row = cur.fetchone()
+	return (row[0] == 1)
+
+def clear_password_reset_key(userid):
+	storage.execute(storage.db.cursor(), """DELETE FROM
+		password_reset WHERE userid=?""", (userid, ))
+
 # Remove functions, removes users from various tables
 def remove_from_groups(userid):
 	storage.execute(storage.db.cursor(), """DELETE FROM group_members

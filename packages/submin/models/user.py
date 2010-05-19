@@ -1,5 +1,6 @@
 from submin import models
 from submin.hooks.common import trigger_hook
+from submin.models import options
 import validators
 storage = models.storage.get("user")
 
@@ -69,23 +70,65 @@ class User(object):
 		"""Return True if password is correct, can raise NoMD5PasswordError"""
 		return storage.check_password(self._id, password)
 
-	def set_password(self, password):
+	def set_password(self, password, send_email=False):
 		storage.set_password(self._id, password)
 		trigger_hook('user-update', username=self._name, user_passwd=password)
+		if send_email:
+			self.email_user(password=password)
 
 	def set_md5_password(self, password):
 		storage.set_md5_password(self._id, password)
 
-	def generate_password(self):
-		"""generate and return a random password"""
+	def generate_random_string(self, length=50):
+		"""generate and return a random string"""
 		from string import ascii_letters, digits
 		import random
-		password_chars = ascii_letters + digits
-		password = ''.join([random.choice(password_chars) \
-				for x in range(0, 50)])
+		string_chars = ascii_letters + digits
+		string = ''.join([random.choice(string_chars) \
+				for x in range(0, length)])
 
-		self.set_password(password)
-		return password
+		return string
+
+	def prepare_password_reset(self):
+		key = self.generate_random_string()
+		storage.set_password_reset_key(self._id, key)
+		self.email_user(key=key)
+
+	def valid_password_reset_key(self, key):
+		"""Validate password request for this user."""
+		return storage.valid_password_reset_key(self._id, key)
+
+	def clear_password_reset_key(self):
+		storage.clear_password_reset_key(self._id)
+
+	def email_user(self, key=None, password=None):
+		"""Email the user a key (to reset her password) OR a password (if the
+		user followed a link with the key in it). Do not call this function
+		with both key set and password set, as the user will get one email
+		with both messages in it."""
+		import smtplib
+		from submin.template.shortcuts import evaluate
+
+		templatevars = {
+			'from': 'submin@supermind.nl',
+			'to': self.email,
+			'username': self.name,
+			'key': key,
+			'password': password,
+			'base_url': options.url_path("base_url_submin"),
+		}
+		server = options.value("smtp_hostname", "localhost")
+		port = options.value("smtp_port", 25)
+		username = options.value("smtp_username", "")
+		password = options.value("smtp_password", "")
+
+		message = evaluate('email/reset_password.txt', templatevars)
+		server = smtplib.SMTP(server, int(port))
+		if username != "" and password != "":
+			server.login(username, password)
+
+		server.sendmail(templatevars['from'], [templatevars['to']], message)
+		server.quit()
 
 	def remove(self):
 		storage.remove_from_groups(self._id)
@@ -224,7 +267,18 @@ Storage contract
 	not supported by the module, it raises an MD5NotSupported error. This
 	method is mainly used to convert htpasswd files to storage plugins that
 	also use md5 to encrypt passwords.
-	
+
+* valid_password_reset_key(userid)
+	Check if the key is valid and not expired for this user.
+
+* set_password_reset_key(userid, key)
+	Prepare the password reset, returns a special key that the user must
+	present to reset the password. This key can be mailed to the user, for
+	example. This overwrites any previous keys _for that user_.
+
+* clear_password_reset_key(userid)
+	Clear password reset key, for example when a user has reset her password.
+
 * remove(userid)
 	Removes user with id *userid*. Before a user can be removed, all
 	remove_-functions below must have been called. This happens in the model,

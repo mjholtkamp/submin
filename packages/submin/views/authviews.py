@@ -61,6 +61,53 @@ class Login(View):
 		localvalues['base_url'] = base_url
 		return Response(evaluate('login.html', localvalues))
 
+class Password(View):
+	def handler(self, req, path):
+		if req.is_ajax():
+			return Response('Invalid')
+
+		if len(path) > 0:
+			username = path[0]
+			if len(path) > 1:
+				key = path[1]
+
+			return self.reset_password(username, key)
+		return self.send_email(req, path)
+
+	def reset_password(self, username, key):
+		templatevars = { 'base_url': options.url_path('base_url_submin') }
+		try:
+			u = user.User(username)
+			if not u.valid_password_reset_key(key):
+				templatevars['invalid'] = True
+			else:
+				newpass = u.generate_random_string(12)
+				u.set_password(newpass, send_email=True)
+				u.clear_password_reset_key()
+				templatevars['reset'] = True
+		except UnknownUserError:
+			raise
+
+		formatted = evaluate('password.html', templatevars)
+		return Response(formatted)
+
+	def send_email(self, req, path):
+		templatevars = { 'base_url': options.url_path('base_url_submin') }
+		username = req.post.get('username', '')
+		if username:
+			try:
+				u = user.User(username)
+				u.prepare_password_reset()
+				templatevars['sent'] = True
+			except UnknownUserError:
+				templatevars['sent'] = True
+			except:
+				templatevars['error'] = True
+		else:
+			templatevars['form'] = True
+
+		formatted = evaluate('password.html', templatevars)
+		return Response(formatted)
 
 class Logout(View):
 	def handler(self, request, path):

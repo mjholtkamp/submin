@@ -4,7 +4,7 @@ from submin.views.error import ErrorResponse
 from submin.views.test import Test
 from submin.views.users import Users
 from submin.views.groups import Groups
-from submin.views.authviews import Login, Logout
+from submin.views.authviews import Login, Logout, Password
 from submin.views.repositories import Repositories
 from submin.views.intro import Intro
 from submin.views.ajax import Ajax
@@ -23,6 +23,7 @@ classes = {
 	'x': Ajax,
 	'repositories': Repositories,
 	'upgrade': Upgrade,
+	'password': Password,
 	'': Intro,
 }
 
