@@ -114,8 +114,18 @@ class Session(PickleDict):
 		return self.__destroyed or self.sessionid == 'xx'
 
 	def updateCookie(self):
+		base_url = str(options.url_path('base_url_submin'))
+		http = 'http://'
+		if http in base_url:
+			try:
+				base_url = base_url[base_url.index('/', len(http)):]
+			except ValueError:
+				# ok, this is weird, apparently, base_url is just a hostname
+				# assume virtual_host specifically for submin
+				base_url = '/'
+
 		self.request.setCookie('SubminSessionID', self.sessionid, \
-			str(options.url_path('base_url_submin')))
+			str(base_url))
 	
 	def generateSessionID(self):
 		"""Really an MD5-sum of the current time and a salt"""
