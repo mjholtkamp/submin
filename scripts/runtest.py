@@ -71,7 +71,7 @@ def main():
 					unittest.defaultTestLoader.loadTestsFromModule(module))
 
 	# Run the test!
-	unittest.TextTestRunner(verbosity=1).run(suite)
+	testresult = unittest.TextTestRunner(verbosity=1).run(suite)
 
 	if use_coverage:
 		cov.stop()
@@ -79,6 +79,10 @@ def main():
 			omit_prefixes=["/usr/lib/", "/opt", "/System/Library/", "/Library/Python/"])
 		cov.annotate(directory="coverage-annotate")
 		print "Coverage annotations are stored in `coverage-annotate/'"
+
+	# Provide a non-zero exitstatus when tests fail.
+	if not testresult.wasSuccessful():
+		sys.exit(1)
 
 if __name__ == "__main__":
 	main()
