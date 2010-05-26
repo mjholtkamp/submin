@@ -6,6 +6,8 @@ from submin.models import user
 def run():
 	env_path = options.env_path()
 	filename = os.path.expanduser("~/.ssh/authorized_keys")
+	if not os.path.exists(os.path.dirname(filename)):
+		os.mkdir(os.path.dirname(filename))
 
 	www_key_file = env_path + "conf" + "id_dsa.pub"
 	if not www_key_file.exists():
