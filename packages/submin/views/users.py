@@ -65,54 +65,56 @@ class Users(View):
 
 	@admin_required
 	def add(self, req, path, localvars):
+		import re
+
 		base_url = options.url_path('base_url_submin')
 		username = ''
 		email = ''
 		fullname = ''
 
-		if req.post and req.post['username'] and req.post['email'] and req.post['fullname']:
-			import re
+		if not req.post or not req.post['username'] \
+						or not req.post['email']    \
+						or not req.post['fullname']:
+			return self.showAddForm(req, username, email, fullname)
 
-			username = uc_str(req.post['username'].value.strip())
-			email = uc_str(req.post['email'].value.strip())
-			fullname = uc_str(req.post['fullname'].value.strip())
+		username = uc_str(req.post['username'].value.strip())
+		email = uc_str(req.post['email'].value.strip())
+		fullname = uc_str(req.post['fullname'].value.strip())
 
-			# check these before we add the user, the rest is checked when adding
-			try:
-				validators.validate_email(email)
-				validators.validate_fullname(fullname)
-			except validators.InvalidEmail:
-				return self.showAddForm(req, username, email, fullname,
-					'Email is not valid')
-			except validators.InvalidFullname:
-				return self.showAddForm(req, username, email, fullname,
-					'Invalid characters in full name')
+		# check these before we add the user, the rest is checked when adding
+		try:
+			validators.validate_email(email)
+			validators.validate_fullname(fullname)
+		except validators.InvalidEmail:
+			return self.showAddForm(req, username, email, fullname,
+				'Email is not valid')
+		except validators.InvalidFullname:
+			return self.showAddForm(req, username, email, fullname,
+				'Invalid characters in full name')
 
-			if username == '':
-				return self.showAddForm(req, username, email, fullname,
-					'Username not supplied')
+		if username == '':
+			return self.showAddForm(req, username, email, fullname,
+				'Username not supplied')
 
-			if email == '':
-				return self.showAddForm(req, username, email, fullname,
-					'Email must be supplied')
+		if email == '':
+			return self.showAddForm(req, username, email, fullname,
+				'Email must be supplied')
 
-			try:
-				u = user.add(username)
-				u.email = email
-				u.fullname = fullname
-			except IOError:
-				return ErrorResponse('File permission denied', request=req)
-			except UserExistsError:
-				return self.showAddForm(req, username, email, fullname,
-					'User %s already exists' % username)
-			except validators.InvalidUsername:
-				return self.showAddForm(req, username, email, fullname,
-					'Invalid characters in username')
+		try:
+			u = user.add(username)
+			u.email = email
+			u.fullname = fullname
+		except IOError:
+			return ErrorResponse('File permission denied', request=req)
+		except UserExistsError:
+			return self.showAddForm(req, username, email, fullname,
+				'User %s already exists' % username)
+		except validators.InvalidUsername:
+			return self.showAddForm(req, username, email, fullname,
+				'Invalid characters in username')
 
-			url = base_url + '/users/show/' + username
-			return Redirect(url)
-
-		return self.showAddForm(req, username, email, fullname)
+		url = base_url + '/users/show/' + username
+		return Redirect(url)
 
 	def ajaxhandler(self, req, path):
 		username = ''
