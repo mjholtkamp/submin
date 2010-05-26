@@ -1,4 +1,4 @@
-def list_paths(repository):
+def list_paths(repository, vcs_type):
 	return []
 
 def list_permissions(repos, repostype, path):
