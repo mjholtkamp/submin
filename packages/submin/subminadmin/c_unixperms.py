@@ -32,7 +32,7 @@ This should also remove possible following warnings.
 	def _fix(self, unixuser):
 		base_dir = Path(self.sa.env)
 
-		apache = self._apache_user(unixuser)
+		apache = self.apache_user(unixuser)
 		self._recurse_change(str(base_dir), apache.pw_uid, apache.pw_gid)
 
 	def _recurse_change(self, directory, user, group):
@@ -75,7 +75,8 @@ This should also remove possible following warnings.
 
 		return success
 
-	def _apache_user(self, preferred=''):
+	def apache_user(self, preferred=''):
+		"""Returns most probably www-user"""
 		from pwd import getpwnam
 		users = []
 		# _www in OS X :)
