@@ -6,7 +6,7 @@ def value(key):
 	storage.execute(cur, "SELECT value FROM options WHERE key=?", (key,))
 	row = cur.fetchone()
 	if not row:
-		raise UnknownKeyError
+		raise UnknownKeyError(key)
 
 	return row[0]
 

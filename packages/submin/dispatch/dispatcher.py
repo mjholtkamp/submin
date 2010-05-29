@@ -60,6 +60,24 @@ def dispatcher(request):
 
 			if not issubclass(response.__class__, Response):
 				raise Exception, "Handler %r should return a Response instance" % handler
+		except UnknownKeyError, e:
+			env = options.env_path() # this should never trigger another UnknownKeyError
+			summary = "It seems your installation is missing a configuration option (%s)" % str(e)
+			details = """
+You can add the missing config option by executing the following commandline:
+
+submin-admin %s config set %s &lt;value&gt;
+
+Unfortunately, this error handling does not know the value you should set, but
+the name of the missing option should give you a hint to its value :)""" % \
+	(env, str(e))
+
+			if not request.is_ajax():
+				details = '<pre>' + details + '</pre>'
+				response = ErrorResponse(summary, request=request, details=details)
+			else:
+				details = summary + '\n\n' + details
+				response = XMLStatusResponse('', False, details)
 		except Exception, e:
 			import traceback
 			details = traceback.format_exc()
