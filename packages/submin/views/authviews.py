@@ -101,8 +101,6 @@ class Password(View):
 				templatevars['sent'] = True
 			except UnknownUserError:
 				templatevars['sent'] = True
-			except:
-				templatevars['error'] = True
 		else:
 			templatevars['form'] = True
 
