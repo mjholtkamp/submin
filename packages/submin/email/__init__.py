@@ -1,0 +1,1 @@
+from fallback import sendmail
