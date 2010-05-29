@@ -25,19 +25,26 @@ def list(session_user):
 
 	return [user['name'] for user in storage.list()]
 
-def add(username, password=None):
-	"""Adds a new user with a no password.
+def add(username, email, password=None):
+	"""Adds a new user
 
-	To generate a password, call generate_password()
-	Raises UserExistsError if a user with this username already exists.
+	If password is not set, send an email to supplied address with activation
+	link. Raises UserExistsError if a user with this username already exists.
 	"""
-
 	if not validators.validate_username(username):
 		raise validators.InvalidUsername(username)
 
+	if not validators.validate_email(email):
+		raise validators.InvalidEmail(email)
+
 	storage.add(username, password)
 	trigger_hook('user-create', username=username, user_passwd=password)
-	return User(username)
+	u = User(username)
+	u.email = email
+	if not password:
+		u.prepare_password_reset()
+
+	return u
 
 class User(object):
 	def __init__(self, username=None, raw_data=None):
@@ -47,6 +54,9 @@ class User(object):
 		required data. If raw_data is provided, the storage plugin is not used.
 		"""
 		db_user = raw_data
+		
+		if not username and not raw_data:
+			raise ValueError('Both username and raw_data are unset')
 
 		if not raw_data:
 			db_user = storage.user_data(username)
@@ -103,11 +113,12 @@ class User(object):
 
 	def email_user(self, key=None, password=None):
 		"""Email the user a key (to reset her password) OR a password (if the
-		user followed a link with the key in it). Do not call this function
-		with both key set and password set, as the user will get one email
-		with both messages in it."""
-		import smtplib
+		user followed a link with the key in it)."""
 		from submin.template.shortcuts import evaluate
+		from submin.email import sendmail
+		
+		if key and password:
+			raise ValueError('Ambiguous input: both key and password are set')
 
 		templatevars = {
 			'from': 'submin@supermind.nl',
@@ -115,20 +126,16 @@ class User(object):
 			'username': self.name,
 			'key': key,
 			'password': password,
+			'http_vhost': options.value('http_vhost'),
 			'base_url': options.url_path("base_url_submin"),
 		}
-		server = options.value("smtp_hostname", "localhost")
-		port = options.value("smtp_port", 25)
-		username = options.value("smtp_username", "")
-		password = options.value("smtp_password", "")
-
-		message = evaluate('email/reset_password.txt', templatevars)
-		server = smtplib.SMTP(server, int(port))
-		if username != "" and password != "":
-			server.login(username, password)
-
-		server.sendmail(templatevars['from'], [templatevars['to']], message)
-		server.quit()
+		if key:
+			template = 'email/prepare_reset.txt'
+		else:
+			template = 'email/reset_password.txt'
+		
+		message = evaluate(template, templatevars)
+		sendmail(templatevars['from'], templatevars['to'], message)
 
 	def remove(self):
 		storage.remove_from_groups(self._id)

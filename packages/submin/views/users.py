@@ -101,8 +101,7 @@ class Users(View):
 				'Email must be supplied')
 
 		try:
-			u = user.add(username)
-			u.email = email
+			u = user.add(username, email)
 			u.fullname = fullname
 		except IOError:
 			return ErrorResponse('File permission denied', request=req)
@@ -343,6 +342,10 @@ class Users(View):
 				'You are not allowed to delete yourself')
 		try:
 			u = user.User(username)
+		except UnknownUserError:
+			return XMLStatusResponse('removeUser', False,
+				"Could not find user '%s'" % username)
+		try:
 			u.remove()
 		except Exception, e:
 			return XMLStatusResponse('removeUser', False,

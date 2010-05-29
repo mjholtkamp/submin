@@ -1,0 +1,14 @@
+From: [val from]
+To: [val to]
+Subject: Submin password reset request
+
+You are receiving this email because someone requested a password reset for
+your account. If you don't know what this is about, you can safely ignore it,
+the reset request will expire automatically.
+
+If you do know what this is about, you can reset your password here:
+
+http://[val http_vhost][val base_url]password/[val username]/[val key]
+
+Kind regards,
+Submin

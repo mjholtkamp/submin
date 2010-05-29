@@ -4,9 +4,12 @@ from submin.path.path import Path
 class c_initenv():
 	'''Initialize a new enviroment
 Usage:
-    initenv                        - Create environment interactively
-    initenv <option> [option ...]  - Create environment from options
+    initenv <email>                - Create environment interactively
+    initenv <email> [option ...]   - Create environment from options
 
+Mandatories:
+    email                    - email address of the new admin user (needed
+                               for account activation)
 Options:
     svn_dir=<path>           - base path for svn repositories (default: svn)
     git_dir=<path>           - base path for git repositories (default: git)
@@ -25,6 +28,7 @@ Notes:
 	needs_env = False
 
 	def __init__(self, sa, argv):
+		import platform
 		self.sa = sa
 		self.env = Path(self.sa.env)
 		self.argv = argv
@@ -33,6 +37,7 @@ Notes:
 			'git_dir': Path('git'),
 			'trac_dir': Path('trac'),
 			'http_base': Path('/'),
+			'vhost': platform.node(),
 			'trac_url': Path('trac'),
 			'submin_url': Path('submin'),
 			'svn_url': Path('svn'),
@@ -46,6 +51,7 @@ Notes:
 			'authz': self.init_vars['conf_dir'] + Path('authz'),
 			'htpasswd': self.init_vars['conf_dir'] + Path('htpasswd'),
 		})
+		self.email = None
 
 	def prompt_user(self, prompt, key):
 		defval = self.defaults[key]
@@ -91,6 +97,13 @@ default setting is also ok. For existing Trac environments, please provide
 the full path.
 '''
 		self.prompt_user("Path to trac environment?", 'trac_dir')
+
+		print '''
+Please provide a hostname that can be used to reach the web interface. This
+hostname will be used in communication to the user (a link in email, links
+in the web interface).
+'''
+		self.prompt_user("Hostname?", 'vhost')
 
 		print '''
 The HTTP path tells Submin where the website is located relative to the root.
@@ -169,6 +182,7 @@ run()
 			'base_url_submin': self._get_url('submin_url'),
 			'base_url_svn': self._get_url('svn_url'),
 			'base_url_trac': self._get_url('trac_url'),
+			'http_vhost': self.init_vars['vhost'],
 			'auth_type': 'sql',
 			'svn_dir': str(self.init_vars['svn_dir']),
 			'git_dir': str(self.init_vars['git_dir']),
@@ -183,11 +197,8 @@ run()
 		
 		if self.init_vars['create_user'] == "yes":
 			# add an admin user
-			u = user.add('admin')
-			password = u.generate_password()
+			u = user.add('admin', self.email)
 			u.is_admin = True
-
-			print "\nAdded an admin user with password '%s'\n" % password
 
 		self.sa.execute(['upgrade', 'hooks', 'no-fix-unixperms'])
 		self.sa.execute(['unixperms', 'fix'])
@@ -210,6 +221,12 @@ run()
 			return False
 
 		if len(self.argv) < 1:
+			self.sa.execute(['help', 'initenv'])
+			return
+
+		self.email = self.argv[0]
+
+		if len(self.argv) < 2:
 			try:
 				self.interactive()
 			except KeyboardInterrupt:

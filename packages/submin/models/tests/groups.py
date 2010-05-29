@@ -63,7 +63,7 @@ class GroupTests(unittest.TestCase):
 
 	def testAddMember(self):
 		from submin.models import user
-		user.add("testUser")
+		user.add("testUser", email="a@a.a", password="x")
 		group.add("testGroup")
 		u = user.User("testUser")
 		g = group.Group("testGroup")
@@ -73,8 +73,8 @@ class GroupTests(unittest.TestCase):
 
 	def testRemoveMember(self):
 		from submin.models import user
-		user.add("testUser1")
-		user.add("testUser2")
+		user.add("testUser1", email="a@a.a", password="x")
+		user.add("testUser2", email="a@a.a", password="x")
 		group.add("testGroup")
 		u1 = user.User("testUser1")
 		u2 = user.User("testUser2")

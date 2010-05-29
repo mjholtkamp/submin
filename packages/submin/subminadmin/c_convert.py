@@ -58,13 +58,16 @@ Usage:
 
 		# add users
 		for line in htpasswd:
-			(username, password) = line.strip('\n').split(':')
+			(username, md5_password) = line.strip('\n').split(':')
 			try:
-				u = user.add(username)
+				# This is a hack. We need to supply an email-address and
+				# if we don't supply a password, user.add() will try to send
+				# an email. Both email and password will be set later.
+				u = user.add(username, email="a@a.a", password=md5_password)
 			except UserExistsError:
 				u = user.User(username)
 
-			u.set_md5_password(password)
+			u.set_md5_password(md5_password)
 
 			if userprop.has_section(username):
 				if userprop.has_option(username, 'email'):

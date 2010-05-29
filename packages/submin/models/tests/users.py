@@ -22,7 +22,7 @@ class UserTests(unittest.TestCase):
 		options.set_value('git_dir', '/tmp/submin-git') # needed for export
 		options.set_value('vcs_plugins', 'svn')
 		self.tmp_dirs = []
-		user.add("test")
+		user.add("test", email="a@a.a", password="x")
 		self.u = user.User("test")
 
 	def tearDown(self):
@@ -93,7 +93,7 @@ class UserTests(unittest.TestCase):
 		self.assertTrue(self.u.check_password("foobar"))
 
 	def testAddDoubleUser(self):
-		self.assertRaises(UserExistsError, user.add, "test")
+		self.assertRaises(UserExistsError, user.add, "test", "a@a.a", "x")
 
 	def testUnknownUser(self):
 		self.assertRaises(UnknownUserError, user.User, "not a user")
@@ -107,7 +107,7 @@ class UserTests(unittest.TestCase):
 	def testListUsersAdmin(self):
 		mock_user = Mock()
 		mock_user.is_admin = True
-		user.add("foo")
+		user.add("foo", email="a@a.a", password="x")
 		users = [x for x in user.list(mock_user)]
 		users.sort()
 		self.assertEquals(users, ["foo", "test"])
@@ -116,7 +116,7 @@ class UserTests(unittest.TestCase):
 		mock_user = Mock()
 		mock_user.is_admin = False
 		mock_user.name = "foo"
-		user.add("foo")
+		user.add("foo", email="a@a.a", password="x")
 		users = [x for x in user.list(mock_user)]
 		users.sort()
 		self.assertEquals(users, ["foo"])
@@ -124,7 +124,7 @@ class UserTests(unittest.TestCase):
 	def testRemoveUser(self):
 		mock_user = Mock()
 		mock_user.is_admin = True
-		user.add("foo")
+		user.add("foo", email="a@a.a", password="x")
 		foo = user.User("foo")
 		foo.remove()
 		self.assert_("foo" not in [x for x in user.list(mock_user)])
