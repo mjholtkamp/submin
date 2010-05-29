@@ -48,3 +48,9 @@ class MemberExistsError(Exception):
 
 class UnknownGroupError(Exception):
 	pass
+
+
+####### Email exceptions #####################################################
+
+class SendEmailError(Exception):
+	pass
