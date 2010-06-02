@@ -44,15 +44,13 @@ def add(name):
 	if os.path.exists(str(reposdir)):
 		raise PermissionError("Could not create %s, already exists." % name)
 
-	old_path = os.environ["PATH"]
-	os.environ["PATH"] = options.value("env_path")
-	cmd = 'GIT_DIR="%s" git --bare init' % str(reposdir)
-	(exitstatus, outtext) = commands.getstatusoutput(cmd)
-	os.environ["PATH"] = old_path
-	if exitstatus != 0:
+	from submin.plugins.vcs.git import remote
+	try:
+		remote.execute("create %s" % name)
+	except remote.NonZeroExitStatus, e:
 		raise PermissionError(
 			"External command 'GIT_DIR=\"%s\" git --bare init' failed: %s" % \
-					(name, outtext))
+					(name, e))
 
 class Repository(object):
 	"""Internally, this class uses unicode to represent files and directories.

@@ -195,9 +195,11 @@ class User(object):
 		if not validators.validate_ssh_key(ssh_key):
 			raise validators.InvalidSSHKey(ssh_key)
 		storage.add_ssh_key(self._id, ssh_key, title)
+		trigger_hook('user-update', username=self._name)
 
 	def remove_ssh_key(self, ssh_key_id):
 		storage.remove_ssh_key(ssh_key_id)
+		trigger_hook('user-update', username=self._name)
 
 	# Properties
 	def _getId(self):
