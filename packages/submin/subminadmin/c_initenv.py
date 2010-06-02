@@ -14,6 +14,7 @@ Options:
     svn_dir=<path>           - base path for svn repositories (default: svn)
     git_dir=<path>           - base path for git repositories (default: git)
     trac_dir=<path>          - dir for trac environments (default: trac)
+    http_vhost=<fqdn>        - hostname of webserver (default: guessed)
     http_base=<url>          - base url (default: /)
     trac_url=<url>           - url to trac (default: trac)
     submin_url=<url>         - url to submin (default: submin)
@@ -37,7 +38,7 @@ Notes:
 			'git_dir': Path('git'),
 			'trac_dir': Path('trac'),
 			'http_base': Path('/'),
-			'vhost': platform.node(),
+			'http_vhost': platform.node(),
 			'trac_url': Path('trac'),
 			'submin_url': Path('submin'),
 			'svn_url': Path('svn'),
@@ -103,7 +104,7 @@ Please provide a hostname that can be used to reach the web interface. This
 hostname will be used in communication to the user (a link in email, links
 in the web interface).
 '''
-		self.prompt_user("Hostname?", 'vhost')
+		self.prompt_user("Hostname?", 'http_vhost')
 
 		print '''
 The HTTP path tells Submin where the website is located relative to the root.
@@ -182,7 +183,7 @@ run()
 			'base_url_submin': self._get_url('submin_url'),
 			'base_url_svn': self._get_url('svn_url'),
 			'base_url_trac': self._get_url('trac_url'),
-			'http_vhost': self.init_vars['vhost'],
+			'http_vhost': self.init_vars['http_vhost'],
 			'auth_type': 'sql',
 			'svn_dir': str(self.init_vars['svn_dir']),
 			'git_dir': str(self.init_vars['git_dir']),
@@ -234,7 +235,7 @@ run()
 				return False
 			return True
 
-		for arg in self.argv:
+		for arg in self.argv[1:]:
 			if '=' not in arg:
 				self.sa.execute(['help', 'initenv'])
 				return False
