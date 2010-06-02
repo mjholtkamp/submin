@@ -1,9 +1,9 @@
 import os
-from submin import models
+from submin.models import storage as models_storage
 from submin.path.path import Path
 from submin.models.exceptions import UnknownKeyError
 
-storage = models.storage.get("options")
+storage = models_storage.get("options")
 
 def value(key, default=None):
 	"""Return value for option *key*. If the key does not exist and *default*
