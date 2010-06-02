@@ -3,13 +3,6 @@ from submin.bootstrap import fimport
 class VCSException(Exception):
 	pass
 
-def list():
-	import pkgutil, os
-	# __file__ returns <submin-dir>/models/vcs.py
-	libdir = os.path.dirname(os.path.dirname(__file__))
-	vcsdir = os.path.join(libdir, 'plugins', 'vcs')
-	return [name for _, name, _ in pkgutil.iter_modules([vcsdir])]
-
 def get(vcstype, model):
 	"""Gets the vcs-plugin for a certain type and model."""
 	try:

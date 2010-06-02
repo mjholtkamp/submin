@@ -1,7 +1,7 @@
 import os
 from submin import models
+from submin.models import options
 from submin.hooks.common import trigger_hook
-systems = models.vcs.list()
 
 class DoesNotExistError(Exception):
 	pass
@@ -15,11 +15,14 @@ class VCSImportError(Exception):
 def _vcs_display_name(vcs_type):
 	return models.vcs.get(vcs_type, "repository").display_name
 
+def _vcs_list():
+	return [x.strip() for x in options.value('vcs_plugins').split(',')]
+
 class Repository(object):
 	@staticmethod
 	def list_all():
 		repositories = []
-		for system in systems:
+		for system in _vcs_list():
 			vcs = models.vcs.get(system, "repository")
 			vcs_repos = vcs.list()
 			for r in vcs_repos:
@@ -44,10 +47,6 @@ class Repository(object):
 			repositories = filtered
 
 		return repositories
-
-	@staticmethod
-	def list_vcs():
-		return systems
 
 	@staticmethod
 	def userHasReadPermissions(reposname, session_user):
