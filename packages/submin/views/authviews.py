@@ -28,7 +28,7 @@ class Login(View):
 			if not u or not u.check_password(password):
 				return self.evaluate_form('Not a valid username and password combination')
 		except NoMD5PasswordError, e:
-			return self.evaluate_form(config, str(e))
+			return self.evaluate_form(str(e))
 
 		if invalid_login:
 			return self.evaluate_form('Not a valid username and password combination')
