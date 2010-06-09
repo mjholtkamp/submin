@@ -138,6 +138,8 @@ Usage:
 		# read file
 		cp = self.read_ini(authz_file)
 
+		from submin.models.repository import DoesNotExistError
+
 		# get all sections
 		for section in cp.sections():
 			if section == 'groups':
@@ -158,7 +160,10 @@ Usage:
 				else:
 					name_type = 'user'
 
-				p.add_permission(repository, "svn", path, name, name_type, permission)
+				try:
+					p.add_permission(repository, "svn", path, name, name_type, permission)
+				except DoesNotExistError:
+					print "Could not add permissions for repository %s, skipping" % repository
 
 	def convert(self, old_config_file):
 		config = self.read_ini(old_config_file)
