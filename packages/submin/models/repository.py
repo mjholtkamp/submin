@@ -15,14 +15,14 @@ class VCSImportError(Exception):
 def _vcs_display_name(vcs_type):
 	return models.vcs.get(vcs_type, "repository").display_name
 
-def _vcs_list():
+def vcs_list():
 	return [x.strip() for x in options.value('vcs_plugins').split(',')]
 
 class Repository(object):
 	@staticmethod
 	def list_all():
 		repositories = []
-		for system in _vcs_list():
+		for system in vcs_list():
 			vcs = models.vcs.get(system, "repository")
 			vcs_repos = vcs.list()
 			for r in vcs_repos:
