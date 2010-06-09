@@ -10,7 +10,7 @@ from submin.models.trac import Trac, UnknownTrac, createTracEnv
 from submin.models import options
 from submin.models.exceptions import UnknownKeyError
 from submin.models.permissions import Permissions
-from submin.models import vcs
+from submin.models.repository import vcs_list
 from submin.auth.decorators import login_required, admin_required
 from submin.path.path import Path
 from submin.unicode import uc_url_decode
@@ -89,7 +89,7 @@ class Repositories(View):
 		templatevars = {}
 		templatevars['errormsg'] = errormsg
 		templatevars['repository'] = reposname
-		templatevars["systems"] = vcs.list()
+		templatevars["systems"] = vcs_list()
 		formatted = evaluate_main('newrepository.html', templatevars, request=req)
 		return Response(formatted)
 
@@ -113,7 +113,7 @@ class Repositories(View):
 			if repository == '':
 				return self.showAddForm(req, repository, 'Repository name not supplied')
 
-			if vcs_type not in vcs.list():
+			if vcs_type not in vcs_list():
 				return self.showAddForm(req, repository, "Invalid repository type supplied.")
 
 			try:
