@@ -32,6 +32,9 @@ def run(username):
 	cmd, repo = orig_cmd.split(" ", 1)
 	if repo[0] == repo[-1] == "'":
 		repo = repo[1:-1]
+	# git 1.5 adds a slash?
+	if repo[0] == '/':
+		repo = repo[1:]
 	sub_cmd = cmd[4:]
 
 	p = permissions.Permissions()
