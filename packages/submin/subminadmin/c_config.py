@@ -103,6 +103,7 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 
 		# And now we can use the models
 		from submin.models import options
+		import platform
 
 		http_base = ''
 		default_options = {
@@ -110,6 +111,7 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 			'base_url_svn': http_base + '/svn',
 			'base_url_git': http_base + '/git',
 			'base_url_trac': http_base + '/trac',
+			'http_vhost': platform.node(),
 			'auth_type': 'sql',
 			'svn_dir': 'svn',
 			'git_dir': 'git',
