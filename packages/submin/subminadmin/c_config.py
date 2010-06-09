@@ -1,6 +1,8 @@
+import os, sys
+
 from submin.path.path import Path
 from submin.models.exceptions import StorageAlreadySetup
-import os, sys
+from submin.subminadmin import common
 
 class c_config():
 	'''Commands to change config
@@ -15,6 +17,7 @@ Usage:
 
 	def __init__(self, sa, argv):
 		self.sa = sa
+		self.env = Path(self.sa.env)
 		self.argv = argv
 		self.settings_path = str(Path(self.sa.env) + 'conf' + 'settings.py')
 
@@ -119,6 +122,30 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 		}
 		for (key, value) in default_options.iteritems():
 			options.set_value(key, value)
+		self.generate_cgi()
+
+	def generate_cgi(self):
+		common.create_dir(self.env, Path('cgi-bin'))
+
+		fname = self.env + "cgi-bin" + "submin.cgi"
+		fp = open(str(fname), "w+")
+
+		suggestion = '/path/to/submin'
+		if os.environ.has_key("PYTHONPATH"):
+			suggestion = os.path.abspath(os.environ["PYTHONPATH"].split(":")[0])
+
+		fp.write("""#!/usr/bin/env python
+
+# If you installed submin in a non-standard path, uncomment the two lines below
+# and insert your submin path.
+#import sys
+#sys.path.append("%s")
+
+from submin.dispatch.cgirunner import run
+run()
+""" % suggestion)
+		fp.close()
+		os.chmod(str(fname), 0755)
 
 	def run(self):
 		if len(self.argv) < 1:

@@ -1,5 +1,6 @@
 import os
 from submin.path.path import Path
+from submin.subminadmin import common
 
 class c_initenv():
 	'''Initialize a new enviroment
@@ -117,38 +118,9 @@ If you use Trac, it will be accessible from <http base>/trac.
 		self.create_env()
 
 	def create_dir(self, directory):
-		"""Create a relative or absulute directory, if it doesn't exist already"""
-		if not directory.absolute:
-			directory = self.env + directory
-
-		if not os.path.exists(str(directory)):
-			try:
-				os.makedirs(str(directory), mode=0700)
-			except OSError, e:
-				print 'making dir %s failed, do you have permissions?' % \
-						str(directory)
-				raise e
-
-	def generate_cgi(self):
-		fname = self.env + "cgi-bin" + "submin.cgi"
-		fp = open(str(fname), "w+")
-
-		suggestion = '/path/to/submin'
-		if os.environ.has_key("PYTHONPATH"):
-			suggestion = os.path.abspath(os.environ["PYTHONPATH"].split(":")[0])
-
-		fp.write("""#!/usr/bin/env python
-
-# If you installed submin in a non-standard path, uncomment the two lines below
-# and insert your submin path.
-#import sys
-#sys.path.append("%s")
-
-from submin.dispatch.cgirunner import run
-run()
-""" % suggestion)
-		fp.close()
-		os.chmod(str(fname), 0755)
+		"""Create a relative or absulute directory, if it doesn't exist
+		already"""
+		common.create_dir(self.env, directory)
 
 	def create_env(self):
 		"""This is called when all info is gathered"""
@@ -164,11 +136,9 @@ run()
 			self.create_dir(self.init_vars['trac_dir'])
 			self.create_dir(self.init_vars['hooks_dir'])
 			self.create_dir(Path('auth'))
-			self.create_dir(Path('cgi-bin'))
 		except OSError:
 			return # already printed error message
 
-		self.generate_cgi()
 		self.sa.execute(['config', 'defaults'])
 
 		# check http_base
