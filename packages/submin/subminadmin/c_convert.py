@@ -35,11 +35,12 @@ Usage:
 			'dir_bin': ('backend', 'bindir'),
 			'session_salt': ('generated', 'session_salt'),
 			'env_path': ('backend', 'path'),
-			'svn_authz_file': ('svn', 'authz_file'),
 		}
 		for (key, section_option) in cfg.iteritems():
 			value = config.get(section_option[0], section_option[1])
 			options.set_value(key, value)
+
+		options.set_value('svn_authz_file', 'conf/authz')
 
 	def write_users(self, config):
 		from submin.models import user
