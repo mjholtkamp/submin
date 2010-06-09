@@ -1,7 +1,6 @@
 import os
 from submin.models.exceptions import UserExistsError, GroupExistsError
 from submin.models.exceptions import MemberExistsError
-from submin.models.user import FakeAdminUser
 
 class c_convert():
 	'''Create a new configuration from an old-style config
@@ -52,6 +51,8 @@ Usage:
 		# read files
 		htpasswd = file(htpasswd_file).readlines()
 		userprop = self.read_ini(userprop_file)
+
+		from submin.models.user import FakeAdminUser
 
 		# fake an admin user
 		fake_admin = FakeAdminUser()
