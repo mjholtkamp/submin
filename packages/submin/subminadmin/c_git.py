@@ -9,6 +9,23 @@ def die(cmd):
 	print >>sys.stderr, ERROR_STR % cmd
 	sys.exit(1)
 
+class ProgramNotFoundError(Exception):
+	def __init__(self, prog, path_searched):
+		self.prog = prog
+		self.path_searched = path_searched
+
+def which(program):
+	def is_exe(fpath):
+		return os.path.exists(fpath) and os.access(fpath, os.X_OK)
+
+	env_path = options.value("env_path")
+	for path in env_path.split(os.pathsep):
+		prog_path = os.path.join(path, program)
+		if is_exe(prog_path) and os.path.isfile(prog_path):
+			return prog_path
+
+	raise ProgramNotFoundError(program, env_path)
+
 class CmdException(Exception):
 	def __init__(self, usermsg, errormsg):
 		self.usermsg = usermsg
@@ -87,6 +104,13 @@ Usage:
 	def subcmd_init(self, args):
 		if os.getuid() != 0:
 			print >>sys.stderr, "Please execute `git init' as root."
+			return
+
+		try:
+			sudo_bin = which("sudo")
+			git_bin  = which("git")
+		except ProgramNotFoundError, e:
+			print 'Could not find %s, which is required for git init.' % e.prog
 			return
 
 		from submin.subminadmin import c_unixperms
