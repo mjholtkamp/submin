@@ -25,6 +25,7 @@ Usage:
 
 	def write_options(self, config):
 		from submin.models import options
+		from ConfigParser import NoOptionError, NoSectionError
 
 		cfg = {
 			'base_url_submin': ('www', 'base_url'),
@@ -37,8 +38,11 @@ Usage:
 			'env_path': ('backend', 'path'),
 		}
 		for (key, section_option) in cfg.iteritems():
-			value = config.get(section_option[0], section_option[1])
-			options.set_value(key, value)
+			try:
+				value = config.get(section_option[0], section_option[1])
+				options.set_value(key, value)
+			except (NoOptionError, NoSectionError):
+				pass # fallback to the defaults set before
 
 		options.set_value('svn_authz_file', 'conf/authz')
 
