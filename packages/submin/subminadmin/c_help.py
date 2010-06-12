@@ -25,11 +25,14 @@ Usage:
 			cmds = self.sa.commands()
 			for cmd in cmds:
 				instance = self.sa.cmd_instance(cmd, [], print_error=False)
-				if instance is None or instance.__doc__ is None:
-					continue
+				if instance is None:
+					docs = "  !!! ERROR: module import failed !!!"
+				elif instance.__doc__ is None:
+					docs = "No help available"
+				else:
+					docs = instance.__doc__.split('\n', 1)[0]
 
-				docs = instance.__doc__.split('\n', 1)
-				print "  %-10s - %s" % (cmd, docs[0])
+				print "  %-10s - %s" % (cmd, docs)
 			print """
 Use 'help [command]' to get more information on that command
 """
