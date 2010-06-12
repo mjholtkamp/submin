@@ -1,7 +1,6 @@
 import os
 import sys
 import commands
-from submin.models import options
 
 ERROR_STR = "submin-admin git %s is not supposed to be called by users."
 
@@ -15,6 +14,8 @@ class ProgramNotFoundError(Exception):
 		self.path_searched = path_searched
 
 def which(program):
+	from submin.models import options
+
 	def is_exe(fpath):
 		return os.path.exists(fpath) and os.access(fpath, os.X_OK)
 
@@ -102,6 +103,8 @@ Usage:
 			die()
 
 	def subcmd_init(self, args):
+		from submin.models import options
+
 		if os.getuid() != 0:
 			print >>sys.stderr, "Please execute `git init' as root."
 			return
@@ -184,6 +187,8 @@ Usage:
 		executeCmd(cmd, "Could not create user %s" % username)
 
 	def create_ssh_key(self, owner):
+		from submin.models import options
+
 		ssh_key_file = options.env_path() + 'conf' + 'id_dsa'
 		ssh_pub_key = str(ssh_key_file) + '.pub'
 		if ssh_key_file.exists():
@@ -204,6 +209,8 @@ Usage:
 		executeCmd(cmd, "Could not add %s to the git-group" % username)
 
 	def chgrp_relevant_files(self, git_uid, git_gid):
+		from submin.models import options
+
 		# Fix permissions for paths, which the git-user needs to be able to
 		# access, in order to also access files within
 		os.chown(str(options.env_path()), -1, int(git_gid))
