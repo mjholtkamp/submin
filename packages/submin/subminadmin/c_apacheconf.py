@@ -102,6 +102,9 @@ recommended way is to include it in a VirtualHost.
 		contents += self._apache_conf_svn(self.init_vars)
 		contents += self._apache_conf_trac(self.init_vars)
 
+		if self.auth_type == "sql":
+			contents += self._apache_conf_auth_sql_foot(self.init_vars)
+
 		file(str(self.init_vars['output']), 'w').write(contents)
 
 		print '''
@@ -214,8 +217,36 @@ Apache file created: %(output)s
 
 	def _apache_conf_auth_sql_head(self, vars):
 		conf = '''
+<IfModule !mod_authn_dbd.c>
+    # Nothing should work, so show a page describing this
+    AliasMatch "^%(trac base url)s" %(www dir)s/nomodauthndbd.html
+    AliasMatch "^%(svn base url)s" %(www dir)s/nomodauthndbd.html
+    AliasMatch "^%(submin base url)s" %(www dir)s/nomodauthndbd.html
+    <Location "%(trac base url)s">
+        Order allow,deny
+        Allow from all
+    </Location>
+    <Location "%(svn base url)s">
+        Order allow,deny
+        Allow from all
+    </Location>
+    <Location "%(submin base url)s">
+        Order allow,deny
+        Allow from all
+    </Location>
+</IfModule>
+<IfModule mod_authn_dbd.c>
     DBDriver sqlite3
     DBDParams "%(submin env)s/conf/submin.db"
+
+    # All this is really inside the IfModule, see bottom of the config.
+
+''' % vars
+		return conf
+
+	def _apache_conf_auth_sql_foot(self, vars):
+		conf = '''
+</IfModule>
 ''' % vars
 		return conf
 

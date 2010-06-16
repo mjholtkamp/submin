@@ -13,11 +13,10 @@
 	</head>
 	<body>
 	<div id="content">
-		<h1>No mod_wsgi found</h1>
-		<div class="errormsg">Apache config is a WSGI config, but no WSGI
-		module found. Please enable this module or choose CGI config when
-		running:<br/>
-		<p><i>submin-admin &lt;submin-env&gt; apacheconf create</i></p>
+		<h1>No mod_authn_dbd found</h1>
+		<div class="errormsg">Apache config uses authn_dbd but no authn_dbd
+		module found. Please make sure that both mod_dbd and mod_auth_dbd are
+		loaded.
 		</div>
 	</div>
 	</body>
