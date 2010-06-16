@@ -109,7 +109,8 @@ Apache file created: %(output)s
 
    Please include this in your apache config. Also make sure that you have
    the appropriate modules installed and enabled. Depending on your choices,
-   these may include: mod_dav_svn, mod_authz_svn, mod_wsgi and mod_python
+   these may include: mod_dav_svn, mod_authz_svn, mod_wsgi, mod_dbd,
+   mod_authn_dbd and mod_python
 ''' % self.init_vars
 
 	def _apache_conf_cgi(self, vars):
