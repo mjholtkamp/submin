@@ -122,10 +122,10 @@ Apache file created: %(output)s
 
 		apache_conf_cgi = '''
     <IfModule mod_cgi.c>
-		# first define scriptalias, otherwise the Alias will override all
-		ScriptAlias "%(submin base url)s/submin.cgi" "%(cgi-bin dir)s/submin.cgi"
-		Alias "%(submin base url)s" "%(www dir)s"
-		<Directory "%(cgi-bin dir)s">
+        # first define scriptalias, otherwise the Alias will override all
+        ScriptAlias "%(submin base url)s/submin.cgi" "%(cgi-bin dir)s/submin.cgi"
+        Alias "%(submin base url)s" "%(www dir)s"
+        <Directory "%(cgi-bin dir)s">
             Order allow,deny
             Allow from all
 
@@ -133,8 +133,8 @@ Apache file created: %(output)s
             AddHandler cgi-script py cgi pl
 
             SetEnv SUBMIN_ENV %(submin env)s
-			%(setenv_pythonpath)s
-		</Directory>
+            %(setenv_pythonpath)s
+        </Directory>
         <Directory "%(www dir)s">
             Order allow,deny
             Allow from all
