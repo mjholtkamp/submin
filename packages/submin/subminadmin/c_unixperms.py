@@ -11,6 +11,7 @@ Usage:
 		self.sa = sa
 		self.argv = argv
 		self.root = True
+		self.fix_mode_dirs = ['cgi-bin', 'conf']
 
 	def subcmd_fix(self, argv):
 		if os.getuid() != 0:
@@ -33,38 +34,44 @@ This should also remove possible following warnings.
 		base_dir = Path(self.sa.env)
 
 		apache = self.apache_user(unixuser)
-		self._recurse_change(str(base_dir), apache.pw_uid, apache.pw_gid)
+		directory = str(base_dir)
+		user = apache.pw_uid
+		group = apache.pw_gid
 
-	def _recurse_change(self, directory, user, group):
+		self.fix_mode_paths = [os.path.join(directory, x) for x in self.fix_mode_dirs]
+
 		if not self._change_item(directory, user, group):
 			return
 
 		for root, dirs, files in os.walk(directory):
 			for f in files:
-				self._change_item(os.path.join(root, f), user, group)
+				path = os.path.join(root, f)
+				self._change_item(path, user, group)
 			for d in dirs:
 				path = os.path.join(root, d)
-				self._recurse_change(path, user, group)
+				self._change_item(path, user, group)
 
 	def _change_item(self, item, user, group):
 		success = True
-		try:
-			permission = 0640
-			if os.path.basename(os.path.dirname(os.path.dirname(item))) == \
-					"hooks" and os.path.isfile(item):
-				# Make all files in the hooks-directory executable
-				permission = 0750
-			elif os.path.isdir(item):
-				permission = 0750
-			(root, ext) = os.path.splitext(item)
-			if ext == '.cgi' or ext == '.wsgi':
-				permission = 0750
+		do_chmod = False
+		for path in self.fix_mode_paths:
+			if path in item:
+				do_chmod = True
 
-			os.chmod(item, permission)
-		except OSError:
-			print ' *** Failed to change permissions of %s' % item
-			print '     Do you have the right permissions?'
-			success = False
+		if do_chmod:
+			try:
+				permission = 0640
+				if os.path.isdir(item):
+					permission = 0750
+				(root, ext) = os.path.splitext(item)
+				if ext == '.cgi' or ext == '.wsgi':
+					permission = 0750
+
+				os.chmod(item, permission)
+			except OSError:
+				print ' *** Failed to change permissions of %s' % item
+				print '     Do you have the right permissions?'
+				success = False
 
 		if self.root:
 			try:
