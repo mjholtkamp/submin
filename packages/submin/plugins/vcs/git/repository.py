@@ -97,10 +97,16 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		if not self.dir.absolute:
 			raise Exception("Error, repository path is relative, this should be fixed")
 
-		cmd = 'rm -rf "%s"' % self.dir
-		(exitstatus, outtext) = commands.getstatusoutput(cmd)
-		if exitstatus != 0:
-			raise Exception("could not remove repository %s" % self.display_name())
+		if not self.dir.exists():
+			raise Exception("Repository %s does not exist." % self.name)
+
+		from submin.plugins.vcs.git import remote
+		try:
+			remote.execute("remove %s" % self.name)
+		except remote.NonZeroExitStatus, e:
+			raise PermissionError(
+				"External command 'remove %s' failed: %s" % \
+						(self.name, e))
 
 	def enableCommitEmails(self, enable):
 		"""Enables sending of commit messages if *enable* is True."""

@@ -77,7 +77,10 @@ Usage:
 		except CmdException, e:
 			print >>sys.stderr, e.usermsg
 			print >>sys.stderr, "Error message of the command was:", e.errormsg
-			return
+			sys.exit(1)
+		except Exception, e:
+			print >>sys.stderr, '*** Unexpected error:', e
+			sys.exit(1)
 
 	def subcmd_user(self, args):
 		if len(args) < 1:
@@ -95,12 +98,18 @@ Usage:
 			_, repo = cmd.split(' ', 1)
 			repo = repo.strip()
 			if not repo or ' ' in repo:
-				die()
+				die("create")
 			git.create.run(repo)
+		elif cmd.startswith('remove '):
+			_, repo = cmd.split(' ', 1)
+			repo = repo.strip()
+			if not repo or ' ' in repo:
+				die("remove")
+			git.remove.run(repo)
 		elif cmd == 'update-auth':
 			git.update.run()
 		else:
-			die()
+			die("admin")
 
 	def subcmd_init(self, args):
 		from submin.models import options
