@@ -40,9 +40,8 @@ def main():
 	from submin.models import storage
 	storage.open()
 
-	from submin.models.options import Options
-	opts = Options()
-	bindir = opts.static_path("hooks") + 'svn'
+	from submin.models import options
+	bindir = options.static_path("hooks") + 'svn'
 
 	from submin.models import user
 	userlist = [user.User(name) for name in user.list(user.FakeAdminUser())]
