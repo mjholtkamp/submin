@@ -5,6 +5,8 @@ schema are first in the list. The first entry in this list is always the
 current schema version.
 """
 sql_scripts = [
+	(5, """UPDATE options SET key='git_ssh_port' WHERE key='ssh_port';
+		   UPDATE options SET key='git_ssh_host' WHERE key='ssh_host';"""),
 	(4, """CREATE TABLE password_reset (
 			userid  integer not null references user(id) primary key, -- valid for this user
 			expires integer not null, -- this entry expires at Unix Time
