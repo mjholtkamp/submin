@@ -232,8 +232,12 @@ Usage:
 		os.chown(str(options.env_path()), -1, int(git_gid))
 		os.chmod(str(options.env_path()), 0750)
 		os.chown(str(options.env_path() + "conf"), -1, int(git_gid))
+
+		# The git-directory should also be available to the apache-user
+		from submin.subminadmin import c_unixperms
+		apache = c_unixperms.c_unixperms(None, None).apache_user()
 		os.chown(str(options.env_path("git_dir")), int(git_uid),
-				int(git_gid))
+				int(apache.pw_gid))
 
 		# Now, fix the permissions for the actual files
 		os.chown(str(options.env_path() + "conf" + "settings.py"), -1,
