@@ -11,6 +11,7 @@ def execute(remote_command):
 	# The options provided with the -o flags are to prevent ssh trying to
 	# create a '.ssh' directory in the homedir of the www user.
 	cmd = 'ssh -i "%s" %s@%s -p %s -o "StrictHostKeyChecking=no"'
+	cmd += ' -o "PreferredAuthentications=publickey"'
 	cmd += ' -o "UserKnownHostsFile=/dev/null" %s'
 	(exitstatus, outtext) = commands.getstatusoutput(cmd % (ssh_key_path,
 		options.value("git_user"), options.value("git_ssh_host"),
