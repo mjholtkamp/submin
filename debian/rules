@@ -18,7 +18,8 @@ install: build
 	dh_installdirs
 
 	python setup.py install \
-        --root=$(CURDIR)/debian/submin2
+        --root=$(CURDIR)/debian/submin2 \
+	--prefix=/usr
 
 binary-indep: build install
 	dh_testdir
