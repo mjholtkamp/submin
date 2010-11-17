@@ -87,7 +87,7 @@ This should also remove possible following warnings.
 		from pwd import getpwnam
 		users = []
 		# _www in OS X :)
-		for user in [preferred, 'www-data', 'httpd', 'apache', '_www']:
+		for user in [preferred, 'www-data', 'httpd', 'apache', '_www', 'wwwrun']:
 			pwd = ()
 			try:
 				pwd = getpwnam(user)
