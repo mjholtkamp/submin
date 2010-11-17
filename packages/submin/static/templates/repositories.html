@@ -1,11 +1,5 @@
 <div id="content">
 	<h1 class="content">Repository [val repository.display_name]</h1>
-	<div id="tabs">
-		<ul class="tabs">
-			<li id="tab_info">info</li>
-			[test:session_user.is_admin <li id="tab_permissions">permissions</li>]
-		</ul>
-	</div>
 	<div id="info" class="settings">
 		<ul>
 			<li><label>[val repository.vcs_display_name] URL</label><span>[test:vcs_http_url <a class="external" href="[val vcs_http_url]">[val vcs_http_url]</a>][else <div class="comment">base_url_[val repository.vcs_type] not set in config</div>]</span>

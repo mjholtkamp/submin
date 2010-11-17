@@ -4,8 +4,6 @@
 var repository_tree = new ReposNode('repostree');
 var repository_paths = new Array();
 var permissionsEditor = null;
-var tabs = Array("info", "permissions");
-var tab_current = tabs[0];
 
 // Using window.onload because an onclick="..." handler doesn't give the
 // handler a this-variable
@@ -23,11 +21,6 @@ window.onload = function() {
 		repostree_expandCB(repository_tree.trigger);
 		initPermissionsEditor('/');
 	}
-	
-	for (var idx = 0; idx < tabs.length; ++idx)
-		tab_setup(tabs[idx]);
-
-	tab_switch(tab_current);
 }
 
 var repos_old_resize = window.onresize;
@@ -36,33 +29,6 @@ window.onresize = function() {
 	resize_content_div();
 }
 
-function tab_setup(name) {
-	var elname = 'tab_' + name;
-	var el = document.getElementById(elname);
-	if (el) {
-		el.onclick = function() {
-			tab_switch(name);
-		}
-		el = document.getElementById(name);
-		if (el)
-			el.style.display = 'none';
-	}
-}
-
-function tab_switch(tab) {
-	var elname = 'tab_' + tab_current;
-	var el = document.getElementById(elname);
-	removeClassName(el, 'active');
-	var el = document.getElementById(tab_current);
-	el.style.display = 'none';
-
-	var elname = 'tab_' + tab;
-	var el = document.getElementById(elname);
-	addClassName(el, 'active');
-	var el = document.getElementById(tab);
-	el.style.display = 'inherit';
-	tab_current = tab;
-}
 
 function resize_content_div()
 {
