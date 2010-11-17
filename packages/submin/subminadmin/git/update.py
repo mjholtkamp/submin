@@ -1,4 +1,5 @@
 import os
+from pwd import getpwnam
 
 from submin.models import options
 from submin.models import user
@@ -8,6 +9,12 @@ def run():
 	filename = os.path.expanduser("~/.ssh/authorized_keys")
 	if not os.path.exists(os.path.dirname(filename)):
 		os.mkdir(os.path.dirname(filename))
+
+		# Make the authorized_keys file only readable to the git-user
+		gituser = options.value("git_user")
+		owner = getpwnam(gituser)
+		os.chown(os.path.dirname(filename), owner.pw_uid, owner.pw_gid)
+		os.chmod(filename, 0600)
 
 	www_key_file = env_path + "conf" + "id_dsa.pub"
 	if not www_key_file.exists():
