@@ -28,15 +28,16 @@ def which(program):
 	raise ProgramNotFoundError(program, env_path)
 
 class CmdException(Exception):
-	def __init__(self, usermsg, errormsg):
+	def __init__(self, usermsg, errormsg, cmd):
 		self.usermsg = usermsg
 		self.errormsg = errormsg
+		self.cmd = cmd
 		Exception.__init__(self)
 
 def executeCmd(cmd, usermsg=""):
 	(exitstatus, outtext) = commands.getstatusoutput(cmd)
 	if exitstatus != 0:
-		raise CmdException(usermsg, outtext)
+		raise CmdException(usermsg, outtext, cmd)
 
 class c_git:
 	"""Commands related to git-support
@@ -76,6 +77,7 @@ Usage:
 			subcmd(self.argv[1:])
 		except CmdException, e:
 			print >>sys.stderr, e.usermsg
+			print >>sys.stderr, "Command:", e.cmd
 			print >>sys.stderr, "Error message of the command was:", e.errormsg
 			sys.exit(1)
 		except Exception, e:
@@ -165,6 +167,11 @@ Usage:
 				"22")
 		options.set_value("git_ssh_port", ssh_port)
 
+		# Enable git as a vcs plugin
+		vcs_plugins = options.value("vcs_plugins")
+		if 'git' not in vcs_plugins.split(','):
+			options.set_value("vcs_plugins", "%s,git" % vcs_plugins)
+
 		# Install .ssh/authorized_keys
 		# This is kind-of elaborate, since the update-auth command is re-used
 		# here, which is intended to be called via ssh. Since that is obviously
@@ -172,7 +179,7 @@ Usage:
 		# as an environment variable.
 		cmd = "sudo -H -u %s SSH_ORIGINAL_COMMAND='update-auth' submin-admin '%s' git admin" % (git_user,
 				options.env_path())
-		executeCmd(cmd, "Could not install authorized_keys-file")
+		executeCmd(cmd, "Could not install authorized_keys-file. Please check whether the git-user has read-access to the submin-environment directory")
 
 	def prompt_user(self, prompt, defval):
 		a = raw_input("%s [%s]> " % (prompt, defval))
@@ -223,6 +230,7 @@ Usage:
 		# Fix permissions for paths, which the git-user needs to be able to
 		# access, in order to also access files within
 		os.chown(str(options.env_path()), -1, int(git_gid))
+		os.chmod(str(options.env_path()), 0750)
 		os.chown(str(options.env_path() + "conf"), -1, int(git_gid))
 		os.chown(str(options.env_path("git_dir")), int(git_uid),
 				int(git_gid))
