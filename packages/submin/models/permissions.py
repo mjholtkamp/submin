@@ -45,6 +45,24 @@ class Permissions(object):
 
 		return set(user_paths) # remove double entries
 
+	def is_writeable(self, repository, vcs_type, user, path):
+		for perm in self.list_permissions(repository, vcs_type, path):
+			# due to lazy evaluation, user perms overrule group and 'all'
+			if (perm['type'] == 'user' and perm['name'] == user.name) or \
+					(perm['type'] == 'group' and perm['name'] in groups) or \
+					(perm['type'] == 'all'):
+				if perm['permission'] == 'rw':
+					return True
+				else:
+					return False
+
+		if path == '/': # fall through, so '/' failed, and '/' has no parent
+			return False
+		parent = '/'.join(path.split('/')[:-1])
+		if not parent: # happens when path.split('/')[:-1] == ['']
+			parent = '/'
+		return self.is_writeable(repository, vcs_type, user, parent)
+
 	def add_permission(self, repos, repostype, path,
 			subject, subjecttype, perm):
 		"""Sets permission for repos:path, raises a
