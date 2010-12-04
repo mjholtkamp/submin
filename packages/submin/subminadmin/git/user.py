@@ -57,6 +57,10 @@ def run(username):
 					(repo, u)
 			sys.exit(1)
 
+	# To pass on to the git-hook
+	os.environ["SUBMIN_USERNAME"] = username
+	os.environ["SUBMIN_REPO"] = repo
+
 	repo_path = options.env_path('git_dir') + repo
 	print >>sys.stderr, "Original command: %s" % orig_cmd
 	print >>sys.stderr, "executing git-%s '%s'" % (sub_cmd, repo_path)
