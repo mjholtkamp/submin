@@ -1,6 +1,7 @@
 import os
 import sys
 import commands
+import shutil
 
 from submin.models import options
 
@@ -15,6 +16,11 @@ def run(reponame):
 	cmd = 'GIT_DIR="%s" git --bare init' % str(reposdir)
 	(exitstatus, outtext) = commands.getstatusoutput(cmd)
 	os.environ["PATH"] = old_path
+
+	# enable hook on creation
+	shutil.copy(str(options.static_path("hooks") + "git" + "update"),
+			str(reposdir + "hooks"))
+	os.chmod(str(reposdir + "hooks" + "update"), 0755)
 
 	if exitstatus != 0:
 		raise PermissionError(

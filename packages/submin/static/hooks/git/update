@@ -1,0 +1,37 @@
+#!/usr/bin/env python
+
+import os
+import sys
+
+from submin.models import storage
+storage.open()
+
+from submin.models import permissions
+from submin.models import options
+from submin.models import user
+
+refname = sys.argv[1]
+oldrev = sys.argv[2]
+newrev = sys.argv[3]
+
+repo = os.environ["SUBMIN_REPO"]
+p = permissions.Permissions()
+u = user.User(os.environ["SUBMIN_USERNAME"])
+readable_paths = p.list_readable_user_paths(repo, "git", u)
+writeable_paths = p.list_writeable_user_paths(repo, "git", u)
+
+if oldrev == 40 * "0":
+	# new branch!
+	if '/' not in writeable_paths:
+		print >>sys.stderr, "User %s is not allowed to create new branches." % u
+		sys.exit(1)
+else:
+	# existing branch
+	branch = refname.split('/')[-1]
+	#if '/%s' % branch not in writeable_paths:
+	if not p.is_writeable(repo, "git", u, "/%s" % branch):
+		print >>sys.stderr, "User %s is not allowed to write to %s" % (u, branch)
+		sys.exit(1)
+
+# If we get here, user is allowed to go on, and we can exit with exit status 0
+sys.exit(0)
