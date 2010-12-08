@@ -73,17 +73,30 @@ class Repositories(View):
 			trac_http_url = str(trac_base_url + repository.name)
 			templatevars['trac_http_url'] = trac_http_url
 
-		vcs_http_url = ""
-		try:
-			vcs_base_url = options.url_path('base_url_%s' % repository.vcs_type)
-			vcs_http_url = str(vcs_base_url + repository.name)
-		except UnknownKeyError:
-			pass
+		vcs_url_error_msgs = {
+				"git": "Please make sure both git_user and git_ssh_host settings are set",
+				"svn": "base_url_svn not set in config",
+		}
 
-		templatevars['vcs_http_url'] = vcs_http_url
+		try:
+			vcs_url = self.get_url(repository)
+		except UnknownKeyError:
+			vcs_url = ""
+			templatevars['vcs_url_error'] = vcs_url_error_msgs[repository.vcs_type]
+
+		templatevars['vcs_url'] = vcs_url
 		templatevars['repository'] = repository
 		formatted = evaluate_main('repositories.html', templatevars, request=req)
 		return Response(formatted)
+
+	def get_url(self, repository):
+		if repository.vcs_type == 'git':
+			git_user = options.value("git_user")
+			git_host = options.value("git_ssh_host")
+			return  'ssh://%s@%s/%s' % (git_user, git_host, repository.name)
+
+		vcs_base_url = options.url_path('base_url_%s' % repository.vcs_type)
+		return str(vcs_base_url + repository.name)
 
 	def showAddForm(self, req, reposname, errormsg=''):
 		templatevars = {}
