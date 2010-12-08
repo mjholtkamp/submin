@@ -86,6 +86,7 @@ class Repositories(View):
 
 		templatevars['vcs_url'] = vcs_url
 		templatevars['repository'] = repository
+		templatevars['vcs_type'] = vcs_type
 		formatted = evaluate_main('repositories.html', templatevars, request=req)
 		return Response(formatted)
 
@@ -194,9 +195,15 @@ class Repositories(View):
 		path = uc_url_decode(path)
 		vcs_type = repository.vcs_type
 
-		# add member with no permissions (let the user select that)
+		default_perm = ''
+		if vcs_type == "git":
+			if path != "/":
+				default_perm = "w"
+			else:
+				default_perm = "r"
+
 		perms.add_permission(repository.name, repository.vcs_type, path, name,
-				type, '')
+				type, default_perm)
 		return XMLStatusResponse('addPermission', True, ('User', 'Group')[type == 'group'] + ' %s added to path %s' % (name, path))
 
 	@admin_required

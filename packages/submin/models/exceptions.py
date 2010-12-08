@@ -54,3 +54,9 @@ class UnknownGroupError(Exception):
 
 class SendEmailError(Exception):
 	pass
+	
+####### VCS Exceptions #######################################################
+
+class InvalidPermissionError(Exception):
+	"""Permission is not valid for this vcs"""
+	pass

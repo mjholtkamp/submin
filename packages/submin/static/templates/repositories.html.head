@@ -1,2 +1,3 @@
 <script type="text/javascript" src="[val main_base_url]js/repositories.js"></script>
+<script type="text/javascript">var vcs_type = "[val vcs_type]";</script>
 <link rel="stylesheet" href="[val main_base_url]css/repository.css">

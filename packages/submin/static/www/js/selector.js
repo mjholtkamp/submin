@@ -103,8 +103,17 @@ Selector.prototype.init = function() {
 
 Selector.prototype.permissionsSelect = function(name, type, permissions) {
 	var select = $c("select");
-	var values = ['', 'r', 'rw'];
-	var inner = ['-', 'r', 'rw'];
+	if (this.options.vcs_type == "git") {
+		if (this.options.path == "/") {
+			var values = ['r', 'rw'];
+		} else {
+			var values = ['w'];
+		}
+		var inner = values;
+	} else {
+		var values = ['', 'r', 'rw'];
+		var inner = ['-', 'r', 'rw'];
+	}
 	for (var idx = 0; idx < values.length; ++idx) {
 		select.appendChild($c("option", {'value': values[idx], 'innerHTML': inner[idx]}));
 		if (values[idx] == permissions)

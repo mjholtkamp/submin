@@ -300,6 +300,7 @@ function initPermissionsEditor(path) {
 		"removeCallback": removePermissionFromPath,
 		"changeCallback": changePathPermission,
 		"path": path,
+		"vcs_type": vcs_type, // from repositories.html.head
 		"canEdit": function() { return is_admin; }
 	});
 }

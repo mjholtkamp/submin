@@ -70,16 +70,26 @@ class Permissions(object):
 		if repos != "":
 			r = Repository(repos, repostype) # check if exists
 
+		self.check_permission(repostype, path, perm)
+
 		storage.add_permission(repos, repostype, path, subject, subjecttype,
 				perm)
 		trigger_hook('permission-update', repositoryname=repos,
 				repository_path=path, vcs_type=repostype)
+
+	def check_permission(self, repostype, path, perm):
+		if repostype == "git":
+			if path != "/" and perm != "w": # only "w"
+				raise InvalidPermissionError()
+			if path == "/" and perm != "rw" and perm != "r": # only "r, rw"
+				raise InvalidPermissionError()
 
 	def change_permission(self, repos, repostype, path,
 			subject, subjecttype, perm):
 		"""Changes permission for repos:path, raises a
 		Repository.DoesNotExistError if repos does not exist."""
 		r = Repository(repos, repostype) # just for the exception
+		self.check_permission(repostype, path, perm)
 		storage.change_permission(repos, repostype, path, subject, subjecttype,
 				perm)
 		trigger_hook('permission-update', repositoryname=repos,
