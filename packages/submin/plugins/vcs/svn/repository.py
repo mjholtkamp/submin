@@ -99,6 +99,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 
 	def get_entries(self, path):
 		# lots of conversions from and to utf-8
+		self.url = os.path.normpath(self.url)
 		root_path_utf8 = repos.svn_repos_find_root_path(self.url)
 		if root_path_utf8 is None or not os.path.exists(root_path_utf8):
 			raise DoesNotExistError
