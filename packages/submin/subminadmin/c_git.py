@@ -160,7 +160,7 @@ Usage:
 		# Ask ssh-host (default localhost)
 		ssh_host = self.prompt_user("What is the host-name of the ssh-server?",
 				"localhost")
-		options.set_value("git_ssh_host", ssh_host)
+		options.set_value("git_ssh_host_internal", ssh_host)
 
 		# Ask ssh-port (default 22)
 		ssh_port = self.prompt_user("On what port is the ssh-server available?",

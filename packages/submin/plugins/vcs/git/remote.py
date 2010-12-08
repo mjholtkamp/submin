@@ -14,7 +14,7 @@ def execute(remote_command):
 	cmd += ' -o "PreferredAuthentications=publickey"'
 	cmd += ' -o "UserKnownHostsFile=/dev/null" %s'
 	(exitstatus, outtext) = commands.getstatusoutput(cmd % (ssh_key_path,
-		options.value("git_user"), options.value("git_ssh_host"),
+		options.value("git_user"), options.value("git_ssh_host_internal"),
 		options.value("git_ssh_port"), remote_command))
 
 	if exitstatus != 0:
