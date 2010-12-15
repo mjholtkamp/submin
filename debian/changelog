@@ -9,6 +9,7 @@ submin (2.0-1) testing; urgency=low
   * Improved support for non-ASCII characters in templates (#149)
   * Give suggestions to fix permission problems.
   * Sort subdirectories in repository trees
+  * Added mailer.py (#137)
 
  -- Michiel Holtkamp <submin@supermind.nl>  Sun, 19 Oct 2008 09:54:21 +0200
 
