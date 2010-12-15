@@ -139,6 +139,9 @@ class Users(View):
 		if 'password' in req.post and req.post['password'].value.strip():
 			return self.setPassword(req, u)
 
+		if 'sendPasswordMail' in req.post:
+			return self.sendPasswordMail(req, u)
+
 		if 'addToGroup' in req.post:
 			return self.addToGroup(req, u)
 
@@ -201,6 +204,16 @@ class Users(View):
 		except Exception, e:
 			return XMLStatusResponse('setPassword', False,
 				'Could not change password of user %s: %s' % (u.name, e))
+
+	def sendPasswordMail(self, req, u):
+		try:
+			u.prepare_password_reset()
+			return XMLStatusResponse('sendPasswordMail', True,
+				'Send password reset email to user %s' % u.name)
+		except Exception, e:
+			return XMLStatusResponse('sendPasswordMail', False,
+				"Could not send Reset password email of user %s: %s" % \
+						(u.name, e))
 
 	@admin_required
 	def addToGroup(self, req, u):

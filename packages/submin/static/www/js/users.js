@@ -39,6 +39,10 @@ function sendEmailCB(response) {
 	reloadNotifications();
 }
 
+function sendSendPasswordMail() {
+	AjaxAsyncPostLog(document.location, "sendPasswordMail=1");
+}
+
 function sendFullName() {
 	AjaxAsyncPostLog(document.location, "fullname=" + escape_plus($('fullname').value));
 }
