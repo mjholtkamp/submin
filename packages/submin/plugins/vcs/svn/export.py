@@ -61,6 +61,7 @@ def export_notifications(**args):
 		u_notif = u.notifications()
 
 		for repos in u_notif:
+			repos_path = str(options.env_path("svn_dir") + repos)
 			if not u_notif[repos]["enabled"]:
 				continue
 
@@ -73,7 +74,7 @@ def export_notifications(**args):
 			elif len(paths) > 0:
 				for_paths = "(" + "|".join(paths) + ")"
 
-			g = {"for_repos": repos, "email": u.email,
+			g = {"for_repos": repos, "repos_path": repos_path, "email": u.email,
 				"for_paths": for_paths, "username": u.name}
 			groups.append(g)
 
@@ -81,5 +82,5 @@ def export_notifications(**args):
 
 	from submin.template.shortcuts import evaluate
 	content = evaluate("plugins/vcs/svn/mailer.conf", templatevariables)
-
-#	raise Exception(content.encode('utf-8'))
+	filename = str(options.env_path("svn_mailer_conf"))
+	file(filename, 'w').writelines(content.encode('utf-8'))
