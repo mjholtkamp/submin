@@ -176,11 +176,12 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		reposdir = options.env_path('svn_dir')
 		hook = reposdir + self.name + 'hooks' + 'post-commit'
 		bindir = options.static_path('hooks') + 'svn'
-		fullpath = bindir + 'post-commit.py'
+		fullpath = bindir + 'mailer.py'
 		base_env = options.env_path()
+		mailer_conf = (base_env + 'conf') + 'mailer.py.conf'
 
-		new_hook = '/usr/bin/python %s "%s" "$1" "$2"\n' % \
-				(str(fullpath), base_env)
+		new_hook = '/usr/bin/python %s commit "$1" "$2" "%s"\n' % \
+				(str(fullpath), mailer_conf)
 
 		f = open(str(hook), 'a+')
 		f.seek(0, 2) # seek to end of file, not all systems do this

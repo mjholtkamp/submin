@@ -82,5 +82,5 @@ def export_notifications(**args):
 
 	from submin.template.shortcuts import evaluate
 	content = evaluate("plugins/vcs/svn/mailer.conf", templatevariables)
-	filename = str(options.env_path("svn_mailer_conf"))
+	filename = str((options.env_path() + 'conf') + 'mailer.py.conf')
 	file(filename, 'w').writelines(content.encode('utf-8'))
