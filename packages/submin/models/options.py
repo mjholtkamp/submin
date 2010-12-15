@@ -33,7 +33,7 @@ def url_path(key):
 
 def env_path(key=None):
 	from submin.bootstrap import settings # for base_dir
-	base = Path(settings.base_dir)
+	base = Path(os.path.normpath(settings.base_dir))
 	if key == None:
 		return base
 
