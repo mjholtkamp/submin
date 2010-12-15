@@ -80,6 +80,7 @@ class Users(View):
 		username = uc_str(req.post['username'].value.strip())
 		email = uc_str(req.post['email'].value.strip())
 		fullname = uc_str(req.post['fullname'].value.strip())
+		send_mail = 'send_password' in req.post
 
 		# check these before we add the user, the rest is checked when adding
 		try:
@@ -101,7 +102,7 @@ class Users(View):
 				'Email must be supplied')
 
 		try:
-			u = user.add(username, email)
+			u = user.add(username, email, send_mail=send_mail)
 			u.fullname = fullname
 		except IOError:
 			return ErrorResponse('File permission denied', request=req)

@@ -25,7 +25,7 @@ def list(session_user):
 
 	return [user['name'] for user in storage.list()]
 
-def add(username, email, password=None):
+def add(username, email, password=None, send_mail=True):
 	"""Adds a new user
 
 	If password is not set, send an email to supplied address with activation
@@ -41,7 +41,7 @@ def add(username, email, password=None):
 	trigger_hook('user-create', username=username, user_passwd=password)
 	u = User(username)
 	u.email = email
-	if not password:
+	if not password and send_mail:
 		u.prepare_password_reset()
 
 	return u
