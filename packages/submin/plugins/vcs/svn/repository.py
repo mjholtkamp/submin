@@ -5,8 +5,8 @@ from submin.unicode import uc_str, uc_to_svn, uc_from_svn
 import commands
 import exceptions
 from submin.models import options
-
 from submin.models.repository import DoesNotExistError, PermissionError, VersionError, VCSImportError
+from export import export_notifications
 
 display_name = "Subversion"
 
@@ -176,12 +176,15 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		reposdir = options.env_path('svn_dir')
 		hook = reposdir + self.name + 'hooks' + 'post-commit'
 		bindir = options.static_path('hooks') + 'svn'
-		fullpath = bindir + 'mailer.py'
+		fullpath = str(bindir + 'mailer.py')
 		base_env = options.env_path()
-		mailer_conf = (base_env + 'conf') + 'mailer.py.conf'
+		mailer_conf = str((base_env + 'conf') + 'mailer.py.conf')
+
+		if not os.path.exists(mailer_conf):
+			export_notifications() # create mailer_conf
 
 		new_hook = '/usr/bin/python %s commit "$1" "$2" "%s"\n' % \
-				(str(fullpath), mailer_conf)
+				(fullpath, mailer_conf)
 
 		f = open(str(hook), 'a+')
 		f.seek(0, 2) # seek to end of file, not all systems do this
