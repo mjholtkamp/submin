@@ -22,7 +22,7 @@ class Login(View):
 		except NoMD5PasswordError, e:
 			return self.evaluate_form(config, str(e))
 
-		url = '/'
+		url = config.base_url
 		if 'redirected_from' in request.session:
 			url = request.session['redirected_from']
 
@@ -42,10 +42,11 @@ class Login(View):
 
 class Logout(View):
 	def handler(self, request, path):
+		config = Config()
 		if 'user' in request.session:
 			request.session['user'].is_authenticated = False
 			del request.session['user']
-		url = '/'
+		url = config.base_url
 		if 'redirected_from' in request.session:
 			url = request.session['redirected_from']
 		return Redirect(url)

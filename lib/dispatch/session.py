@@ -108,14 +108,17 @@ class Session(PickleDict):
 
 	def destroy(self):
 		self.__destroyed = True
+		config = Config()
 		self.request.setCookie('SubminSessionID', 'xx',
-				expires=time.asctime())
+				expires=time.asctime(), path=str(config.base_url))
 	
 	def destroyed(self):
 		return self.__destroyed or self.sessionid == 'xx'
 
 	def updateCookie(self):
-		self.request.setCookie('SubminSessionID', self.sessionid)
+		config = Config()
+		self.request.setCookie('SubminSessionID', self.sessionid,
+				path=str(config.base_url))
 	
 	def generateSessionID(self):
 		"""Really an MD5-sum of the current time and a salt"""
