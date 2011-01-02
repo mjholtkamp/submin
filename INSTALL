@@ -32,11 +32,20 @@ For help on submin-admin, execute the following command:
     submin2-admin <anything> help <subcommand>
 
 
+Git support (optional)
+----------------------
+
+Git support requires a special user to be created and some additional settings.
+Run the following command as root and follow the instructions:
+
+    submin2-admin /var/lib/submin git init
+
+
 Configure Apache2 Webserver
 ---------------------------
 
 To activate the submin2 website, the configuration should be included into
-Apache2. If you have used defaults, you can use the following command:
+Apache2. If you have used defaults, run the following command as root:
 
     ln -s /var/lib/submin/conf/apache.cgi.conf /etc/apache2/conf.d/
 
