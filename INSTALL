@@ -11,7 +11,7 @@ Installing from source:
     Download tarball from http://supermind.nl/submin/download.html
     Extract the tarball
     execute: python setup.py install
-    => submin will be installed in site-packages, an executable submin-admin
+    => submin will be installed in site-packages, an executable submin2-admin
        will be installed in /usr/bin
 
 
@@ -24,9 +24,32 @@ configuration, etc) are located in one directory, for example /var/lib/submin.
 
 To create a submin environment, follow instructions after executing:
 
-    submin-admin /var/lib/submin initenv
+    submin2-admin /var/lib/submin initenv your@email.address
 
 For help on submin-admin, execute the following command:
 
-    submin-admin <anything> help
+    submin2-admin <anything> help
+    submin2-admin <anything> help <subcommand>
 
+
+Configure Apache2 Webserver
+---------------------------
+
+To activate the submin2 website, the configuration should be included into
+Apache2. If you have used defaults, you can use the following command:
+
+    ln -s /var/lib/submin/conf/apache.cgi.conf /etc/apache2/conf.d/
+
+Now restart your webserver to activate the new settings.
+
+    apachectl restart
+
+
+Login to your Submin2 website
+-----------------------------
+
+The email-address you have provided with the 'initenv' command above has
+received a password reset email. Read your email and click the link. You will
+get another email with the password. You can use this to login.
+
+Happy subminning :)
