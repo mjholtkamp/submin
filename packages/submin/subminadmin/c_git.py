@@ -243,6 +243,7 @@ Usage:
 		apache = c_unixperms.c_unixperms(None, None).apache_user()
 		os.chown(str(options.env_path("git_dir")), int(git_uid),
 				int(apache.pw_gid))
+		os.chmod(str(options.env_path("git_dir")), 0750)
 
 		# Now, fix the permissions for the actual files
 		os.chown(str(options.env_path() + "conf" + "settings.py"), -1,

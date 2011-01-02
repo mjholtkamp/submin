@@ -8,7 +8,9 @@ def run():
 	env_path = options.env_path()
 	filename = os.path.expanduser("~/.ssh/authorized_keys")
 	if not os.path.exists(os.path.dirname(filename)):
+		# create dir and file if one of them doesn't exist
 		os.mkdir(os.path.dirname(filename))
+		file(filename, 'a')
 
 		# Make the authorized_keys file only readable to the git-user
 		gituser = options.value("git_user")
