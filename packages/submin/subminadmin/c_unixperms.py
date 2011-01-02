@@ -18,7 +18,7 @@ Usage:
 			print '''
 To set permissions and ownerships properly, execute:
 
-    sudo submin-admin %s unixperms fix
+    sudo submin2-admin %s unixperms fix
 
 This should also remove possible following warnings.
 ''' % self.sa.env

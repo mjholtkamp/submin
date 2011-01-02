@@ -2,7 +2,7 @@ import os
 import sys
 import commands
 
-ERROR_STR = "submin-admin git %s is not supposed to be called by users."
+ERROR_STR = "submin2-admin git %s is not supposed to be called by users."
 
 def die(cmd):
 	print >>sys.stderr, ERROR_STR % cmd
@@ -47,11 +47,11 @@ Usage:
 	# The following commands are not to be called by users, but are internal
 	# git-commands to be used via ssh. They are therefore not mentioned in the
 	# usage text above.
-	# - submin-admin <env> git user <username>
+	# - submin2-admin <env> git user <username>
 	#           -- to be called when trying to receive or upload a pack via
 	#              ssh. Typically located in the command="" in the
 	#              authorized_keys
-	# - submin-admin <env> git admin
+	# - submin2-admin <env> git admin
 	#           -- to be called via ssh by the web interface to create a
 	#              repository with the correct git-user permissions. The
 	#              SSH_ORIGINAL_COMMAND can have two commands:
@@ -182,7 +182,7 @@ Usage:
 		# here, which is intended to be called via ssh. Since that is obviously
 		# not possible yet, fake setting the SSH_ORIGINAL_COMMAND by passing it
 		# as an environment variable.
-		cmd = "sudo -H -u %s SSH_ORIGINAL_COMMAND='update-auth' submin-admin '%s' git admin" % (git_user,
+		cmd = "sudo -H -u %s SSH_ORIGINAL_COMMAND='update-auth' submin2-admin '%s' git admin" % (git_user,
 				options.env_path())
 		executeCmd(cmd, "Could not install authorized_keys-file. Please check whether the git-user has read-access to the submin-environment directory")
 

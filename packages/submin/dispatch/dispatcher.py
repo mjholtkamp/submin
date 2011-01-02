@@ -66,7 +66,7 @@ def dispatcher(request):
 			details = """
 You can add the missing config option by executing the following commandline:
 
-submin-admin %s config set %s &lt;value&gt;
+submin2-admin %s config set %s &lt;value&gt;
 
 Unfortunately, this error handling does not know the value you should set, but
 the name of the missing option should give you a hint to its value :)""" % \

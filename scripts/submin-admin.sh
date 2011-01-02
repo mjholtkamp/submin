@@ -6,4 +6,4 @@ if [ -z "${PYTHONPATH}" ]; then
 else
 	export PYTHONPATH=${BASEDIR}/packages:${PYTHONPATH}
 fi
-${BASEDIR}/bin/submin-admin $*
+${BASEDIR}/bin/submin2-admin $*

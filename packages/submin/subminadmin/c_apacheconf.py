@@ -72,12 +72,12 @@ recommended way is to include it in a VirtualHost.
 		self.init_vars['REQ_FILENAME'] = '%{REQUEST_FILENAME}'; # hack :)
 		self.init_vars['datetime_generated'] = strftime("%Y-%m-%d %H:%M:%S")
 		contents = '''# Generated on: %(datetime_generated)s
-# This config file was automatically created with submin-admin. If you use
+# This config file was automatically created with submin2-admin. If you use
 # this command again, it will overwrite all changes to this file. The
 # recommanded way to regenerate this file is to change the config with
-# submin-admin and run:
+# submin2-admin and run:
 #
-#   submin-admin %(submin env)s apacheconf create
+#   submin2-admin %(submin env)s apacheconf create
 # 
 #
 # To make this config active, you have to include it in your apache

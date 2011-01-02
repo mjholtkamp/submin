@@ -47,7 +47,7 @@ class SubminAdmin:
 		self.execute(self.argv[2:])
 
 	def interactive(self):
-		print '''Welcome to submin-admin
+		print '''Welcome to submin2-admin
 Interactive Submin administration console.
 
 Use '?' or 'help' for help on commands.
