@@ -1,0 +1,64 @@
+Upgrading from 1.2
+------------------
+
+ IMPORTANT: by default, 'submin2-admin convert' does *not* copy subversion
+ repositories or trac environments, so do *NOT* throw them away after the
+ conversion. You might want to move the directories into /var/lib/submin/.
+ If you want to do that, see 'Moving SVN and Trac dirs' below. 
+
+Submin 2 is configured differently from Submin 1.2. The latter has a config file
+in /etc/submin/ (e.g. default.conf), and repositories in /var/lib/submin/svn. Submin2 has one directory, /var/lib/submin where everything is located (config, svn, trac, git).
+
+To initialize a Submin 2 environment from 1.2, run this command:
+
+    submin2-admin /var/lib/submin convert /etc/submin/submin1.2.conf
+
+where /var/lib/submin does NOT exist yet and where /etc/submin/submin1.2.conf is
+the old configuration. This command will convert the (flat file) config of
+Submin 1.2 and copy the information to an SQLite database, located in 
+/var/lib/submin/conf/submin.db. Also, permissions are set and a couple of apache
+configuration files are created in /var/lib/submin/conf.
+
+To include the newly created apache config, remove the old configuration (it
+will overlap with the newly created apache conf, since we copied the
+configuration), and run the following command:
+
+    ln -s /var/lib/submin/conf/apache.cgi.conf /etc/apache2/conf.d/submin2.conf
+
+This will select the CGI version.
+
+
+Git Support
+-----------
+
+Submin 2 has git support. To enable it, run this command and follow the
+instructions on screen:
+
+    submin2-admin /var/lib/submin git init
+
+
+Moving SVN and Trac dirs
+------------------------
+
+Since 'convert' leaves the Subversion and trac directories where they are, they
+are still at their old place after the 'convert'. To import them as well, copy
+(instead of move; in case something goes wrong) them to your new environment
+(e.g. /var/lib/submin/). After copying the directories, change the location in
+the configuration as well:
+
+    submin2-admin /var/lib/submin config set svn_dir /var/lib/submin/svn
+    submin2-admin /var/lib/submin config set trac_dir /var/lib/submin/trac
+
+Then, create the apache2 config again and reload apache2:
+
+    submin2-admin /var/lib/submin apacheconf create
+    apachectl reload
+
+If this doesn't work, you can check the config (and/or follow the instructions
+in the error messages):
+
+    submin2-admin /var/lib/sbumin config get
+
+
+Happy subminning!
+
