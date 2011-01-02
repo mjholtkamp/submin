@@ -69,8 +69,8 @@ setup(name='Submin',
 		"submin": find_package_data("packages/submin/static", ["*.svn*"]),
 	},
 	data_files=[
-		("share/man/man1", ("man/submin-admin.1",)),
+		("share/man/man1", ("man/submin2-admin.1",)),
 	],
-	scripts=["bin/submin-admin"],
+	scripts=["bin/submin2-admin"],
 )
 
