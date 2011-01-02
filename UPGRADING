@@ -31,8 +31,8 @@ This will select the CGI version.
 Git Support
 -----------
 
-Submin 2 has git support. To enable it, run this command and follow the
-instructions on screen:
+Submin 2 has git support. To enable it, run this command as root and follow
+the instructions on screen:
 
     submin2-admin /var/lib/submin git init
 
@@ -57,7 +57,7 @@ Then, create the apache2 config again and reload apache2:
 If this doesn't work, you can check the config (and/or follow the instructions
 in the error messages):
 
-    submin2-admin /var/lib/sbumin config get
+    submin2-admin /var/lib/submin config get
 
 
 Happy subminning!
