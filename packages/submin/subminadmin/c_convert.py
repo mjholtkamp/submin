@@ -1,6 +1,7 @@
 import os
 from submin.models.exceptions import UserExistsError, GroupExistsError
 from submin.models.exceptions import MemberExistsError
+from submin.path.path import Path
 
 class c_convert():
 	'''Create a new configuration from an old-style config
@@ -176,6 +177,15 @@ Usage:
 		self.write_users(config)
 		self.write_groups(config)
 		self.write_permissions(config)
+		
+		# final initialize (for convenience)
+		self.sa.execute(['upgrade', 'hooks', 'no-fix-unixperms'])
+		self.sa.execute(['unixperms', 'fix'])
+		confdir = Path(self.sa.env) + 'conf'
+		cgiconf = confdir + 'apache.cgi.conf'
+		wsgiconf = confdir + 'apache.wsgi.conf'
+		self.sa.execute(['apacheconf', 'create', 'cgi', str(cgiconf)])
+		self.sa.execute(['apacheconf', 'create', 'wsgi', str(wsgiconf)])
 
 	def run(self):
 		if len(self.argv) != 1:
