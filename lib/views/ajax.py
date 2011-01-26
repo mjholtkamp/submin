@@ -7,6 +7,7 @@ from models.group import listGroups
 from models.repository import listRepositories
 from template import evaluate
 from auth.decorators import *
+import cgi
 
 class Ajax(View):
 	"""Ajax view, for global ajax requests, like list users/groups/repositories"""
@@ -33,7 +34,7 @@ class Ajax(View):
 		try:
 			users = listUsers(session_user)
 			groups = listGroups(session_user)
-			repositories = listRepositories(session_user)
+			repositories = self.prepareForHTML(listRepositories(session_user))
 			return XMLTemplateResponse("ajax/listall.xml", 
 				{'users': users, 'groups': groups, 'repositories': repositories})
 		except Exception, e:
@@ -54,9 +55,13 @@ class Ajax(View):
 		except Exception, e:
 			return XMLStatusResponse('listGroups', False, 'Failed to get a list: %s' % e)
 
+	def prepareForHTML(self, repos):
+		return [cgi.escape(x) for x in repos]
+
 	def listRepositories(self, req):
 		try:
 			repos = listRepositories(req.session['user'])
+			repos = self.prepareForHTML(repos)
 			invalid = listRepositories(req.session['user'], only_invalid=True)
 			variables = {'repositories': repos, 'invalid_repositories': invalid}
 			return XMLTemplateResponse("ajax/listrepositories.xml", variables)
