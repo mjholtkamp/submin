@@ -5,6 +5,7 @@ import os
 from unicode import uc_str, uc_to_svn, uc_from_svn
 import commands
 import exceptions
+import shutil
 
 def listRepositories(session_user, only_invalid=False):
 	config = Config()
@@ -215,11 +216,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		if not newrepos.absolute:
 			raise Exception("Error, repository path is relative, this should be fixed")
 
-		cmd = 'rm -rf "%s"' % newrepos
-		(exitstatus, outtext) = commands.getstatusoutput(cmd)
-		if exitstatus == 0:
-			return
-		raise Exception("could not remove repository %s" % self.name)
+		shutil.rmtree(str(newrepos))
 
 	def userHasReadPermissions(self, session_user):
 		if session_user.notifications.has_key(self.name):
