@@ -101,18 +101,6 @@ function reloadX(response, X, Xplural, Xcapital) {
 			li.appendChild(span);
 		}
 		dest.appendChild(li);
-		var choplength = parseInt(getStyle(link, "width")) * 0.80;
-		var maxlen = autoEllipseText(nameNode, name, choplength);
-		nameNode.innerHTML = name.substr(0, maxlen);
-
-		// do we have to chop?
-		if (maxlen != name.length) {
-			var dotdotdot = $c("span");
-			addClassName(dotdotdot, "dotdotdot");
-			dotdotdot.appendChild(document.createTextNode("..."));
-			link.appendChild(dotdotdot);
-			link.setAttribute("title", name);
-		}
 	}
 }
 
