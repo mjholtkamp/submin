@@ -108,7 +108,7 @@ class Repositories(View):
 			import re, commands
 
 			repository = req.post['repository'].value.strip()
-			if re.findall('[^a-z&A-Z0-9_-]', repository):
+			if re.findall('[^a-zA-Z0-9_-]', repository):
 				return self.showAddForm(req, repository, 'Invalid characters in repository name')
 
 			if repository == '':
