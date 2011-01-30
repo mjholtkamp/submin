@@ -121,7 +121,7 @@ class User(object):
 			raise ValueError('Ambiguous input: both key and password are set')
 
 		templatevars = {
-			'from': 'submin@supermind.nl',
+			'from': 'root@localhost',
 			'to': self.email,
 			'username': self.name,
 			'key': key,
