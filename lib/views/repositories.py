@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import cgi
 from template.shortcuts import evaluate_main
 from dispatch.response import Response, XMLStatusResponse, XMLTemplateResponse, Redirect
 from views.error import ErrorResponse
@@ -161,14 +162,20 @@ class Repositories(View):
 		if 'grouplist' in req.post:
 			groups = config.authz.groups()
 
-		templatevars = {'perms': perms, 'repository': repository.name,
+		templatevars = {'perms': perms, 'repository': self.prepareForHTML(repository.name),
 			'path': svn_path, 'users': users, 'groups': groups}
 		return XMLTemplateResponse('ajax/repositoryperms.xml', templatevars)
+
+	def prepareForHTML(self, repos):
+		if isinstance(repos, basestring):
+			return cgi.escape(repos)
+
+		return [cgi.escape(x) for x in repos]
 
 	@admin_required
 	def getpermissionpaths(self, req, repository):
 		authz_paths = [x[1] for x in repository.authz_paths]
-		templatevars = {'repository': repository.name, 'paths': authz_paths}
+		templatevars = {'repository': self.prepareForHTML(repository.name), 'paths': authz_paths}
 		return XMLTemplateResponse('ajax/repositorypermpaths.xml', templatevars)
 
 	@admin_required
@@ -239,14 +246,14 @@ class Repositories(View):
 	@admin_required
 	def removeRepository(self, req, repository):
 		repository.remove()
-		return XMLStatusResponse('removeRepository', True, 'Repository %s deleted' % repository.name)
+		return XMLStatusResponse('removeRepository', True, 'Repository %s deleted' % self.prepareForHTML(repository.name))
 
 	@admin_required
 	def tracEnvCreate(self, req, repository):
 		(s, m) = createTracEnv(repository.name)
 		if s:
 			m = ""
-		return XMLStatusResponse('tracEnvCreate', s, 'Trac environment "%s" created. %s' % (repository.name, m))
+		return XMLStatusResponse('tracEnvCreate', s, 'Trac environment "%s" created. %s' % (self.prepareForHTML(repository.name), m))
 
 	def ajaxhandler(self, req, path):
 		repositoryname = ''
