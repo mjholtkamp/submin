@@ -69,8 +69,11 @@ class Repositories(View):
 				templatevars['trac_msg'] = \
 					'There is something missing in your config: %s' % str(e)
 
+			# this chops off the .git for git repositories, not for svn
+			repos_name = repository.name.replace(".git", "")
+
 			trac_base_url = options.url_path('base_url_trac')
-			trac_http_url = str(trac_base_url + repository.name)
+			trac_http_url = str(trac_base_url + repos_name)
 			templatevars['trac_http_url'] = trac_http_url
 
 		vcs_url_error_msgs = {
@@ -265,8 +268,9 @@ class Repositories(View):
 
 	@admin_required
 	def tracEnvCreate(self, req, repository):
-		createTracEnv(repository.name, req.session['user'])
-		return XMLStatusResponse('tracEnvCreate', True, 'Trac environment "%s" created.' % repository.name)
+		repos_name = repository.name.replace(".git", "")
+		createTracEnv(repos_name, req.session['user'])
+		return XMLStatusResponse('tracEnvCreate', True, 'Trac environment "%s" created.' % repos_name)
 
 	def ajaxhandler(self, req, path):
 		repositoryname = ''
