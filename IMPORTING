@@ -1,0 +1,68 @@
+How to import existing authz and svn repositories into submin
+-------------------------------------------------------------
+
+We are going to create a fake submin1.2 installation and then use the 'convert'
+method of submin2 to import our data. Just follow these 7 easy steps:
+
+1) Copy your authz file to /tmp/authz (or somewhere else) and add a new group:
+'submin-admins'. This group was used in submin1.2 to determine admin users.
+Add to this group all users that you want to give admin privileges to. You can
+choose to give users admin privileges later as well.
+
+2) Create a configuration file called '/tmp/bootstrap.conf':
+
+-----------8<----- /tmp/bootstrap.conf ----------------
+[svn]
+access_file = /path/to/current/htpasswd
+userprop_file = /dev/null
+authz_file = /tmp/authz
+repositories = /path/to/current/subversion/repositories
+-----------8<----- /tmp/bootstrap.conf ----------------
+
+3) Make sure you have working backups of the files/directories
+mentioned above. Submin2 will not touch the htpasswd file and the authz file,
+but it will use the repositories (that is, it will not make a copy, but it
+will point to this directory).
+
+The repositories are not copied, so submin2 will use this directory as well. If
+you want to move them later, see MOVING SUBVERSION DIRECTORY below.
+
+4) Run the following command to initialize submin2 (and import users/groups):
+
+  submin2-admin /var/lib/submin convert /tmp/bootstrap.conf
+
+This will create the submin2 environment in /var/lib/submin (change it if you
+don't like it). Apache configuration is created (see the messages on screen).
+
+5) Include the apache config file into your webserver (or make a symlink from a
+conf.d directory).
+
+6) Remove /tmp/bootstrap.conf and /tmp/authz
+
+7) Enjoy submin :)
+
+
+Moving subversion directory (optional)
+--------------------------------------
+
+If you want to move your repositories to /var/lib/submin/svn (the default), you
+have to update the configuration as well. The following command will show all
+the configuration:
+
+  submin2-admin /var/lib/submin config get
+
+To change the svn repository directory, run this command:
+
+  submin2-admin /var/lib/submin config set svn_dir svn
+
+This will set the svn_dir to /var/lib/submin/svn ('svn' is relative to
+'/var/lib/submin', so it will become '/var/lib/submin/svn').
+
+Now your webserver does not know where to find the subversion repositories. If
+you are using apache, you can use the 'apacheconf' to update the configuration
+(example is for cgi, for wsgi replace 'cgi' with 'wsgi'):
+
+  cd /var/lib/submin &&
+  submin2-admin . apacheconf create cgi ./conf/apache.cgi.conf
+
+Now reload your apache and you should be done!
