@@ -167,7 +167,7 @@ class Repositories(View):
 
 		p = Permissions()
 		perms = p.list_permissions(repository.name, repository.vcs_type,
-				str(branch_or_path))
+				path)
 
 		usernames = []
 		if 'userlist' in req.post:
