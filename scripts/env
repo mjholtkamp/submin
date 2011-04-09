@@ -1,0 +1,11 @@
+#!/bin/bash
+# Source this script from the project root (where the submin-package is
+# located). It will set some environment variables
+
+if [ ! -d "submin" ]; then
+	echo "Please source this script from the project root"
+else
+	export PYTHONPATH=`pwd`
+	export PATH=$PATH:`pwd`/bin
+	echo "Submin is now added to the environment."
+fi
