@@ -13,19 +13,19 @@ def is_package(filename):
 
 # Taken from setuptools
 def find_packages(directory, exclude=()):
-	packages = []
+	packages = [directory]
 	stack = [(convert_path(directory), '')]
 	while stack:
 		path, prefix = stack.pop(0)
 		for name in os.listdir(path):
 			filename = os.path.join(path, name)
-			if '.' not in name and is_package(filename):
+			if is_package(filename):
 				packages.append(os.path.join(directory, prefix + name))
 				stack.append((filename, prefix + name + "."))
 
 	for pattern in exclude:
 		packages = [package for package in packages \
-				if not fnmatch.fnmatchcase(package, pattern)]
+	 			if not fnmatch.fnmatchcase(package, pattern)]
 	return packages
 
 def find_package_data(directory, exclude_dirs=()):
