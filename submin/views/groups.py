@@ -31,7 +31,7 @@ class Groups(View):
 			if path[0] == 'add':
 				return self.add(req, path[1:], localvars)
 		except Unauthorized:
-			return Redirect(options.url_path('base_url_submin'))
+			return Redirect(options.url_path('base_url_submin'), req)
 
 		return ErrorResponse('Unknown path', request=req)
 
@@ -85,7 +85,7 @@ class Groups(View):
 			except GroupExistsError:
 				return self.showAddForm(req, groupname, 'Group %s already exists' % groupname)
 
-			return Redirect(url)
+			return Redirect(url, req)
 
 		return self.showAddForm(req, groupname)
 

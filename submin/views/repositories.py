@@ -147,7 +147,7 @@ class Repositories(View):
 
 			url = '%s/repositories/show/%s/%s' % (base_url, vcs_type,
 					repository)
-			return Redirect(url)
+			return Redirect(url, req)
 
 		return self.showAddForm(req, repository)
 

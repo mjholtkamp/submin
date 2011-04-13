@@ -12,7 +12,7 @@ class Ajax(View):
 	def handler(self, req, path):
 		# we only handle ajax requests
 		if not req.is_ajax():
-			return Redirect(options.url_path('base_url_submin'))
+			return Redirect(options.url_path('base_url_submin'), req)
 
 		if 'listAll' in req.post:
 			return self.listAll(req)

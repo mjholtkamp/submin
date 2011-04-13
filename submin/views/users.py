@@ -33,7 +33,7 @@ class Users(View):
 			if path[0] == 'add':
 				return self.add(req, path[1:], localvars)
 		except Unauthorized:
-			return Redirect(options.value('base_url_submin'))
+			return Redirect(options.value('base_url_submin'), req)
 
 		return ErrorResponse('Unknown path', request=req)
 
@@ -114,7 +114,7 @@ class Users(View):
 				'Invalid characters in username')
 
 		url = base_url + '/users/show/' + username
-		return Redirect(url)
+		return Redirect(url, req)
 
 	def ajaxhandler(self, req, path):
 		username = ''

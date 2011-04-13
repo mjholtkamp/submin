@@ -14,10 +14,10 @@ def login_required(fun):
 			self.request.session['redirected_from'] = self.request.url
 
 		if not 'user' in self.request.session:
-			return Redirect(login_url)
+			return Redirect(login_url, self.request)
 
 		if not self.request.session['user'].is_authenticated:
-			return Redirect(login_url)
+			return Redirect(login_url, self.request)
 
 		return fun(self, *args, **kwargs)
 
@@ -40,9 +40,9 @@ def upgrade_user_required(fun):
 	def _decorator(self, *args, **kwargs):
 		if not 'upgrade_user' in self.request.session:
 			if 'user' in self.request.session:
-				return Redirect(main_url)
+				return Redirect(main_url, self.request)
 
-			return Redirect(login_url)
+			return Redirect(login_url, self.request)
 
 		return fun(self, *args, **kwargs)
 	return _decorator

@@ -23,6 +23,8 @@ class WSGIRequest(Request):
 			self._incookies.load(self.__environ.get('HTTP_COOKIE', ''))
 		self.path_info = self.__environ.get('PATH_INFO', '')
 		self.remote_address = self.__environ.get('REMOTE_ADDR')
+		self.https = self.__environ.get('HTTPS', 'off') == 'on'
+		self.http_host = self.__environ.get('HTTP_HOST')
 
 class WSGIGet(GetVariables):
 	def __init__(self, query_string):

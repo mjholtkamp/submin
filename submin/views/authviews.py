@@ -49,7 +49,7 @@ class Login(View):
 		request.session['user'] = u
 		request.session.save()
 
-		return Redirect(url)
+		return Redirect(url, request)
 
 
 	def evaluate_form(self, msg=''):
@@ -115,5 +115,5 @@ class Logout(View):
 		url = '/'
 		if 'redirected_from' in request.session:
 			url = request.session['redirected_from']
-		return Redirect(url)
+		return Redirect(url, request)
 

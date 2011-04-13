@@ -1,3 +1,5 @@
+import urlparse
+
 class Response(object):
 	def __init__(self, content=''):
 		self.content = content
@@ -12,11 +14,14 @@ class Response(object):
 		self.headers['Set-Cookie'] = cookies
 
 class Redirect(Response):
-	def __init__(self, url):
+	def __init__(self, url, request):
 		Response.__init__(self)
-		self.url = str(url)
+		url = str(url)
 		self.status_code = 302
-		self.headers.update({'Location': self.url})
+		if not '://' in url:
+			schema = 'https://' if request.https else 'http://'
+			url = urlparse.urljoin(schema + request.http_host, url)
+		self.headers.update({'Location': url})
 
 class HTTP404(Response):
 	def __init__(self, page='/'):

@@ -9,6 +9,8 @@ class Request(object):
 		self.url = ''
 		self.path_info = ''
 		self.remote_address = ''
+		self.https = False # is HTTPS set?
+		self.http_host = ''
 		self.headers = {'Content-Type': 'text/html'}
 
 		self._incookies = SimpleCookie()
