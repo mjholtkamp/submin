@@ -1,5 +1,6 @@
 from submin.path.path import Path
 import os
+import re
 
 class c_apacheconf():
 	'''Commands to change apache config
@@ -308,6 +309,21 @@ Apache file created: %(output)s
 ''' % vars
 		return apache_conf_trac
 
+	def urlpath(self, url):
+		"""Strip scheme and hostname from url, leaving only the path. Also
+		fix slashes (need leading, no trailing, no doubles)"""
+		# strip trailing slash
+		url = url.rstrip('/')
+		# add leading slash
+		if url[0] != '/':
+			url = '/' + url
+
+		# remove schema + hostname
+		url = re.sub('.*://[^/]+/', '/', url)
+		url = re.sub('/+', '/', url)
+
+		return url
+
 	def run(self):
 		os.environ['SUBMIN_ENV'] = self.sa.env
 		from submin.models import options
@@ -324,9 +340,9 @@ Apache file created: %(output)s
 			'submin env': self.sa.env,
 			'www dir': self.sa.basedir_www,
 			'cgi-bin dir': os.path.join(self.sa.env, 'cgi-bin'),
-			'submin base url': options.value('base_url_submin'),
-			'svn base url': options.value('base_url_svn'),
-			'trac base url': options.value('base_url_trac'),
+			'submin base url': self.urlpath(options.value('base_url_submin')),
+			'svn base url': self.urlpath(options.value('base_url_svn')),
+			'trac base url': self.urlpath(options.value('base_url_trac')),
 			'svn dir': options.env_path('svn_dir'),
 			'trac dir': options.env_path('trac_dir'),
 			'authz file': options.env_path('svn_authz_file'),
