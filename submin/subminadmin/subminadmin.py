@@ -4,6 +4,29 @@ import os
 from submin.path.path import Path
 from submin.models import storage
 
+import code
+import readline
+import atexit
+import os
+
+class HistoryConsole(code.InteractiveConsole):
+    def __init__(self, locals=None, filename="<console>",
+                 histfile=os.path.expanduser("~/.submin2-admin-history")):
+        code.InteractiveConsole.__init__(self, locals, filename)
+        self.init_history(histfile)
+
+    def init_history(self, histfile):
+        readline.parse_and_bind("tab: complete")
+        if hasattr(readline, "read_history_file"):
+            try:
+                readline.read_history_file(histfile)
+            except IOError:
+                pass
+            atexit.register(self.save_history, histfile)
+
+    def save_history(self, histfile):
+        readline.write_history_file(histfile)
+
 class SubminAdmin:
 	def __init__(self, argv):
 		self.argv = argv
@@ -13,6 +36,7 @@ class SubminAdmin:
 		self.cmd_aliases = [('?', 'help'), ('exit', 'quit')]
 		self.storage_opened = False
 		self._set_systemdirs()
+		self.hc = HistoryConsole
 
 	def __del__(self):
 		if self.storage_opened:
