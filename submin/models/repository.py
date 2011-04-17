@@ -97,6 +97,8 @@ class Repository(object):
 	def enableCommitEmails(self, enable):
 		"""Enables sending of commit messages if *enable* is True."""
 		self.repository.enableCommitEmails(enable)
+		if options.value('trac_enable', True):
+			self.repository.enableTracEmails(True)
 
 	def commitEmailsEnabled(self):
 		return self.repository.commitEmailsEnabled()

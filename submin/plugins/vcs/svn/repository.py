@@ -67,7 +67,8 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 			raise VCSImportError("Failed to import python 'svn' module, please install")
 
 		self.name = name
-		self.signature = "### SUBMIN AUTOCONFIG, DO NOT ALTER FOLLOWING LINE ###\n"
+		self.svn_signature = "### SUBMIN AUTOCONFIG, DO NOT ALTER FOLLOWING LINE ###\n"
+		self.trac_signature = "### SUBMIN TRAC AUTOCONFIG, DO NOT ALTER FOLLOWING LINE ###\n"
 
 		reposdir = options.env_path('svn_dir')
 		self.url = str(reposdir + self.name)
@@ -164,7 +165,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 			return False # assume it does not exist
 		
 		# if we find the signature, assume it is installed
-		if self.signature in f.readlines():
+		if self.svn_signature in f.readlines():
 			return True
 		return False
 
@@ -172,9 +173,6 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		"""Add or remove our script to/from the post-commit hook"""
 		import os
 
-		line_altered = False
-		reposdir = options.env_path('svn_dir')
-		hook = reposdir + self.name + 'hooks' + 'post-commit'
 		bindir = options.static_path('hooks') + 'svn'
 		fullpath = str(bindir + 'mailer.py')
 		base_env = options.env_path()
@@ -185,6 +183,26 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 
 		new_hook = '/usr/bin/python %s commit "$1" "$2" "%s"\n' % \
 				(fullpath, mailer_conf)
+
+		self.rewritePostCommitHook(self.svn_signature, new_hook, enable)
+
+	def enableTracEmails(self, enable):
+		"""Add or remove trac commit script to/from the post-commit hook"""
+		import os
+
+		bindir = options.static_path('hooks') + 'svn'
+		fullpath = str(bindir + 'trac-post-commit-hook')
+		trac_env = str(options.env_path('trac_dir') + self.name)
+
+		new_hook = '/usr/bin/python %s -p %s -r "$2"\n' % \
+				(fullpath, trac_env)
+
+		self.rewritePostCommitHook(self.trac_signature, new_hook, enable)
+
+	def rewritePostCommitHook(self, signature, new_hook, enable):
+		line_altered = False
+		reposdir = options.env_path('svn_dir')
+		hook = reposdir + self.name + 'hooks' + 'post-commit'
 
 		f = open(str(hook), 'a+')
 		f.seek(0, 2) # seek to end of file, not all systems do this
@@ -201,7 +219,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 					line_altered = True
 					continue # filter out command
 
-				if line == self.signature:
+				if line == signature:
 					alter_line = True
 					if not enable:
 						continue # filter out signature
@@ -215,7 +233,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 				f.write("#!/bin/sh\n")
 
 		if not line_altered and enable:
-			f.write(self.signature)
+			f.write(signature)
 			f.write(new_hook)
 		f.close()
 		os.chmod(str(hook), 0755)
