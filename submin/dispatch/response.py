@@ -20,7 +20,9 @@ class Redirect(Response):
 		self.status_code = 302
 		if not '://' in url:
 			schema = 'https://' if request.https else 'http://'
-			url = urlparse.urljoin(schema + request.http_host, url)
+			# to prevent accidental double slashes to be interpreted as netloc,
+			# we strip all leading slashes from the url
+			url = urlparse.urljoin(schema + request.http_host, url.lstrip('/'))
 		self.headers.update({'Location': url})
 
 class HTTP404(Response):
