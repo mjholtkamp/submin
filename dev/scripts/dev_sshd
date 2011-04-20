@@ -1,0 +1,66 @@
+#!/bin/bash
+
+# This script assumes submin2-admin is present in $PATH
+if [ $# -lt 1 ]; then
+	echo "Usage: $0 <submin env>" >&2
+	exit 1
+fi
+
+# if this script isn't run from the project root, the conf-dir will not be set
+# correctly
+if [ ! -d "dev" ]; then
+	echo "Please run this script from the project root"
+	exit 1
+fi
+
+SUBMIN_ENV=$1
+
+devdir=$PWD/dev
+PORT=2233
+CONF_DIR=$devdir/conf
+AUTH_KEYFILE=$SUBMIN_ENV/auth/authorized_keys
+
+if [ ${AUTH_KEYFILE:0:1} != "/" ]; then
+	AUTH_KEYFILE=$PWD/$AUTH_KEYFILE
+fi
+
+cat $CONF_DIR/sshd_config.tpl \
+	| perl -pe "s{CONF_DIR}{$CONF_DIR}" \
+	| perl -pe "s{PORT}{$PORT}" \
+	| perl -pe "s{AUTH_KEYFILE}{$AUTH_KEYFILE}" \
+	> $CONF_DIR/sshd_config
+
+if [ ! -e $CONF_DIR/ssh_host_dsa_key ]; then
+	ssh-keygen -t dsa -f $CONF_DIR/ssh_host_dsa_key
+fi
+
+
+echo Setting git options in submin environment $SUBMIN_ENV
+submin2-admin $SUBMIN_ENV config set git_user $USER
+submin2-admin $SUBMIN_ENV config set git_ssh_host localhost
+submin2-admin $SUBMIN_ENV config set git_ssh_host_internal localhost
+submin2-admin $SUBMIN_ENV config set git_ssh_port $PORT
+submin2-admin $SUBMIN_ENV config set git_dev_authorized_keysfile $AUTH_KEYFILE
+old_env_path=`submin2-admin $SUBMIN_ENV config get env_path | awk '{print $2}'`
+s2a_path=$(dirname $(which submin2-admin))
+echo $old_env_path | grep -q $s2a_path: >/dev/null 2>&1
+if [ $? != 0 ]; then
+	submin2-admin $SUBMIN_ENV config set env_path $s2a_path:$old_env_path
+fi
+
+vcs_plugins=`submin2-admin $SUBMIN_ENV config get vcs_plugins | awk '{print $2}'`
+echo $vcs_plugins
+echo $vcs_plugins | grep git > /dev/null 2>&1
+if [ $? != 0 ]; then
+	submin2-admin $SUBMIN_ENV config set vcs_plugins $vcs_plugins,git
+fi
+
+if [ ! -e $SUBMIN_ENV/conf/id_dsa ]; then
+	echo Creating ssh-key $SUBMIN_ENV/conf/id_dsa
+	ssh-keygen -t dsa -f $SUBMIN_ENV/conf/id_dsa -N ""
+	# XXX chown?
+fi
+
+SSH_ORIGINAL_COMMAND=update-auth submin2-admin $SUBMIN_ENV git admin
+
+/usr/sbin/sshd -h $CONF_DIR/ssh_host_dsa_key -De -f $CONF_DIR/sshd_config;
