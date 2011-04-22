@@ -11,7 +11,7 @@ class SessionDestroyedError(Exception):
 	pass
 
 
-class PickleDict:
+class PickleDict(object):
 	"""Dictionary which stores a dictionary in a file using the cPickle
 	library
 
@@ -19,38 +19,25 @@ class PickleDict:
 	setting a value (using pickledictobject['foo'] = 'bar')
 	"""
 
-	def __init__(self, filename, autosave=True):
-		try:
-			filehandle = open(filename, 'r')
-			self.dict = cPickle.load(filehandle)
-			filehandle.close()
-		except:
-			self.dict = {}
-
+	def __init__(self, autosave=True):
 		self.autosave = autosave
-		self.filename = filename
-		self.lock = thread.allocate_lock()
-	
+		self.dict = {} # default
+		self.load()
+
 	def save(self):
-		try:
-			self.lock.acquire()
-			filehandle = open(self.filename, 'w')
-			cPickle.dump(self.dict, filehandle)
-			filehandle.close()
-		finally:
-			self.lock.release()
-	
+		raise NotImplementedError
+
 	def __contains__(self, key):
 		return key in self.dict
 
 	def __getitem__(self, key):
 		return self.dict[key]
-	
+
 	def __setitem__(self, key, value):
 		self.dict[key] = value
 		if self.autosave:
 			self.save()
-	
+
 	def __delitem__(self, key):
 		del self.dict[key]
 		if self.autosave:
@@ -62,8 +49,58 @@ class PickleDict:
 	def _destroy(self):
 		os.path.unlink(self.filename)
 
+class FilePickleDict(PickleDict):
+	def __init__(self, filename, autosave=True):
+		self.filename = filename
+		self.lock = thread.allocate_lock()
+		super(FilePickleDict, self).__init__(autosave)
 
-class Session(PickleDict):
+	def load(self):
+		try:
+			filehandle = open(self.filename, 'r')
+			self.dict = cPickle.load(filehandle)
+			filehandle.close()
+		except:
+			pass
+
+	def save(self):
+		try:
+			self.lock.acquire()
+			filehandle = open(self.filename, 'w')
+			cPickle.dump(self.dict, filehandle)
+			filehandle.close()
+		finally:
+			self.lock.release()
+
+class DBPickleDict(PickleDict):
+	def __init__(self, key, autosave=True):
+		self.key = key
+		super(DBPickleDict, self).__init__(autosave)
+
+	def load(self):
+		from submin.models import sessions
+		from submin.models.exceptions import UnknownKeyError
+		try:
+			val = sessions.value(self.key)
+			self.dict = cPickle.loads(str(val))
+		except UnknownKeyError:
+			pass
+
+	def save(self):
+		from submin.models import sessions
+		val = cPickle.dumps(self.dict)
+		sessions.set_value(self.key, val)
+
+
+SESS_CLASS = DBPickleDict
+SESS_INIT_ARG = "_getid"
+from submin.models.storage import database_isuptodate
+if not database_isuptodate():
+	SESS_CLASS = FilePickleDict
+	SESS_INIT_ARG = "_getfilename"
+
+
+class Session(SESS_CLASS):
 	def __init__(self, request, autoupdatecookie=True, autosave=True):
 		self.request = request
 		self.sessionid = self.request.getCookie('SubminSessionID', \
@@ -72,44 +109,48 @@ class Session(PickleDict):
 			self.updateCookie()
 
 		self.__destroyed = False
-		PickleDict.__init__(self, self.__getfilename(), autosave)
+		init_arg = getattr(self, SESS_INIT_ARG)
+		super(Session, self).__init__(init_arg(), autosave)
 
-	def __getfilename(self):
+	def _getfilename(self):
 		if self.destroyed():
 			raise SessionDestroyedError
 		suffix = md5(str(options.url_path('base_url_submin'))).hexdigest()
 		return '/tmp/sm-sess%s-%s' % (self.sessionid, suffix)
 
+	def _getid(self):
+		return self.sessionid
+
 	def __setitem__(self, *args):
 		if self.destroyed():
 			raise SessionDestroyedError
-		return PickleDict.__setitem__(self, *args)
+		return super(Session, self).__setitem__(*args)
 
 	def __delitem__(self, *args):
 		if self.destroyed():
 			raise SessionDestroyedError
-		return PickleDict.__delitem__(self, *args)
-	
+		return super(Session, self).__delitem__(*args)
+
 	def __contains__(self, *args):
 		if self.destroyed():
 			raise SessionDestroyedError
-		return PickleDict.__contains__(self, *args)
+		return super(Session, self).__contains__(*args)
 
 	def __getitem__(self, *args):
 		if self.destroyed():
 			raise SessionDestroyedError
-		return PickleDict.__getitem__(self, *args)
-	
+		return super(Session, self).__getitem__(*args)
+
 	def get(self, *args, **kwargs):
 		if self.destroyed():
 			raise SessionDestroyedError
-		return PickleDict.get(self, *args, **kwargs)
+		return super(Session, self).get(*args, **kwargs)
 
 	def destroy(self):
 		self.__destroyed = True
 		self.request.setCookie('SubminSessionID', 'xx',
 				expires=time.asctime())
-	
+
 	def destroyed(self):
 		return self.__destroyed or self.sessionid == 'xx'
 
@@ -126,7 +167,7 @@ class Session(PickleDict):
 
 		self.request.setCookie('SubminSessionID', self.sessionid, \
 			str(base_url))
-	
+
 	def generateSessionID(self):
 		"""Really an MD5-sum of the current time and a salt"""
 		from submin.models import options

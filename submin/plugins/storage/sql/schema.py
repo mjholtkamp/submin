@@ -5,6 +5,12 @@ schema are first in the list. The first entry in this list is always the
 current schema version.
 """
 sql_scripts = [
+	(7, """CREATE TABLE sessions
+	(
+		key   text not null primary key not null unique,
+		value text not null -- pickled dictionary
+	);
+	"""),
 	(6, """UPDATE options SET key='git_ssh_host_internal'
 		          WHERE key='git_ssh_host';"""),
 	(5, """UPDATE options SET key='git_ssh_port' WHERE key='ssh_port';
