@@ -5,17 +5,25 @@ from submin.path.path import Path
 from submin.models import storage
 
 import code
-import readline
+_has_readline = True
+try:
+	import readline
+except ImportError:
+	_has_readline = False
 import atexit
 import os
 
 class HistoryConsole(code.InteractiveConsole):
+    global _has_readline
     def __init__(self, locals=None, filename="<console>",
                  histfile=os.path.expanduser("~/.submin2-admin-history")):
         code.InteractiveConsole.__init__(self, locals, filename)
         self.init_history(histfile)
 
     def init_history(self, histfile):
+        if not _has_readline:
+            return
+
         readline.parse_and_bind("tab: complete")
         if hasattr(readline, "read_history_file"):
             try:
@@ -25,6 +33,9 @@ class HistoryConsole(code.InteractiveConsole):
             atexit.register(self.save_history, histfile)
 
     def save_history(self, histfile):
+        if not _has_readline:
+            return
+
         readline.write_history_file(histfile)
 
 class SubminAdmin:
