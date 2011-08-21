@@ -1,3 +1,14 @@
+submin (2.0.1-1) testing; urgency=low
+
+  * Save session information in the database. Fixes #193
+  * Prevent accidental double slash to be interpreted as netloc (fixes #256)
+  * Implement absolute URI redirection (fixes #256)
+  * Add URL sanitizing (fixes #255)
+  * Used the wrong encoded variable, fixed (fixes #248)
+  * Added www for FreeBSD (closes #235)
+
+ -- Michiel Holtkamp <michiel@supermind.nl>  Sun, 21 Aug 2011 19:42:14 +0200
+
 submin (2.0-1) testing; urgency=low
 
   * Preparation for version 2.0
