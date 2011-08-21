@@ -1,3 +1,9 @@
+submin (2.0.2-1) testing; urgency=low
+
+  * made readline support optional (refs #265)
+
+ -- Michiel Holtkamp <michiel@kuroi.elfstone.nl>  Mon, 22 Aug 2011 00:36:46 +0200
+
 submin (2.0.1-1) testing; urgency=low
 
   * Save session information in the database. Fixes #193
