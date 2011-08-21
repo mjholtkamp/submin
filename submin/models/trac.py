@@ -33,10 +33,7 @@ def createTracEnv(repository, adminUser):
 	projectname = repository
 	svnbasedir = options.env_path('svn_dir')
 	svndir = svnbasedir + repository
-	try:
-		path = options.value('path')
-	except UnknownKeyError:
-		path = "/bin:/usr/bin:/usr/local/bin:/opt/local/bin"
+	path = options.value('env_path', "/bin:/usr/bin:/usr/local/bin:/opt/local/bin")
 
 	cmd =  "PATH='%s' trac-admin '%s' initenv '%s' 'sqlite:db/trac.db' 'svn' '%s'" % \
 		(path, tracenv, projectname, svndir)

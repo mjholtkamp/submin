@@ -45,7 +45,8 @@ def _repositoriesOnDisk():
 def add(name):
 	reposdir = options.env_path('svn_dir')
 	newrepos = reposdir + name
-	cmd = 'svnadmin create "%s"' % str(newrepos)
+	path = options.value('env_path', "/bin:/usr/bin:/usr/local/bin:/opt/local/bin")
+	cmd = "PATH='%s' svnadmin create '%s'" % (path, str(newrepos))
 	(exitstatus, outtext) = commands.getstatusoutput(cmd)
 	if exitstatus != 0:
 		raise PermissionError("External command 'svnadmin' failed: %s" % outtext)
