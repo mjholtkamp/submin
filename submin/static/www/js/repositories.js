@@ -18,7 +18,6 @@ window.onload = function() {
 			reloadPermissions(this);
 		};
 
-		repostree_expandCB(repository_tree.trigger);
 		initPermissionsEditor('/');
 	}
 }
