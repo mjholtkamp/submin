@@ -111,6 +111,8 @@ class Repository(object):
 					enable_trac = True
 
 		self.repository.enableTracEmails(enable_trac)
+		trigger_hook('repository-notifications-update', 
+				repositoryname=self.name, vcs_type=self.vcs_type)
 
 	def commitEmailsEnabled(self):
 		return self.repository.commitEmailsEnabled()

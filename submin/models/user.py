@@ -163,6 +163,7 @@ class User(object):
 			allowed = True
 
 		storage.set_notification(self._id, repository, allowed, enabled)
+		trigger_hook('user-notifications-update', username=self._name)
 
 	def notifications(self):
 		"""Returns a dict of dicts, in the following layout:
