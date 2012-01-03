@@ -75,7 +75,10 @@ def export_notifications(**args):
 			elif len(paths) > 0:
 				for_paths = "(" + "|".join(paths) + ")"
 
-			g = {"for_repos": repos, "repos_path": repos_path, "email": u.email,
+			# Only match complete path, not partial paths (ticket #257)
+			repos_path_re = '^' + repos_path + '$'
+
+			g = {"repos_name": repos, "for_repos": repos_path_re, "email": u.email,
 				"for_paths": for_paths, "username": u.name}
 			groups.append(g)
 
