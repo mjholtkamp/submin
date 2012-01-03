@@ -9,10 +9,6 @@ window.onload = function() {
 
 	sidebar.onmousedown = function() { return false; }
 	sidebar.onselectstart = function() { return false; } // ie
-
-	sidebar_reload("users");
-	sidebar_reload("groups");
-	sidebar_reload("repositories");
 }
 
 var sidebar_img_add_user = new Image();
