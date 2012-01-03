@@ -1,8 +1,18 @@
+submin (2.0.3-1) testing; urgency=low
+
+  * Fixed #270 (mailer.py.conf is not updated when notifications change)
+  * Fixed #259 (Sort repository list on absolute values)
+  * Fixed #269/#258 (svn: MERGE request failed/200 OK)
+  * Fixed #257 (Svn commit email script matches repositories incorrectly)
+  * Removed unnecessary calls (perfomance increase)
+
+ -- Michiel Holtkamp <michiel@supermind.nl>  Tue, 03 Jan 2012 20:21:36 +0100
+
 submin (2.0.2-1) testing; urgency=low
 
   * made readline support optional (refs #265)
 
- -- Michiel Holtkamp <michiel@kuroi.elfstone.nl>  Mon, 22 Aug 2011 00:36:46 +0200
+ -- Michiel Holtkamp <michiel@supermind.nl>  Mon, 22 Aug 2011 00:36:46 +0200
 
 submin (2.0.1-1) testing; urgency=low
 
