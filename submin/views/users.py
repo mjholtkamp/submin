@@ -257,18 +257,8 @@ class Users(View):
 			return XMLStatusResponse('listNotifications', False, "You do not have permission to "
 					"view this user.")
 
-		# rebuild notifications into a list so we can sort it
-		notifications = []
-		for (name, d) in u.notifications().iteritems():
-			# add a 'name' key, leave the 'allowed' and 'enabled' keys
-			d['name'] = name
-			notifications.append(d)
-
-		# sort on name
-		notifications.sort(cmp=lambda x,y: cmp(x['name'], y['name']))
-
 		return XMLTemplateResponse("ajax/usernotifications.xml",
-				{"notifications": notifications, "username": u.name,
+				{"notifications": u.notifications(), "username": u.name,
 				"session_user": session_user})
 
 	def listSSHKeys(self, req, u):

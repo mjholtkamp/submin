@@ -187,6 +187,8 @@ function reloadNotificationsCB(response) {
 	LogResponse(response);
 	
 	var notifications = list.xml.getElementsByTagName("notification");
+	notifications = Array.prototype.splice.call(notifications, 0);
+	notifications.sort(xmlSortByName);
 	var n = [];
 	for (var i = 0; i < notifications.length; ++i) {
 		name = notifications[i].getAttribute('name');

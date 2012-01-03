@@ -14,3 +14,8 @@ function humanCmp(a, b) {
 	}
 	return 0;
 }
+
+function xmlSortByName(a, b) {
+	return humanCmp(a.getAttribute("name"), b.getAttribute("name"));
+}
+
