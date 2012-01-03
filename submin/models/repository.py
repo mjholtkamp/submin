@@ -2,6 +2,7 @@ import os
 from submin import models
 from submin.models import options
 from submin.hooks.common import trigger_hook
+from submin.models.trac import Trac, UnknownTrac
 
 class DoesNotExistError(Exception):
 	pass
@@ -97,8 +98,19 @@ class Repository(object):
 	def enableCommitEmails(self, enable):
 		"""Enables sending of commit messages if *enable* is True."""
 		self.repository.enableCommitEmails(enable)
+
+		# only enable when trac env could be found, but always disable (ticket #194, #269)
+		enable_trac = False
 		if options.value('trac_enable', True):
-			self.repository.enableTracEmails(True)
+			if enable:
+				try:
+					trac = Trac(self.name)
+				except UnknownTrac:
+					pass
+				else:
+					enable_trac = True
+
+		self.repository.enableTracEmails(enable_trac)
 
 	def commitEmailsEnabled(self):
 		return self.repository.commitEmailsEnabled()
