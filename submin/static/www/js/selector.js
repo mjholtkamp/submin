@@ -49,25 +49,16 @@ Selector.prototype.reInit = function() {
 
 function permissionSort(a, b)
 {
-	if (a.type == b.type) {
-		if (a.name < b.name)
-			return -1;
-		return 1;
-	}
+	var type_diff = humanCmp(a.type, b.type)
+	if (type_diff != 0)
+		return type_diff;
 
-	if (a.type > b.type)
-		return 1;
-	return -1;
+	return humanCmp(a.name, b.name);
 }
 
 function stringSort(a, b)
 {
-	if (a == b)
-		return 0;
-
-	if (a < b)
-		return -1;
-	return 1;
+	return humanCmp(a, b);
 }
 
 Selector.prototype.init = function() {

@@ -51,6 +51,10 @@ function setupSidebarImages() {
 	}
 }
 
+function listSort(a, b) {
+	return humanCmp(a.getAttribute("name"), b.getAttribute("name"));
+}
+
 function reloadX(response, X, Xplural, Xcapital) {
 	var dest = document.getElementById(Xplural);
 	if (dest.childNodes)
@@ -60,6 +64,9 @@ function reloadX(response, X, Xplural, Xcapital) {
 	LogResponse(response);
 	var list = FindResponse(response, "list" + Xcapital);
 	var Xs = list.xml.getElementsByTagName(X);
+	// convert into array so we can sort it
+	Xs = Array.prototype.slice.call(Xs, 0);
+	Xs.sort(listSort);
 	for (var i = 0; i < Xs.length; ++i) {
 		var name = Xs[i].getAttribute("name");
 		var vcs = Xs[i].getAttribute("vcs");
