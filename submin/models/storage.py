@@ -1,6 +1,8 @@
 from submin.bootstrap import fimport, settings, SettingsException, setSettings
 from submin.models.exceptions import StorageAlreadySetup, StorageError
 
+opened_module = None
+
 def get(model):
 	"""Gets the storage-module for a certain model."""
 	try:
@@ -35,19 +37,22 @@ def database_isuptodate():
 def open(pass_settings=None):
 	"""opens the storage: either opens a database connection or does
 	other initialisation."""
+	global opened_module
 	if pass_settings:
 		setSettings(pass_settings)
 
 	try:
-		fimport("submin.plugins.storage.%s" % settings.storage,
-				"submin.plugins.storage").open(settings)
+		opened_module = fimport("submin.plugins.storage.%s" % settings.storage,
+				"submin.plugins.storage")
+		opened_module.open(settings)
 	except SettingsException, e:
 		raise StorageError(str(e))
 
 def close():
 	"""close() will close databases, if approriate."""
+	global opened_module
 	try:
-		fimport("submin.plugins.storage.%s" % settings.storage,
-				"submin.plugins.storage").close()
+		if opened_module:
+			opened_module.close()
 	except SettingsException, e:
 		raise StorageError(str(e))

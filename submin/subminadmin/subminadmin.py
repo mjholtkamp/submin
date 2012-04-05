@@ -53,7 +53,7 @@ class SubminAdmin:
 		if self.storage_opened:
 			try:
 				storage.close()
-			except storage.StorageException:
+			except storage.StorageError:
 				pass # this only happens if initenv is not called yet
 
 	def ensure_storage(self):
