@@ -68,7 +68,7 @@ PidFile CONF_DIR/sshd.pid
 #PermitTunnel no
 
 # SACL options
-SACLSupport no
+#SACLSupport no
 
 # Change to no to disable s/key passwords
 #ChallengeResponseAuthentication yes
