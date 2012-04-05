@@ -97,7 +97,8 @@ class Repositories(View):
 		if repository.vcs_type == 'git':
 			git_user = options.value("git_user")
 			git_host = options.value("git_ssh_host")
-			return  'ssh://%s@%s/%s' % (git_user, git_host, repository.name)
+			git_port = options.value("git_ssh_port")
+			return  'ssh://%s@%s:%s/%s' % (git_user, git_host, git_port, repository.name)
 
 		vcs_base_url = options.url_path('base_url_%s' % repository.vcs_type)
 		return str(vcs_base_url + repository.name)
