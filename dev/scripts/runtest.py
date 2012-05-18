@@ -40,7 +40,7 @@ else:
 	del sys.argv[idx]
 
 def main():
-	libprefix = "packages"
+	libprefix = "submin"
 	paths = libprefix
 	if len(sys.argv) > 1:
 		paths = ''
