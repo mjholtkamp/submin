@@ -171,11 +171,17 @@ recommended way is to include it in a VirtualHost.
 		else:
 			vars['setenv_pythonpath'] = ''
 
+		if vars['submin base url'] == "/":
+			# Doesn't make sense to have an Alias if the base url is "/"
+			vars['origin'] = 'Docroot "%(www dir)s"' % vars
+		else:
+			vars['origin'] = 'Alias "%(submin base url)s" "%(www dir)s"' % vars
+
 		apache_conf_cgi = '''
     <IfModule mod_cgi.c>
         # first define scriptalias, otherwise the Alias will override all
-        ScriptAlias "%(submin base url)s/submin.cgi" "%(cgi-bin dir)s/submin.cgi"
-        Alias "%(submin base url)s" "%(www dir)s"
+        ScriptAlias "%(submin base url)ssubmin.cgi" "%(cgi-bin dir)s/submin.cgi"
+        %(origin)s
         <Directory "%(cgi-bin dir)s">
             Order allow,deny
             Allow from all
@@ -299,9 +305,6 @@ recommended way is to include it in a VirtualHost.
 <IfModule mod_authn_dbd.c>
     DBDriver sqlite3
     DBDParams "%(submin env)s/conf/submin.db"
-
-    # All this is really inside the IfModule, see bottom of the config.
-
 ''' % self.init_vars
 		return conf
 
@@ -371,7 +374,7 @@ recommended way is to include it in a VirtualHost.
 
 	def urlpath(self, url):
 		"""Strip scheme and hostname from url, leaving only the path. Also
-		fix slashes (need leading, no trailing, no doubles)"""
+		fix slashes (need leading, trailing, no doubles)"""
 		# remove schema + hostname
 		url = re.sub('^[^:]*://[^/]+', '/', url)
 
@@ -382,6 +385,9 @@ recommended way is to include it in a VirtualHost.
 			url = '/' + url
 
 		url = re.sub('/+', '/', url)
+
+		if not url.endswith('/'):
+			url += '/'
 
 		return url
 
