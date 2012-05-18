@@ -372,14 +372,15 @@ recommended way is to include it in a VirtualHost.
 	def urlpath(self, url):
 		"""Strip scheme and hostname from url, leaving only the path. Also
 		fix slashes (need leading, no trailing, no doubles)"""
+		# remove schema + hostname
+		url = re.sub('^[^:]*://[^/]+', '/', url)
+
 		# strip trailing slash
 		url = url.rstrip('/')
 		# add leading slash
 		if url == "" or url[0] != '/':
 			url = '/' + url
 
-		# remove schema + hostname
-		url = re.sub('.*://[^/]+/', '/', url)
 		url = re.sub('/+', '/', url)
 
 		return url
