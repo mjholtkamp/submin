@@ -375,7 +375,7 @@ recommended way is to include it in a VirtualHost.
 		# strip trailing slash
 		url = url.rstrip('/')
 		# add leading slash
-		if url[0] != '/':
+		if url == "" or url[0] != '/':
 			url = '/' + url
 
 		# remove schema + hostname
