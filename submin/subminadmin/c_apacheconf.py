@@ -173,7 +173,7 @@ recommended way is to include it in a VirtualHost.
 
 		if vars['submin base url'] == "/":
 			# Doesn't make sense to have an Alias if the base url is "/"
-			vars['origin'] = 'Docroot "%(www dir)s"' % vars
+			vars['origin'] = 'DocumentRoot "%(www dir)s"' % vars
 		else:
 			vars['origin'] = 'Alias "%(submin base url)s" "%(www dir)s"' % vars
 
@@ -220,9 +220,9 @@ recommended way is to include it in a VirtualHost.
 		apache_conf_wsgi = '''
     <IfModule mod_wsgi.c>
         WSGIScriptAlias "%(submin base url)s" %(www dir)s/submin.wsgi
-        AliasMatch ^%(submin base url)s/css/(.*) %(www dir)s/css/$1
-        AliasMatch ^%(submin base url)s/img/(.*) %(www dir)s/img/$1
-        AliasMatch ^%(submin base url)s/js/(.*) %(www dir)s/js/$1
+        AliasMatch ^%(submin base url)scss/(.*) %(www dir)s/css/$1
+        AliasMatch ^%(submin base url)simg/(.*) %(www dir)s/img/$1
+        AliasMatch ^%(submin base url)sjs/(.*) %(www dir)s/js/$1
 
         <Location "%(submin base url)s">
             Order allow,deny
@@ -356,7 +356,7 @@ recommended way is to include it in a VirtualHost.
 
            Require valid-user
         </LocationMatch>
-        AliasMatch "%(trac base url)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs
+        AliasMatch "%(trac base url)s[^/]+/chrome/site" %(trac dir)s/$1/htdocs
         <Directory %(trac dir)s/*/htdocs>
           Order allow,deny
           Allow from all
