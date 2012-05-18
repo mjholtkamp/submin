@@ -5,9 +5,25 @@ import re
 class c_apacheconf():
 	'''Commands to change apache config
 Usage:
-	apacheconf create               - create config interactively
-	apacheconf create wsgi <output> - create wsgi config, save to <output>
-	apacheconf create cgi <output>  - create cgi config, save to <output>'''
+    apacheconf create                - create config interactively
+    apacheconf create wsgi <output>  - create wsgi config, save to <output>
+    apacheconf create cgi <output>   - create cgi config, save to <output>
+    apacheconf create all <template> - create cgi config, save to multiple files
+                                       using <template>
+
+    With the 'all' method, separate files are created and the different sections
+    (submin itself, svn, trac) are created as different files as well. This is
+    now the recommended way of creating apache configs. The template will be
+    used to create each filename. For example: '/etc/apache2/conf.d/XYZ.conf'
+    The following files will be created in '/etc/apache2/conf.d/':
+     - XYZ-webui-cgi.conf
+     - XYZ-webui-wsgi.conf
+     - XYZ-svn.conf
+     - XYZ-trac-modpython.conf
+
+    Now the files can be included in separate <VirtualHost> blocks. For each
+    component, there can be multiple options, for example there is a CGI webui
+    and a WSGI webui. Include only one of these (CGI is most common).'''
 
 	def __init__(self, sa, argv):
 		self.sa = sa
@@ -55,7 +71,7 @@ recommended way is to include it in a VirtualHost.
 				print
 			return
 
-		if len(argv) > 1 and argv[0] == 'wsgi' or argv[0] == 'cgi':
+		if len(argv) > 1 and argv[0] in ('wsgi', 'cgi', 'all'):
 			for key, value in self.defaults.iteritems():
 				self.init_vars[key] = value
 
@@ -72,13 +88,13 @@ recommended way is to include it in a VirtualHost.
 		from time import strftime
 		self.init_vars['REQ_FILENAME'] = '%{REQUEST_FILENAME}'; # hack :)
 		self.init_vars['datetime_generated'] = strftime("%Y-%m-%d %H:%M:%S")
-		contents = '''# Generated on: %(datetime_generated)s
+		header = '''# Generated on: %(datetime_generated)s
 # This config file was automatically created with submin2-admin. If you use
 # this command again, it will overwrite all changes to this file. The
 # recommanded way to regenerate this file is to change the config with
 # submin2-admin and run:
 #
-#   submin2-admin %(submin env)s apacheconf create
+#   submin2-admin %(submin env)s apacheconf create %(type)s %(output)s
 # 
 #
 # To make this config active, you have to include it in your apache
@@ -92,30 +108,61 @@ recommended way is to include it in a VirtualHost.
 #
 ''' % self.init_vars
 
+		output_type = self.init_vars['type']
 		if self.auth_type == "sql":
-			contents += self._apache_conf_auth_sql_head(self.init_vars)
+			if output_type != "all":
+				header += self._apache_conf_auth_sql_head()
+			else:
+				header_webui = header
+				header_svn = header + self._apache_conf_auth_sql_head("svn")
+				header_trac = header + self._apache_conf_auth_sql_head("trac")
 
-		if self.init_vars['type'] == 'cgi':
-			contents += self._apache_conf_cgi(self.init_vars)
-		elif self.init_vars['type'] == 'wsgi':
-			contents += self._apache_conf_wsgi(self.init_vars)
+		if output_type in ('cgi', 'all'):
+			submin_cgi = self._apache_conf_cgi(self.init_vars)
+		if output_type in ('wsgi', 'all'):
+			submin_wsgi = self._apache_conf_wsgi(self.init_vars)
 
-		contents += self._apache_conf_svn(self.init_vars)
-		contents += self._apache_conf_trac(self.init_vars)
+		submin_svn = self._apache_conf_svn(self.init_vars)
+		submin_trac = self._apache_conf_trac(self.init_vars)
 
 		if self.auth_type == "sql":
-			contents += self._apache_conf_auth_sql_foot(self.init_vars)
+			footer = self._apache_conf_auth_sql_foot(self.init_vars)
 
-		file(str(self.init_vars['output']), 'w').write(contents)
+		if output_type == 'all':
+			template = str(self.init_vars['output'])
+			if template.endswith('.conf'):
+				template = template[:-len('.conf')]
+
+			print template
+
+			fname_submin_cgi = template + '-webui-cgi.conf'
+			fname_submin_wsgi = template + '-webui-wsgi.conf'
+			fname_svn = template + '-svn.conf'
+			fname_trac = template + '-trac-modpython.conf'
+			file(fname_submin_cgi, 'w').write(header_webui + submin_cgi)
+			file(fname_submin_wsgi, 'w').write(header_webui + submin_wsgi)
+			file(fname_svn, 'w').write(header_svn + submin_svn + footer)
+			file(fname_trac, 'w').write(header_trac + submin_trac + footer)
+			print 'Apache files created: ', " ".join([fname_submin_cgi,
+				fname_submin_wsgi, fname_svn, fname_trac])
+		else:
+			submin_type = submin_cgi if output_type == 'cgi' else submin_wsgi
+			contents = header + submin_type + submin_svn + submin_trac + footer
+			try:
+				os.makedirs(os.path.dirname(self.init_vars['output']))
+			except IOError:
+				# Assume 'directory exists', else, exception will follow
+				pass
+
+			file(str(self.init_vars['output']), 'w').write(contents)
+
+			print '''Apache file created: %(output)s''' % self.init_vars
 
 		print '''
-Apache file created: %(output)s
-
    Please include this in your apache config. Also make sure that you have
    the appropriate modules installed and enabled. Depending on your choices,
-   these may include: mod_dav_svn, mod_authz_svn, mod_wsgi, mod_dbd,
-   mod_authn_dbd and mod_python
-''' % self.init_vars
+   these may include: mod_dav_svn, mod_authz_svn, mod_wsgi, mod_dbd, mod_cgi,
+   mod_authn_dbd and mod_python'''
 
 	def _apache_conf_cgi(self, vars):
 		import os
@@ -216,25 +263,38 @@ Apache file created: %(output)s
 ''' % vars
 		return apache_conf_svn
 
-	def _apache_conf_auth_sql_head(self, vars):
+	def _apache_conf_auth_sql_head(self, component="all"):
+		"""Generate SQL auth section, including a fallback in case the module
+		wasn't loaded. Only the component that is selected is created, choosing
+		from 'webui', 'svn', 'trac' and 'all'. The 'all' options creates all
+		components"""
 		conf = '''
 <IfModule !mod_authn_dbd.c>
-    # Nothing should work, so show a page describing this
+    # Nothing should work, so show a page describing this'''
+
+		if component in ("trac", "all"):
+			conf += '''
     AliasMatch "^%(trac base url)s" %(www dir)s/nomodauthndbd.html
-    AliasMatch "^%(svn base url)s" %(www dir)s/nomodauthndbd.html
-    AliasMatch "^%(submin base url)s" %(www dir)s/nomodauthndbd.html
     <Location "%(trac base url)s">
         Order allow,deny
         Allow from all
-    </Location>
+    </Location>''' % self.init_vars
+		if component in ("svn", "all"):
+			conf += '''
+    AliasMatch "^%(svn base url)s" %(www dir)s/nomodauthndbd.html
     <Location "%(svn base url)s">
         Order allow,deny
         Allow from all
-    </Location>
+    </Location>''' % self.init_vars
+		if component in ("webui", "all"):
+			conf += '''
+    AliasMatch "^%(submin base url)s" %(www dir)s/nomodauthndbd.html
     <Location "%(submin base url)s">
         Order allow,deny
         Allow from all
-    </Location>
+    </Location>''' % self.init_vars
+
+		conf += '''
 </IfModule>
 <IfModule mod_authn_dbd.c>
     DBDriver sqlite3
@@ -242,7 +302,7 @@ Apache file created: %(output)s
 
     # All this is really inside the IfModule, see bottom of the config.
 
-''' % vars
+''' % self.init_vars
 		return conf
 
 	def _apache_conf_auth_sql_foot(self, vars):

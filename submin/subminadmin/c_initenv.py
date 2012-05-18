@@ -173,11 +173,8 @@ If you use Trac, it will be accessible from <http base>/trac.
 
 		self.sa.execute(['upgrade', 'hooks', 'no-fix-unixperms'])
 		self.sa.execute(['unixperms', 'fix'])
-		confdir = self.env + 'conf'
-		cgiconf = self.env + 'conf' + 'apache.cgi.conf'
-		wsgiconf = self.env + 'conf' + 'apache.wsgi.conf'
-		self.sa.execute(['apacheconf', 'create', 'cgi', str(cgiconf)])
-		self.sa.execute(['apacheconf', 'create', 'wsgi', str(wsgiconf)])
+		conf_filename = self.env + 'conf' + 'apache.conf'
+		self.sa.execute(['apacheconf', 'create', 'all', str(conf_filename)])
 
 	def _get_url(self, key):
 		p = self.init_vars[key]
