@@ -1,6 +1,6 @@
 import os
 import sys
-import commands
+from common import executeCmd, which, CmdException
 
 ERROR_STR = "submin2-admin git %s is not supposed to be called by users."
 
@@ -12,32 +12,6 @@ class ProgramNotFoundError(Exception):
 	def __init__(self, prog, path_searched):
 		self.prog = prog
 		self.path_searched = path_searched
-
-def which(program):
-	from submin.models import options
-
-	def is_exe(fpath):
-		return os.path.exists(fpath) and os.access(fpath, os.X_OK)
-
-	env_path = options.value("env_path")
-	for path in env_path.split(os.pathsep):
-		prog_path = os.path.join(path, program)
-		if is_exe(prog_path) and os.path.isfile(prog_path):
-			return prog_path
-
-	raise ProgramNotFoundError(program, env_path)
-
-class CmdException(Exception):
-	def __init__(self, usermsg, errormsg, cmd):
-		self.usermsg = usermsg
-		self.errormsg = errormsg
-		self.cmd = cmd
-		Exception.__init__(self)
-
-def executeCmd(cmd, usermsg=""):
-	(exitstatus, outtext) = commands.getstatusoutput(cmd)
-	if exitstatus != 0:
-		raise CmdException(usermsg, outtext, cmd)
 
 class c_git:
 	"""Commands related to git-support
