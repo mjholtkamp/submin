@@ -8,7 +8,7 @@ from submin.models import user
 
 READ_CMDS = [
 		"upload-pack",
-#		"upload-archive", # Apparently git-shell does not recognize it.
+		"upload-archive",
 ]
 
 WRITE_CMDS = [
