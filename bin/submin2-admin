@@ -4,4 +4,5 @@ from submin.subminadmin import SubminAdmin
 
 sa = SubminAdmin(sys.argv)
 success = sa.run()
-sys.exit(not success)
+if not success:
+	sys.exit(1)
