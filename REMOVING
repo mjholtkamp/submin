@@ -1,0 +1,77 @@
+We are sorry that you want to remove Submin. We hope it could
+help you, and if not, please let us know why.
+
+REMOVAL INSTRUCTIONS
+====================
+
+Submin consists of several parts that all need to be removed:
+1) the executables and libraries
+2) the environment (you might want to back this up because it
+   contains the repositories and possibly bug tracking info)
+3) Apache configuration
+
+We'll start with 3 and work our way backwards, since that is
+a nicer way to clean up things.
+
+The instructions assume that you installed submin into
+/var/lib/submin (default location). If you used a different
+location, please substitute that in the instructions below.
+
+Cleaning up Apache configuration
+--------------------------------
+
+This depends on how you configured apache: there are multiple
+ways of doing it. If you used Quickstart, look for symlinks
+to /var/lib/submin/conf/apache-*.conf in /etc/apache2/conf.d
+and remove them.
+
+If you did a manual configuration you can also look for
+symlinks in /etc/apache2/conf.d or look for Includes to your
+submin environment. For example:
+
+   grep -Rn "Include.*/var/lib/submin" /etc/apache2
+
+Remove any Includes.
+
+Finally, check your configuration and restart:
+
+    apachectl configtest && apachectl restart
+
+Removing your submin environment
+--------------------------------
+
+Now we can remove the submin environment. If you do not want
+to save any repositories or bug tracking information, just
+delete everything:
+
+    rm -rf /var/lib/submin
+
+If you do want to save repositories or bug tracking information,
+first move them out of the way:
+
+    mkdir /backup
+    mv /var/lib/submin/{svn,trac} /backup
+
+If you used svn and git, use {svn,git,trac} below, or if you
+only used git, use {git}. You'll get the idea.
+
+Removing executable and libraries
+--------------------------------
+
+If you installed submin using debian packages, the only
+thing you have to do now is:
+
+    aptitude purge submin2
+
+This will remove all executables and libraries and purge
+any configuration.
+
+If you used the "python setup.py" method, you should find the files by yourself
+and delete them. They should be located in python's site-packages and some
+binaries in /usr/bin/ (look for submin*). Alternatively, you could try to
+reinstall with the --record to get a list of files to remove, as suggested in: 
+
+http://stackoverflow.com/questions/1550226/python-setup-py-uninstall
+http://askubuntu.com/questions/38692/how-does-one-remove-applications-installed-through-python-setup-py-install
+
+
