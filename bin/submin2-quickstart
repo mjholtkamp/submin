@@ -6,7 +6,7 @@
 
 INSTALL_DIR=/var/lib/submin
 
-# SETUP trap
+# Setup trap
 
 trap show_error 0
 
@@ -59,6 +59,11 @@ mkdir -p /etc/apache2/conf.d
 cd /etc/apache2/conf.d
 for conf in svn trac-modpython webui-cgi; do
 	ln -fs $INSTALL_DIR/conf/apache-${conf}.conf
+done
+echo
+echo -n "Enabling modules ... "
+for module in authn_dbd rewrite authz_svn; do
+	a2enmod $module
 done
 echo
 echo -n "Restarting apache ... "
