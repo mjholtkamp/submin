@@ -8,7 +8,7 @@ XS-Python-Version: >= 2.5
 
 Package: submin2
 Architecture: all
-Depends: python-subversion, libapache2-svn, ${python:Depends}
+Depends: python-subversion, apache2-mpm-prefork | apache2-mpm, libapache2-svn, ${python:Depends}
 Recommends: libapache2-mod-python | libapache2-mod-wsgi
 XB-Python-Version: ${python:Versions}
 Description: A web admin interface for local svn repositories
