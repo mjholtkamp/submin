@@ -59,6 +59,6 @@ setup(name='Submin',
 	data_files=[
 		("share/man/man1", ("man/submin2-admin.1",)),
 	],
-	scripts=["bin/submin2-admin"],
+	scripts=["bin/submin2-admin", "bin/submin2-quickstart"],
 )
 

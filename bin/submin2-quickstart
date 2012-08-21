@@ -1,0 +1,70 @@
+#!/bin/sh
+# Quick startup of Submin.
+# This program runs the initial steps to create a working submin environment.
+# It won't run in interactive mode, and is supposed to "just work". Most of the
+# code below is error checking and usage information.
+
+INSTALL_DIR=/var/lib/submin
+
+# SETUP trap
+
+trap show_error 0
+
+show_error() {
+	RC=$?
+	if [ "$RC" != "0" ]; then
+		echo "Quickstart failed. Please try to fix the problem and retry"
+	fi
+}
+
+# program starts here
+
+
+if [ "$(id -u)" != "0" ]; then
+	echo "Please run as root: sudo $0 $@";
+	exit 1;
+fi
+
+if [ "$#" -lt "1" ]; then
+	echo "Usage: $0 <email-address>"
+	echo "where <email-address> is the email address of the new admin user"
+	exit 2;
+fi
+
+ADMIN_EMAIL=$1
+
+if [ -e $INSTALL_DIR ]; then
+	echo "A previous installation seems to exist already in $INSTALL_DIR"
+	echo "If you want to continue, you have to move it out of the way. For example:"
+	echo
+	echo "    mv $INSTALL_DIR $INSTALL_DIR.bak"
+	echo
+	exit 3;
+fi
+
+echo -n "Creating environment ... "
+OUTPUT=$(submin2-admin $INSTALL_DIR initenv $ADMIN_EMAIL svn_dir=svn git_dir=git trac_dir=trac 2>&1)
+RC=$?
+echo
+if [ "$RC" != "0" ]; then
+	echo $OUTPUT
+	exit 1
+fi
+
+# From now on, every command that fails, stops the script
+set -e
+
+echo -n "Enabling submin in apache ..." 
+mkdir -p /etc/apache2/conf.d
+cd /etc/apache2/conf.d
+for conf in svn trac-modpython webui-cgi; do
+	ln -fs $INSTALL_DIR/conf/apache-${conf}.conf
+done
+echo
+echo -n "Restarting apache ... "
+apachectl configtest
+apachectl restart
+echo
+
+echo "Quickstart setup correctly! Now please check your email to login."
+echo "Email sent to: $ADMIN_EMAIL"
