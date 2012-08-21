@@ -175,7 +175,13 @@ recommended way is to include it in a VirtualHost.
 			# Doesn't make sense to have an Alias if the base url is "/"
 			vars['origin'] = 'DocumentRoot "%(www dir)s"' % vars
 		else:
-			vars['origin'] = 'Alias "%(submin base url)s" "%(www dir)s"' % vars
+			# The alias is really picky about trailing slashes. Our experience
+			# finds that no trailing slashes works best for both src and dst.
+			# This is because without a trailing slash, the following will also
+			# work as expected: http://localhost/submin
+			submin_base_url = str(vars['submin base url']).rstrip('/')
+			www_dir = str(vars['www dir']).rstrip('/')
+			vars['origin'] = 'Alias "%s" "%s"' % (submin_base_url, www_dir)
 
 		apache_conf_cgi = '''
     <IfModule mod_cgi.c>
