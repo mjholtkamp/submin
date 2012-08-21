@@ -64,7 +64,7 @@ class SubminAdmin:
 	def run(self):
 		if len(self.argv) < 2:
 			self.usage()
-			return
+			return False
 
 		self.env = self.argv[1]
 		if self.env[0] != os.path.sep:
@@ -76,10 +76,9 @@ class SubminAdmin:
 		os.environ['SUBMIN_ENV'] = self.env
 
 		if len(self.argv) < 3:
-			self.interactive()
-			return
+			return self.interactive()
 
-		self.execute(self.argv[2:])
+		return self.execute(self.argv[2:])
 
 	def interactive(self):
 		print '''Welcome to submin2-admin
