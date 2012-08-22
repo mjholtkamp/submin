@@ -5,11 +5,13 @@ import re
 class c_apacheconf():
 	'''Commands to change apache config
 Usage:
+    apacheconf create all [<template>] - create cgi config, save to multiple files
+                                         using <template>
+
+(deprecated, do not use)
     apacheconf create                  - create config interactively
     apacheconf create wsgi <output>    - create wsgi config, save to <output>
     apacheconf create cgi <output>     - create cgi config, save to <output>
-    apacheconf create all [<template>] - create cgi config, save to multiple files
-                                         using <template>
 
     With the 'all' method, separate files are created and the different sections
     (submin itself, svn, trac) are created as different files as well. This is
@@ -26,7 +28,8 @@ Usage:
 
     Now the files can be included in separate <VirtualHost> blocks. For each
     component, there can be multiple options, for example there is a CGI webui
-    and a WSGI webui. Include only one of these (CGI is most common).'''
+    and a WSGI webui. Include only one of these: CGI is most common, but
+    slowest. For more performance, choose WSGI if available'''
 
 	def __init__(self, sa, argv):
 		self.sa = sa
@@ -173,10 +176,13 @@ recommended way is to include it in a VirtualHost.
 			print '''Apache file created: %(output)s''' % self.init_vars
 
 		print '''
-   Please include this in your apache config. Also make sure that you have
-   the appropriate modules installed and enabled. Depending on your choices,
-   these may include: mod_dav_svn, mod_authz_svn, mod_wsgi, mod_dbd, mod_cgi,
-   mod_authn_dbd and mod_python'''
+   Please include the relevent files in your apache config. If you have
+   selected to generate all files (recommended), do not include all files,
+   but only select one version (e.g. svn and webui-cgi but not webui-wsgi).
+
+   Also make sure that you have the appropriate modules installed and enabled.
+   Depending on your choices, these may include: mod_dav_svn, mod_authz_svn,
+   mod_authn_dbd, mod_dbd, mod_wsgi, mod_cgi, mod_cgid and mod_python'''
 
 	def _apache_conf_cgi(self, vars):
 		import os
@@ -197,8 +203,11 @@ recommended way is to include it in a VirtualHost.
 			www_dir = str(vars['www dir']).rstrip('/')
 			vars['origin'] = 'Alias "%s" "%s"' % (submin_base_url, www_dir)
 
-		apache_conf_cgi = '''
-    <IfModule mod_cgi.c>
+		# We are including the cgi stuff twice, once for cgi and once for cgid.
+		# if we could assume apache 2.3+, we could have used SetEnv and If and
+		# only include it once. Since we assume <2.3, we have to include it
+		# twice (or make another file and include that twice)
+		cgi_directives = '''
         # first define scriptalias, otherwise the Alias will override all
         ScriptAlias "%(submin base url)ssubmin.cgi" "%(cgi-bin dir)s/submin.cgi"
         %(origin)s
@@ -225,13 +234,31 @@ recommended way is to include it in a VirtualHost.
 
             RewriteRule ^$ submin.cgi/
         </Directory>
+ ''' % vars
+
+		vars['cgi directives'] = cgi_directives
+
+		apache_conf_cgi = '''
+    # WARNING!
+    # Please note that the following section is included twice: if you change
+    # something, do not forget to make the same change below. Or better, do
+    # not change anything, since this file is generated anyway!
+	# (it is included twice so it works with both prefork and worker/event)
+    <IfModule mod_cgi.c>
+%(cgi directives)s
     </IfModule>
+    <IfModule mod_cgid.c>
+%(cgi directives)s
+    </IfModule>
+    # only show the error page if both cgi and cgid are not loaded
     <IfModule !mod_cgi.c>
-        AliasMatch "^%(submin base url)s" %(www dir)s/nocgi.html
-        <Location "%(submin base url)s">
-            Order allow,deny
-            Allow from all
-        </Location>
+        <IfModule !mod_cgid.c>
+            AliasMatch "^%(submin base url)s" %(www dir)s/nocgi.html
+            <Location "%(submin base url)s">
+                Order allow,deny
+                Allow from all
+            </Location>
+        </IfModule>
     </IfModule>
 ''' % vars
 		return apache_conf_cgi
@@ -402,9 +429,11 @@ recommended way is to include it in a VirtualHost.
 		trac_base_url_nts = str(vars['trac base url']).rstrip('/')
 		vars['trac base url nts'] = trac_base_url_nts
 
-		apache_conf_trac = '''
-    # Only load if mod_cgi is available
-    <IfModule mod_cgi.c>
+		# We are including the cgi stuff twice, once for cgi and once for cgid.
+		# if we could assume apache 2.3+, we could have used SetEnv and If and
+		# only include it once. Since we assume <2.3, we have to include it
+		# twice (or make another file and include that twice)
+		cgi_directives = '''
         ScriptAlias %(trac base url nts)s %(cgi-bin dir)s/trac.cgi
         <Location "%(trac base url nts)s">
           SetEnv TRAC_ENV_PARENT_DIR "%(trac dir)s"
@@ -423,13 +452,30 @@ recommended way is to include it in a VirtualHost.
           Order allow,deny
           Allow from all
         </Directory>
+ ''' % vars
+		vars['cgi directives'] = cgi_directives
+
+		apache_conf_trac = '''
+    # WARNING!
+    # Please note that the following section is included twice: if you change
+    # something, do not forget to make the same change below. Or better, do
+    # not change anything, since this file is generated anyway!
+	# (it is included twice so it works with both prefork and worker/event)
+    <IfModule mod_cgi.c>
+%(cgi directives)s
     </IfModule>
+    <IfModule mod_cgid.c>
+%(cgi directives)s
+    </IfModule>
+    # only show the error page if both cgi and cgid are not loaded
     <IfModule !mod_cgi.c>
-        AliasMatch "^%(trac base url nts)s" %(www dir)s/nocgi.html
-        <Location "%(trac base url nts)s">
-            Order allow,deny
-            Allow from all
-        </Location>
+        <IfModule !mod_cgid.c>
+            AliasMatch "^%(submin base url)s" %(www dir)s/nocgi.html
+            <Location "%(submin base url)s">
+                Order allow,deny
+                Allow from all
+            </Location>
+        </IfModule>
     </IfModule>
 ''' % vars
 		return apache_conf_trac
