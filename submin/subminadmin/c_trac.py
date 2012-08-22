@@ -2,6 +2,7 @@ import os
 import commands
 import shutil
 from submin.models import options
+from submin.subminadmin import trac
 
 class c_trac():
 	'''Trac support commands
@@ -22,18 +23,17 @@ Usage:
 		tmp_trac_dir = options.env_path() + 'tmp-trac'
 		tmp_deploy_dir = tmp_trac_dir + 'deploy'
 
+		if not trac.exists():
+			print "Could not find 'trac-admin' command. If you want to use Trac, please",
+			print "install trac and run: `submin2-admin %s trac init`" % options.env_path()
+			return
+
 		# first, create a temp trac env, because 'deploy' needs a working trac
 		# env (sigh)
-		cmd = "trac-admin %s initenv dummy sqlite:db/trac.db" % (tmp_trac_dir)
-		(exitstatus, outtext) = commands.getstatusoutput(cmd)
-		if exitstatus > 0:
-			print outtext
+		trac.initenv(str(tmp_trac_dir), 'dummy')
 
 		# then generate the scripts
-		cmd = "trac-admin %s deploy %s" % (tmp_trac_dir, tmp_deploy_dir)
-		(exitstatus, outtext) = commands.getstatusoutput(cmd)
-		if exitstatus > 0:
-			print outtext
+		trac.deploy(str(tmp_trac_dir), str(tmp_deploy_dir))
 
 		# copy them to our cgi-bin
 		cgi_bin_dir = options.env_path() + 'cgi-bin'
@@ -42,10 +42,12 @@ Usage:
 				src = os.path.join(root, filename)
 				dst = os.path.join(str(cgi_bin_dir), filename)
 				os.rename(src, dst)
-				os.chmod(dst, 0750)
 			
 		# ... and remove the temporary trac env
 		shutil.rmtree(str(tmp_trac_dir))
+
+		# finally set all permissions and ownerships
+		self.sa.execute(['unixperms', 'fix'])
 		return
 
 	def run(self):

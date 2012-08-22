@@ -64,7 +64,7 @@ This should also remove possible following warnings.
 				if os.path.isdir(item):
 					permission = 0750
 				(root, ext) = os.path.splitext(item)
-				if ext == '.cgi' or ext == '.wsgi':
+				if ext in ('.cgi', '.wsgi', '.fcgi'):
 					permission = 0750
 
 				os.chmod(item, permission)
