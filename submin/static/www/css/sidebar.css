@@ -7,9 +7,13 @@ body {
 	margin: 0px;
 	float: left;
 	color: #000;
-	padding-bottom: 45px;
-	overflow: hidden;
+	overflow: auto;
 	white-space: nowrap;
+	position: fixed;
+	left: 0px;
+	top: 0px; /* from the top to the icons below */
+	bottom: 31px; /* height of the icons */
+	padding-bottom: 10px;
 }
 #sidebar h2 {
 	text-transform: uppercase;

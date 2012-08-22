@@ -9,9 +9,10 @@ body {
 #content {
 	float: left;
 	position: absolute;
-	left: 0px;
+	left: 162px;
 	top: 0px;
-	margin-left: 180px;
+	margin-left: 1em;
+	overflow: auto;
 }
 
 ul { 
