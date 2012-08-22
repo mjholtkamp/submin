@@ -5,11 +5,11 @@ import re
 class c_apacheconf():
 	'''Commands to change apache config
 Usage:
-    apacheconf create                - create config interactively
-    apacheconf create wsgi <output>  - create wsgi config, save to <output>
-    apacheconf create cgi <output>   - create cgi config, save to <output>
-    apacheconf create all <template> - create cgi config, save to multiple files
-                                       using <template>
+    apacheconf create                  - create config interactively
+    apacheconf create wsgi <output>    - create wsgi config, save to <output>
+    apacheconf create cgi <output>     - create cgi config, save to <output>
+    apacheconf create all [<template>] - create cgi config, save to multiple files
+                                         using <template>
 
     With the 'all' method, separate files are created and the different sections
     (submin itself, svn, trac) are created as different files as well. This is
@@ -19,7 +19,10 @@ Usage:
      - XYZ-webui-cgi.conf
      - XYZ-webui-wsgi.conf
      - XYZ-svn.conf
+     - XYZ-trac-cgi.conf
      - XYZ-trac-modpython.conf
+
+    By default <template> is '<submin env>/conf/apache.conf'.
 
     Now the files can be included in separate <VirtualHost> blocks. For each
     component, there can be multiple options, for example there is a CGI webui
@@ -64,6 +67,7 @@ recommended way is to include it in a VirtualHost.
 		self._apache_conf_create()
 
 	def subcmd_create(self, argv):
+		from submin.models import options
 		if len(argv) == 0:
 			try:
 				self.interactive()
@@ -71,12 +75,21 @@ recommended way is to include it in a VirtualHost.
 				print
 			return
 
-		if len(argv) > 1 and argv[0] in ('wsgi', 'cgi', 'all'):
+		minargs = -1 # invalid command
+		if argv[0] in ('wsgi', 'cgi'):
+			minargs = 2
+		if argv[0] in ('all'):
+			minargs = 1
+
+		if minargs > -1 and len(argv) >= minargs:
 			for key, value in self.defaults.iteritems():
 				self.init_vars[key] = value
 
 			self.init_vars['type'] = argv[0]
-			self.init_vars['output'] = argv[1]
+			if len(argv) > 1: # not always true with 'all'
+				self.init_vars['output'] = argv[1]
+			else: #  argv[0] must be 'all'
+				self.init_vars['output'] = options.env_path() + 'conf' + 'apache.conf'
 
 			self._apache_conf_create()
 			return
@@ -123,7 +136,8 @@ recommended way is to include it in a VirtualHost.
 			submin_wsgi = self._apache_conf_wsgi(self.init_vars)
 
 		submin_svn = self._apache_conf_svn(self.init_vars)
-		submin_trac = self._apache_conf_trac(self.init_vars)
+		submin_trac_modpy = self._apache_conf_trac_modpy(self.init_vars)
+		submin_trac_cgi = self._apache_conf_trac_cgi(self.init_vars)
 
 		if self.auth_type == "sql":
 			footer = self._apache_conf_auth_sql_foot(self.init_vars)
@@ -133,18 +147,18 @@ recommended way is to include it in a VirtualHost.
 			if template.endswith('.conf'):
 				template = template[:-len('.conf')]
 
-			print template
-
 			fname_submin_cgi = template + '-webui-cgi.conf'
 			fname_submin_wsgi = template + '-webui-wsgi.conf'
 			fname_svn = template + '-svn.conf'
-			fname_trac = template + '-trac-modpython.conf'
+			fname_trac_modpy = template + '-trac-modpython.conf'
+			fname_trac_cgi = template + '-trac-cgi.conf'
 			file(fname_submin_cgi, 'w').write(header_webui + submin_cgi)
 			file(fname_submin_wsgi, 'w').write(header_webui + submin_wsgi)
 			file(fname_svn, 'w').write(header_svn + submin_svn + footer)
-			file(fname_trac, 'w').write(header_trac + submin_trac + footer)
-			print 'Apache files created: ', " ".join([fname_submin_cgi,
-				fname_submin_wsgi, fname_svn, fname_trac])
+			file(fname_trac_modpy, 'w').write(header_trac + submin_trac_modpy + footer)
+			file(fname_trac_cgi, 'w').write(header_trac + submin_trac_cgi + footer)
+			print 'Apache files created:\n', "\n".join([fname_submin_cgi,
+				fname_submin_wsgi, fname_svn, fname_trac_modpy, fname_trac_cgi])
 		else:
 			submin_type = submin_cgi if output_type == 'cgi' else submin_wsgi
 			contents = header + submin_type + submin_svn + submin_trac + footer
@@ -335,7 +349,7 @@ recommended way is to include it in a VirtualHost.
 ''' % vars
 		return conf
 
-	def _apache_conf_trac(self, vars):
+	def _apache_conf_trac_modpy(self, vars):
 		if self.auth_type == "sql":
 			auth_conf = self._apache_conf_auth_sql(vars)
 		elif self.auth_type == "htaccess":
@@ -371,6 +385,48 @@ recommended way is to include it in a VirtualHost.
     <IfModule !mod_python.c>
         AliasMatch "^%(trac base url)s" %(www dir)s/nomodpython.html
         <Location "%(trac base url)s">
+            Order allow,deny
+            Allow from all
+        </Location>
+    </IfModule>
+''' % vars
+		return apache_conf_trac
+
+	def _apache_conf_trac_cgi(self, vars):
+		if self.auth_type == "sql":
+			auth_conf = self._apache_conf_auth_sql(vars)
+		elif self.auth_type == "htaccess":
+			auth_conf = self._apache_conf_auth_sql(vars)
+
+		# nts = No Trailing Slash
+		trac_base_url_nts = str(vars['trac base url']).rstrip('/')
+		vars['trac base url nts'] = trac_base_url_nts
+
+		apache_conf_trac = '''
+    # Only load if mod_cgi is available
+    <IfModule mod_cgi.c>
+        ScriptAlias %(trac base url nts)s %(cgi-bin dir)s/trac.cgi
+        <Location "%(trac base url nts)s">
+          SetEnv TRAC_ENV_PARENT_DIR "%(trac dir)s"
+        </Location>
+
+        <LocationMatch "%(trac base url nts)s/[^/]+/login">
+           AuthType Basic
+           AuthName "Trac"
+
+%(apache_conf_auth)s
+
+           Require valid-user
+        </LocationMatch>
+        AliasMatch "%(trac base url nts)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs
+        <Directory %(trac dir)s/*/htdocs>
+          Order allow,deny
+          Allow from all
+        </Directory>
+    </IfModule>
+    <IfModule !mod_cgi.c>
+        AliasMatch "^%(trac base url nts)s" %(www dir)s/nocgi.html
+        <Location "%(trac base url nts)s">
             Order allow,deny
             Allow from all
         </Location>

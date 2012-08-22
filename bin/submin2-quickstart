@@ -57,13 +57,13 @@ set -e
 echo -n "Enabling submin in apache ..." 
 mkdir -p /etc/apache2/conf.d
 cd /etc/apache2/conf.d
-for conf in svn trac-modpython webui-cgi; do
+for conf in svn trac-cgi webui-cgi; do
 	ln -fs $INSTALL_DIR/conf/apache-${conf}.conf
 done
 echo
-echo -n "Enabling modules ... "
-for module in authn_dbd rewrite authz_svn; do
-	a2enmod $module
+echo -n "Enabling minimal set of modules ... "
+for module in authn_dbd rewrite authz_svn cgi; do
+	a2enmod $module > /dev/null
 done
 echo
 echo -n "Restarting apache ... "
