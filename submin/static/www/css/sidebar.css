@@ -108,15 +108,29 @@ ul#addicons li:hover {
 	background: transparent;
 }
 ul#addicons li {
-	width: 40.25px;
 	padding: 0;
 	margin: 0;
 	float: left;
 }
 ul#addicons li a {
 	margin: 0;
+	float: left;
 	overflow: visible;
 }
+ul#addicons li a div {
+	background: url('../img/addicons.png') no-repeat;
+	width: 40px;
+	height: 30px;
+	float: left;
+	cursor: pointer;
+}
+ul#addicons li a div.sb_user { background-position: 0px 0px; }
+ul#addicons li a div.sb_user.pressed { background-position: 0px -30px; }
+ul#addicons li a div.sb_group { background-position: -40px 0px; }
+ul#addicons li a div.sb_group.pressed { background-position: -40px -30px; }
+ul#addicons li a div.sb_repos  { background-position: -80px 0px; }
+ul#addicons li a div.sb_repos.pressed { background-position: -80px -30px; }
+
 .dotdotdot {
 	color: #999;
 	float: left;

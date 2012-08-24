@@ -11,39 +11,26 @@ window.onload = function() {
 	sidebar.onselectstart = function() { return false; } // ie
 }
 
-var sidebar_img_add_user = new Image();
-var sidebar_img_add_group = new Image();
-var sidebar_img_add_repository = new Image();
-var sidebar_img_add_user_pressed = new Image();
-var sidebar_img_add_group_pressed = new Image();
-var sidebar_img_add_repository_pressed = new Image();
-
 function setupSidebarImages() {
-	var img_user = document.getElementById('sidebar_add_user_img');
-	var img_group = document.getElementById('sidebar_add_group_img');
-	var img_repository = document.getElementById('sidebar_add_repository_img');
+	var div_user = document.getElementById('sidebar_add_user');
+	var div_group = document.getElementById('sidebar_add_group');
+	var div_repository = document.getElementById('sidebar_add_repository');
 
-	// if image is not found (for example if not an admin), don't do anything
-	if (img_user) {
-		sidebar_img_add_user.src = base_url + 'img/add-user.png';
-		sidebar_img_add_user_pressed.src = base_url + 'img/add-user-pressed.png';
-		img_user.onmousedown = function() { this.src = sidebar_img_add_user_pressed.src; return false; };
-		img_user.onmouseup = function() { this.src = sidebar_img_add_user.src; };
-		img_user.onmouseout = function() { this.src = sidebar_img_add_user.src; };
+	// if div is not found (for example if not an admin), don't do anything
+	if (div_user) {
+		div_user.onmousedown = function() { addClassName(this, "pressed"); return false; };
+		div_user.onmouseup = function() { removeClassName(this, "pressed"); };
+		div_user.onmouseout = function() { removeClassName(this, "pressed"); };
 	}
-	if (img_group) {
-		sidebar_img_add_group.src = base_url + 'img/add-group.png';
-		sidebar_img_add_group_pressed.src = base_url + 'img/add-group-pressed.png';
-		img_group.onmousedown = function() { this.src = sidebar_img_add_group_pressed.src; return false; };
-		img_group.onmouseup = function() { this.src = sidebar_img_add_group.src; };
-		img_group.onmouseout = function() { this.src = sidebar_img_add_group.src; };
+	if (div_group) {
+		div_group.onmousedown = function() { addClassName(this, "pressed"); return false; };
+		div_group.onmouseup = function() { removeClassName(this, "pressed"); };
+		div_group.onmouseout = function() { removeClassName(this, "pressed"); };
 	}
-	if (img_repository) {
-		sidebar_img_add_repository.src = base_url + 'img/add-repository.png';
-		sidebar_img_add_repository_pressed.src = base_url + 'img/add-repository-pressed.png';
-		img_repository.onmousedown = function() { this.src = sidebar_img_add_repository_pressed.src; return false; };
-		img_repository.onmouseup = function() { this.src = sidebar_img_add_repository.src; };
-		img_repository.onmouseout = function() { this.src = sidebar_img_add_repository.src; };
+	if (div_repository) {
+		div_repository.onmousedown = function() { addClassName(this, "pressed"); return false; };
+		div_repository.onmouseup = function() { removeClassName(this, "pressed"); };
+		div_repository.onmouseout = function() { removeClassName(this, "pressed"); };
 	}
 }
 
