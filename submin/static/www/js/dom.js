@@ -68,6 +68,21 @@ function removeClassName(element, oClassName) {
 	element.className = classnames.join(' ');
 }
 
+function hasClassName(element, oClassName) {
+	if (!element.className)
+		return false;
+
+	if (element.className == oClassName)
+		return true;
+
+	if (element.className.indexOf(' ') < 0)
+		return false;
+
+	var classnames = element.className.split(/\s+/);
+	return -1 != classnames.indexOf(oClassName);
+}
+
+
 // $c takes the name of the element and a list of properties.
 // if a property is an object itself it should add all the members of that 
 // object to the property (i.e. style.display)
