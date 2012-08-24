@@ -130,8 +130,3 @@ ul#addicons li a div.sb_group { background-position: -40px 0px; }
 ul#addicons li a div.sb_group.pressed { background-position: -40px -30px; }
 ul#addicons li a div.sb_repos  { background-position: -80px 0px; }
 ul#addicons li a div.sb_repos.pressed { background-position: -80px -30px; }
-
-.dotdotdot {
-	color: #999;
-	float: left;
-}
