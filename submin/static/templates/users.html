@@ -8,7 +8,7 @@
 			<li><label for="is_admin">Administrator</label><input [test:session_user.is_admin ][else disabled] [test:user.is_admin checked] type="checkbox" id="is_admin" /></li>
 		</ul>
 		<div class="usershowhide">
-			<h3 class="usershowhide-trigger"><img class="usershowhide-icon" src="[val main_base_url]img/arrow-expanded.png" />Member of</h3>
+			<h3 class="usershowhide-trigger"><div class="usershowhide-icon expanded"></div>Member of</h3>
 			<div class="usershowhide-object">
 				<ul id="memberof" class="selector">
 				</ul>
@@ -17,7 +17,7 @@
 
 		<div class="usershowhide">
 			<h3 class="usershowhide-trigger">
-				<img class="usershowhide-icon" src="[val main_base_url]img/arrow-expanded.png" />SSH Keys
+				<div class="usershowhide-icon expanded"></div>SSH Keys
 			</h3>
 			<div class="usershowhide-object">
 				<ul id="ssh_keys">
@@ -44,7 +44,7 @@
 
 		<div class="usershowhide">
 			<h3 class="usershowhide-trigger">
-				<img class="usershowhide-icon" src="[val main_base_url]img/arrow-expanded.png" />Notices from repositories
+				<div class="usershowhide-icon expanded"></div>Notices from repositories
 			</h3>
 			<div class="usershowhide-object">
 				<table id="notifications">
@@ -63,15 +63,5 @@
 				</form>
 				</div>
 		</div>
-<!--
-		<div class="usershowhide">
-			<h3 class="usershowhide-trigger"><img class="usershowhide-icon" src="[val main_base_url]img/arrow-expanded.png" />Admin of</h3>
-			<div class="usershowhide-object">
-				<ul id="adminof" class="selector">
-					<li><span class="comment">Not implemented yet</span></li>
-				</ul>
-			</div>
-		</div>
-//-->
 	</div>
 </div>

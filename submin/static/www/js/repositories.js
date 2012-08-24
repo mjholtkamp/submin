@@ -375,13 +375,13 @@ ReposNode.prototype.createChild = function(dir, has_subdirs)
 	li.className = this.prefix;
 
 	if (newnode.has_subdirs) {
-		var img = document.createElement('img');
-		img.className = prefix + '-icon';
-		img.src = base_url + 'img/arrow-collapsed.png';
+		var div = document.createElement('div');
+		addClassName(div, prefix + '-icon');
+		addClassName(div, 'collapsed');
 
 		var span = document.createElement('span');
 		span.className = prefix + '-trigger';
-		span.appendChild(img);
+		span.appendChild(div);
 
 		var ul = document.createElement('ul');
 		ul.className = prefix + '-object';

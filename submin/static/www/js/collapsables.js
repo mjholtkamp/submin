@@ -11,16 +11,9 @@
  * Callbacks are called when the trigger is triggered. There are two callbacks:
  * one for collapsing and one for expanding.
  */
-var collapsables_arrow_collapsed = new Image();
-var collapsables_arrow_halfway = new Image();
-var collapsables_arrow_expanded = new Image();
 
 function setupCollapsables(docroot, prefix, collapseFun, expandFun) {
 	var collapsables = collapsables_findClassNames(docroot, prefix + '-trigger');
-
-	collapsables_arrow_collapsed.src = base_url + 'img/arrow-collapsed.png';
-	collapsables_arrow_halfway.src = base_url + 'img/arrow-halfway.png';
-	collapsables_arrow_expanded.src = base_url + 'img/arrow-expanded.png';
 
 	var collapsables_length = collapsables.length;
 	for (var idx = 0; idx < collapsables_length; ++idx) {
@@ -28,14 +21,14 @@ function setupCollapsables(docroot, prefix, collapseFun, expandFun) {
 		var image = collapsables_getImage(prefix, collapsable);
 
 		// if no image, assume not collapsable (sometimes needed for bootstrap)
-		if (image && image.src) {
+		if (image) {
 			// Set the overflow to 'hidden', this is a workaround to make
 			// sure the elements are rerendered everytime it is hidden/shown.
 			// This is needed for example in Opera.
 			var root = collapsables_getCollapsee(prefix, image);
 			root.style.overflow = 'hidden';
 
-			if (image.src == collapsables_arrow_expanded.src) {
+			if (hasClassName(image, 'expanded')) {
 				collapsable.onclick =
 					function() { arrowCollapse(prefix, this, collapseFun, expandFun); }
 				collapsables_collapse(prefix, collapsable, false);
@@ -86,7 +79,7 @@ function collapsables_findFirstClassName(node, classname)
 	var childNodes = node.childNodes;
 	var childNodes_length = childNodes.length;
 	for (var idx = 0; idx < childNodes_length; ++idx) {
-		if (childNodes[idx].className == classname)
+		if (hasClassName(childNodes[idx], classname))
 			return childNodes[idx];
 	}
 
@@ -129,7 +122,7 @@ function collapsables_getImage(prefix, node)
 function collapsables_isCollapsed(prefix, node)
 {
 	var image = collapsables_getImage(prefix, node);
-	if (image && image.src && image.src == collapsables_arrow_collapsed.src)
+	if (image && hasClassName(image, 'collapsed'))
 		return true;
 
 	return false;
@@ -149,13 +142,18 @@ function arrowChange(prefix, triggered, collapse, collapseFun, expandFun)
 {
 	// animate image
 	var image = collapsables_getImage(prefix, triggered);
-	image.src = collapsables_arrow_halfway.src;
+	if (collapse) {
+		removeClassName(image, 'expanded');
+	} else {
+		removeClassName(image, 'collapsed');
+	}
+	addClassName(image, 'halfway');
 	if (collapse) {
 		setTimeout(
-			function() { image.src = collapsables_arrow_collapsed.src; }, 100);
+			function() { addClassName(image, 'collapsed'); removeClassName(image, 'halfway'); }, 100);
 	} else {
 		setTimeout(
-			function() { image.src = collapsables_arrow_expanded.src; }, 100);
+			function() { addClassName(image, 'expanded'); removeClassName(image, 'halfway'); }, 100);
 	}
 	collapsables_collapse(prefix, triggered, collapse);
 

@@ -41,7 +41,7 @@ a.external {
 }
 
 #content h3 {
-	border-bottom: 1px solid black;
+	border-bottom: 1px solid #999;
 }
 
 .comment {
@@ -95,12 +95,6 @@ ul.selector li .adder {
 	padding-top: 2px;
 }
 
-img.showhide-icon {
-	height: 1em;
-	width: 1em;
-	padding-right: 0.5em;
-}
-
 div.error {
 	border: 1px solid #666;
 	text-align: center;
@@ -119,3 +113,21 @@ input.rounded {
 	-webkit-border-radius: 4px;
 	border: 2px solid #DDD;
 }
+
+/* ==== arrow CSS sprite ==== */
+div.showhide-icon, div.usershowhide-icon, div.repostree-icon {
+	height: 12px;
+	width: 12px;
+	float: left;
+	margin-right: 0.5em;
+	background: url('../img/arrows.png');
+}
+
+div.showhide-icon.collapsed { background-position: 0px 0px; }
+div.showhide-icon.halfway { background-position: 0px -12px; }
+div.showhide-icon.expanded { background-position: 0px -24px; }
+
+/* We should've implemented the collapsables with multiple classes... */
+div.usershowhide-icon.collapsed, div.repostree-icon.collapsed { background-position: 0px 0px; }
+div.usershowhide-icon.halfway, div.repostree-icon.halfway { background-position: 0px -12px; }
+div.usershowhide-icon.expanded, div.repostree-icon.expanded { background-position: 0px -24px; }
