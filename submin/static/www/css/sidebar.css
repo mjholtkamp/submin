@@ -124,6 +124,7 @@ ul#addicons li a div {
 	float: left;
 	cursor: pointer;
 }
+ul#addicons li a div:hover { opacity: 0.75; }
 ul#addicons li a div.sb_user { background-position: 0px 0px; }
 ul#addicons li a div.sb_user.pressed { background-position: 0px -30px; }
 ul#addicons li a div.sb_group { background-position: -40px 0px; }
