@@ -126,3 +126,33 @@ div.c_icon {
 div.c_icon.collapsed { background-position: 0px 0px; }
 div.c_icon.halfway { background-position: 0px -12px; }
 div.c_icon.expanded { background-position: 0px -24px; }
+
+/* ==== Log popup ==== */
+#log {
+	border: 1px solid #666;
+	position: fixed;
+	left: 100px;
+	top: 10px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+
+.log_error {
+	text-align: left;
+	width: 800px;
+	background: #f66;
+	padding: 1.5em;
+}
+
+.log_message {
+	text-align: center;
+	width: 400px;
+	background: #afa;
+	padding: 1.5em 0 1.5em 0;
+}
+
+.log_error small {
+	color: #822;
+	float: right;
+	padding-right: 10px;
+}
