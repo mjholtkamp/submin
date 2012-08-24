@@ -1,7 +1,5 @@
-body {
-	background: #fff url(../img/sidebar.png) top left repeat-y;
-}
 #sidebar {
+	background-color: #dadfe6;
 	width: 161px;
 	padding: 0px;
 	margin: 0px;
@@ -14,6 +12,7 @@ body {
 	top: 0px; /* from the top to the icons below */
 	bottom: 31px; /* height of the icons */
 	padding-bottom: 10px;
+	border-right: 1px solid #515151;
 }
 #sidebar h2 {
 	text-transform: uppercase;
@@ -103,6 +102,7 @@ ul#addicons {
 	padding: 0;
 	width: 161px; /* not 162px, let the border show! */
 	border-top: 1px solid #515151;
+	border-right: 1px solid #515151;
 }
 ul#addicons li:hover {
 	background: transparent;
