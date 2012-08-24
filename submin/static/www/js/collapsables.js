@@ -1,9 +1,9 @@
 /* So how does this work?
  *
  * In the html-code you need to have 3 classes:
- *  - 'prefix'-trigger      (onclick target)
- *  - 'prefix'-icon         (the image that shows the state)
- *  - 'prefix'-object       (the node that is shown or hidden)
+ *  - 'prefix' c_trigger      (onclick target)
+ *  - 'prefix' c_icon         (the image that shows the state)
+ *  - 'prefix' c_object       (the node that is shown or hidden)
  *
  * The 'prefix' depends on the prefix you use, so you can have multiple
  * types of collapsables with different callbacks.
@@ -13,7 +13,7 @@
  */
 
 function setupCollapsables(docroot, prefix, collapseFun, expandFun) {
-	var collapsables = collapsables_findClassNames(docroot, prefix + '-trigger');
+	var collapsables = collapsables_findClassNames(docroot, prefix, 'c_trigger');
 
 	var collapsables_length = collapsables.length;
 	for (var idx = 0; idx < collapsables_length; ++idx) {
@@ -47,12 +47,12 @@ function setupCollapsables(docroot, prefix, collapseFun, expandFun) {
 	}
 }
 
-function collapsables_findClassNames(node, classname)
+function collapsables_findClassNames(node, prefix, classname)
 {
 	var classNodes = [];
 	var current = node;
 	for (;;) {
-		if (current.className == classname)
+		if (hasClassName(current, prefix) && hasClassName(current, classname))
 			classNodes.push(current);
 
 		if (current.firstChild) {
@@ -74,18 +74,18 @@ function collapsables_findClassNames(node, classname)
 	}
 }
 
-function collapsables_findFirstClassName(node, classname)
+function collapsables_findFirstClassName(node, prefix, classname)
 {
 	var childNodes = node.childNodes;
 	var childNodes_length = childNodes.length;
 	for (var idx = 0; idx < childNodes_length; ++idx) {
-		if (hasClassName(childNodes[idx], classname))
+		if (hasClassName(childNodes[idx], prefix) && hasClassName(childNodes[idx], classname))
 			return childNodes[idx];
 	}
 
 	for (var idx = 0; idx < childNodes_length; ++idx) {
 		var firstNode = collapsables_findFirstClassName(childNodes[idx],
-				classname);
+				prefix, classname);
 		if (firstNode)
 			return firstNode;
 	}
@@ -104,19 +104,19 @@ function collapsables_getRoot(prefix, node)
 function collapsables_getTrigger(prefix, node)
 {
 	var root = collapsables_getRoot(prefix, node);
-	return collapsables_findFirstClassName(root, prefix + '-trigger');
+	return collapsables_findFirstClassName(root, prefix, 'c_trigger');
 }
 
 function collapsables_getCollapsee(prefix, node)
 {
 	var root = collapsables_getRoot(prefix, node);
-	return collapsables_findFirstClassName(root, prefix + '-object');
+	return collapsables_findFirstClassName(root, prefix, 'c_object');
 }
 
 function collapsables_getImage(prefix, node)
 {
 	var root = collapsables_getRoot(prefix, node);
-	return collapsables_findFirstClassName(root, prefix + '-icon');
+	return collapsables_findFirstClassName(root, prefix, 'c_icon');
 }
 
 function collapsables_isCollapsed(prefix, node)

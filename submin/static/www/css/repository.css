@@ -11,11 +11,9 @@ span.link a:hover {
 	text-decoration: underline;
 }
 
-img.repostree-icon {
-	height: 1em;
-	width: 1em;
-	padding-right: 0.5em;
-	vertical-align: bottom;
+div.repostree.c_icon {
+	margin-right: 1em;
+	margin-top: 0.25em;
 }
 
 img.repostree-folder {

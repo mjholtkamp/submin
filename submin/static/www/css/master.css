@@ -115,7 +115,7 @@ input.rounded {
 }
 
 /* ==== arrow CSS sprite ==== */
-div.showhide-icon, div.usershowhide-icon, div.repostree-icon {
+div.c_icon {
 	height: 12px;
 	width: 12px;
 	float: left;
@@ -123,11 +123,6 @@ div.showhide-icon, div.usershowhide-icon, div.repostree-icon {
 	background: url('../img/arrows.png');
 }
 
-div.showhide-icon.collapsed { background-position: 0px 0px; }
-div.showhide-icon.halfway { background-position: 0px -12px; }
-div.showhide-icon.expanded { background-position: 0px -24px; }
-
-/* We should've implemented the collapsables with multiple classes... */
-div.usershowhide-icon.collapsed, div.repostree-icon.collapsed { background-position: 0px 0px; }
-div.usershowhide-icon.halfway, div.repostree-icon.halfway { background-position: 0px -12px; }
-div.usershowhide-icon.expanded, div.repostree-icon.expanded { background-position: 0px -24px; }
+div.c_icon.collapsed { background-position: 0px 0px; }
+div.c_icon.halfway { background-position: 0px -12px; }
+div.c_icon.expanded { background-position: 0px -24px; }

@@ -376,15 +376,18 @@ ReposNode.prototype.createChild = function(dir, has_subdirs)
 
 	if (newnode.has_subdirs) {
 		var div = document.createElement('div');
-		addClassName(div, prefix + '-icon');
+		addClassName(div, prefix);
+		addClassName(div, 'c_icon');
 		addClassName(div, 'collapsed');
 
 		var span = document.createElement('span');
-		span.className = prefix + '-trigger';
+		addClassName(span, prefix);
+		addClassName(span, 'c_trigger');
 		span.appendChild(div);
 
 		var ul = document.createElement('ul');
-		ul.className = prefix + '-object';
+		addClassName(ul, prefix);
+		addClassName(ul, 'c_object');
 
 		var folder_img = document.createElement('img');
 		folder_img.src = base_url + 'img/repostree-folder.png';
