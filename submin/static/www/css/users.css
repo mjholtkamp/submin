@@ -59,3 +59,11 @@ tr.noticeshead td.name {
 #content input.disabled {
 	cursor: help;
 }
+
+div.usershowhide.c_object {
+	padding-left: 1em;
+}
+
+#notifications {
+	padding-left: 1.5em;
+}
