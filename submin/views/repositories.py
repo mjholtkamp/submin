@@ -13,7 +13,6 @@ from submin.models.permissions import Permissions
 from submin.models.repository import vcs_list
 from submin.auth.decorators import login_required, admin_required
 from submin.path.path import Path
-from submin.unicode import uc_url_decode
 
 class Repositories(View):
 	@login_required
@@ -195,7 +194,6 @@ class Repositories(View):
 		name = req.post.get('name')
 		type = req.post.get('type')
 		path = req.post.get('path')
-		path = uc_url_decode(path)
 		vcs_type = repository.vcs_type
 
 		default_perm = ''
@@ -215,7 +213,6 @@ class Repositories(View):
 		name = req.post.get('name')
 		type = req.post.get('type')
 		path = req.post.get('path')
-		path = uc_url_decode(path)
 
 		perms.remove_permission(repository.name, repository.vcs_type, path,
 				name, type)
@@ -227,7 +224,6 @@ class Repositories(View):
 		name = req.post.get('name')
 		type = req.post.get('type')
 		path = req.post.get('path')
-		path = uc_url_decode(path)
 		permission = req.post.get('permission')
 
 		perms.change_permission(repository.name, repository.vcs_type, path,
