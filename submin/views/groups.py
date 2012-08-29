@@ -70,7 +70,7 @@ class Groups(View):
 		if req.post and req.post['groupname']:
 			import re
 
-			groupname = req.post['groupname'].value.strip()
+			groupname = req.post.get('groupname').strip()
 			if re.findall('[^a-zA-Z0-9_-]', groupname):
 				return self.showAddForm(req, groupname, 'Invalid characters in groupname')
 			if groupname == '':
@@ -139,7 +139,7 @@ class Groups(View):
 	@admin_required
 	def removeMember(self, req, groupname):
 		g = group.Group(groupname)
-		username = req.post['removeMember'].value
+		username = req.post.get('removeMember')
 		success = True
 		try:
 			g.remove_member(user.User(username))
@@ -152,7 +152,7 @@ class Groups(View):
 
 	@admin_required
 	def addMember(self, req, groupname):
-		username = req.post['addMember'].value
+		username = req.post.get('addMember')
 		success = True
 		try:
 			group.Group(groupname).add_member(user.User(username))

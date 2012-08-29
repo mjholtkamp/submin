@@ -129,13 +129,13 @@ class Users(View):
 
 		u = user.User(username)
 		
-		if 'fullname' in req.post and req.post['fullname'].value.strip():
+		if 'fullname' in req.post and req.post.get('fullname').strip():
 			return self.setFullName(req, u)
 		
-		if 'email' in req.post and req.post['email'].value.strip():
+		if 'email' in req.post and req.post.get('email').strip():
 			return self.setEmail(req, u)
 
-		if 'password' in req.post and req.post['password'].value.strip():
+		if 'password' in req.post and req.post.get('password').strip():
 			return self.setPassword(req, u)
 
 		if 'sendPasswordMail' in req.post:

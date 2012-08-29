@@ -119,14 +119,14 @@ class Repositories(View):
 		if req.post and req.post['repository']:
 			import re, commands
 
-			repository = req.post['repository'].value.strip()
+			repository = req.post.get('repository').strip()
 			if re.findall('[^a-zA-Z0-9_-]', repository):
 				return self.showAddForm(req, repository, 'Invalid characters in repository name')
 
-			if "vcs" not in req.post or req.post["vcs"].value.strip() == "":
+			if "vcs" not in req.post or req.post.get("vcs").strip() == "":
 				return self.showAddForm(req, repository, "No repository type selected. Please select a repository type.")
 
-			vcs_type = req.post["vcs"].value.strip()
+			vcs_type = req.post.get("vcs").strip()
 
 			if repository == '':
 				return self.showAddForm(req, repository, 'Repository name not supplied')
@@ -154,16 +154,15 @@ class Repositories(View):
 
 	@admin_required
 	def getsubdirs(self, req, repository):
-		svn_path = req.post['getSubdirs'].value.strip('/')
-		svn_path_u = uc_url_decode(svn_path) #also convert from utf-8
-		dirs = repository.subdirs(svn_path_u)
+		svn_path = req.post.get('getSubdirs').strip('/')
+		dirs = repository.subdirs(svn_path)
 		templatevars = {'dirs': dirs}
 		return XMLTemplateResponse('ajax/repositorytree.xml', templatevars)
 
 	@admin_required
 	def getpermissions(self, req, repository):
 		session_user = req.session['user']
-		path = uc_url_decode(req.post['getPermissions'].value)
+		path = req.post.get('getPermissions')
 		branch_or_path = Path(path.encode('utf-8'))
 
 		p = Permissions()
@@ -193,9 +192,9 @@ class Repositories(View):
 	@admin_required
 	def addpermission(self, req, repository):
 		perms = Permissions()
-		name = req.post['name'].value
-		type = req.post['type'].value
-		path = req.post['path'].value
+		name = req.post.get('name')
+		type = req.post.get('type')
+		path = req.post.get('path')
 		path = uc_url_decode(path)
 		vcs_type = repository.vcs_type
 
@@ -213,9 +212,9 @@ class Repositories(View):
 	@admin_required
 	def removepermission(self, req, repository):
 		perms = Permissions()
-		name = req.post['name'].value
-		type = req.post['type'].value
-		path = req.post['path'].value
+		name = req.post.get('name')
+		type = req.post.get('type')
+		path = req.post.get('path')
 		path = uc_url_decode(path)
 
 		perms.remove_permission(repository.name, repository.vcs_type, path,
@@ -225,11 +224,11 @@ class Repositories(View):
 	@admin_required
 	def setpermission(self, req, repository):
 		perms = Permissions()
-		name = req.post['name'].value
-		type = req.post['type'].value
-		path = req.post['path'].value
+		name = req.post.get('name')
+		type = req.post.get('type')
+		path = req.post.get('path')
 		path = uc_url_decode(path)
-		permission = req.post['permission'].value
+		permission = req.post.get('permission')
 
 		perms.change_permission(repository.name, repository.vcs_type, path,
 				name, type, permission)
@@ -238,7 +237,7 @@ class Repositories(View):
 
 	@admin_required
 	def setCommitEmails(self, req, repository):
-		enable = req.post['setCommitEmails'].value.lower() == "true"
+		enable = req.post.get('setCommitEmails').lower() == "true"
 		change_msg = 'enabled'
 		if not enable:
 			change_msg = 'disabled'
