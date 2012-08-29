@@ -1,8 +1,7 @@
 import os
 import sys
-import cgi
 
-from request import Request, GetVariables
+from request import Request, CGIGet, CGIFieldStorage
 
 class CGIRequest(Request):
 	def __init__(self):
@@ -26,28 +25,3 @@ class CGIRequest(Request):
 	def write(self, content):
 		self.__output.write(content.encode('utf-8'))
 		self.__output.flush()
-
-class CGIGet(GetVariables):
-	def __init__(self, query_string):
-		self.variables = {}
-
-		if query_string:
-			self.variables = cgi.parse_qs(query_string)
-	
-	def __contains__(self, key):
-		return key in self.variables
-
-class CGIFieldStorage(cgi.FieldStorage):
-	"""Provide a consistent way to access the POST variables."""
-	
-	get = cgi.FieldStorage.getvalue
-
-	def __setitem__(self, name, value):
-		if self.has_key(name):
-			del self[name]
-		self.list.append(cgi.MiniFieldStorage(name, value))
-
-	def __delitem__(self, name):
-		if not self.has_key(name):
-			raise KeyError(name)
-		self.list = filter(lambda x, name=name: x.name != name, self.list)

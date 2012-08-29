@@ -45,7 +45,7 @@ def dispatcher(request):
 	# Add session information to request
 	request.session = Session(request)
 
-	path = request.path_info.strip('/').split('/')
+	path = [unicode(p, 'utf-8') for p in request.path_info.strip('/').split('/')]
 
 	handlerName = 'handler'
 	if path[0].lower() in classes:

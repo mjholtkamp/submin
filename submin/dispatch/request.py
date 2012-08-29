@@ -1,4 +1,9 @@
+import cgi # for cgi.FieldStorage/parse_qs etc.
+
 from Cookie import SimpleCookie
+
+# to convert javascript URL encoding to Unicode
+from submin.unicode import uc_url_decode
 
 class Request(object):
 	"""Provide a consistent way to treat a Request."""
@@ -95,3 +100,30 @@ class GetVariables(object):
 	
 	def getall(self, item):
 		return self.variables.get(item)
+
+class CGIGet(GetVariables):
+	def __init__(self, query_string):
+		self.variables = {}
+
+		if query_string:
+			self.variables = cgi.parse_qs(query_string, keep_blank_values=True)
+	
+	def __contains__(self, key):
+		return key in self.variables
+
+class CGIFieldStorage(cgi.FieldStorage):
+	"""Provide a consistent way to access the POST variables."""
+	
+	def get(self, name):
+		value = cgi.FieldStorage.getvalue(self, name)
+		return uc_url_decode(value)
+
+	def __setitem__(self, name, value):
+		if self.has_key(name):
+			del self[name]
+		self.list.append(cgi.MiniFieldStorage(name, value))
+
+	def __delitem__(self, name):
+		if not self.has_key(name):
+			raise KeyError(name)
+		self.list = filter(lambda x, name=name: x.name != name, self.list)

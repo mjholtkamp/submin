@@ -74,6 +74,9 @@ class User(object):
 		                              # default value
 
 	def __str__(self):
+		return unicode(self).encode('utf-8')
+
+	def __unicode__(self):
 		return self._name
 
 	def check_password(self, password):

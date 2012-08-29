@@ -9,7 +9,6 @@ from submin.models import group
 from submin.auth.decorators import *
 from submin.models import options
 from submin.models import validators
-from submin.unicode import uc_str
 
 class Users(View):
 	@login_required
@@ -77,9 +76,9 @@ class Users(View):
 						or not req.post['fullname']:
 			return self.showAddForm(req, username, email, fullname)
 
-		username = uc_str(req.post['username'].value.strip())
-		email = uc_str(req.post['email'].value.strip())
-		fullname = uc_str(req.post['fullname'].value.strip())
+		username = req.post.get('username').strip()
+		email = req.post.get('email').strip()
+		fullname = req.post.get('fullname').strip()
 		send_mail = 'send_password' in req.post
 
 		# check these before we add the user, the rest is checked when adding
@@ -173,7 +172,7 @@ class Users(View):
 
 	def setEmail(self, req, u):
 		try:
-			u.email = uc_str(req.post.get('email'))
+			u.email = req.post.get('email')
 			return XMLStatusResponse('email', True,
 				'Changed email address for user %s to %s' %
 				(u.name, u.email))
@@ -186,7 +185,7 @@ class Users(View):
   
 	def setFullName(self, req, u):
 		try:
-			u.fullname = uc_str(req.post.get('fullname'))
+			u.fullname = req.post.get('fullname')
 			return XMLStatusResponse('setFullName', True,
 				'Changed name for user %s to %s' %
 				(u.name, u.fullname))

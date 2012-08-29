@@ -16,7 +16,7 @@ class Response(object):
 class Redirect(Response):
 	def __init__(self, url, request):
 		Response.__init__(self)
-		url = str(url)
+		url = unicode(url)
 		self.status_code = 302
 		if not '://' in url:
 			schema = 'https://' if request.https else 'http://'
