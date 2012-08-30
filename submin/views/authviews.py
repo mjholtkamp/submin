@@ -45,8 +45,9 @@ class Login(View):
 			localvalues['session_user'] = u
 			return Response(evaluate('database_upgrade.html', localvalues))
 
-		u.is_authenticated = True
-		request.session['user'] = u
+		session_user = u.session_object()
+		session_user['is_authenticated'] = True
+		request.session['user'] = session_user
 		request.session.save()
 
 		return Redirect(url, request)
@@ -110,7 +111,7 @@ class Password(View):
 class Logout(View):
 	def handler(self, request, path):
 		if 'user' in request.session:
-			request.session['user'].is_authenticated = False
+			request.session['user']['is_authenticated'] = False
 			del request.session['user']
 		url = '/'
 		if 'redirected_from' in request.session:

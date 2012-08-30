@@ -39,7 +39,7 @@ class Groups(View):
 		if len(path) < 1:
 			return ErrorResponse('Invalid path', request=req)
 
-		is_admin = req.session['user'].is_admin
+		is_admin = req.session['user']['is_admin']
 		try:
 			g = group.Group(path[0])
 		except (IndexError, UnknownGroupError):
@@ -48,7 +48,7 @@ class Groups(View):
 
 			return ErrorResponse('This group does not exist.', request=req)
 
-		if not is_admin and req.session['user'].name not in g.members():
+		if not is_admin and req.session['user']['name'] not in g.members():
 			return ErrorResponse('Not permitted', request=req)
 
 		localvars['group'] = g
@@ -117,9 +117,10 @@ class Groups(View):
 
 	def listGroupUsers(self, req, g):
 		members = list(g.members())
-		if req.session['user'].is_admin:
+		asking_user = user.User(req.session['user'])
+		if asking_user.is_admin:
 			nonmembers = []
-			usernames = user.list(req.session['user'])
+			usernames = user.list(asking_user)
 			for username in usernames:
 				if username not in members:
 					nonmembers.append(username)
@@ -128,7 +129,7 @@ class Groups(View):
 					{"members": members, "nonmembers": nonmembers,
 						"group": g.name})
 
-		if req.session['user'].name not in g.members():
+		if asking_user.name not in g.members():
 			return XMLStatusResponse('listGroupUsers', False,
 				"You do not have permission to view this group.")
 

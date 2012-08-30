@@ -1,5 +1,6 @@
 from submin.models.exceptions import UnknownUserError
 from submin.models import options
+from submin.models.user import User
 from submin.template.template import Template
 import template_commands
 
@@ -33,7 +34,7 @@ def evaluate_main(templatename, templatevariables={}, request=None):
 	if not request or 'user' not in request.session:
 		raise UnknownUserError
 
-	session_user = request.session['user']
+	session_user = User(request.session['user']['name'])
 
 	templatevariables['main_base_url'] = str(options.url_path('base_url_submin'))
 	templatevariables['session_user'] = session_user

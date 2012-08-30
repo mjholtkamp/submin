@@ -16,7 +16,7 @@ def login_required(fun):
 		if not 'user' in self.request.session:
 			return Redirect(login_url, self.request)
 
-		if not self.request.session['user'].is_authenticated:
+		if not self.request.session['user']['is_authenticated']:
 			return Redirect(login_url, self.request)
 
 		return fun(self, *args, **kwargs)
@@ -26,7 +26,7 @@ def login_required(fun):
 def admin_required(fun):
 	@login_required
 	def _decorator(self, *args, **kwargs):
-		if not self.request.session['user'].is_admin:
+		if not self.request.session['user']['is_admin']:
 			raise Unauthorized("Admin privileges are required.")
 		return fun(self, *args, **kwargs)
 	return _decorator

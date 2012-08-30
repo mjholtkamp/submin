@@ -26,7 +26,7 @@ class Ajax(View):
 		return XMLStatusResponse('', False, 'Unknown command')
 
 	def listUsers(self, req):
-		session_user = req.session['user']
+		session_user = user.User(req.session['user']['name'])
 		try:
 			usernames = user.list(session_user)
 			return XMLTemplateResponse("ajax/listusers.xml", {'usernames': usernames})
@@ -35,7 +35,7 @@ class Ajax(View):
 
 	def listGroups(self, req):
 		try:
-			groupnames = group.list(req.session['user'])
+			groupnames = group.list(user.User(req.session['user']['name']))
 			return XMLTemplateResponse("ajax/listgroups.xml", {'groupnames': groupnames})
 		except Exception, e:
 			raise
@@ -43,7 +43,7 @@ class Ajax(View):
 
 	def listRepositories(self, req):
 		try:
-			repos = Repository.list(req.session['user'])
+			repos = Repository.list(user.User(req.session['user']['name']))
 			variables = {'repositories': repos}
 			return XMLTemplateResponse("ajax/listrepositories.xml", variables)
 		except Exception, e:

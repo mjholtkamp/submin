@@ -1,4 +1,4 @@
-import cPickle
+import json
 import time
 import os
 import thread
@@ -12,7 +12,7 @@ class SessionDestroyedError(Exception):
 
 
 class PickleDict(object):
-	"""Dictionary which stores a dictionary in a file using the cPickle
+	"""Dictionary which stores a dictionary in a file using the json
 	library
 
 	If autosave is True (default) PickleDict automatically saves when
@@ -58,7 +58,7 @@ class FilePickleDict(PickleDict):
 	def load(self):
 		try:
 			filehandle = open(self.filename, 'r')
-			self.dict = cPickle.load(filehandle)
+			self.dict = json.load(filehandle)
 			filehandle.close()
 		except:
 			pass
@@ -67,7 +67,7 @@ class FilePickleDict(PickleDict):
 		try:
 			self.lock.acquire()
 			filehandle = open(self.filename, 'w')
-			cPickle.dump(self.dict, filehandle)
+			json.dump(self.dict, filehandle)
 			filehandle.close()
 		finally:
 			self.lock.release()
@@ -82,13 +82,17 @@ class DBPickleDict(PickleDict):
 		from submin.models.exceptions import UnknownKeyError
 		try:
 			val = sessions.value(self.key)
-			self.dict = cPickle.loads(str(val))
+			self.dict = json.loads(str(val))
 		except UnknownKeyError:
 			pass
+		except ValueError:
+			# invalid (old) session, invalidate
+			self.dict = {}
+			sessions.unset_value(self.key)
 
 	def save(self):
 		from submin.models import sessions
-		val = cPickle.dumps(self.dict)
+		val = json.dumps(self.dict)
 		sessions.set_value(self.key, val)
 
 

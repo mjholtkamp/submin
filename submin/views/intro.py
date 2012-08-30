@@ -9,9 +9,9 @@ class Intro(View):
 	def handler(self, req, path):
 		localvars = {}
 
-		if not req.session['user'].is_admin:
+		if not req.session['user']['is_admin']:
 			base_url = options.value('base_url_submin')
-			username = req.session['user'].name
+			username = req.session['user']['name']
 			return Redirect(base_url + '/users/show/' + username, req)
 
 		formatted = evaluate_main('intro.html', localvars, request=req)

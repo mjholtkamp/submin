@@ -40,8 +40,8 @@ class Users(View):
 		if len(path) < 1:
 			return ErrorResponse('Invalid path', request=req)
 
-		is_admin = req.session['user'].is_admin
-		if not is_admin and path[0] != req.session['user'].name:
+		is_admin = req.session['user']['is_admin']
+		if not is_admin and path[0] != req.session['user']['name']:
 			raise Unauthorized('Permission denied to view this user')
 
 		try:
@@ -231,9 +231,10 @@ class Users(View):
 	def listUserGroups(self, req, u):
 		member_of_names = list(u.member_of())
 		session_user = req.session['user']
-		if session_user.is_admin:
+		if session_user['is_admin']:
+			asking_user = user.User(session_user['name'])
 			nonmember_of = []
-			groupnames = group.list(session_user)
+			groupnames = group.list(asking_user)
 			for groupname in groupnames:
 				if groupname not in member_of_names:
 					nonmember_of.append(groupname)
@@ -242,7 +243,7 @@ class Users(View):
 					{"memberof": member_of_names,
 						"nonmemberof": nonmember_of, "user": u.name})
 
-		if req.session['user'].name != u.name:
+		if session_user['name'] != u.name:
 			return XMLStatusResponse('listUserGroups', False, "You do not have permission to "
 					"view this user.")
 
@@ -252,7 +253,7 @@ class Users(View):
 
 	def listNotifications(self, req, u):
 		session_user = req.session['user']
-		if not session_user.is_admin and session_user.name != u.name:
+		if not session_user['is_admin'] and session_user['name'] != u.name:
 			return XMLStatusResponse('listNotifications', False, "You do not have permission to "
 					"view this user.")
 
@@ -262,7 +263,7 @@ class Users(View):
 
 	def listSSHKeys(self, req, u):
 		session_user = req.session['user']
-		if not session_user.is_admin and session_user.name != u.name:
+		if not session_user['is_admin'] and session_user['name'] != u.name:
 			return XMLStatusResponse('listSSHKeys', False, "You do not have permission to "
 					"view this user.")
 
@@ -274,7 +275,7 @@ class Users(View):
 
 	def addSSHKey(self, req, u):
 		session_user = req.session['user']
-		if not session_user.is_admin and session_user.name != u.name:
+		if not session_user['is_admin'] and session_user['name'] != u.name:
 			return XMLStatusResponse('addSSHKey', False,
 				"You do not have permission to add SSH Keys for this user.")
 		title = req.post.get("title", None)
@@ -295,7 +296,7 @@ class Users(View):
 
 	def removeSSHKey(self, req, u):
 		session_user = req.session['user']
-		if not session_user.is_admin and session_user.name != u.name:
+		if not session_user['is_admin'] and session_user['name'] != u.name:
 			return XMLStatusResponse('addSSHKey', False,
 				"You do not have permission to add SSH Keys for this user.")
 		ssh_key_id = req.post.get("removeSSHKey")
@@ -316,9 +317,10 @@ class Users(View):
 			if len(n) < 2:
 				return XMLStatusResponse('saveNotifications', False, 'badly formatted notifications')
 			try:
+				asking_user = user.User(session_user['name'])
 				allowed = (n[1] == "true")
 				enabled = (n[2] == "true")
-				u.set_notification(n[0], allowed, enabled, session_user)
+				u.set_notification(n[0], allowed, enabled, asking_user)
 			except UserPermissionError, e:
 				return XMLStatusResponse('saveNotifications', False, str(e))
 
@@ -340,7 +342,7 @@ class Users(View):
 
 	@admin_required
 	def removeUser(self, req, username):
-		if username == req.session['user'].name:
+		if username == req.session['user']['name']:
 			return XMLStatusResponse('removeUser', False,
 				'You are not allowed to delete yourself')
 		try:
@@ -359,7 +361,7 @@ class Users(View):
 	@admin_required
 	def setIsAdmin(self, req, u):
 		is_admin = req.post.get('setIsAdmin')
-		if u.name == req.session['user'].name:
+		if u.name == req.session['user']['name']:
 			return XMLStatusResponse('setIsAdmin', False,
 				'You are not allowed to change admin rights for yourself')
 

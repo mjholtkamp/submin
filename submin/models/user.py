@@ -79,6 +79,10 @@ class User(object):
 	def __unicode__(self):
 		return self._name
 
+	def session_object(self):
+		return {'name': self._name, 'is_admin': self._is_admin, 
+				'is_authenticated': self.is_authenticated}
+
 	def check_password(self, password):
 		"""Return True if password is correct, can raise NoMD5PasswordError"""
 		return storage.check_password(self._id, password)

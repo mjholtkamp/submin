@@ -40,7 +40,7 @@ class Repositories(View):
 	def show(self, req, vcs_type, path, templatevars):
 		import os.path
 
-		u = req.session['user']
+		u = user.User(req.session['user']['name'])
 		try:
 			repository = Repository(path[0], vcs_type)
 
@@ -140,7 +140,8 @@ class Repositories(View):
 				pass
 
 			try:
-				Repository.add(vcs_type, repository, req.session['user'])
+				asking_user = user.User(req.session['user'])
+				Repository.add(vcs_type, repository, asking_user)
 			except PermissionError, e:
 				return ErrorResponse('could not create repository',
 					request=req, details=str(e))
@@ -161,6 +162,7 @@ class Repositories(View):
 	@admin_required
 	def getpermissions(self, req, repository):
 		session_user = req.session['user']
+		asking_user = user.User(session_user['name'])
 		path = req.post.get('getPermissions')
 		branch_or_path = Path(path)
 
@@ -170,11 +172,11 @@ class Repositories(View):
 
 		usernames = []
 		if 'userlist' in req.post:
-			usernames = user.list(session_user)
+			usernames = user.list(asking_user)
 
 		groupnames = []
 		if 'grouplist' in req.post:
-			groupnames = group.list(session_user)
+			groupnames = group.list(asking_user)
 
 		templatevars = {'perms': perms, 'repository': repository.name,
 			'path': branch_or_path, 'usernames': usernames,
@@ -265,7 +267,8 @@ class Repositories(View):
 	@admin_required
 	def tracEnvCreate(self, req, repository):
 		repos_name = repository.name.replace(".git", "")
-		createTracEnv(repos_name, req.session['user'])
+		asking_user = user.User(req.session['user']['name'])
+		createTracEnv(repos_name, asking_user)
 		return XMLStatusResponse('tracEnvCreate', True, 'Trac environment "%s" created.' % repos_name)
 
 	def ajaxhandler(self, req, path):
