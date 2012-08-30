@@ -191,7 +191,7 @@ If you use Trac, it will be accessible from <http base>/trac.
 
 		if len(self.argv) < 1:
 			self.sa.execute(['help', 'initenv'])
-			return
+			return True
 
 		self.email = self.argv[0]
 

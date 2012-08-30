@@ -15,6 +15,9 @@ def create_dir(env, directory):
 					str(directory)
 			raise e
 
+class SubminAdminCmdException(Exception):
+	pass
+
 class CmdException(Exception):
 	def __init__(self, usermsg, errormsg, cmd):
 		Exception.__init__(self, "%s: %s (%s)" % (usermsg, errormsg, cmd))

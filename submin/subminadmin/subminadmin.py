@@ -93,7 +93,13 @@ Use '?' or 'help' for help on commands.
 				print
 				return
 
-			self.execute(argv)
+			try:
+				self.execute(argv)
+			except SubminAdminCmdException, e:
+				# print the error and continue (interactive mode)
+				print >>sys.stderr, str(e)
+
+		return True
 
 	def cmd_instance(self, cmd, argv, print_error=True):
 		objname = "c_" + cmd
@@ -132,13 +138,13 @@ Use '?' or 'help' for help on commands.
 
 	def execute(self, argv):
 		if len(argv) < 1:
-			return True
+			return False
 
 		cmd = self.cmd_alias(argv[0])
 		Class = self.cmd_instance(cmd, argv[1:])
 		if not Class:
 			print "Unknown command: %s" % ' '.join(argv)
-			return True
+			return False
 
 		if not self.storage_opened:
 			if not hasattr(Class, "needs_env") or Class.needs_env:

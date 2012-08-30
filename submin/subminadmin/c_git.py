@@ -1,6 +1,6 @@
 import os
 import sys
-from common import executeCmd, which, CmdException
+from common import executeCmd, which, CmdException, SubminAdminCmdException
 
 ERROR_STR = "submin2-admin git %s is not supposed to be called by users."
 
@@ -39,16 +39,18 @@ Usage:
 	def run(self):
 		if len(self.argv) < 1:
 			self.sa.execute(['help', 'git'])
-			return
+			return False
 
 		try:
 			subcmd = getattr(self, 'subcmd_%s' % self.argv[0])
 		except AttributeError:
 			self.sa.execute(['help', 'git'])
-			return
+			return False
 
 		try:
 			subcmd(self.argv[1:])
+		except SubminAdminCmdException:
+			pass
 		except CmdException, e:
 			print >>sys.stderr, e.usermsg
 			print >>sys.stderr, "Command:", e.cmd
@@ -57,6 +59,8 @@ Usage:
 		except Exception, e:
 			print >>sys.stderr, '*** Unexpected error:', e
 			sys.exit(1)
+
+		return True
 
 	def subcmd_user(self, args):
 		if len(args) < 1:
@@ -91,15 +95,13 @@ Usage:
 		from submin.models import options
 
 		if os.getuid() != 0:
-			print >>sys.stderr, "Please execute `git init' as root."
-			return
+			raise SubminAdminCmdException("Please execute `git init' as root.")
 
 		try:
 			sudo_bin = which("sudo")
 			git_bin  = which("git")
 		except ProgramNotFoundError, e:
-			print 'Could not find %s, which is required for git init.' % e.prog
-			return
+			raise SubminAdminCmdException('Could not find %s, which is required for git init.' % e.prog)
 
 		from submin.subminadmin import c_unixperms
 		apache = c_unixperms.c_unixperms(None, None).apache_user()
@@ -119,8 +121,7 @@ Usage:
 			use_it = self.prompt_user("User %s already exists. Use it?" % \
 					git_user, "Yn")
 			if use_it.lower() not in ("y", "yes", "yn"):
-				print >>sys.stderr, "Aborting."
-				return
+				raise SubminAdminCmdException('Aborting')
 
 		# Now add the www-user to the git-group and chgrp of essential files
 		# (settings file, database and paths.)
