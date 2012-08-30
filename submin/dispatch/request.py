@@ -114,8 +114,8 @@ class CGIGet(GetVariables):
 class CGIFieldStorage(cgi.FieldStorage):
 	"""Provide a consistent way to access the POST variables."""
 	
-	def get(self, name):
-		value = cgi.FieldStorage.getvalue(self, name)
+	def get(self, name, default=None):
+		value = cgi.FieldStorage.getvalue(self, name, default)
 		return uc_url_decode(value)
 
 	def __setitem__(self, name, value):
