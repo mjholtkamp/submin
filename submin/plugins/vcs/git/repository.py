@@ -32,7 +32,8 @@ def _repositoriesOnDisk():
 	repositories = []
 	for rep in reps:
 		if os.path.isdir(rep):
-			repositories.append(rep[rep.rfind('/') + 1:])
+			name = rep[rep.rfind('/') + 1:]
+			repositories.append(unicode(name, 'utf-8'))
 
 	return repositories
 
@@ -41,6 +42,7 @@ def add(name):
 	if not name.endswith(".git"):
 		name += ".git"
 	reposdir = options.env_path('git_dir') + name
+	# FIXME: reposdir encoding?
 	if os.path.exists(str(reposdir)):
 		raise PermissionError("Could not create %s, already exists." % name)
 
@@ -63,6 +65,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		self.signature = "### SUBMIN AUTOCONFIG, DO NOT ALTER FOLLOWING LINE ###\n"
 
 		reposdir = options.env_path('git_dir')
+		# FIXME: reposdir encoding?
 		self.dir = reposdir + self.name
 		self.url = str(reposdir + self.name)
 
@@ -77,9 +80,11 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		return self.name[:-4]
 
 	def branches(self):
-		return [{"name": os.path.basename(x), "has_subdirs": False} for x in
-				glob.glob(str(self.dir + "refs" + "heads" + "*"))
-				if os.path.isfile(x)]
+		dirname = str(self.dir + "refs" + "heads" + "*")
+		for path in glob.glob(dirname):
+			if os.path.isfile(path):
+				yield {"name": unicode(os.path.basename(path), 'utf-8'), "has_subdirs": False}
+		return
 
 	def subdirs(self, subdir):
 		"""Get a list of subdirs of subdir *subdir* (root is "")
