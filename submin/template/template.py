@@ -9,27 +9,6 @@ from library import Library
 class UnknownCommandError(Exception):
 	pass
 
-def itoa(obj):
-	"""Helper function to only convert int/float types to str. This is
-	necessary because template commands expect everything to return string
-	type object and tries to concatenate them. Concatenating int/floats with
-	strings does not work.
-	
-	Actually, template expect everything to be unicode, but concatenating str
-	with unicode results in unicode and numbers do not give us encoding
-	errors. Using str() rather than unicode() gives a significant speedup, so
-	we use str() instead of unicode().
-	"""
-	if isinstance(obj, basestring):
-		# str/unicode
-		return obj
-	if hasattr(obj, '__int__'):
-		# bool/int/float
-		return str(obj)
-
-	# all the rest
-	return uc_str(obj)
-
 class Node(object):
 	"""Represents a piece of template-text.
 	This is the most basic node and basically does not convey meaning."""
@@ -61,7 +40,7 @@ class TextNode(Node):
 		self.content = content
 	
 	def evaluate(self, template=None):
-		return self.content
+		return unicode(self.content)
 	
 	def __str__(self):
 		return '<text %r>' % self.content
@@ -81,7 +60,13 @@ class CommandNode(Node):
 	def evaluate(self, template):
 		library = Library()
 		if library.has_command(self.command):
-			return itoa(library.execute(self, template))
+			value = library.execute(self, template)
+			# int/bool/float values can't be joined with unicode strings, so coerce
+			# to str (faster than unicode and gives no problems with encoding)
+			if hasattr(value, '__int__'):
+				return str(value)
+			# coerce anything else to unicode
+			return unicode(value)
 		raise UnknownCommandError, self.command
 	
 	def __str__(self):
