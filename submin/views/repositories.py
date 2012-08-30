@@ -162,7 +162,7 @@ class Repositories(View):
 	def getpermissions(self, req, repository):
 		session_user = req.session['user']
 		path = req.post.get('getPermissions')
-		branch_or_path = Path(path.encode('utf-8'))
+		branch_or_path = Path(path)
 
 		p = Permissions()
 		perms = p.list_permissions(repository.name, repository.vcs_type,
