@@ -1,4 +1,12 @@
-import json
+try:
+	import json
+	pickler = json
+	picklerError = ValueError
+except ImportError:
+	import cPickle
+	pickler = cPickle
+	picklerError = cPickle.UnpicklingError
+
 import time
 import os
 import thread
@@ -58,7 +66,7 @@ class FilePickleDict(PickleDict):
 	def load(self):
 		try:
 			filehandle = open(self.filename, 'r')
-			self.dict = json.load(filehandle)
+			self.dict = pickler.load(filehandle)
 			filehandle.close()
 		except:
 			pass
@@ -67,7 +75,7 @@ class FilePickleDict(PickleDict):
 		try:
 			self.lock.acquire()
 			filehandle = open(self.filename, 'w')
-			json.dump(self.dict, filehandle)
+			pickler.dump(self.dict, filehandle)
 			filehandle.close()
 		finally:
 			self.lock.release()
@@ -82,17 +90,17 @@ class DBPickleDict(PickleDict):
 		from submin.models.exceptions import UnknownKeyError
 		try:
 			val = sessions.value(self.key)
-			self.dict = json.loads(str(val))
+			self.dict = pickler.loads(str(val))
 		except UnknownKeyError:
 			pass
-		except ValueError:
+		except picklerError:
 			# invalid (old) session, invalidate
 			self.dict = {}
 			sessions.unset_value(self.key)
 
 	def save(self):
 		from submin.models import sessions
-		val = json.dumps(self.dict)
+		val = pickler.dumps(self.dict)
 		sessions.set_value(self.key, val)
 
 
