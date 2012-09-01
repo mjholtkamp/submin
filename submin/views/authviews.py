@@ -113,8 +113,6 @@ class Logout(View):
 		if 'user' in request.session:
 			request.session['user']['is_authenticated'] = False
 			del request.session['user']
-		url = '/'
-		if 'redirected_from' in request.session:
-			url = request.session['redirected_from']
+		url = options.url_path('base_url_submin')
 		return Redirect(url, request)
 
