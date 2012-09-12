@@ -140,7 +140,7 @@ class Repositories(View):
 				pass
 
 			try:
-				asking_user = user.User(req.session['user'])
+				asking_user = user.User(req.session['user']['name'])
 				Repository.add(vcs_type, repository, asking_user)
 			except PermissionError, e:
 				return ErrorResponse('could not create repository',
