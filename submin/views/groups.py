@@ -117,7 +117,7 @@ class Groups(View):
 
 	def listGroupUsers(self, req, g):
 		members = list(g.members())
-		asking_user = user.User(req.session['user'])
+		asking_user = user.User(req.session['user']['name'])
 		if asking_user.is_admin:
 			nonmembers = []
 			usernames = user.list(asking_user)
