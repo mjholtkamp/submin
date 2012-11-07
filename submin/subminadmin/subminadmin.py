@@ -3,6 +3,7 @@ import os
 
 from submin.path.path import Path
 from submin.models import storage
+from common import SubminAdminCmdException
 
 import code
 _has_readline = True
