@@ -17,13 +17,18 @@ class Settings(object):
 
 	def load(self):
 		if not os.environ.has_key('SUBMIN_ENV'):
-			raise SettingsException('Settings cannot be imported, please set the SUBMIN_ENV' +\
-			' environment variable to the submin base directory')
+			raise SettingsException('Settings cannot be imported, please ' +
+				'set the SUBMIN_ENV environment variable to the submin base ' +
+				'directory')
 
 		base_dir = os.environ['SUBMIN_ENV']
 		sys.path.insert(0, os.path.join(base_dir, 'conf'))
 
-		self.setSettings(fimport('settings'))
+		try:
+			self.setSettings(fimport('settings'))
+		except ImportError, e:
+			raise SettingsException('Could not load settings: file does not ' +
+				'exist or insufficient permissions')
 
 		del sys.path[0]
 		# we can now set directly because __setattr__ will not call load
