@@ -396,7 +396,7 @@ recommended way is to include it in a VirtualHost.
 %(apache_conf_auth)s
             Require valid-user
         </LocationMatch>
-        AliasMatch "%(trac base url)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs
+        AliasMatch "%(trac base url)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs/site
         <Directory %(trac dir)s/*/htdocs>
           Order allow,deny
           Allow from all
@@ -429,7 +429,7 @@ recommended way is to include it in a VirtualHost.
 %(apache_conf_auth)s
             Require valid-user
         </LocationMatch>
-        AliasMatch "%(trac base url)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs
+        AliasMatch "%(trac base url)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs/site
         <Directory %(trac dir)s/*/htdocs>
           Order allow,deny
           Allow from all
@@ -479,7 +479,7 @@ recommended way is to include it in a VirtualHost.
 %(apache_conf_auth)s
             Require valid-user
         </LocationMatch>
-        AliasMatch "%(trac base url)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs
+        AliasMatch "%(trac base url)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs/site
         <Directory %(trac dir)s/*/htdocs>
           Order allow,deny
           Allow from all
