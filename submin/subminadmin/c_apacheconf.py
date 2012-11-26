@@ -264,9 +264,13 @@ recommended way is to include it in a VirtualHost.
 		return apache_conf_cgi
 
 	def _apache_conf_wsgi(self, vars):
+		# nts = No Trailing Slash
+		submin_base_url_nts = str(vars['submin base url']).rstrip('/')
+		vars['submin base url nts'] = submin_base_url_nts
+
 		apache_conf_wsgi = '''
     <IfModule mod_wsgi.c>
-        WSGIScriptAlias "%(submin base url)s" %(www dir)s/submin.wsgi
+        WSGIScriptAlias "%(submin base url nts)s" %(www dir)s/submin.wsgi
         AliasMatch ^%(submin base url)scss/(.*) %(www dir)s/css/$1
         AliasMatch ^%(submin base url)simg/(.*) %(www dir)s/img/$1
         AliasMatch ^%(submin base url)sjs/(.*) %(www dir)s/js/$1
