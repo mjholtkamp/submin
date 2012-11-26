@@ -23,6 +23,7 @@ Usage:
      - XYZ-svn.conf
      - XYZ-trac-cgi.conf
      - XYZ-trac-modpython.conf
+     - XYZ-trac-modwsgi.conf
 
     By default <template> is '<submin env>/conf/apache.conf'.
 
@@ -133,6 +134,12 @@ recommended way is to include it in a VirtualHost.
 				header_svn = header + self._apache_conf_auth_sql_head("svn")
 				header_trac = header + self._apache_conf_auth_sql_head("trac")
 
+		if self.auth_type == "sql":
+			auth_conf = self._apache_conf_auth_sql(self.init_vars)
+		elif self.auth_type == "htaccess":
+			auth_conf = self._apache_conf_auth_sql(self.init_vars)
+		self.init_vars['apache_conf_auth'] = auth_conf
+
 		if output_type in ('cgi', 'all'):
 			submin_cgi = self._apache_conf_cgi(self.init_vars)
 		if output_type in ('wsgi', 'all'):
@@ -141,6 +148,7 @@ recommended way is to include it in a VirtualHost.
 		submin_svn = self._apache_conf_svn(self.init_vars)
 		submin_trac_modpy = self._apache_conf_trac_modpy(self.init_vars)
 		submin_trac_cgi = self._apache_conf_trac_cgi(self.init_vars)
+		submin_trac_modwsgi = self._apache_conf_trac_modwsgi(self.init_vars)
 
 		if self.auth_type == "sql":
 			footer = self._apache_conf_auth_sql_foot(self.init_vars)
@@ -155,13 +163,16 @@ recommended way is to include it in a VirtualHost.
 			fname_svn = template + '-svn.conf'
 			fname_trac_modpy = template + '-trac-modpython.conf'
 			fname_trac_cgi = template + '-trac-cgi.conf'
+			fname_trac_modwsgi = template + '-trac-modwsgi.conf'
 			file(fname_submin_cgi, 'w').write(header_webui + submin_cgi)
 			file(fname_submin_wsgi, 'w').write(header_webui + submin_wsgi)
 			file(fname_svn, 'w').write(header_svn + submin_svn + footer)
 			file(fname_trac_modpy, 'w').write(header_trac + submin_trac_modpy + footer)
 			file(fname_trac_cgi, 'w').write(header_trac + submin_trac_cgi + footer)
+			file(fname_trac_modwsgi, 'w').write(header_trac + submin_trac_modwsgi + footer)
 			print 'Apache files created:\n', "\n".join([fname_submin_cgi,
-				fname_submin_wsgi, fname_svn, fname_trac_modpy, fname_trac_cgi])
+				fname_submin_wsgi, fname_svn, fname_trac_modpy,
+				fname_trac_cgi, fname_trac_modwsgi])
 		else:
 			submin_type = submin_cgi if output_type == 'cgi' else submin_wsgi
 			contents = header + submin_type + submin_svn + submin_trac + footer
@@ -209,7 +220,7 @@ recommended way is to include it in a VirtualHost.
 		# twice (or make another file and include that twice)
 		cgi_directives = '''
         # first define scriptalias, otherwise the Alias will override all
-        ScriptAlias "%(submin base url)ssubmin.cgi" "%(cgi-bin dir)s/submin.cgi"
+        ScriptAlias "%(submin base url)s/submin.cgi" "%(cgi-bin dir)s/submin.cgi"
         %(origin)s
         <Directory "%(cgi-bin dir)s">
             Order allow,deny
@@ -264,16 +275,12 @@ recommended way is to include it in a VirtualHost.
 		return apache_conf_cgi
 
 	def _apache_conf_wsgi(self, vars):
-		# nts = No Trailing Slash
-		submin_base_url_nts = str(vars['submin base url']).rstrip('/')
-		vars['submin base url nts'] = submin_base_url_nts
-
 		apache_conf_wsgi = '''
     <IfModule mod_wsgi.c>
-        WSGIScriptAlias "%(submin base url nts)s" %(www dir)s/submin.wsgi
-        AliasMatch ^%(submin base url)scss/(.*) %(www dir)s/css/$1
-        AliasMatch ^%(submin base url)simg/(.*) %(www dir)s/img/$1
-        AliasMatch ^%(submin base url)sjs/(.*) %(www dir)s/js/$1
+        WSGIScriptAlias "%(submin base url)s" %(www dir)s/submin.wsgi
+        AliasMatch ^%(submin base url)s/css/(.*) %(www dir)s/css/$1
+        AliasMatch ^%(submin base url)s/img/(.*) %(www dir)s/img/$1
+        AliasMatch ^%(submin base url)s/js/(.*) %(www dir)s/js/$1
 
         <Location "%(submin base url)s">
             Order allow,deny
@@ -292,24 +299,15 @@ recommended way is to include it in a VirtualHost.
 		return apache_conf_wsgi
 
 	def _apache_conf_svn(self, vars):
-		if self.auth_type == "sql":
-			auth_conf = self._apache_conf_auth_sql(vars)
-		elif self.auth_type == "htaccess":
-			auth_conf = self._apache_conf_auth_sql(vars)
-
-		vars['apache_conf_auth'] = auth_conf
-
 		apache_conf_svn = '''
     <IfModule mod_dav_svn.c>
-        <Location %(svn base url)s>
+        <Location "%(svn base url)s">
             DAV svn
             SVNParentPath %(svn dir)s
 
             AuthType Basic
             AuthName "Subversion repository"
-
 %(apache_conf_auth)s
-
             # Authorization
             AuthzSVNAccessFile %(authz file)s
 
@@ -381,33 +379,24 @@ recommended way is to include it in a VirtualHost.
 		return conf
 
 	def _apache_conf_trac_modpy(self, vars):
-		if self.auth_type == "sql":
-			auth_conf = self._apache_conf_auth_sql(vars)
-		elif self.auth_type == "htaccess":
-			auth_conf = self._apache_conf_auth_sql(vars)
-
-		vars['apache_conf_auth'] = auth_conf
-
 		apache_conf_trac = '''
     # Only load if mod_python is available
     <IfModule mod_python.c>
         <Location "%(trac base url)s">
-           SetHandler mod_python
-           PythonInterpreter main_interpreter
-           PythonHandler trac.web.modpython_frontend
-           PythonOption TracEnvParentDir "%(trac dir)s"
-           PythonOption TracUriRoot "%(trac base url)s"
+            SetHandler mod_python
+            PythonInterpreter main_interpreter
+            PythonHandler trac.web.modpython_frontend
+            PythonOption TracEnvParentDir "%(trac dir)s"
+            PythonOption TracUriRoot "%(trac base url)s"
         </Location>
 
         <LocationMatch "%(trac base url)s/[^/]+/login">
-           AuthType Basic
-           AuthName "Trac"
-
+            AuthType Basic
+            AuthName "Trac"
 %(apache_conf_auth)s
-
-           Require valid-user
+            Require valid-user
         </LocationMatch>
-        AliasMatch "%(trac base url)s[^/]+/chrome/site" %(trac dir)s/$1/htdocs
+        AliasMatch "%(trac base url)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs
         <Directory %(trac dir)s/*/htdocs>
           Order allow,deny
           Allow from all
@@ -424,34 +413,23 @@ recommended way is to include it in a VirtualHost.
 		return apache_conf_trac
 
 	def _apache_conf_trac_cgi(self, vars):
-		if self.auth_type == "sql":
-			auth_conf = self._apache_conf_auth_sql(vars)
-		elif self.auth_type == "htaccess":
-			auth_conf = self._apache_conf_auth_sql(vars)
-
-		# nts = No Trailing Slash
-		trac_base_url_nts = str(vars['trac base url']).rstrip('/')
-		vars['trac base url nts'] = trac_base_url_nts
-
 		# We are including the cgi stuff twice, once for cgi and once for cgid.
 		# if we could assume apache 2.3+, we could have used SetEnv and If and
 		# only include it once. Since we assume <2.3, we have to include it
 		# twice (or make another file and include that twice)
 		cgi_directives = '''
-        ScriptAlias %(trac base url nts)s %(cgi-bin dir)s/trac.cgi
-        <Location "%(trac base url nts)s">
+        ScriptAlias %(trac base url)s %(cgi-bin dir)s/trac.cgi
+        <Location "%(trac base url)s">
           SetEnv TRAC_ENV_PARENT_DIR "%(trac dir)s"
         </Location>
 
-        <LocationMatch "%(trac base url nts)s/[^/]+/login">
-           AuthType Basic
-           AuthName "Trac"
-
+        <LocationMatch "%(trac base url)s/[^/]+/login">
+            AuthType Basic
+            AuthName "Trac"
 %(apache_conf_auth)s
-
-           Require valid-user
+            Require valid-user
         </LocationMatch>
-        AliasMatch "%(trac base url nts)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs
+        AliasMatch "%(trac base url)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs
         <Directory %(trac dir)s/*/htdocs>
           Order allow,deny
           Allow from all
@@ -484,24 +462,58 @@ recommended way is to include it in a VirtualHost.
 ''' % vars
 		return apache_conf_trac
 
+	def _apache_conf_trac_modwsgi(self, vars):
+		vars['GLOBAL'] = '%{GLOBAL}' # trick to include %-signs
+
+		apache_conf_trac = '''
+    <IfModule mod_wsgi.c>
+        WSGIScriptAlias %(trac base url)s %(cgi-bin dir)s/trac.wsgi
+        <Directory "%(cgi-bin dir)s">
+            WSGIApplicationGroup %(GLOBAL)s
+            Order Deny,Allow
+         </Directory>
+
+        <LocationMatch "%(trac base url)s/[^/]+/login">
+            AuthType Basic
+            AuthName "Trac"
+%(apache_conf_auth)s
+            Require valid-user
+        </LocationMatch>
+        AliasMatch "%(trac base url)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs
+        <Directory %(trac dir)s/*/htdocs>
+          Order allow,deny
+          Allow from all
+        </Directory>
+    </IfModule>
+    <IfModule !mod_wsgi.c>
+        AliasMatch "^%(trac base url)s" %(www dir)s/nowsgi.html
+        <Location "%(trac base url)s">
+            Order allow,deny
+            Allow from all
+        </Location>
+    </IfModule>
+''' % vars
+		return apache_conf_trac
+
+
 	def urlpath(self, url):
 		"""Strip scheme and hostname from url, leaving only the path. Also
-		fix slashes (need leading, trailing, no doubles)"""
+		fix slashes (need leading, no trailing, no doubles)"""
 		# remove schema + hostname
 		url = re.sub('^[^:]*://[^/]+', '/', url)
 
+		return self.canonicalize(url)
+
+	def canonicalize(self, path):
 		# strip trailing slash
-		url = url.rstrip('/')
+		path = path.rstrip('/')
 		# add leading slash
-		if url == "" or url[0] != '/':
-			url = '/' + url
+		if path == "" or path[0] != '/':
+			path = '/' + path
 
-		url = re.sub('/+', '/', url)
+		path = re.sub('/+', '/', path)
 
-		if not url.endswith('/'):
-			url += '/'
-
-		return url
+		return path
 
 	def run(self):
 		os.environ['SUBMIN_ENV'] = self.sa.env
@@ -515,10 +527,11 @@ recommended way is to include it in a VirtualHost.
 			'type': 'wsgi',
 			'output': options.env_path() + 'conf' + 'apache.conf'
 		}
+		cgi_bin_dir = os.path.join(self.sa.env, 'cgi-bin')
 		self.init_vars = {
-			'submin env': self.sa.env,
-			'www dir': self.sa.basedir_www,
-			'cgi-bin dir': os.path.join(self.sa.env, 'cgi-bin'),
+			'submin env': self.canonicalize(str(self.sa.env)),
+			'www dir': self.canonicalize(str(self.sa.basedir_www)),
+			'cgi-bin dir': self.canonicalize(str(cgi_bin_dir)),
 			'submin base url': self.urlpath(options.value('base_url_submin')),
 			'svn base url': self.urlpath(options.value('base_url_svn')),
 			'trac base url': self.urlpath(options.value('base_url_trac')),
