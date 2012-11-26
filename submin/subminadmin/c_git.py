@@ -17,7 +17,8 @@ class c_git:
 	"""Commands related to git-support
 Usage:
 	git init          - Initialises git support; creates a user and more.
-	                    Execute this as root!"""
+	                    Execute this as root!
+	git fix_perms     - Fixes unix permissions. Execute as root!"""
 	# The following commands are not to be called by users, but are internal
 	# git-commands to be used via ssh. They are therefore not mentioned in the
 	# usage text above.
@@ -204,6 +205,13 @@ Usage:
 		cmd = "usermod -a -G %s %s" % (group_id, username)
 		executeCmd(cmd, "Could not add %s to the git-group" % username)
 
+	def subcmd_fix_perms(self, args):
+		from submin.models import options
+		from pwd import getpwnam
+		git_user = options.value("git_user")
+		git_pw = getpwnam(git_user)
+		self.chgrp_relevant_files(git_uid=git_pw.pw_uid, git_gid=git_pw.pw_gid)
+
 	def chgrp_relevant_files(self, git_uid, git_gid):
 		from submin.models import options
 
@@ -211,17 +219,22 @@ Usage:
 		# access, in order to also access files within
 		os.chown(str(options.env_path()), -1, int(git_gid))
 		os.chmod(str(options.env_path()), 0750)
-		os.chown(str(options.env_path() + "conf"), -1, int(git_gid))
+		conf_dir = options.env_path() + "conf"
+		os.chown(str(conf_dir), -1, int(git_gid))
 
 		# The git-directory should also be available to the apache-user
 		from submin.subminadmin import c_unixperms
 		apache = c_unixperms.c_unixperms(None, None).apache_user()
-		os.chown(str(options.env_path("git_dir")), int(git_uid),
-				int(apache.pw_gid))
-		os.chmod(str(options.env_path("git_dir")), 0750)
+		git_dir = options.env_path("git_dir")
+		os.chown(str(git_dir), int(git_uid), int(apache.pw_gid))
+		os.chmod(str(git_dir), 0750)
+
+		# The ssh-directory can be really strict, only allow git
+		ssh_dir = git_dir + ".ssh"
+		os.chown(str(ssh_dir), int(git_uid), int(apache.pw_gid))
+		os.chmod(str(ssh_dir), 0700)
 
 		# Now, fix the permissions for the actual files
-		os.chown(str(options.env_path() + "conf" + "settings.py"), -1,
-				int(git_gid))
-		os.chown(str(options.env_path() + "conf" + "submin.db"), -1,
-				int(git_gid))
+		os.chown(str(conf_dir + "settings.py"), -1, int(git_gid))
+		os.chown(str(conf_dir + "submin.db"), -1, int(git_gid))
+		os.chown(str(ssh_dir + "authorized_keys"), int(git_uid), int(git_gid))

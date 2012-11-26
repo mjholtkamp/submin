@@ -1,4 +1,5 @@
 from submin.path.path import Path
+from submin.models import options
 import os
 
 class c_unixperms():
@@ -26,9 +27,12 @@ This should also remove possible following warnings.
 
 		if len(argv) > 0:
 			self._fix(argv[0])
-			return
+		else:
+			self._fix('')
 
-		self._fix('')
+		vcs_plugins = options.value("vcs_plugins")
+		if 'git' in vcs_plugins.split(','):
+			self.sa.execute(['git', 'fix_perms'])
 
 	def _fix(self, unixuser):
 		base_dir = Path(self.sa.env)
