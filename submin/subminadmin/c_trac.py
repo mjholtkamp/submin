@@ -4,6 +4,19 @@ import shutil
 from submin.models import options
 from submin.subminadmin import trac
 
+SYSTEM_ENV_LINES = """
+# Added by submin2-admin trac init
+import os
+os.environ['TRAC_ENV_PARENT_DIR'] = '%s'
+
+"""
+
+WSGI_ENV_LINES = """
+	# Added by submin2-admin trac init
+    environ.setdefault('trac.env_parent_dir', os.environ['TRAC_ENV_PARENT_DIR'])
+
+"""
+
 class c_trac():
 	'''Trac support commands
 Usage:
@@ -41,15 +54,37 @@ Usage:
 			for filename in files:
 				src = os.path.join(root, filename)
 				dst = os.path.join(str(cgi_bin_dir), filename)
-				os.rename(src, dst)
-			
+				self.generate_Xgi_script(src, dst)
+		
 		# ... and remove the temporary trac env
 		shutil.rmtree(str(tmp_trac_dir))
 
-		# finally set all permissions and ownerships
+		# finally, set all permissions and ownerships
 		self.sa.execute(['unixperms', 'fix'])
 		return
 
+	def generate_Xgi_script(self, src, dst):
+		"""Copy CGI/FCGI/WSGI script with small adjustments
+		Set environment to point to trac dir instead of generated temp-dir
+		Because script are generated out of our control, try to keep adjustmenst
+		as generic as possible."""
+		header = True
+		with open(src, "r") as f_in:
+			with open(dst, "w") as f_out:
+				for line in f_in.readlines():
+					# set env right after the first non-comment
+					if header and not '#' in line:
+						header = False
+						trac_dir = str(options.env_path('trac_dir'))
+						f_out.write(SYSTEM_ENV_LINES % trac_dir)
+
+					f_out.write(line)
+
+					# if wsgi application is detected, add environ to that
+					# because it won't read from os.environ
+					if 'def application(environ' in line:
+						f_out.write(WSGI_ENV_LINES)
+	
 	def run(self):
 		try:
 			subcmd = getattr(self, 'subcmd_%s' % self.argv[0])
