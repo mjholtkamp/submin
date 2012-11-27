@@ -101,7 +101,7 @@ class Repository(object):
 
 		# only enable when trac env could be found, but always disable (ticket #194, #269)
 		enable_trac = False
-		if options.value('trac_enable', True):
+		if options.value('enabled_trac', True):
 			if enable:
 				try:
 					trac = Trac(self.name)
