@@ -5,7 +5,7 @@ class PathTests(unittest.TestCase):
 	def testConcatPaths(self):
 		p1 = Path("/home")
 		p2 = Path("jeanpaul")
-		self.assertEquals(str(p1 + p2), "/home/jeanpaul")
+		self.assertEquals(p1 + p2, "/home/jeanpaul")
 
 	def testConcatPathString(self):
 		p1 = Path("/home")
@@ -73,6 +73,22 @@ class PathTests(unittest.TestCase):
 	def testNotAbsolute(self):
 		p = Path("notabsolute", absolute=False)
 		self.assertEquals(str(p), "notabsolute")
+
+	def testStringInheritence(self):
+		p = Path("/home/michiel")
+		self.assertEquals(p, "/home/michiel")
+
+	def testUnicode(self):
+		moon = u'\u6708'
+		sun = u'\u65e5'
+		p = Path(moon)
+		self.assertEquals(p + sun, moon + '/' + sun)
+
+	def testStrAndUnicode(self):
+		moon = 'moon'
+		sun = u'\u65e5'
+		p = Path(moon)
+		self.assertEquals(p + sun, moon + '/' + sun)
 
 if __name__ == "__main__":
 	unittest.main()

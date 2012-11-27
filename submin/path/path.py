@@ -1,63 +1,61 @@
 import os.path
 
-class Path(object):
-	def __init__(self, path, append_slash=False, absolute=None):
+try:
+	superclass = unicode
+except NameError:
+	# Must be Python 3.x
+	superclass = str
+
+def _canonicalize(path, append_slash, absolute):
+	'''Return canonical form of path, depending on options'''
+	# autodetect absolute/relative paths
+	if absolute == None:
+		if len(path) > 0 and path[0] == '/':
+			absolute = True
+		else:
+			absolute = False
+
+	path = path.rstrip('/')
+
+	if not absolute:
+		path = path.lstrip('/')
+	else:
+		if path == '' or path[0] != '/':
+			path = '/' + path
+
+	if append_slash and path != '/':
+		return (path + '/', absolute)
+
+	return (path, absolute)
+
+class Path(superclass):
+	def __new__(cls, path, append_slash=False, absolute=None):
+		(path, absolute) = _canonicalize(path, append_slash, absolute)
+		self = super(Path, cls).__new__(cls, path)
 		self.append_slash = append_slash
 		self.absolute = absolute
-		self.path = self.canonicalize(path)
+		return self
 
 	def exists(self):
-		return os.path.exists(self.path)
+		return os.path.exists(self)
 
 	def basename(self):
-		return os.path.basename(self.path)
+		return os.path.basename(self)
 
 	def dirname(self):
-		return os.path.dirname(self.path)
+		return os.path.dirname(self)
 
-	def copy(self, path=None):
-		if path is None:
-			path = self.path
-
-		p = Path(path, append_slash=self.append_slash, absolute=self.absolute)
-		return p
+	def copy(self):
+		return Path(superclass(self), append_slash=self.append_slash, absolute=self.absolute)
 
 	def join(self, other):
-		if isinstance(other, Path):
-			other = other.path.lstrip('/')
-		else:
-			other = other.lstrip('/')
-
-		joined = os.path.join(self.path, other)
-		path = self.canonicalize(joined)
-
-		return self.copy(path)
-
-	def canonicalize(self, path):
-		'''Return canonical form of path, depending on options'''
-		# autodetect absolute/relative paths
-		if self.absolute == None:
-			if len(path) > 0 and path[0] == '/':
-				self.absolute = True
-			else:
-				self.absolute = False
-
-		path = path.rstrip('/')
-
-		if not self.absolute:
-			path = path.lstrip('/')
-		else:
-			if path == '' or path[0] != '/':
-				path = '/' + path
-
-		if self.append_slash and path != '/':
-			return path + '/'
-
-		return path
+		other = other.lstrip('/')
+		joined = os.path.join(superclass(self), other)
+		return Path(joined, append_slash=self.append_slash, absolute=self.absolute)
 
 	def __add__(self, other):
 		return self.join(other)
 
 	def __str__(self):
-		return self.path
+		return super(Path, self).__str__()
 
