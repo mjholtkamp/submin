@@ -11,25 +11,27 @@ setSettings(mock_settings)
 
 from submin.models import repository
 from submin.models import options
+from submin.models import storage
 
 model_tests = ["users.UserTests", "groups.GroupTests", "options.OptionTests"]
 
 def suite():
 	s = unittest.TestSuite()
-	map(s.addTest, map(unittest.defaultTestLoader.loadTestsFromName,
-		["submin.models.tests.%s" % x for x in model_tests]))
+	subtests = ["submin.models.tests.%s" % x for x in model_tests]
+	subtests.append("submin.models.unittests.RepositoryTests")
+	map(s.addTest, map(unittest.defaultTestLoader.loadTestsFromName, subtests))
 	return s
 
 class RepositoryTests(unittest.TestCase):
 	def setUp(self):
 		import tempfile
-		self.submin_env = tempfile.mkdtemp('submin-unittest')
+		self.submin_env = tempfile.mkdtemp(prefix='submin-unittest')
 		self.conf_dir = os.path.join(self.submin_env, 'conf')
 		os.mkdir(self.conf_dir)
 		self.authz_file = os.path.join(self.submin_env, 'conf', 'authz')
 
-		os.environ['SUBMIN_ENV'] = self.submin_env
 		mock_settings.base_dir = self.submin_env
+		storage.open(mock_settings)
 		options.set_value('vcs_plugins', 'svn')
 		options.set_value('svn_dir', 'svn')
 		options.set_value('trac_dir', 'trac')
@@ -58,6 +60,7 @@ class RepositoryTests(unittest.TestCase):
 			os.path.join(self.svn_dir, 'invalidperm2', 'db', 'revs'))
 
 	def tearDown(self):
+		storage.close()
 		os.system("chmod 777 '%s'" % os.path.join(self.svn_dir, 'invalidperm'))
 		os.system("chmod 777 '%s'" % \
 			os.path.join(self.svn_dir, 'invalidperm2', 'db', 'revs'))

@@ -19,7 +19,7 @@ import os
 
 class GroupTests(unittest.TestCase):
 	def setUp(self):
-		self.submin_env = Path(tempfile.mkdtemp('submin-unittest'))
+		self.submin_env = Path(tempfile.mkdtemp(prefix='submin-unittest'))
 		conf_dir = self.submin_env + 'conf'
 		os.mkdir(conf_dir)
 		mock_settings.base_dir = self.submin_env

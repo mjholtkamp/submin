@@ -24,12 +24,15 @@ import os
 
 class UserTests(unittest.TestCase):
 	def setUp(self):
-		self.submin_env = Path(tempfile.mkdtemp('submin-unittest'))
-		os.mkdir(self.submin_env + 'conf')
+		self.submin_env = Path(tempfile.mkdtemp(prefix='submin-unittest'))
+		conf_dir = self.submin_env + 'conf'
+		svn_dir = self.submin_env + 'svn'
+		os.mkdir(conf_dir)
+		os.mkdir(svn_dir)
 		mock_settings.base_dir = self.submin_env
 		storage.open(mock_settings)
-		options.set_value('svn_authz_file', self.submin_env + 'authz') # needed for export
-		options.set_value('svn_dir', self.submin_env + 'svn') # needed for export
+		options.set_value('svn_authz_file', conf_dir + 'authz') # needed for export
+		options.set_value('svn_dir', svn_dir) # needed for export
 		options.set_value('git_dir', self.submin_env + 'git')
 		options.set_value('vcs_plugins', 'svn, git')
 		self.tmp_dirs = []
@@ -41,15 +44,8 @@ class UserTests(unittest.TestCase):
 		storage.close()
 		shutil.rmtree(self.submin_env)
 
-	def makeTempDir(self):
-		tmp_dir = tempfile.mkdtemp(prefix="tmp-%s-" % self.__class__.__name__)
-		self.tmp_dirs.append(tmp_dir)
-		return tmp_dir
-
 	def addRepository(self, reposname):
 		from submin.models.user import FakeAdminUser
-		svndir = self.makeTempDir()
-		options.set_value('svn_dir', svndir)
 		Repository.add('svn', reposname, FakeAdminUser())
 
 	def setEmail(self, u, email):
