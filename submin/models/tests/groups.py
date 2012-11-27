@@ -1,30 +1,37 @@
 import unittest
-from pmock import *
+from mock import Mock
 
 mock_settings = Mock()
 mock_settings.storage = "mock"
-mock_settings.base_dir = "/tmp/submin"
 
-from submin.models import storage
+from submin.bootstrap import setSettings
+setSettings(mock_settings)
+
 from submin.models import group
 from submin.models import options
+from submin.models import storage
+from submin.path.path import Path
 from submin.models.exceptions import GroupExistsError, UnknownGroupError
+
+import tempfile
+import shutil
+import os
 
 class GroupTests(unittest.TestCase):
 	def setUp(self):
+		self.submin_env = Path(tempfile.mkdtemp('submin-unittest'))
+		conf_dir = self.submin_env + 'conf'
+		os.mkdir(conf_dir)
+		mock_settings.base_dir = self.submin_env
 		storage.open(mock_settings)
-		options.set_value('svn_authz_file', '/tmp/submin-authz') # needed for export
-		options.set_value('svn_dir', '/tmp/submin-svn') # needed for export
-		options.set_value('git_dir', '/tmp/submin-git')
+		options.set_value('svn_authz_file', conf_dir + 'authz') # needed for export
+		options.set_value('svn_dir', self.submin_env + 'svn') # needed for export
+		options.set_value('git_dir', self.submin_env + 'git')
 		options.set_value('vcs_plugins', 'svn, git')
 
 	def tearDown(self):
-		import os
 		storage.close()
-		try:
-			os.unlink('/tmp/submin-authz')
-		except OSError:
-			pass
+		shutil.rmtree(self.submin_env)
 
 	def testEmptyList(self):
 		fake_admin = Mock()
@@ -88,3 +95,6 @@ class GroupTests(unittest.TestCase):
 # TODO: test integration between Group and User
 # especially when removing a Group, that group should no longer be available
 # via user.member_of()!
+
+if __name__ == "__main__":
+	unittest.main()

@@ -1,40 +1,45 @@
 import unittest
 import shutil # for temporary dir
 import tempfile # for temporary dir
-from pmock import *
+from mock import Mock
 
 mock_settings = Mock()
 mock_settings.storage = "mock"
 mock_settings.base_dir = "/"
 
+from submin.bootstrap import setSettings
+setSettings(mock_settings)
+
 from submin.models import storage
 from submin.models import user
 from submin.models import options
+from submin.path.path import Path
 from submin.models.exceptions import UserExistsError, UnknownUserError, UserPermissionError
 from submin.models.validators import *
 from submin.models.repository import Repository
 
+import tempfile
+import shutil
+import os
+
 class UserTests(unittest.TestCase):
 	def setUp(self):
+		self.submin_env = Path(tempfile.mkdtemp('submin-unittest'))
+		os.mkdir(self.submin_env + 'conf')
+		mock_settings.base_dir = self.submin_env
 		storage.open(mock_settings)
-		options.set_value('svn_authz_file', '/tmp/submin-authz') # needed for export
-		options.set_value('svn_dir', '/tmp/submin-svn') # needed for export
-		options.set_value('git_dir', '/tmp/submin-git') # needed for export
+		options.set_value('svn_authz_file', self.submin_env + 'authz') # needed for export
+		options.set_value('svn_dir', self.submin_env + 'svn') # needed for export
+		options.set_value('git_dir', self.submin_env + 'git')
 		options.set_value('vcs_plugins', 'svn, git')
 		self.tmp_dirs = []
 		user.add("test", email="a@a.a", password="x")
 		self.u = user.User("test")
 
 	def tearDown(self):
-		import os
 		self.u.remove()
 		storage.close()
-		for tmp_dir in self.tmp_dirs:
-			shutil.rmtree(tmp_dir)
-		try:
-			os.unlink('/tmp/submin-authz')
-		except OSError:
-			pass
+		shutil.rmtree(self.submin_env)
 
 	def makeTempDir(self):
 		tmp_dir = tempfile.mkdtemp(prefix="tmp-%s-" % self.__class__.__name__)
@@ -188,5 +193,7 @@ class UserTests(unittest.TestCase):
 		self.u.set_notification("repos", True, True, self.u)
 		notifications = self.u.notifications()
 		self.assertTrue(notifications["repos"]["enabled"])
-		
 
+
+if __name__ == "__main__":
+	unittest.main()

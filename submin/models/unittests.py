@@ -16,7 +16,6 @@ model_tests = ["users.UserTests", "groups.GroupTests", "options.OptionTests"]
 
 def suite():
 	s = unittest.TestSuite()
-	import submin.models.tests.options
 	map(s.addTest, map(unittest.defaultTestLoader.loadTestsFromName,
 		["submin.models.tests.%s" % x for x in model_tests]))
 	return s
