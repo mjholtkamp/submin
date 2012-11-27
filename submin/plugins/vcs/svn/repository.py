@@ -126,7 +126,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		try:
 			root = fs.revision_root(fs_ptr, youngest_revision_number)
 		except SubversionException, e:
-			raise self.PermissionDenied
+			raise PermissionError
 
 		entries = fs.dir_entries(root, path_utf8)
 
