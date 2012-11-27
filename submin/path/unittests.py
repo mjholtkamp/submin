@@ -10,7 +10,7 @@ class PathTests(unittest.TestCase):
 	def testConcatPathString(self):
 		p1 = Path("/home")
 		p2 = "jeanpaul"
-		self.assertEquals(str(p1 + p2), "/home/jeanpaul")
+		self.assertEquals(p1 + p2, "/home/jeanpaul")
 
 	def testBasename(self):
 		p = Path("/home/jeanpaul/test.file")
@@ -31,48 +31,48 @@ class PathTests(unittest.TestCase):
 	def testConcatRelative(self):
 		p1 = Path("/home")
 		p2 = Path("/jeanpaul")
-		self.assertEquals(str(p1 + p2), "/home/jeanpaul")
+		self.assertEquals(p1 + p2, "/home/jeanpaul")
 
 	def testAppendSlash(self):
 		p1 = Path("/home", append_slash=True)
 		p2 = Path("/jeanpaul")
-		self.assertEquals(str(p1 + p2), "/home/jeanpaul/")
+		self.assertEquals(p1 + p2, "/home/jeanpaul/")
 
 	def testStripSlash(self):
 		p1 = Path("/home")
 		p2 = Path("/jeanpaul/")
-		self.assertEquals(str(p1 + p2), "/home/jeanpaul")
+		self.assertEquals(p1 + p2, "/home/jeanpaul")
 
 	def testStr(self):
 		p = Path("/home/jeanpaul/")
-		self.assertEquals(str(p), "/home/jeanpaul")
+		self.assertEquals(p, "/home/jeanpaul")
 
 	def testAbsoluteFix(self):
 		p = Path("home/michiel", absolute=True)
-		self.assertEquals(str(p), "/home/michiel")
+		self.assertEquals(p, "/home/michiel")
 
 	def testRoot(self):
 		p = Path("/")
-		self.assertEquals(str(p), "/")
+		self.assertEquals(p, "/")
 
 	def testRootAppendSlash(self):
 		p = Path("/", append_slash=True)
-		self.assertEquals(str(p), "/")
+		self.assertEquals(p, "/")
 
 	def testPathJoin(self):
 		p = Path("/base")
 		username = "test"
 		path = p + "/user/show/" + username
-		self.assertEquals(str(path), "/base/user/show/test")
+		self.assertEquals(path, "/base/user/show/test")
 		
 	def testRawCopy(self):
 		p = Path("/base")
 		p2 = p.copy()
-		self.assertEquals(str(p), str(p2))
+		self.assertEquals(p, p2)
 
 	def testNotAbsolute(self):
 		p = Path("notabsolute", absolute=False)
-		self.assertEquals(str(p), "notabsolute")
+		self.assertEquals(p, "notabsolute")
 
 	def testStringInheritence(self):
 		p = Path("/home/michiel")
