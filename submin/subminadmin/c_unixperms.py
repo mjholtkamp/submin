@@ -13,6 +13,7 @@ Usage:
 		self.argv = argv
 		self.root = True
 		self.fix_mode_dirs = ['cgi-bin', 'conf']
+		self.ignore_dirs = []
 
 	def subcmd_fix(self, argv):
 		if os.getuid() != 0:
@@ -25,14 +26,20 @@ This should also remove possible following warnings.
 ''' % self.sa.env
 			self.root = False
 
+		vcs_plugins = options.value("vcs_plugins")
+		# git should be owned by the git user, let 'git fix_perms' handle it
+		if 'git' in vcs_plugins.split(','):
+			git_dir = options.env_path('git_dir')
+			self.ignore_dirs.append(git_dir)
+
 		if len(argv) > 0:
 			self._fix(argv[0])
 		else:
 			self._fix('')
 
-		vcs_plugins = options.value("vcs_plugins")
 		if 'git' in vcs_plugins.split(','):
 			self.sa.execute(['git', 'fix_perms'])
+
 
 	def _fix(self, unixuser):
 		base_dir = Path(self.sa.env)
@@ -53,6 +60,10 @@ This should also remove possible following warnings.
 				self._change_item(path, user, group)
 			for d in dirs:
 				path = os.path.join(root, d)
+				if path in self.ignore_dirs:
+					dirs.remove(d)
+					continue
+
 				self._change_item(path, user, group)
 
 	def _change_item(self, item, user, group):
