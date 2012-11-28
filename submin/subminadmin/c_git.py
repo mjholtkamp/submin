@@ -127,6 +127,7 @@ Usage:
 		# Now add the www-user to the git-group and chgrp of essential files
 		# (settings file, database and paths.)
 		git_pw = getpwnam(git_user)
+		# XXX this is problably not necessary anymore
 		self.add_user_to_group(apache.pw_name, git_pw.pw_gid)
 		self.chgrp_relevant_files(git_uid=git_pw.pw_uid, git_gid=git_pw.pw_gid)
 
@@ -222,19 +223,33 @@ Usage:
 		conf_dir = options.env_path() + "conf"
 		os.chown(str(conf_dir), -1, int(git_gid))
 
-		# The git-directory should also be available to the apache-user
+		# now make everything in git's home-dir owned by the git user and apache group
 		from submin.subminadmin import c_unixperms
 		apache = c_unixperms.c_unixperms(None, None).apache_user()
 		git_dir = options.env_path("git_dir")
-		os.chown(str(git_dir), int(git_uid), int(apache.pw_gid))
-		os.chmod(str(git_dir), 0750)
+		ssh_dir = git_dir + ".ssh"
+		for root, dirs, files in os.walk(git_dir):
+			for f in files:
+				path = os.path.join(root, f)
+				if root == ssh_dir:
+					os.chown(path, int(git_uid), int(git_gid))
+					os.chmod(path, 0700)
+				else:
+					os.chown(path, int(git_uid), int(apache.pw_gid))
+					os.chmod(path, 0750)
+			for d in dirs:
+				path = os.path.join(root, d)
+				os.chown(path, int(git_uid), int(apache.pw_gid))
+				os.chmod(path, 0750)
+
+		# The git-directory itself should also be available to the apache-user,
+		# So it can list the repositories
+		os.chown(git_dir, int(git_uid), int(apache.pw_gid))
 
 		# The ssh-directory can be really strict, only allow git
-		ssh_dir = git_dir + ".ssh"
-		os.chown(str(ssh_dir), int(git_uid), int(apache.pw_gid))
-		os.chmod(str(ssh_dir), 0700)
+		os.chmod(ssh_dir, 0700)
+		os.chown(ssh_dir, int(git_uid), int(git_gid))
 
 		# Now, fix the permissions for the actual files
 		os.chown(str(conf_dir + "settings.py"), -1, int(git_gid))
 		os.chown(str(conf_dir + "submin.db"), -1, int(git_gid))
-		os.chown(str(ssh_dir + "authorized_keys"), int(git_uid), int(git_gid))
