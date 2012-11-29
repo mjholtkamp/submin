@@ -8,8 +8,6 @@ class Permissions(object):
 	def list_paths(self, repository, vcs_type):
 		return storage.list_paths(repository, vcs_type)
 
-	#def list_permissions(*args):
-	#	raise Exception(str(args))
 	def list_permissions(self, repos, vcs_type, path):
 		return storage.list_permissions(repos, vcs_type, path)
 
