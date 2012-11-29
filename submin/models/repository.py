@@ -1,6 +1,7 @@
 import os
 from submin import models
 from submin.models import options
+from submin.models import permissions
 from submin.hooks.common import trigger_hook
 from submin.models.trac import Trac, UnknownTrac
 
@@ -36,29 +37,39 @@ class Repository(object):
 	def list(session_user):
 		repositories = Repository.list_all()
 
-		if not session_user.is_admin:
-			# filter repositories
-			filtered = []
-			for repository in repositories:
-				name = repository['name']
-				status = repository['status']
-				if Repository.userHasReadPermissions(name, session_user):
-					filtered.append({"name": name, "status": status,
-						"vcs": repository["vcs"]})
-			repositories = filtered
+		if session_user.is_admin:
+			return repositories
 
-		return repositories
+		filtered = []
+		# because we iterate multiple times over perms, make it into a list, otherwise
+		# it will be empty after the first time
+		perms = list(permissions.list_by_user(session_user.name))
+		for repository in repositories:
+			name = repository['name']
+			status = repository['status']
+			vcs = repository['vcs']
+			if Repository._userHasReadPermissions(perms, name, vcs):
+				filtered.append({"name": name, "status": status, "vcs": vcs})
+
+		return filtered
 
 	@staticmethod
-	def userHasReadPermissions(reposname, session_user):
-		return True # for now, every user is able to set permissions
-		# should be replaced by submin_permissions instead of 'notifications'
-		if session_user.notifications().has_key(reposname):
-			perm = session_user.notifications()[reposname]
-			if perm['allowed']:
-				return True
+	def userHasReadPermissions(session_user, reposname, vcs):
+		perms = permissions.list_by_user(session_user.name)
+		return Repository._userHasReadPermissions(perms, reposname, vcs)
 
+	@staticmethod
+	def _userHasReadPermissions(perms, reposname, vcs):
+		for perm in perms:
+			name = reposname
+			if vcs == 'git':
+				name += '.git'
+			if perm['repository'] != name or perm['vcs'] != vcs:
+				continue
+			if perm['permission'] in ('r', 'rw'):
+				return True
 		return False
+
 
 	@staticmethod
 	def add(vcs_type, name, session_user):

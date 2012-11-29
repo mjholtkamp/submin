@@ -28,8 +28,7 @@ def export_authz(**args):
 		for path in permissions.list_paths(repository["name"], "svn"):
 			authz.write("[%s:%s]\n" % (repository["name"], path))
 
-			for perm in permissions.list_permissions(repository["name"], "svn",
-					path):
+			for perm in permissions.list_by_path(repository["name"], "svn", path):
 				if perm["type"] == "group":
 					authz.write("@")
 				authz.write("%s = %s\n" % (perm["name"], perm["permission"]))

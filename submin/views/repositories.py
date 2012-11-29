@@ -45,7 +45,7 @@ class Repositories(View):
 			repository = Repository(path[0], vcs_type)
 
 			# Lie if user has no permission to read
-			if not u.is_admin and not Repository.userHasReadPermissions(path[0], u):
+			if not u.is_admin and not Repository.userHasReadPermissions(u, path[0], vcs_type):
 				raise DoesNotExistError
 		except DoesNotExistError:
 			return ErrorResponse('This repository does not exist.', request=req)
@@ -166,7 +166,7 @@ class Repositories(View):
 		path = req.post.get('getPermissions')
 		branch_or_path = Path(path)
 
-		perms = permissions.list_permissions(repository.name,
+		perms = permissions.list_by_path(repository.name,
 				repository.vcs_type, path)
 
 		usernames = []

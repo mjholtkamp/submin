@@ -11,6 +11,9 @@ from submin.bootstrap import setSettings
 setSettings(mock_settings)
 
 from submin.models import repository
+from submin.models import user
+from submin.models import group
+from submin.models import permissions
 from submin.models import options
 from submin.models import storage
 
@@ -39,6 +42,8 @@ class RepositoryTests(unittest.TestCase):
 		options.set_value('trac_dir', 'trac')
 		options.set_value('svn_authz_file', 'conf/authz')
 		options.set_value('enabled_trac', 'no')
+		options.set_value('http_vhost', 'localhost')
+		options.set_value('base_url_submin', '/submin')
 
 		self.svn_dir = str(options.env_path('svn_dir'))
 		self.trac_dir = str(options.env_path('trac_dir'))
@@ -50,6 +55,7 @@ class RepositoryTests(unittest.TestCase):
 			{'name': 'foo', 'status': 'ok', 'vcs': 'svn'},
 			{'name': 'invalidperm', 'status': 'permission denied', 'vcs': 'svn'},
 			{'name': 'invalidperm2', 'status': 'permission denied', 'vcs': 'svn'},
+			{'name': 'example', 'status': 'ok', 'vcs': 'svn'},
 			{'name': 'subdirs', 'status': 'ok', 'vcs': 'svn'},
 		]
 		for r in self.repositories:
@@ -77,11 +83,18 @@ class RepositoryTests(unittest.TestCase):
 
 	def testListRepositoriesAll(self):
 		"""Test listRepositories, which checks for valid permissions of repositories"""
-		self.assertEquals("", "This test fails because list is not filtering correctly")
-		mock_user = Mock()
-		mock_user.is_admin = False
+		mock_admin = Mock()
+		mock_admin.is_admin = True
+		u = user.add('bar', 'a@a.a', send_mail=False)
+		g = group.add('baz') # no members in this group
+		g = group.add('quux')
+		g.add_member(u)
+		permissions.add('foo', 'svn', '/', 'bar', 'user', 'r')
+		permissions.add('subdirs', 'svn', '/trunk', 'quux', 'group', 'rw')
+		# 'bar' is not part of group 'baz', so 'example' should not be listed
+		permissions.add('example', 'svn', '/', 'baz', 'group', 'r')
 
-		result = repository.Repository.list(mock_user)
+		result = repository.Repository.list(u)
 		copy = self.repositories[:]
 		copy = [d for d in self.repositories if d.get('name') == 'foo' or d.get('name') == 'subdirs']
 		copy.sort()

@@ -2,13 +2,14 @@ from submin import models
 from submin.hooks.common import trigger_hook
 storage = models.storage.get("permissions")
 
-from submin.models.repository import Repository
-
 def list_paths(repository, vcs_type):
 	return storage.list_paths(repository, vcs_type)
 
-def list_permissions(repos, vcs_type, path):
+def list_by_path(repos, vcs_type, path):
 	return storage.list_permissions(repos, vcs_type, path)
+
+def list_by_user(username):
+	return storage.list_permissions_by_user(username)
 
 def list_readable_user_paths(repository, vcs_type, user):
 	"""Return a list of paths for this *repository* that the *user* is
@@ -16,7 +17,7 @@ def list_readable_user_paths(repository, vcs_type, user):
 	groups = user.member_of()
 	user_paths = []
 	for path in list_paths(repository, vcs_type):
-		for perm in list_permissions(repository, vcs_type, path):
+		for perm in list_by_path(repository, vcs_type, path):
 			# due to lazy evaluation, user perms overrule group and 'all'
 			if (perm['type'] == 'user' and perm['name'] == user.name) or \
 					(perm['type'] == 'group' and perm['name'] in groups) or \
@@ -32,7 +33,7 @@ def list_writeable_user_paths(repository, vcs_type, user):
 	groups = user.member_of()
 	user_paths = []
 	for path in list_paths(repository, vcs_type):
-		for perm in list_permissions(repository, vcs_type, path):
+		for perm in list_by_path(repository, vcs_type, path):
 			# due to lazy evaluation, user perms overrule group and 'all'
 			if (perm['type'] == 'user' and perm['name'] == user.name) or \
 					(perm['type'] == 'group' and perm['name'] in groups) or \
@@ -43,7 +44,7 @@ def list_writeable_user_paths(repository, vcs_type, user):
 	return set(user_paths) # remove double entries
 
 def is_writeable(repository, vcs_type, user, path):
-	for perm in list_permissions(repository, vcs_type, path):
+	for perm in list_by_path(repository, vcs_type, path):
 		# due to lazy evaluation, user perms overrule group and 'all'
 		if (perm['type'] == 'user' and perm['name'] == user.name) or \
 				(perm['type'] == 'group' and perm['name'] in groups) or \
@@ -64,6 +65,7 @@ def add(repos, repostype, path, subject, subjecttype, perm):
 	"""Sets permission for repos:path, raises a
 	Repository.DoesNotExistError if repos does not exist."""
 	if repos != "":
+		from submin.models.repository import Repository
 		r = Repository(repos, repostype) # check if exists
 
 	_assert_permission_allowed(repostype, path, perm)
@@ -84,6 +86,7 @@ def change(repos, repostype, path,
 		subject, subjecttype, perm):
 	"""Changes permission for repos:path, raises a
 	Repository.DoesNotExistError if repos does not exist."""
+	from submin.models.repository import Repository
 	r = Repository(repos, repostype) # just for the exception
 	_assert_permission_allowed(repostype, path, perm)
 	storage.change_permission(repos, repostype, path, subject, subjecttype,
@@ -107,6 +110,10 @@ Storage Contract
 	Returns a list of permissions of *path* in *repos*. Each permission is
 	in the following form:
 		{'name': 'testUser', 'type': 'user', 'permission': 'rw'}
+
+* list_permissions_by_user(username)
+	Get all permissions for a specific user, including permissions that groups have that
+	this user is a member of.
 
 * add_permission(repos, repostype, path, subject, subjecttype, perm)
 	Set the permission of *repos*:*path* to *subject* (user, group, all)

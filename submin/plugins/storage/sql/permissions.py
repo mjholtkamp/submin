@@ -10,6 +10,26 @@ def list_paths(repository, repostype):
 
 	return [x[0] for x in rows]
 
+def list_permissions_by_user(username):
+	cur = storage.db.cursor()
+	userid = _subject_to_id(username, 'user')
+	storage.execute(cur, """SELECT p.repository, p.repositorytype, p.path, p.type  FROM permissions AS p
+		LEFT JOIN group_members AS gm ON p.subjectid=gm.groupid
+		WHERE (subjecttype = 'group' AND gm.userid = ?) OR
+			(subjecttype = 'user' and p.subjectid = ?)""", (userid, userid))
+
+	rows = cur.fetchall()
+	if not rows:
+		return
+
+	for row in rows:
+		yield {
+			'repository': row[0],
+			'vcs': row[1],
+			'path': row[2],
+			'permission': row[3]
+		}
+
 def list_permissions(repos, repostype, path):
 	cur = storage.db.cursor()
 
