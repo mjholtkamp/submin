@@ -55,7 +55,3 @@ class Path(superclass):
 
 	def __add__(self, other):
 		return self.join(other)
-
-	def __str__(self):
-		return super(Path, self).__str__()
-
