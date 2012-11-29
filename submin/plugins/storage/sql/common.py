@@ -59,6 +59,10 @@ def database_isuptodate():
 	return schema_version == data_version
 
 def database_backup(settings):
+	# no backup possible when in memory
+	if settings.sqlite_path == ":memory:":
+		return
+
 	from shutil import copyfile
 	from time import strftime
 	backupname = settings.sqlite_path + "-" + strftime("%Y%m%d%H%M%S")
