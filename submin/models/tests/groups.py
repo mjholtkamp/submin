@@ -2,7 +2,8 @@ import unittest
 from mock import Mock
 
 mock_settings = Mock()
-mock_settings.storage = "mock"
+mock_settings.storage = "sql"
+mock_settings.sqlite_path = ":memory:"
 
 from submin.bootstrap import setSettings
 setSettings(mock_settings)
@@ -24,6 +25,7 @@ class GroupTests(unittest.TestCase):
 		os.mkdir(conf_dir)
 		mock_settings.base_dir = self.submin_env
 		storage.open(mock_settings)
+		storage.database_evolve()
 		options.set_value('svn_authz_file', conf_dir + 'authz') # needed for export
 		options.set_value('svn_dir', self.submin_env + 'svn') # needed for export
 		options.set_value('git_dir', self.submin_env + 'git')
@@ -67,7 +69,7 @@ class GroupTests(unittest.TestCase):
 	def testEmptyMemberList(self):
 		group.add("foo")
 		foo = group.Group("foo")
-		self.assertEquals(foo.members(), [])
+		self.assertEquals(list(foo.members()), [])
 
 	def testAddMember(self):
 		from submin.models import user

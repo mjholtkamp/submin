@@ -4,7 +4,8 @@ import tempfile # for temporary dir
 from mock import Mock
 
 mock_settings = Mock()
-mock_settings.storage = "mock"
+mock_settings.storage = "sql"
+mock_settings.sqlite_path = ":memory:"
 mock_settings.base_dir = "/"
 
 from submin.bootstrap import setSettings
@@ -31,6 +32,7 @@ class UserTests(unittest.TestCase):
 		os.mkdir(svn_dir)
 		mock_settings.base_dir = self.submin_env
 		storage.open(mock_settings)
+		storage.database_evolve()
 		options.set_value('svn_authz_file', conf_dir + 'authz') # needed for export
 		options.set_value('svn_dir', svn_dir) # needed for export
 		options.set_value('git_dir', self.submin_env + 'git')

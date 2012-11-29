@@ -4,7 +4,8 @@ import unittest
 from mock import Mock
 
 mock_settings = Mock()
-mock_settings.storage = "mock"
+mock_settings.storage = "sql"
+mock_settings.sqlite_path = ":memory:"
 
 from submin.bootstrap import setSettings
 setSettings(mock_settings)
@@ -32,6 +33,7 @@ class RepositoryTests(unittest.TestCase):
 
 		mock_settings.base_dir = self.submin_env
 		storage.open(mock_settings)
+		storage.database_evolve()
 		options.set_value('vcs_plugins', 'svn')
 		options.set_value('svn_dir', 'svn')
 		options.set_value('trac_dir', 'trac')
