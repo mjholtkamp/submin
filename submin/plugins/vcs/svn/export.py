@@ -2,7 +2,7 @@ import codecs
 
 from submin.models import options
 from submin.models import group
-from submin.models.permissions import Permissions
+from submin.models import permissions
 from submin.models.user import FakeAdminUser
 
 def export_authz(**args):
@@ -25,12 +25,10 @@ def export_authz(**args):
 		if repository["status"] != "ok":
 			continue
 
-		perms = Permissions()
-
-		for path in perms.list_paths(repository["name"], "svn"):
+		for path in permissions.list_paths(repository["name"], "svn"):
 			authz.write("[%s:%s]\n" % (repository["name"], path))
 
-			for perm in perms.list_permissions(repository["name"], "svn",
+			for perm in permissions.list_permissions(repository["name"], "svn",
 					path):
 				if perm["type"] == "group":
 					authz.write("@")
@@ -52,8 +50,6 @@ def export_notifications(**args):
 	from submin.models import user
 	users = [user.User(name) for name in user.list(user.FakeAdminUser())]
 
-	from submin.models.permissions import Permissions
-	p = Permissions()
 	groups = []
 	for u in users:
 		if not u.email:
@@ -67,7 +63,7 @@ def export_notifications(**args):
 				continue
 
 			# strip leading /
-			paths = [x[1:] for x in p.list_readable_user_paths(repos, "svn", u)]
+			paths = [x[1:] for x in permissions.list_readable_user_paths(repos, "svn", u)]
 			if len(paths) == 0:
 				continue
 			elif len(paths) == 1:

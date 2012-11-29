@@ -5,11 +5,11 @@ from submin.views.error import ErrorResponse
 from submin.dispatch.view import View
 from submin.models import user
 from submin.models import group
+from submin.models import permissions
 from submin.models.repository import Repository, DoesNotExistError, PermissionError
 from submin.models.trac import Trac, UnknownTrac, createTracEnv
 from submin.models import options
 from submin.models.exceptions import UnknownKeyError
-from submin.models.permissions import Permissions
 from submin.models.repository import vcs_list
 from submin.auth.decorators import login_required, admin_required
 from submin.path.path import Path
@@ -166,9 +166,8 @@ class Repositories(View):
 		path = req.post.get('getPermissions')
 		branch_or_path = Path(path)
 
-		p = Permissions()
-		perms = p.list_permissions(repository.name, repository.vcs_type,
-				path)
+		perms = permissions.list_permissions(repository.name,
+				repository.vcs_type, path)
 
 		usernames = []
 		if 'userlist' in req.post:
@@ -185,14 +184,12 @@ class Repositories(View):
 
 	@admin_required
 	def getpermissionpaths(self, req, repository):
-		perms = Permissions()
-		paths = perms.list_paths(repository.name, repository.vcs_type)
+		paths = permissions.list_paths(repository.name, repository.vcs_type)
 		templatevars = {'repository': repository.name, 'paths': paths}
 		return XMLTemplateResponse('ajax/repositorypermpaths.xml', templatevars)
 
 	@admin_required
 	def addpermission(self, req, repository):
-		perms = Permissions()
 		name = req.post.get('name')
 		type = req.post.get('type')
 		path = req.post.get('path')
@@ -205,30 +202,28 @@ class Repositories(View):
 			else:
 				default_perm = "r"
 
-		perms.add_permission(repository.name, repository.vcs_type, path, name,
+		permissions.add(repository.name, repository.vcs_type, path, name,
 				type, default_perm)
 		return XMLStatusResponse('addPermission', True, ('User', 'Group')[type == 'group'] + ' %s added to path %s' % (name, path))
 
 	@admin_required
 	def removepermission(self, req, repository):
-		perms = Permissions()
 		name = req.post.get('name')
 		type = req.post.get('type')
 		path = req.post.get('path')
 
-		perms.remove_permission(repository.name, repository.vcs_type, path,
+		permissions.remove(repository.name, repository.vcs_type, path,
 				name, type)
 		return XMLStatusResponse('removePermission', True, ('User', 'Group')[type == 'group'] + ' %s removed from path %s' % (name, path))
 
 	@admin_required
 	def setpermission(self, req, repository):
-		perms = Permissions()
 		name = req.post.get('name')
 		type = req.post.get('type')
 		path = req.post.get('path')
 		permission = req.post.get('permission')
 
-		perms.change_permission(repository.name, repository.vcs_type, path,
+		permissions.change(repository.name, repository.vcs_type, path,
 				name, type, permission)
 		return XMLStatusResponse('setPermission', True, 'Permission for %s %s changed to %s' %
 			(('user', 'group')[type == 'group'], name, permission))

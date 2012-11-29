@@ -15,10 +15,9 @@ oldrev = sys.argv[2]
 newrev = sys.argv[3]
 
 repo = os.environ["SUBMIN_REPO"]
-p = permissions.Permissions()
 u = user.User(os.environ["SUBMIN_USERNAME"])
-readable_paths = p.list_readable_user_paths(repo, "git", u)
-writeable_paths = p.list_writeable_user_paths(repo, "git", u)
+readable_paths = permissions.list_readable_user_paths(repo, "git", u)
+writeable_paths = permissions.list_writeable_user_paths(repo, "git", u)
 
 if oldrev == 40 * "0":
 	# new branch!
@@ -29,7 +28,7 @@ else:
 	# existing branch
 	branch = refname.split('/')[-1]
 	#if '/%s' % branch not in writeable_paths:
-	if not p.is_writeable(repo, "git", u, "/%s" % branch):
+	if not permissions.is_writeable(repo, "git", u, "/%s" % branch):
 		print >>sys.stderr, "User %s is not allowed to write to %s" % (u, branch)
 		sys.exit(1)
 

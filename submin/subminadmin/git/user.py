@@ -37,10 +37,9 @@ def run(username):
 		repo = repo[1:]
 	sub_cmd = cmd[4:]
 
-	p = permissions.Permissions()
 	u = user.User(username)
 
-	readable_paths = p.list_readable_user_paths(repo, "git", u)
+	readable_paths = permissions.list_readable_user_paths(repo, "git", u)
 	if not readable_paths:
 		print >>sys.stderr, "Permission denied for %s to user %s" % (repo, u)
 		sys.exit(1)
@@ -50,7 +49,7 @@ def run(username):
 		sys.exit(1)
 	elif sub_cmd in WRITE_CMDS:
 		# check if we have write access
-		writeable_paths = p.list_writeable_user_paths(repo, "git", u)
+		writeable_paths = permissions.list_writeable_user_paths(repo, "git", u)
 		if not writeable_paths:
 			print >>sys.stderr, \
 					"Permission denied for writing, for %s to user %s" % \

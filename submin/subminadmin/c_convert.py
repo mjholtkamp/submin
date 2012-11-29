@@ -134,8 +134,7 @@ Usage:
 					u.is_admin = True
 
 	def write_permissions(self, config):
-		from submin.models.permissions import Permissions
-		p = Permissions()
+		from submin.models import permissions
 
 		# get filename
 		authz_file = config.get('svn', 'authz_file')
@@ -166,7 +165,8 @@ Usage:
 					name_type = 'user'
 
 				try:
-					p.add_permission(repository, "svn", path, name, name_type, permission)
+					permissions.add(repository, "svn", path, name,
+							name_type, permission)
 				except DoesNotExistError:
 					print "Could not add permissions for repository %s, skipping" % repository
 
