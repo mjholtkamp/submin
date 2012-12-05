@@ -50,10 +50,7 @@ class Repositories(View):
 		except DoesNotExistError:
 			return ErrorResponse('This repository does not exist.', request=req)
 
-		try:
-			trac_enabled = options.value('enabled_trac')
-		except UnknownKeyError:
-			trac_enabled = False
+		trac_enabled = options.value('enabled_trac', 'no') != 'no'
 
 		if trac_enabled:
 			templatevars['trac_config_ok'] = True

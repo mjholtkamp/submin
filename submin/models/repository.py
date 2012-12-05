@@ -110,18 +110,19 @@ class Repository(object):
 		"""Enables sending of commit messages if *enable* is True."""
 		self.repository.enableCommitEmails(enable)
 
-		# only enable when trac env could be found, but always disable (ticket #194, #269)
-		enable_trac = False
-		if options.value('enabled_trac', True):
-			if enable:
-				try:
-					trac = Trac(self.name)
-				except UnknownTrac:
-					pass
-				else:
-					enable_trac = True
+		# only enable when trac env could be found, but always disable (whether trac
+		# env could be found or not) (ticket #194, #269)
+		if options.value('enabled_trac', 'no') == 'no':
+			enable = False
 
-		self.repository.enableTracEmails(enable_trac)
+		if enable:
+			try:
+				trac = Trac(self.name)
+			except UnknownTrac:
+				enable = False
+
+		self.repository.enableTracEmails(enable)
+
 		trigger_hook('repository-notifications-update', 
 				repositoryname=self.name, vcs_type=self.vcs_type)
 
