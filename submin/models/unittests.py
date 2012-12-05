@@ -1,6 +1,7 @@
 import os
 import sys
 import unittest
+import tempfile
 from mock import Mock
 
 mock_settings = Mock()
@@ -17,7 +18,8 @@ from submin.models import permissions
 from submin.models import options
 from submin.models import storage
 
-model_tests = ["users.UserTests", "groups.GroupTests", "options.OptionTests"]
+model_tests = ["users.UserTests", "groups.GroupTests", "options.OptionTests",
+			"trac.TracTests"]
 
 def suite():
 	s = unittest.TestSuite()
@@ -28,7 +30,6 @@ def suite():
 
 class RepositoryTests(unittest.TestCase):
 	def setUp(self):
-		import tempfile
 		self.submin_env = tempfile.mkdtemp(prefix='submin-unittest')
 		self.conf_dir = os.path.join(self.submin_env, 'conf')
 		os.mkdir(self.conf_dir)

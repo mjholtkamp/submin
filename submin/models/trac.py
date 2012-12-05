@@ -1,5 +1,5 @@
 import exceptions
-import commands
+import subprocess
 import os
 from submin.models import options
 from submin.models.exceptions import UnknownKeyError
@@ -12,9 +12,13 @@ class MissingConfig(Exception):
 	pass
 
 class TracAdminError(Exception):
-	def __init__(self, exitstatus, outtext):
+	def __init__(self, cmd, exitstatus, outtext):
+		self.cmd = cmd
+		self.exitstatus = exitstatus
+		self.outtext = outtext
 		Exception.__init__(self,
-				"trac-admin exited with exit status %d. Output from the command: %s" % (exitstatus, outtext))
+				"trac-admin '%s' exited with exit status %d. Output from the command: %s" % \
+				(cmd, exitstatus, outtext))
 
 def tracBaseDir():
 	try:
@@ -33,19 +37,32 @@ def createTracEnv(repository, adminUser):
 	projectname = repository
 	svnbasedir = options.env_path('svn_dir')
 	svndir = svnbasedir + repository
+
+	trac_admin_command(tracenv, ['initenv', projectname, 'sqlite:db/trac.db', 'svn', svndir])
+	trac_admin_command(tracenv, ['permission', 'add', adminUser.name, "TRAC_ADMIN"])
+
+def trac_admin_command(trac_dir, args):
+	"""trac_dir is the trac env dir, args is a list of arguments to trac-admin"""
+	cmd = ['trac-admin', trac_dir]
+	cmd.extend(args)
 	path = options.value('env_path', "/bin:/usr/bin:/usr/local/bin:/opt/local/bin")
+	env_copy = os.environ.copy()
+	env_copy['PATH'] = path
 
-	cmd =  "PATH='%s' trac-admin '%s' initenv '%s' 'sqlite:db/trac.db' 'svn' '%s'" % \
-		(path, tracenv, projectname, svndir)
-	(exitstatus, outtext) = commands.getstatusoutput(cmd)
-	if exitstatus != 0:
-		raise TracAdminError(exitstatus, outtext)
+	try:
+		return subprocess.check_output(cmd, stderr=subprocess.STDOUT, env=env_copy)
+	except subprocess.CalledProcessError, e:
+		raise TracAdminError(' '.join(cmd), e.returncode, e.output)
 
-	cmd = "PATH='%s' trac-admin '%s' permission add '%s' TRAC_ADMIN" % \
-			(path, tracenv, adminUser.name)
-	(exitstatus, outtext) = commands.getstatusoutput(cmd)
-	if exitstatus != 0:
-		raise TracAdminError(exitstatus, outtext)
+def tracAdminExists():
+	try:
+		trac_admin_command('/tmp', ['help'])
+	except OSError, e:
+		if e.errno == errno.ENOENT: # could not find executable
+			return False
+		raise
+
+	return True
 
 class Trac(object):
 	def __init__(self, name):
