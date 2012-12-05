@@ -24,8 +24,7 @@ if "--no-coverage" not in sys.argv:
 	try:
 		import coverage
 		use_coverage = True
-		cov = coverage.coverage()
-
+		cov = coverage.coverage(cover_pylib=False, omit="/", include=["submin/*"])
 		# ignore never executed statements
 		cov.exclude("if False:")
 		cov.exclude('if __name__ == .__main__.:')
@@ -75,8 +74,7 @@ def main():
 
 	if use_coverage:
 		cov.stop()
-		cov.report(show_missing=False,
-			omit=["/usr/lib/", "/opt", "/System/Library/", "/Library/Python/"])
+		cov.report(show_missing=False)
 		cov.annotate(directory="coverage-annotate")
 		print "Coverage annotations are stored in `coverage-annotate/'"
 
