@@ -14,7 +14,7 @@ def deploy(trac_dir, deploy_dir):
 	trac_admin_command(trac_dir, ['deploy', deploy_dir])
 
 def exists():
-	return trac.exists()
+	return trac.tracAdminExists()
 
 def initenv(trac_dir, trac_name):
 	trac_admin_command(trac_dir, ['initenv', trac_name, 'sqlite:db/trac.db'])
