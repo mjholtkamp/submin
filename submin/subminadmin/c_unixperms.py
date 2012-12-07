@@ -1,5 +1,4 @@
 from submin.path.path import Path
-from submin.models import options
 import os
 
 class c_unixperms():
@@ -16,6 +15,7 @@ Usage:
 		self.ignore_dirs = []
 
 	def subcmd_fix(self, argv):
+		from submin.models import options
 		if os.getuid() != 0:
 			print '''
 To set permissions and ownerships properly, execute:

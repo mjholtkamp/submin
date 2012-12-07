@@ -1,8 +1,6 @@
 import os
 import commands
 import shutil
-from submin.models import options
-from submin.subminadmin import trac
 
 SYSTEM_ENV_LINES = """
 # Added by submin2-admin trac init
@@ -27,6 +25,8 @@ Usage:
 		self.argv = argv
 
 	def subcmd_init(self, argv):
+		from submin.models import options
+		from submin.subminadmin import trac
 		"""Initialize trac
 		Why not just distribute them with submin? Two reasons: one is because
 		they might change with each version of trac, two is because those scripts
@@ -68,6 +68,7 @@ Usage:
 		Set environment to point to trac dir instead of generated temp-dir
 		Because script are generated out of our control, try to keep adjustmenst
 		as generic as possible."""
+		from submin.models import options
 		header = True
 		with open(src, "r") as f_in:
 			with open(dst, "w") as f_out:
