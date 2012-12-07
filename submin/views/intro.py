@@ -1,5 +1,5 @@
 from submin.template.shortcuts import evaluate_main
-from submin.dispatch.response import Response, XMLStatusResponse
+from submin.dispatch.response import Response
 from submin.dispatch.view import View
 from submin.auth.decorators import *
 from submin.models import options

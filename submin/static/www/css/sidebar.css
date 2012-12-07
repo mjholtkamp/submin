@@ -23,6 +23,8 @@
 	padding-top: 1em;
 	margin-left: 0.5em;
 	clear: both;
+}
+#sidebar h2.showhide {
 	cursor: pointer;
 }
 #sidebar div.showhide ul {

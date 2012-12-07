@@ -1,0 +1,41 @@
+<div id="content">
+	<div id="diagnostics">
+		<h1>Diagnostics</h1>
+		<p>This page shows some tests which make it easier to hunt down why things are not working as they should</p>
+		<div>
+			<h2 class="diag">Trac support (<span class="diag_[test:diag.trac_all yes][else no]"></span>)</h2>
+			<ul>
+				<li>
+					<label class="diag">Trac installed</label>
+					<div class="diag_result">
+						<span class="diag_[test:diag.installed_trac yes][else no]"></span>
+						<div class="diag_note">
+							[test:diag.installed_trac]
+							[else trac-admin was not found, please install Trac. If you have installed Trac, but it cannot be found, check if the env_path config value is set correctly: 'submin2-admin [val subminenv] config get env_path'. Set it with 'submin2-admin [val subminenv] config set env_path <em>yourpath</em>']
+						</div>
+					</div>
+				</li>
+				<li>
+					<label class="diag">Trac dir set in config</label>
+					<div class="diag_result">
+						<span class="diag_[test:diag.trac_dir_set yes][else no]"></span>
+						<div class="diag_note">
+							[test:diag.trac_dir_set]
+							[else To set the trac_dir, run the following command: 'submin2-admin [val subminenv] config set trac_dir trac']
+						</div>
+					</div>
+				</li>
+				<li>
+					<label class="diag">Trac enabled</label>
+					<div class="diag_result">
+						<span class="diag_[test:diag.enabled_trac yes][else no]"></span>
+						<div class="diag_note">
+							[test:diag.enabled_trac To disable, run the following command: 'submin2-admin [val subminenv] config set enabled_trac no']
+							[else To enable, run the following command: 'submin2-admin [val subminenv] config set enabled_trac yes']
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>

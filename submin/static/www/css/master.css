@@ -123,6 +123,7 @@ div.c_icon {
 	background: url('../img/arrows.png');
 }
 
+div.c_icon.none { background: none; }
 div.c_icon.collapsed { background-position: 0px 0px; }
 div.c_icon.halfway { background-position: 0px -12px; }
 div.c_icon.expanded { background-position: 0px -24px; }
@@ -155,4 +156,37 @@ div.c_icon.expanded { background-position: 0px -24px; }
 	color: #822;
 	float: right;
 	padding-right: 10px;
+}
+
+.diag_yes {
+	background: #afa;
+	padding: 0 0.2em;
+}
+.diag_yes:before {
+	content: 'Yes';
+}
+.diag_no {
+	background: #f66;
+	padding: 0 0.2em;
+}
+.diag_no:before {
+	content: 'No';
+}
+
+.diag_result .diag_note {
+	padding: 0.5em;
+	color: #ddd;
+}
+.diag_result:hover .diag_note {
+	color: inherit;
+}
+
+label.diag {
+	width: 15em;
+	float: left;
+	text-align: right;
+	padding: 0 0.5em;
+	background: #eee;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
 }

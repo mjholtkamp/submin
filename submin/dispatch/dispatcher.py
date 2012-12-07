@@ -9,6 +9,7 @@ from submin.views.repositories import Repositories
 from submin.views.intro import Intro
 from submin.views.ajax import Ajax
 from submin.views.upgrade import Upgrade
+from submin.views.diagnostics import Diagnostics
 from submin.models import options
 from submin.models.exceptions import UnknownKeyError
 from submin.dispatch.session import Session
@@ -24,6 +25,7 @@ classes = {
 	'repositories': Repositories,
 	'upgrade': Upgrade,
 	'password': Password,
+	'diagnostics': Diagnostics,
 	'': Intro,
 }
 
