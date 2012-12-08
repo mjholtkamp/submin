@@ -101,7 +101,7 @@ class Users(View):
 				'Email must be supplied')
 
 		try:
-			u = user.add(username, email, send_mail=send_mail)
+			u = user.add(username, email, send_mail=send_mail, origin=req.remote_address)
 			u.fullname = fullname
 		except IOError:
 			return ErrorResponse('File permission denied', request=req)
@@ -206,7 +206,7 @@ class Users(View):
 
 	def sendPasswordMail(self, req, u):
 		try:
-			u.prepare_password_reset()
+			u.prepare_password_reset(req.remote_address)
 			return XMLStatusResponse('sendPasswordMail', True,
 				'Send password reset email to user %s' % u.name)
 		except Exception, e:

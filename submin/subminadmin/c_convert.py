@@ -70,7 +70,7 @@ Usage:
 				# This is a hack. We need to supply an email-address and
 				# if we don't supply a password, user.add() will try to send
 				# an email. Both email and password will be set later.
-				u = user.add(username, email="a@a.a", password=md5_password)
+				u = user.add(username, email="a@a.a", password=md5_password, origin='submin2-admin')
 			except UserExistsError:
 				u = user.User(username)
 

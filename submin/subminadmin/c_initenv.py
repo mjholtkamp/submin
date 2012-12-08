@@ -168,7 +168,7 @@ If you use Trac, it will be accessible from <http base>/trac.
 		
 		if self.init_vars['create_user'] == "yes":
 			# add an admin user
-			u = user.add('admin', self.email)
+			u = user.add('admin', self.email, origin='submin2-admin')
 			u.is_admin = True
 
 		self.sa.execute(['upgrade', 'hooks', 'no-fix-unixperms'])

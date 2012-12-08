@@ -25,7 +25,7 @@ def list(session_user):
 
 	return [user['name'] for user in storage.list()]
 
-def add(username, email, password=None, send_mail=True):
+def add(username, email, password=None, send_mail=True, origin=None):
 	"""Adds a new user
 
 	If password is not set, send an email to supplied address with activation
@@ -42,7 +42,7 @@ def add(username, email, password=None, send_mail=True):
 	u = User(username)
 	u.email = email
 	if not password and send_mail:
-		u.prepare_password_reset()
+		u.prepare_password_reset(origin)
 
 	return u
 
@@ -106,10 +106,10 @@ class User(object):
 
 		return string
 
-	def prepare_password_reset(self):
+	def prepare_password_reset(self, origin):
 		key = self.generate_random_string()
 		storage.set_password_reset_key(self._id, key)
-		self.email_user(key=key)
+		self.email_user(key=key, origin=origin)
 
 	def valid_password_reset_key(self, key):
 		"""Validate password request for this user."""
@@ -118,9 +118,10 @@ class User(object):
 	def clear_password_reset_key(self):
 		storage.clear_password_reset_key(self._id)
 
-	def email_user(self, key=None, password=None):
+	def email_user(self, key=None, password=None, origin=None):
 		"""Email the user a key (to reset her password) OR a password (if the
-		user followed a link with the key in it)."""
+		user followed a link with the key in it). The origin shows where the request
+		came from (string)"""
 		from submin.template.shortcuts import evaluate
 		from submin.email import sendmail
 		
@@ -135,6 +136,7 @@ class User(object):
 			'password': password,
 			'http_vhost': options.value('http_vhost'),
 			'base_url': options.url_path("base_url_submin"),
+			'origin': origin,
 		}
 		if key:
 			template = 'email/prepare_reset.txt'

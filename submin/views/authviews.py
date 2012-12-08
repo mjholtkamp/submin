@@ -98,7 +98,7 @@ class Password(View):
 		if username:
 			try:
 				u = user.User(username)
-				u.prepare_password_reset()
+				u.prepare_password_reset(req.remote_address)
 				templatevars['sent'] = True
 			except UnknownUserError:
 				templatevars['sent'] = True
