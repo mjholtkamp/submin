@@ -4,6 +4,7 @@ import os
 from submin.unicode import uc_str, uc_to_svn, uc_from_svn
 import commands
 import exceptions
+from submin.common import shellscript
 from submin.models import options
 from submin.models.repository import DoesNotExistError, PermissionError, VersionError, VCSImportError
 from export import export_notifications
@@ -201,43 +202,10 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		self.rewritePostCommitHook(self.trac_signature, new_hook, enable)
 
 	def rewritePostCommitHook(self, signature, new_hook, enable):
-		line_altered = False
 		reposdir = options.env_path('svn_dir')
 		hook = reposdir + self.name + 'hooks' + 'post-commit'
 
-		f = open(str(hook), 'a+')
-		f.seek(0, 2) # seek to end of file, not all systems do this
-
-		if f.tell() != 0:
-			f.seek(0)
-			alter_line = False
-			new_file_content = []
-			for line in f.readlines():
-				if alter_line:
-					if enable:
-						new_file_content.append(new_hook)
-					alter_line = False
-					line_altered = True
-					continue # filter out command
-
-				if line == signature:
-					alter_line = True
-					if not enable:
-						continue # filter out signature
-
-				new_file_content.append(line)
-
-			f.truncate(0)
-			f.writelines(new_file_content)
-		else:
-			if enable:
-				f.write("#!/bin/sh\n")
-
-		if not line_altered and enable:
-			f.write(signature)
-			f.write(new_hook)
-		f.close()
-		os.chmod(str(hook), 0755)
+		shellscript.rewriteWithSignature(hook, signature, new_hook, enable, mode=0755)
 
 	def remove(self):
 		reposdir = options.env_path('svn_dir')
