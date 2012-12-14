@@ -16,9 +16,11 @@ class ProgramNotFoundError(Exception):
 class c_git:
 	"""Commands related to git-support
 Usage:
-	git init          - Initialises git support; creates a user and more.
-	                    Execute this as root!
-	git fix_perms     - Fixes unix permissions. Execute as root!"""
+    git init               - Initialises git support; creates a user and more.
+                             Execute this as root!
+    git fix_perms          - Fixes unix permissions. Execute as root!
+    git hook update <repo> - Rewrite the git hook for <repo> (used for old
+                             style hooks). Execute as root!"""
 	# The following commands are not to be called by users, but are internal
 	# git-commands to be used via ssh. They are therefore not mentioned in the
 	# usage text above.
@@ -212,6 +214,14 @@ Usage:
 		git_user = options.value("git_user")
 		git_pw = getpwnam(git_user)
 		self.chgrp_relevant_files(git_uid=git_pw.pw_uid, git_gid=git_pw.pw_gid)
+
+	def subcmd_hook(self, args):
+		if len(args) < 2 or args[0] != 'update':
+			self.sa.execute(['help', 'git'])
+			return
+
+		from submin.subminadmin import git
+		git.create.rewrite_hook(args[1])
 
 	def chgrp_relevant_files(self, git_uid, git_gid):
 		from submin.models import options
