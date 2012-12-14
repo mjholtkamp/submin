@@ -253,3 +253,5 @@ Usage:
 		# Now, fix the permissions for the actual files
 		os.chown(str(conf_dir + "settings.py"), -1, int(git_gid))
 		os.chown(str(conf_dir + "submin.db"), -1, int(git_gid))
+		os.chown(str(conf_dir + "id_dsa.pub"), int(git_uid), int(git_gid))
+		os.chown(str(conf_dir + "id_dsa"), int(git_uid), int(git_gid))
