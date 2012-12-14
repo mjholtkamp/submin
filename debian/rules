@@ -12,7 +12,10 @@ clean:
 
 	python setup.py clean --all
 
-install: build
+clean_dh:
+	rm -f debian/submin2.*.debhelper
+
+install: build clean_dh
 	dh_testdir
 	dh_testroot
 	dh_installdirs
