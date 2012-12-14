@@ -3,7 +3,39 @@
 		<h1>Diagnostics</h1>
 		<p>This page shows some tests which make it easier to hunt down why things are not working as they should</p>
 		<div>
-			<h2 class="diag">Trac support (<span class="diag_[test:diag.trac_all yes][else no]"></span>)</h2>
+			<h2 class="diag">Git support working correctly: <span class="diag_[test:diag.git_all yes][else no]"></span></h2>
+			<ul>
+				<li>
+					<label class="diag">Git dir set in config</label>
+					<div class="diag_result">
+						<span class="diag_[test:diag.git_dir_set yes][else no]"></span>
+						<div class="diag_note">
+							[test:diag.git_dir_set]
+							[else To set the git_dir, run the following command: 'submin2-admin [val subminenv] config set git_dir git']
+						</div>
+					</div>
+				</li>
+				<li>
+					<label class="diag">Only new-style hooks</label>
+					<div class="diag_result">
+						<span class="diag_[test:diag.git_hooks_all_new yes][else no]"></span>
+						<div class="diag_note">
+							[test:diag.git_hooks_all_new][else The following repositories have old-style hooks: <ul>[iter:diag.git_old_hook_repos <li>[ival]</li>]</ul>They can be upgraded to new-style hooks with: 'submin2-admin [val subminenv] git hook update <em>reponame</em>']
+						</div>
+					</div>
+				</li>
+				<li>
+					<label class="diag">Git enabled</label>
+					<div class="diag_result">
+						<span class="diag_[test:diag.enabled_git yes][else no]"></span>
+						<div class="diag_note">
+							[test:diag.enabled_git To disable, run the following command: 'submin2-admin [val subminenv] config set vcs_plugins svn']
+							[else To enable, run the following command: 'submin2-admin [val subminenv] config set vcs_plugins git,svn']
+						</div>
+					</div>
+				</li>
+			</ul>
+			<h2 class="diag">Trac support working correctly: <span class="diag_[test:diag.trac_all yes][else no]"></span></h2>
 			<ul>
 				<li>
 					<label class="diag">Trac installed</label>
