@@ -101,6 +101,16 @@ class IterTagTest(unittest.TestCase):
 		tpl, ev = evaluate('[iter:range bar]', {'range': []})
 		self.assertEquals(ev, '')
 
+	def testTestInsideIter(self):
+		vars = {'pills': {'red': False}}
+		tpl, ev = evaluate('[iter:pills [test:ival red][else blue]]', vars)
+		self.assertEquals(ev, 'blue')
+
+	def testIvalAsPartOfVariableName(self):
+		vars = {'pills': [0], 'color': {'red': False}}
+		tpl, ev = evaluate('[iter:pills [test:color.ival red][else blue]]', vars)
+		self.assertEquals(ev, 'blue')
+
 class IvalTagTest(unittest.TestCase):
 	'Tests the ival-tag, which returns the current iteration-value'
 
@@ -250,6 +260,14 @@ class ElseTest(unittest.TestCase):
 
 	def testElseInSet(self):
 		tpl, ev = evaluate('[set:range [test:foo evals true][else evals false]]')
+		self.assertEquals(ev, '')
+
+	def testDoubleElseInOtherTag(self):
+		tpl, ev = evaluate('[set:something [test:foo true][else false][test:bar true][else false]]')
+		self.assertEquals(ev, '')
+
+	def testElseWithNewLine(self):
+		tpl, ev = evaluate('[set:something [test:foo true]\n[else false]]')
 		self.assertEquals(ev, '')
 
 class EqualsTest(unittest.TestCase):
