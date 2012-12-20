@@ -6,20 +6,6 @@ import string
 from submin.unicode import uc_str
 from library import Library
 
-def get_previous_node(stack):
-	# Nothing on the stack? No previous node
-	if len(stack) == 0:
-		return None
-
-	# if the current stack has nodes, get the last one
-	if stack[-1].nodes:
-		prev_node = stack[-1].nodes[-1]
-	else:
-		# otherwise, just use the current stack
-		prev_node = stack[-1]
-
-	return prev_node
-
 class UnknownCommandError(Exception):
 	pass
 
@@ -102,9 +88,8 @@ class Parser(object):
 		self.lines = 1
 
 	def parse(self):
+		previous_node = None
 		for ch in self.template:
-			previous_node = get_previous_node(self.stack)
-
 			if self.state == ESCAPE:
 				# always leave ESCAPE state the next character
 				self.state = prev_state
@@ -117,8 +102,7 @@ class Parser(object):
 
 				if not self.state and self.data:
 					# But first, do some text cleaning-up!
-					text_prev_node = get_previous_node(self.stack)
-					text = TextNode(self.data, text_prev_node, self.lines)
+					text = TextNode(self.data, previous_node, self.lines)
 					previous_node = text
 					self.data = ''
 					if self.open_cmds:
@@ -127,8 +111,10 @@ class Parser(object):
 						self.stack.append(text)
 
 				self.state = COMMAND
-				self.stack.append(CommandNode('', previous_node, self.lines))
+				cmd = CommandNode('', previous_node, self.lines)
+				self.stack.append(cmd)
 				self.open_cmds += 1
+				previous_node = cmd
 			elif (ch.isspace() or ch in (':', '.')) and self.state == COMMAND:
 				# Represents the end of the command-section. Set the node's
 				# command-name.
@@ -186,9 +172,16 @@ class Parser(object):
 					node = self.stack.pop()
 
 					# Fix the previous node in embedded context.
-					node.previous_node = get_previous_node(self.stack)
+					if self.stack[-1].nodes:
+						node.previous_node = self.stack[-1].nodes[-1]
+					else:
+						node.previous_node = self.stack[-1]
+
 					# Add the node to the other's node-stack
 					self.stack[-1].nodes.append(node)
+					previous_node = node
+				else:
+					previous_node = self.stack[-1]
 
 				self.state = None
 			else:

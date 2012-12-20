@@ -269,6 +269,11 @@ class ElseTest(unittest.TestCase):
 		tpl, ev = evaluate('[set:something [test:foo true]\n[else false]]')
 		self.assertEquals(ev, '')
 
+	def testElseWithSomethingInTest(self):
+		vars = {'foo': True, 'bar': 'BAR'}
+		tpl, ev = evaluate('[test:foo [val bar] and some text]\n[else false]', vars)
+		self.assertEquals(ev, 'BAR and some text\n')
+
 class EqualsTest(unittest.TestCase):
 	def testEqualsBeforeElseFalse(self):
 		tpl, ev = evaluate('[set:empty ][equals:errormsg:empty][else evals false]')

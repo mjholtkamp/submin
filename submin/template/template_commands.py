@@ -238,12 +238,13 @@ def test(node, tpl):
 @commands.register('else')
 def else_tag(node, tpl):
 	prev = node.previous_node
-	while prev.type == 'text':
+	while prev and prev.type == 'text':
 		prev = prev.previous_node
-	if prev.type != 'command' or (prev.command != 'test' and prev.command != 'equals'):
+	if not prev or prev.type != 'command' or (prev.command != 'test' and 
+			prev.command != 'equals'):
 		raise ElseError, \
-			'Previous node to else was not a test-node (file %s, line %d)' % \
-			(tpl.filename, node.line)
+			'Previous node to else was not a test-node (file %s, line %d, node %s)' % \
+			(tpl.filename, node.line, str(prev))
 
 	if prev.command == 'test':
 		value = testTrue(prev, tpl)
