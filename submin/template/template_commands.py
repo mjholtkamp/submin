@@ -238,7 +238,7 @@ def test(node, tpl):
 @commands.register('else')
 def else_tag(node, tpl):
 	prev = node.previous_node
-	if prev.type == 'text' and prev.content.isspace():
+	while prev.type == 'text':
 		prev = prev.previous_node
 	if prev.type != 'command' or (prev.command != 'test' and prev.command != 'equals'):
 		raise ElseError, \
