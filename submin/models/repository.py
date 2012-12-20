@@ -110,6 +110,10 @@ class Repository(object):
 		"""Enables sending of commit messages if *enable* is True."""
 		self.repository.enableCommitEmails(enable)
 
+		trigger_hook('repository-notifications-update', 
+				repositoryname=self.name, vcs_type=self.vcs_type)
+
+	def enableTracCommitHook(self, enable):
 		# only enable when trac env could be found, but always disable (whether trac
 		# env could be found or not) (ticket #194, #269)
 		if options.value('enabled_trac', 'no') == 'no':
@@ -121,13 +125,16 @@ class Repository(object):
 			except UnknownTrac:
 				enable = False
 
-		self.repository.enableTracEmails(enable)
+		self.repository.enableTracCommitHook(enable)
 
 		trigger_hook('repository-notifications-update', 
 				repositoryname=self.name, vcs_type=self.vcs_type)
 
 	def commitEmailsEnabled(self):
 		return self.repository.commitEmailsEnabled()
+
+	def tracCommitHookEnabled(self):
+		return self.repository.tracCommitHookEnabled()
 
 __doc__ = """
 VCS contract
@@ -158,6 +165,12 @@ as some secondary tasks.
 * repo.enableCommitEmails(enable)
 	Enables sending of commit messages if *enable* is True.
 
+* repo.enableTracCommitHook(enable)
+	Enables sending of commit messages if *enable* is True.
+
 * repo.commitEmailsEnabled()
+	Returns True if sendinf of commit messages is enabled.
+
+* repo.tracCommitHookEnabled()
 	Returns True if sendinf of commit messages is enabled.
 """

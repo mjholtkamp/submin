@@ -118,10 +118,13 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		pass
 
 	def commitEmailsEnabled(self):
-		"""Returns True if sendinf of commit messages is enabled."""
+		"""Returns True if sending of commit messages is enabled."""
 		return False
 
-	def enableTracEmails(self, enable):
+	def tracCommitHookEnabled(self):
+		return False
+
+	def enableTracCommitHook(self, enable):
 		pass
 
 	def __str__(self):

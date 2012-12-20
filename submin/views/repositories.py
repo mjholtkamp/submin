@@ -252,6 +252,33 @@ class Repositories(View):
 				templatevars)
 
 	@admin_required
+	def setTracCommitHook(self, req, repository):
+		enable = req.post.get('setTracCommitHook').lower() == "true"
+		change_msg = 'enabled'
+		if not enable:
+			change_msg = 'disabled'
+			
+		repository.enableTracCommitHook(enable)
+		message = 'Trac commit hook is %s' % change_msg
+		templatevars = {'command': 'setTracCommitHook',
+				'enabled': str(enable), 'message': message}
+		return XMLTemplateResponse('ajax/repositorynotifications.xml', 
+				templatevars)
+
+	@admin_required
+	def commitEmailsEnabled(self, req, repository):
+		enabled = repository.tracCommitHookEnabled()
+		change_msg = 'enabled'
+		if not enabled:
+			change_msg = 'disabled'
+		message = 'Notifications %s' % change_msg
+		templatevars = {'command': 'tracCommitHookEnabled',
+				'enabled': str(enabled), 'message': message}
+		return XMLTemplateResponse('ajax/repositorynotifications.xml', 
+				templatevars)
+
+
+	@admin_required
 	def removeRepository(self, req, repository):
 		repository.remove()
 		return XMLStatusResponse('removeRepository', True, 'Repository %s deleted' % repository.name)
@@ -306,6 +333,12 @@ class Repositories(View):
 
 		if 'commitEmailsEnabled' in req.post:
 			return self.commitEmailsEnabled(req, repository)
+
+		if 'setTracCommitHook' in req.post:
+			return self.setTracCommitHook(req, repository)
+
+		if 'tracCommitHookEnabled' in req.post:
+			return self.tracCommitHookEnabled(req, repository)
 
 		if 'tracEnvCreate' in req.post:
 			return self.tracEnvCreate(req, repository)

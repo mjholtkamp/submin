@@ -469,7 +469,38 @@ function toggle_commit_emailsCB(response) {
 	if (!id)
 		return;
 	
-	id.checked = (enabled.lowercase() == "true");
+	id.checked = (enabled.toLowerCase() == "true");
+}
+
+function toggle_trac_commit_hook() {
+	var id = document.getElementById('trac_commit_hook');
+	if (!id)
+		return;
+	
+	var enable = "false";
+	if (id.checked)
+		enable = "true";
+
+	AjaxAsyncPostRequest(document.location, 'setTracCommitHook=' + enable,
+	 	toggle_trac_commit_hookCB);
+	return false; // no following of link
+}
+
+function toggle_trac_commit_hookCB(response) {
+	LogResponse(response);
+	var command = FindResponse(response, 'setTracCommitHook');
+	if (!command)
+		return;
+
+	var enabled = command.xml.getAttribute('enabled');
+	if (!enabled)
+		return;
+
+	var id = document.getElementById('trac_commit_hook');
+	if (!id)
+		return;
+	
+	id.checked = (enabled.toLowerCase() == "true");
 }
 
 function trac_env_create() {

@@ -157,19 +157,14 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		return False
 
 	def commitEmailsEnabled(self):
-		import os
-
 		reposdir = options.env_path('svn_dir')
 		hook = reposdir + self.name + 'hooks' + 'post-commit'
-		try:
-			f = open(str(hook), 'r')
-		except IOError:
-			return False # assume it does not exist
-		
-		# if we find the signature, assume it is installed
-		if self.svn_signature in f.readlines():
-			return True
-		return False
+		return shellscript.hasSignature(str(hook), self.svn_signature)
+
+	def tracCommitHookEnabled(self):
+		reposdir = options.env_path('svn_dir')
+		hook = reposdir + self.name + 'hooks' + 'post-commit'
+		return shellscript.hasSignature(str(hook), self.trac_signature)
 
 	def enableCommitEmails(self, enable):
 		"""Add or remove our script to/from the post-commit hook"""
@@ -188,7 +183,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 
 		self.rewritePostCommitHook(self.svn_signature, new_hook, enable)
 
-	def enableTracEmails(self, enable):
+	def enableTracCommitHook(self, enable):
 		"""Add or remove trac commit script to/from the post-commit hook"""
 		import os
 

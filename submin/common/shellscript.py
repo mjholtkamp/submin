@@ -38,3 +38,11 @@ def rewriteWithSignature(filename, signature, new_hook, enable, mode=None):
 
 	if mode:
 		os.chmod(str(filename), mode)
+
+def hasSignature(filename, signature):
+	try:
+		f = open(filename, 'r')
+	except IOError:
+		return False # no file = no signature
+
+	return signature in f.readlines()

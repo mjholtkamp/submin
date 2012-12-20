@@ -12,6 +12,8 @@
 				[test:trac_config_ok [test:session_user.is_admin <li><label>Trac Environment</label><span><input type="submit" value="Create" onclick="javascript:trac_env_create()"></span></li>]]]
 			<li><label>Send commit email</label><span><input id="commit_emails" type="checkbox" [test:session_user.is_admin onclick="javascript:toggle_commit_emails()"][else disabled] [test:repository.commitEmailsEnabled checked]/>enabled</span>
 			</li>
+			[test:trac_exists <li><label>Trac commit hook</label><span><input id="trac_commit_hook" type="checkbox" [test:session_user.is_admin onclick="javascript:toggle_trac_commit_hook()"][else disabled] [test:repository.tracCommitHookEnabled checked]/>enabled</span>
+			</li>]
 		</ul>
 	</div>
 	[test:session_user.is_admin
