@@ -23,11 +23,10 @@ class ParserTest(unittest.TestCase):
 		tpl, ev = evaluate('\[escaped!\]')
 		self.assertEquals(ev, expected)
 
-	# this test fails, because the code is not good enough to handle this
-	# def testNonEscapeEscape(self):
-	# 	expected = "\n\[newline\]"
-	# 	tpl, ev = evaluate('\n\[newline\]')
-	# 	self.assertEquals(ev, expected)
+	def testNonEscapeEscape(self):
+	 	expected = r'.[newline]'
+	 	tpl, ev = evaluate(r'\.\[newline\]')
+	 	self.assertEquals(ev, expected)
 
 class SetTagTest(unittest.TestCase):
 	'Testcase for the set-tag which can set a template variable'

@@ -105,18 +105,13 @@ class Parser(object):
 		for ch in self.template:
 			previous_node = get_previous_node(self.stack)
 
-
-			# FIXME: Escaping gaat nog niet goed als er geen \, [ of ] erna 
-			# komt: dan blijft het geheel in state ESCAPE.
-
-			if ch == '\\' and self.state != ESCAPE:
+			if self.state == ESCAPE:
+				# always leave ESCAPE state the next character
+				self.state = prev_state
+				self.data += ch
+			elif ch == '\\' and self.state != ESCAPE:
 				prev_state = self.state
 				self.state = ESCAPE
-			elif ch in ('\\', '[', ']') and self.state == ESCAPE:
-				# Escape characters
-				# self.state = None
-				self.data += ch
-				self.state = prev_state
 			elif ch == '[':
 				# Add new CommandNode to the stack
 
