@@ -35,6 +35,40 @@
 					</div>
 				</li>
 			</ul>
+			<h2 class="diag">Svn support working correctly: <span class="diag_[test:diag.svn_all yes][else no]"></span></h2>
+			<ul>
+				<li>
+					<label class="diag">SVN dir set in config</label>
+					<div class="diag_result">
+						<span class="diag_[test:diag.svn_dir_set yes][else no]"></span>
+						<div class="diag_note">
+							[test:diag.svn_dir_set]
+							[else To set the svn_dir, run the following command: 'submin2-admin [val subminenv] config set svn_dir svn']
+						</div>
+					</div>
+				</li>
+				[iter:diag.svn_apache_modules
+				<li>
+					<label class="diag">Apache '[ikey]'</label>
+					<div class="diag_result">
+						<span class="diag_[test:ival yes][else no]"></span>
+						<div class="diag_note">
+							[test:ival]
+							[else The module '[ikey]' was not loaded. Please make sure it is.]
+						</div>
+					</div>
+				</li>]
+				<li>
+					<label class="diag">SVN enabled</label>
+					<div class="diag_result">
+						<span class="diag_[test:diag.enabled_svn yes][else no]"></span>
+						<div class="diag_note">
+							[test:diag.enabled_svn To disable, run the following command: 'submin2-admin [val subminenv] config set vcs_plugins git']
+							[else To enable, run the following command: 'submin2-admin [val subminenv] config set vcs_plugins git,svn']
+						</div>
+					</div>
+				</li>
+			</ul>
 			<h2 class="diag">Trac support working correctly: <span class="diag_[test:diag.trac_all yes][else no]"></span></h2>
 			<ul>
 				<li>
