@@ -6,6 +6,20 @@ import string
 from submin.unicode import uc_str
 from library import Library
 
+def get_previous_node(stack):
+	# Nothing on the stack? No previous node
+	if len(stack) == 0:
+		return None
+
+	# if the current stack has nodes, get the last one
+	if stack[-1].nodes:
+		prev_node = stack[-1].nodes[-1]
+	else:
+		# otherwise, just use the current stack
+		prev_node = stack[-1]
+
+	return prev_node
+
 class UnknownCommandError(Exception):
 	pass
 
@@ -89,9 +103,7 @@ class Parser(object):
 
 	def parse(self):
 		for ch in self.template:
-			previous_node = None
-			if len(self.stack):
-				previous_node = self.stack[-1]
+			previous_node = get_previous_node(self.stack)
 
 
 			# FIXME: Escaping gaat nog niet goed als er geen \, [ of ] erna 
@@ -110,7 +122,8 @@ class Parser(object):
 
 				if not self.state and self.data:
 					# But first, do some text cleaning-up!
-					text = TextNode(self.data, previous_node, self.lines)
+					text_prev_node = get_previous_node(self.stack)
+					text = TextNode(self.data, text_prev_node, self.lines)
 					previous_node = text
 					self.data = ''
 					if self.open_cmds:
@@ -178,10 +191,7 @@ class Parser(object):
 					node = self.stack.pop()
 
 					# Fix the previous node in embedded context.
-					if self.stack[-1].nodes:
-						node.previous_node = self.stack[-1].nodes[-1]
-					else:
-						node.previous_node = None
+					node.previous_node = get_previous_node(self.stack)
 					# Add the node to the other's node-stack
 					self.stack[-1].nodes.append(node)
 
