@@ -49,7 +49,7 @@
 
 #sidebar div.showhide li {
 	float: left;
-	width: 100%;
+	width: 85%;
 }
 #sidebar div.showhide li:hover, div.showhide li.selected {
 	background: #C0CDED;
@@ -59,11 +59,12 @@
 }
 #sidebar li .deleteuser, #sidebar li .deletegroup, #sidebar li .deleterepository {
 	display: none;
+	float: right;
 }
 #sidebar div.showhide li a, #sidebar div.showhide li span.err_version, #sidebar div.showhide li span.err_permission {
 	display: block;
 	float: left;
-	width: 75%;
+	width: 80%;
 	margin-left: 0.5em;
 	text-decoration: none;
 	color: black;
