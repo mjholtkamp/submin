@@ -69,7 +69,7 @@ Usage:
 		if len(args) < 1:
 			die("user")
 		from submin.subminadmin import git
-		git.user.run(args[0])
+		git.user.run(unicode(args[0], 'utf-8'))
 
 	def subcmd_admin(self, args):
 		if 'SSH_ORIGINAL_COMMAND' not in os.environ:
