@@ -11,11 +11,11 @@ if "--help" in sys.argv or "-h" in sys.argv:
 	print "    --help (-h):   Display this help-text"
 	print
 	print "%s looks for unittests (in files named unittests.py) in the " % sys.argv[0]
-	print "`lib/' directory."
-	print "To narrow the search, supply a sub-directory of `lib/' at the commandline"
+	print "`submin/' directory."
+	print "To narrow the search, supply a sub-directory of `submin/' at the commandline"
 	print
 	print "By default, %s displays coverage report if it is able to load the" % sys.argv[0]
-	print "coverage-module. Annotations are stored in the `coverage-annotate/' directory."
+	print "coverage-module. Annotations are stored in the `dev/coverage-annotate/' directory."
 	sys.exit(0)
 
 use_coverage = False
@@ -75,8 +75,8 @@ def main():
 	if use_coverage:
 		cov.stop()
 		cov.report(show_missing=False)
-		cov.annotate(directory="coverage-annotate")
-		print "Coverage annotations are stored in `coverage-annotate/'"
+		cov.annotate(directory="dev/coverage-annotate")
+		print "Coverage annotations are stored in `dev/coverage-annotate/'"
 
 	# Provide a non-zero exitstatus when tests fail.
 	if not testresult.wasSuccessful():
