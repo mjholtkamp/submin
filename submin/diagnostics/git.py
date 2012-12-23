@@ -3,6 +3,7 @@ import errno
 
 from submin.models import options
 from submin.models.exceptions import UnknownKeyError
+from submin.plugins.vcs.git import remote
 
 def diagnostics():
 	results = {}
@@ -28,6 +29,14 @@ def diagnostics():
 		results['git_hostname_ok'] = True
 		if git_ssh_host in ('localhost', '127.0.0.1', '::1'):
 			results['git_hostname_ok'] = False
+
+	try:
+		remote.execute("update-auth")
+	except remote.NonZeroExitStatus, e:
+		results['git_admin_test'] = False
+		results['git_admin_test_errmsg'] = str(e)
+	else:
+		results['git_admin_test'] = True
 
 	results['git_all'] = False not in results.values()
 	

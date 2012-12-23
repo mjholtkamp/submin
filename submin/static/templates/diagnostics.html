@@ -35,6 +35,20 @@
 					</div>
 				</li>
 				<li>
+					<label class="diag">Git local ssh</label>
+					<div class="diag_result">
+						<span class="diag_[test:diag.git_admin_test yes][else no]"></span>
+						<div class="diag_note">
+							[test:diag.git_admin_test Could succesfully issue admin commands through SSH]
+							[else Could not issue admin commands, error message:
+<p>"[val diag.git_admin_test_errmsg]".</p>
+
+<p>Please check that git_ssh_host_internal, git_ssh_port and git_user are setup correctly. You can check this with: 'submin2-admin [val subminenv] config get <em>value</em>'. Next check that you can actually connect to SSH: 'ssh <em>git_user</em>@<em>git_ssh_host_internal</em> -p <em>git_ssh_port</em> -i [val subminenv]/conf/id_dsa' (it should give a message like: 'submin2-admin git admin is not supposed to be called by users.')
+</p>]
+						</div>
+					</div>
+				</li>
+				<li>
 					<label class="diag">Git enabled</label>
 					<div class="diag_result">
 						<span class="diag_[test:diag.enabled_git yes][else no]"></span>
