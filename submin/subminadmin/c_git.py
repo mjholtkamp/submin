@@ -59,9 +59,7 @@ Usage:
 			print >>sys.stderr, "Command:", e.cmd
 			print >>sys.stderr, "Error message of the command was:", e.errormsg
 			sys.exit(1)
-		except Exception, e:
-			print >>sys.stderr, '*** Unexpected error:', e
-			sys.exit(1)
+		# other exceptions are just raised
 
 		return True
 
@@ -221,7 +219,8 @@ Usage:
 			return
 
 		from submin.subminadmin import git
-		git.create.rewrite_hook(args[1])
+		filename = unicode(args[1], 'utf-8')
+		git.create.rewrite_hook(filename)
 
 	def chgrp_relevant_files(self, git_uid, git_gid):
 		from submin.models import options

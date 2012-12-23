@@ -1,5 +1,6 @@
 import os
 import sys
+import errno
 import commands
 import shutil
 
@@ -25,7 +26,11 @@ def run(reponame):
 def rewrite_hook(reponame):
 	reposdir = _git_dirname(reponame)
 	hook = reposdir + 'hooks' + 'update'
-	os.rename(hook, str(hook) + '.submin2.backup')
+	try:
+		os.rename(hook, str(hook) + '.submin2.backup')
+	except OSError, e:
+		if e.errno != errno.ENOENT:
+			raise
 	_enable_hook(reposdir)
 
 def _enable_hook(reposdir):
@@ -33,7 +38,7 @@ def _enable_hook(reposdir):
 	If you want to overwrite the hook with a clean submin-hook, call rewrite_hook instead."""
 	signature = "### SUBMIN GIT AUTOCONFIG, DO NOT ALTER FOLLOWING LINE ###\n"
 	target_script = options.static_path("hooks") + "git" + "update"
-	new_hook = "/usr/bin/python %s\n" % (target_script, )
+	new_hook = '/usr/bin/python %s "$@"\n' % (target_script, )
 	hook = reposdir + 'hooks' + 'update'
 
 	shellscript.rewriteWithSignature(hook, signature, new_hook, True, mode=0755)
