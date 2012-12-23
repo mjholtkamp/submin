@@ -262,6 +262,11 @@ Usage:
 		# Now, fix the permissions for the actual files
 		os.chown(str(conf_dir + "settings.py"), -1, int(git_gid))
 		os.chown(str(conf_dir + "submin.db"), -1, int(git_gid))
-		os.chown(str(conf_dir + "id_dsa.pub"), int(git_uid), int(git_gid))
-		os.chown(str(conf_dir + "id_dsa"), int(git_uid), int(git_gid))
+
+		# These last ones are a bit tricky, id_dsa and id_dsa.pub are
+		# NOT owned by the git user, as they are client files owned
+		# by the www user. However, SSH requires strict permissions
+		# and id_dsa.pub needs to be readable by the git user, so it
+		# can add the public key to the authorized_keys file.
+		os.chown(str(conf_dir + "id_dsa.pub"), -1, int(git_gid))
 		os.chmod(str(conf_dir + "id_dsa"), 0600)
