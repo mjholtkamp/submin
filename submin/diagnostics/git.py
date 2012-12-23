@@ -1,4 +1,5 @@
 import os
+import errno
 
 from submin.models import options
 from submin.models.exceptions import UnknownKeyError
@@ -19,6 +20,15 @@ def diagnostics():
 		results['git_hooks_all_new'] = len(old_dirs) == 0
 		results['git_old_hook_repos'] = old_dirs
 
+	try:
+		git_ssh_host = options.value('git_ssh_host')
+	except UnknownKeyError:
+		results['git_hostname_ok'] = False
+	else:
+		results['git_hostname_ok'] = True
+		if git_ssh_host in ('localhost', '127.0.0.1', '::1'):
+			results['git_hostname_ok'] = False
+
 	results['git_all'] = False not in results.values()
 	
 	return results
@@ -33,7 +43,12 @@ def old_hook_dirs(git_dir_root):
 		break
 
 	for git_dir in git_dirs:
-		hook = file(os.path.join(git_dir_root, git_dir, 'hooks', 'update'), 'r').readlines()
+		try:
+			hook = file(os.path.join(git_dir_root, git_dir, 'hooks', 'update'), 'r').readlines()
+		except IOError, e:
+			if e.errno == errno.ENOENT:
+				continue
+
 		if signature not in hook:
 			yield git_dir
 	return

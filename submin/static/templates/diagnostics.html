@@ -25,6 +25,16 @@
 					</div>
 				</li>
 				<li>
+					<label class="diag">Git hostname correct</label>
+					<div class="diag_result">
+						<span class="diag_[test:diag.git_hostname_ok yes][else no]"></span>
+						<div class="diag_note">
+							[test:diag.git_hostname_ok ]
+							[else The 'git_ssh_host' config is not set, or it is set to a local address. Please set a good hostname reachable by everyone with the following command: 'submin2-admin [val subminenv] config set git_ssh_host <em>public_hostname</em>']
+						</div>
+					</div>
+				</li>
+				<li>
 					<label class="diag">Git enabled</label>
 					<div class="diag_result">
 						<span class="diag_[test:diag.enabled_git yes][else no]"></span>
