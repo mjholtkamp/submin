@@ -264,3 +264,4 @@ Usage:
 		os.chown(str(conf_dir + "submin.db"), -1, int(git_gid))
 		os.chown(str(conf_dir + "id_dsa.pub"), int(git_uid), int(git_gid))
 		os.chown(str(conf_dir + "id_dsa"), int(git_uid), int(git_gid))
+		os.chmod(str(conf_dir + "id_dsa"), 0700)
