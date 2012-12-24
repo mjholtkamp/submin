@@ -17,7 +17,6 @@ def run():
 	storage.open()
 
 	try:
-		import cgitb; cgitb.enable()
 		from submin.dispatch.cgirequest import CGIRequest
 		from submin.dispatch.dispatcher import dispatcher
 
