@@ -1,0 +1,15 @@
+Changes since 2.1.0:
+ - Apache config files are now generated separately (Trac, submin web UI, SVN and also CGI, WSGI, FCGI)
+ - Web UI: improved correctness, load time, performance and small design improvements.
+ - Added 'Diagnostics' page: check common misconfigurations.
+ - Fixed code that was checking if Trac support was enabled (fixes #293)
+ - Removed (partial) IE6 support.
+ - Added IP-address in password reset request, so you can see who is trying to reset your password.
+ - Session improvements (fixes #283, #286 and others)
+ - Unicode improvements (fixes #278 and others)
+ - Git support improvements (fixes #295, #275 and others)
+ - Added submin-quickstart binary, for quick testing
+ - Other minor bugfixes in submin2-admin (fixes #291 and others)
+ - Other minor bugfixes in submin web UI
+ - Other minor fixes in the tempting system
+ - Add more unit tests for regression testing

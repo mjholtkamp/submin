@@ -1,3 +1,9 @@
+submin (2.1.0-1) testing; urgency=low
+
+  * New release: 2.1.0
+
+ -- Michiel Holtkamp <michiel@supermind.nl>  Mon, 24 Dec 2012 23:09:32 +0000
+
 submin (2.0.3-1) testing; urgency=low
 
   * Fixed #270 (mailer.py.conf is not updated when notifications change)
