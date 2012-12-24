@@ -51,7 +51,7 @@ a.external {
 	font-style: italic;
 }
 
-img.adder, img.remover {
+img.adder, div.remover {
 	vertical-align: middle;
 }
 
@@ -120,13 +120,19 @@ div.c_icon {
 	width: 12px;
 	float: left;
 	margin-right: 0.5em;
-	background: url('../img/arrows.png');
+	background: url('../img/icons.png');
 }
 
 div.c_icon.none { background: none; }
 div.c_icon.collapsed { background-position: 0px 0px; }
 div.c_icon.halfway { background-position: 0px -12px; }
 div.c_icon.expanded { background-position: 0px -24px; }
+div.c_icon.minus {
+	height: 13px;
+	width: 13px;
+	margin: 0px;
+	background-position: 0px -36px;
+}
 
 /* ==== Log popup ==== */
 #log {

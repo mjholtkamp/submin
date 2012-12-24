@@ -85,7 +85,7 @@ div#permissions-editor select.adder {
 	margin-bottom: 1.5em;
 }
 
-div#permissions-editor img.remover {
+div#permissions-editor div.remover {
 	float: right;
 	margin-right: 0.5em;
 	margin-left: 2.0em;

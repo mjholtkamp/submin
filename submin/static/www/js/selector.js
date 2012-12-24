@@ -34,9 +34,10 @@ function Selector(options) {
 
 /* Creates the add/remove button for each item */
 Selector.prototype.makeButton = function(className) {
-	var imgSrc = base_url + "img/min.png";
-	var img = $c("img", {"src": imgSrc, "className": className});
-	return img;
+	var minus = $c("div", {"className": className});
+	addClassName(minus, "c_icon");
+	addClassName(minus, "minus");
+	return minus;
 }
 
 /* Reinitializes the list after a change. */

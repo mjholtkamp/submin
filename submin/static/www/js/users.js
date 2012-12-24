@@ -335,11 +335,10 @@ function redrawSSHKeys(ssh_keys) {
 		}
 		li.appendChild(a);
 
-		var img = $c("img", {src: base_url + "img/min.png",
-				className: "remover"});
-		img.setAttribute("title", "Delete " + ssh_keys[i].title);
-		img.onclick = removeSSHKey;
-		li.appendChild(img);
+		var minus = $c("div", {className: "remover c_icon minus"});
+		minus.setAttribute("title", "Delete " + ssh_keys[i].title);
+		minus.onclick = removeSSHKey;
+		li.appendChild(minus);
 
 		list.appendChild(li);
 	}
