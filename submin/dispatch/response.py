@@ -16,6 +16,9 @@ class Response(object):
 class Redirect(Response):
 	def __init__(self, url, request):
 		Response.__init__(self)
+		if not request.is_ajax():
+			request.session['redirected_from'] = request.url
+
 		url = unicode(url)
 		self.status_code = 302
 		if not '://' in url:

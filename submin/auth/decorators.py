@@ -10,9 +10,6 @@ def login_required(fun):
 	login_url = options.url_path('base_url_submin') + 'login'
 
 	def _decorator(self, *args, **kwargs):
-		if not self.request.is_ajax():
-			self.request.session['redirected_from'] = self.request.url
-
 		if not 'user' in self.request.session:
 			return Redirect(login_url, self.request)
 
