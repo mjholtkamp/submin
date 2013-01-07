@@ -3,13 +3,14 @@
 	<div class="logout">
 	<ul><li><a href="[val main_base_url]logout">Logout ([val session_user.name])</a></li></ul>
 	</div>
+	[test:session_user.is_admin
 	<div class="showhide">
 	[set:type system]
 	<h2><div class="showhide c_icon none"></div>System</h2>
 	<ul>
 	<li><a href="[val main_base_url]diagnostics">Diagnostics</a></li>
 	</ul>
-	</div>
+	</div>]
 	<div class="showhide">
 	[set:type users]
 	<h2 class="showhide c_trigger"><div class="showhide c_icon expanded"></div>Users</h2>
