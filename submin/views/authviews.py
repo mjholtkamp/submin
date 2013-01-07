@@ -11,10 +11,13 @@ from submin.models.storage import database_isuptodate
 
 class Login(View):
 	def handler(self, request, path):
-		if not request.post:
-			return self.evaluate_form()
-		username = request.post.get('username', '')
-		password = request.post.get('password', '')
+		if 'auto_authenticate' in request.session:
+			username = request.session['auto_authenticate']
+		else:
+			if not request.post:
+				return self.evaluate_form()
+			username = request.post.get('username', '')
+			password = request.post.get('password', '')
 
 		invalid_login = True
 		u = None
@@ -24,14 +27,17 @@ class Login(View):
 		except UnknownUserError, e:
 			pass
 
-		try:
-			if not u or not u.check_password(password):
-				return self.evaluate_form('Not a valid username and password combination')
-		except NoMD5PasswordError, e:
-			return self.evaluate_form(str(e))
+		if 'auto_authenticate' in request.session:
+			del request.session['auto_authenticate']
+		else:
+			try:
+				if not u or not u.check_password(password):
+					return self.evaluate_form('Not a valid username and password combination')
+			except NoMD5PasswordError, e:
+				return self.evaluate_form(str(e))
 
-		if invalid_login:
-			return self.evaluate_form('Not a valid username and password combination')
+			if invalid_login:
+				return self.evaluate_form('Not a valid username and password combination')
 
 		url = options.url_path('base_url_submin')
 		if 'redirected_from' in request.session:
@@ -72,22 +78,25 @@ class Password(View):
 			if len(path) > 1:
 				key = path[1]
 
-			return self.reset_password(username, key)
+			return self.reset_password(req, username, key)
 		return self.send_email(req, path)
 
-	def reset_password(self, username, key):
+	def reset_password(self, req, username, key):
 		templatevars = { 'base_url': options.url_path('base_url_submin') }
+		if 'auto_authenticate' in req.session:
+			del req.session['auto_authenticate']
+
 		try:
 			u = user.User(username)
-			if not u.valid_password_reset_key(key):
-				templatevars['invalid'] = True
-			else:
-				newpass = u.generate_random_string(12)
-				u.set_password(newpass, send_email=True)
-				u.clear_password_reset_key()
-				templatevars['reset'] = True
 		except UnknownUserError:
 			raise
+
+		if not u.valid_password_reset_key(key):
+			templatevars['invalid'] = True
+		else:
+			templatevars['reset'] = True
+			req.session['auto_authenticate'] = username
+			u.clear_password_reset_key()
 
 		formatted = evaluate('password.html', templatevars)
 		return Response(formatted)
