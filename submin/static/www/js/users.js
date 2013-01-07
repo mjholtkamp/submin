@@ -106,6 +106,10 @@ function checkPasswords() {
 	// Send the entered password to the server.
 	sendPassword(enteredPassword);
 	enteredPassword = '';
+	change_password_hint = $('change_password_hint')
+	if (change_password_hint) {
+		change_password_hint.style.display = 'none';
+	}
 	return false;
 }
 
