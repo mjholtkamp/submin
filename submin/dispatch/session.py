@@ -35,6 +35,9 @@ class PickleDict(object):
 	def save(self):
 		raise NotImplementedError
 
+	def clear(self):
+		self.dict.clear()
+
 	def __contains__(self, key):
 		return key in self.dict
 
@@ -53,9 +56,6 @@ class PickleDict(object):
 
 	def get(self, *args, **kwargs):
 		return self.dict.get(*args, **kwargs)
-
-	def _destroy(self):
-		os.path.unlink(self.filename)
 
 class FilePickleDict(PickleDict):
 	def __init__(self, filename, autosave=True):
@@ -79,6 +79,9 @@ class FilePickleDict(PickleDict):
 			filehandle.close()
 		finally:
 			self.lock.release()
+
+	def _destroy(self):
+		os.path.unlink(self.filename)
 
 class DBPickleDict(PickleDict):
 	def __init__(self, key, autosave=True):
