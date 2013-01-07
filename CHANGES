@@ -1,3 +1,7 @@
+Changes since 2.1.1:
+ - Password reset functionality is now easier: no need to check your mail multiple times
+ - Removed Diagnostics from displaying for non-admins
+
 Changes since 2.1.0:
  - Apache config files are now generated separately (Trac, submin web UI, SVN and also CGI, WSGI, FCGI)
  - Web UI: improved correctness, load time, performance and small design improvements.
