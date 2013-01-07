@@ -29,6 +29,7 @@ class Login(View):
 
 		if 'auto_authenticate' in request.session:
 			del request.session['auto_authenticate']
+			request.session['change_password_hint'] = True
 		else:
 			try:
 				if not u or not u.check_password(password):
@@ -121,7 +122,7 @@ class Logout(View):
 	def handler(self, request, path):
 		if 'user' in request.session:
 			request.session['user']['is_authenticated'] = False
-			del request.session['user']
+		request.session.clear()
 		url = options.url_path('base_url_submin')
 		return Redirect(url, request)
 

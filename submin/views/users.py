@@ -50,6 +50,9 @@ class Users(View):
 			return ErrorResponse('This user does not exist.', request=req)
 
 		localvars['user'] = u
+		if 'change_password_hint' in req.session:
+			localvars['change_password_hint'] = True
+
 		formatted = evaluate_main('users.html', localvars, request=req)
 		return Response(formatted)
 
@@ -198,11 +201,16 @@ class Users(View):
 	def setPassword(self, req, u):
 		try:
 			u.set_password(req.post.get('password'))
-			return XMLStatusResponse('setPassword', True,
-				'Changed password for user %s' % u.name)
 		except Exception, e:
 			return XMLStatusResponse('setPassword', False,
 				'Could not change password of user %s: %s' % (u.name, e))
+		else:
+			# User changed their password, we don't have to remind to
+			# change the password anymore
+			if 'change_password_hint' in req.session:
+				del req.session['change_password_hint']
+			return XMLStatusResponse('setPassword', True,
+				'Changed password for user %s' % u.name)
 
 	def sendPasswordMail(self, req, u):
 		try:

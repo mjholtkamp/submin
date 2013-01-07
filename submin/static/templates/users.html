@@ -4,7 +4,7 @@
 		<ul>
 			<li><form onSubmit="sendFullName();return false;"><label for="fullname">Name</label><input type="text" class="rounded" value="[val user.fullname]" id="fullname"/><input type="submit" value="save name" name="namebutton"/></form></li>
 			<li><form onSubmit="sendEmail();return false;"><label for="email">Email</label><input type="text" class="rounded" value="[val user.email]" id="email"/><input type="submit" value="save email" name="email"/> [test:session_user.is_admin <input type="button" name="reset_password" value="Send reset password email" onclick="sendSendPasswordMail(); return false" />]</form></li>
-			<li><form onSubmit=""><label for="password">Password</label><input type="password" class="rounded" id="password"/><input type="submit" value="save password" name="password" id="password_button"/></form></li>
+			<li><form onSubmit=""><label for="password">Password</label><input type="password" class="rounded" id="password"/><input type="submit" value="save password" name="password" id="password_button"/></form>[test:change_password_hint <div class="hint">Hint: don't forget to change your password!</div>]</li>
 			<li><label for="is_admin">Administrator</label><input [test:session_user.is_admin ][else disabled] [test:user.is_admin checked] type="checkbox" id="is_admin" /></li>
 		</ul>
 		<div class="usershowhide">
