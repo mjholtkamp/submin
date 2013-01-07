@@ -65,8 +65,13 @@ def set_password_reset_key(userid, key):
 
 def valid_password_reset_key(userid, key):
 	cur = storage.db.cursor()
+	# first delete all expired keys, so we clean up the database
+	# and make it simpler to select keys (because we don't have to check
+	# for expiry)
+	storage.execute(cur, """DELETE FROM password_reset
+		WHERE expires <= strftime('%s', 'now')""",)
 	storage.execute(cur, """SELECT count(key) FROM password_reset 
-		WHERE userid=? AND key=? AND expires > strftime('%s', 'now')""",
+		WHERE userid=? AND key=?""",
 		(userid, key))
 	row = cur.fetchone()
 	return (row[0] == 1)
