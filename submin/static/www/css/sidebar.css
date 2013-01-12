@@ -71,6 +71,11 @@
 	overflow: hidden;
 	white-space: nowrap;
 }
+#sidebar div.showhide li a span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	width: 100%;
+}
 
 #sidebar div.showhide li span.err_version, #sidebar div.showhide li span.err_permission {
 	color: red;
