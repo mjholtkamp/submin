@@ -45,7 +45,7 @@ class Repositories(View):
 			repository = Repository(path[0], vcs_type)
 
 			# Lie if user has no permission to read
-			if not u.is_admin and not Repository.userHasReadPermissions(u, path[0], vcs_type):
+			if not u.is_admin and not Repository.userHasReadPermissions(u.name, path[0], vcs_type):
 				raise DoesNotExistError
 		except DoesNotExistError:
 			return ErrorResponse('This repository does not exist.', request=req)

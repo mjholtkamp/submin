@@ -54,8 +54,8 @@ class Repository(object):
 		return filtered
 
 	@staticmethod
-	def userHasReadPermissions(session_user, reposname, vcs):
-		perms = permissions.list_by_user(session_user.name)
+	def userHasReadPermissions(username, reposname, vcs):
+		perms = permissions.list_by_user(username)
 		return Repository._userHasReadPermissions(perms, reposname, vcs)
 
 	@staticmethod
