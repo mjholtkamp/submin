@@ -184,6 +184,9 @@ class User(object):
 			if reposname in notifications:
 				continue
 
+			if not perms['permission'] in ('r', 'rw'):
+				continue
+
 			notification = {
 				'vcs': perms['vcs'],
 				'enabled': storage.notification(self._id, reposname, perms['vcs'])

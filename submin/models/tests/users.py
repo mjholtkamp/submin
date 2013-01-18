@@ -13,6 +13,7 @@ setSettings(mock_settings)
 
 from submin.models import storage
 from submin.models import user
+from submin.models import group
 from submin.models import options
 from submin.path.path import Path
 from submin.models.exceptions import UserExistsError, UnknownUserError, UserPermissionError
@@ -188,6 +189,21 @@ class UserTests(unittest.TestCase):
 		self.u.set_notification("repos", "svn", True, self.u)
 		notifications = self.u.notifications()
 		self.assertTrue(notifications["repos"]["enabled"])
+
+	def testNotificationWithEmptyPermission(self):
+		self.addRepository('repos', 'svn')
+		permissions.add('repos', 'svn', '/', self.u.name, 'user', '')
+		self.assertRaises(UserPermissionError, self.u.set_notification, "repos", "svn", True, self.u)
+
+	def testNotificationWithEmptyGroupPermission(self):
+		self.addRepository('repos', 'svn')
+		group.add('untrusted')
+		untrusted = group.Group('untrusted')
+		untrusted.add_member(self.u)
+		permissions.add('repos', 'svn', '/', 'untrusted', 'group', '')
+		self.assertRaises(UserPermissionError, self.u.set_notification, "repos", "svn", True, self.u)
+		n = self.u.notifications()
+		self.assertEquals(n, {})
 
 if __name__ == "__main__":
 	unittest.main()
