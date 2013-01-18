@@ -5,6 +5,20 @@ schema are first in the list. The first entry in this list is always the
 current schema version.
 """
 sql_scripts = [
+	(8, """DROP TABLE IF EXISTS notifications_tmp;
+		CREATE TABLE notifications_tmp
+		(
+			userid       integer references users(id),
+			repository   text,
+			repositorytype text,
+			PRIMARY KEY(userid, repository, repositorytype)
+		);
+		INSERT INTO notifications_tmp (userid, repository, repositorytype)
+			SELECT userid, repository, CASE WHEN repository LIKE '%.git' THEN 'git' ELSE 'svn' END as repositorytype FROM notifications WHERE enabled=1;
+		ALTER TABLE notifications RENAME TO notifications_old;
+		ALTER TABLE notifications_tmp RENAME TO notifications;
+		DROP TABLE notifications_old;
+	"""),
 	(7, """CREATE TABLE sessions
 	(
 		key   text not null primary key not null unique,

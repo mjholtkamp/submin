@@ -18,6 +18,7 @@ from submin.path.path import Path
 from submin.models.exceptions import UserExistsError, UnknownUserError, UserPermissionError
 from submin.models.validators import *
 from submin.models.repository import Repository
+from submin.models import permissions
 
 import tempfile
 import shutil
@@ -46,9 +47,9 @@ class UserTests(unittest.TestCase):
 		storage.close()
 		shutil.rmtree(self.submin_env)
 
-	def addRepository(self, reposname):
+	def addRepository(self, reposname, vcstype):
 		from submin.models.user import FakeAdminUser
-		Repository.add('svn', reposname, FakeAdminUser())
+		Repository.add(vcstype, reposname, FakeAdminUser())
 
 	def setEmail(self, u, email):
 		u.email = email
@@ -164,34 +165,29 @@ class UserTests(unittest.TestCase):
 		self.assertFalse(self.u.is_admin)
 
 	def testSaveNotificationsAdmin(self):
-		self.addRepository('repos') # otherwise, we cannot add notifications
+		self.addRepository('repos', 'svn') # otherwise, we cannot add notifications
 		mock_admin = Mock()
 		mock_admin.is_admin = True
-		self.u.set_notification("repos", True, True, mock_admin)
-		self.u.set_notification("non-existing", True, True, mock_admin)
+		self.u.set_notification("repos", 'svn', True, mock_admin)
+		self.u.set_notification("non-existing", 'svn', True, mock_admin)
+		notifications = self.u.notifications()
+		self.assertFalse(notifications.has_key("non-existing"))
 		u2 = user.User("test")
 		notifications = u2.notifications()
-		self.assertTrue(notifications['repos']['enabled'])
-		# should not have notification for non-existing repository
-		self.assertFalse(notifications.has_key("non-existing"))
+		self.assertFalse(notifications.has_key("repos"))
 
 	def testSaveNotificationsNonAdminNotAllowed(self):
 		"""If not allowed, should raise Exception"""
 		# default permissions are set to false
-		self.assertRaises(UserPermissionError, self.u.set_notification, "repos", True, True, self.u)
+		self.assertRaises(UserPermissionError, self.u.set_notification, "repos", "svn", True, self.u)
 
 	def testSaveNotificationsNonAdminAllowed(self):
 		"""First set allowed as admin, then set enabled as user"""
-		self.addRepository('repos') # otherwise, we cannot add notifications
-		mock_admin = Mock()
-		mock_admin.is_admin = True
-		self.u.set_notification("repos", True, False, mock_admin)
-		notifications = self.u.notifications()
-		self.assertFalse(notifications["repos"]["enabled"])
-		self.u.set_notification("repos", True, True, self.u)
+		self.addRepository('repos', 'svn') # otherwise, we cannot add notifications
+		permissions.add('repos', 'svn', '/', self.u.name, 'user', 'r')
+		self.u.set_notification("repos", "svn", True, self.u)
 		notifications = self.u.notifications()
 		self.assertTrue(notifications["repos"]["enabled"])
-
 
 if __name__ == "__main__":
 	unittest.main()

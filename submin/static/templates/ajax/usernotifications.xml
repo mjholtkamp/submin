@@ -1,18 +1,7 @@
 <response>
 	<command name="listNotifications" success="True">
 		<notifications user="[val username]">
-			[test:session_user.is_admin
-				[iter:notifications
-			<notification name="[ikey]" allowed="[ival.allowed]" enabled="[ival.enabled]"/>
-				]
-			]
-			[else
-				[iter:notifications
-					[test:ival.allowed
-			<notification name="[ikey]" allowed="True" enabled="[ival.enabled]"/>
-					]
-				]
-			]
+			[iter:notifications <notification name="[ikey]" vcs="[ival.vcs]" enabled="[ival.enabled]"/>]
 		</notifications>
 	</command>
 </response>

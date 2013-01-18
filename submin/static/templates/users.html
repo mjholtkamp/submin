@@ -44,24 +44,23 @@
 
 		<div class="usershowhide">
 			<h3 class="usershowhide c_trigger">
-				<div class="usershowhide c_icon expanded"></div>Notices from repositories
+				<div class="usershowhide c_icon expanded"></div>Access to repositories
 			</h3>
 			<div class="usershowhide c_object">
+				<form onsubmit="return false;">
 				<table id="notifications">
 					<thead>
 					<tr class="noticeshead">
 						<td class="name">&nbsp;</td>
-						[test:session_user.is_admin <td>allowed</td>]
-						<td>enabled</td>
+						<td>Receive commit e-mails</td>
 					</tr>
 					</thead>
 					<tbody>
 					</tbody>
 				</table>
-				<form onsubmit="return false;">
 				<input id="savenotifications" type="submit" value="save notifications" />
 				</form>
-				</div>
+			</div>
 		</div>
 	</div>
 </div>

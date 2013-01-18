@@ -196,9 +196,9 @@ function reloadNotificationsCB(response) {
 	var n = [];
 	for (var i = 0; i < notifications.length; ++i) {
 		name = notifications[i].getAttribute('name');
-		allowed = notifications[i].getAttribute('allowed');
-		enabled = notifications[i].getAttribute('enabled');
-		n[n.length] = {"name": name, "allowed": allowed, "enabled": enabled};
+		vcs = notifications[i].getAttribute('vcs');
+		enabled = notifications[i].getAttribute('enabled').toLowerCase() == "true";
+		n[n.length] = {"name": name, "vcs": vcs, "enabled": enabled};
 	}
 	redrawNotifications(n);
 }
@@ -218,23 +218,20 @@ function redrawNotifications(notifications) {
 	for (var i = 0; i < notifications.length; ++i) {
 		var tr = $c("tr");
 		var td_name = $c("td");
-		td_name.appendChild(document.createTextNode(notifications[i].name));
+		var reposname = notifications[i].name;
+		var vcs = notifications[i].vcs;
+		var a_name = $c("a");
+		a_name.appendChild(document.createTextNode(reposname));
+		a_name.setAttribute("href", base_url + "repositories/show/" + vcs + "/" + reposname);
+		td_name.appendChild(a_name);
 		tr.appendChild(td_name);
 
-		var input = $c("input", {type: "checkbox"});
-		if (is_admin) {
-			var td_allowed = $c("td");
-		
-			input.value = notifications[i].name + "_allowed";
-			input.checked = (notifications[i].allowed == "1");
-			input.defaultChecked = input.checked; // IE7 quirk
-			td_allowed.appendChild(input);
-			tr.appendChild(td_allowed);
+		// We need to store the repository type somewhere, we use a custom attribute
+		tr.setAttribute("data-vcstype", vcs);
 
-			input = $c("input", {type: "checkbox"});
-		}
-		input.value = notifications[i].name + "_enabled";
-		input.checked = (notifications[i].enabled == "1");
+		var input = $c("input", {type: "checkbox"});
+		input.value = reposname + "_" + vcs + "_enabled";
+		input.checked = notifications[i].enabled;
 		input.defaultChecked = input.checked; // IE7 quirk
 		if (!email || email == "") {
 			input.disabled = "disabled";
@@ -259,25 +256,19 @@ function saveNotifications() {
 	var str = "";
 	for (var item_idx = tbody.childNodes.length - 1; item_idx > 0; --item_idx) {
 		// every childnode is a tr. Layout as follows:
-		// admin user: <tr><td>repository name</td><td>allowed</td><td>enabled</td></tr>
-		// normal user: <tr><td>repository name</td><td>enabled</td></tr>
-		var name = tbody.childNodes[item_idx].childNodes[0].innerHTML;
-		var allowed, enabled;
-
-		if (is_admin) {
-			allowed = tbody.childNodes[item_idx].childNodes[1].childNodes[0].checked;
-			enabled = tbody.childNodes[item_idx].childNodes[2].childNodes[0].checked;
-		} else {
-			allowed = true;
-			enabled = tbody.childNodes[item_idx].childNodes[1].childNodes[0].checked;
-		}
+		// <tr><td><a href="...">repository name</a></td><td>enabled</td></tr>
+		var tr = tbody.childNodes[item_idx];
+		var name = tr.childNodes[0].childNodes[0].innerHTML;
+		var vcstype = tr.getAttribute("data-vcstype");
+		var enabled = tr.childNodes[1].childNodes[0].checked;
 		if (str != "")
-			str += ":";
+			str += "|";
 
 		var ename = escape_plus(name);
-		str += ename + "," + allowed + "," + enabled;
+		str += vcstype + ":" + ename + "," + enabled;
 	}
 
+	// XXX maybe we should use XML here, or even better: JSON
 	AjaxAsyncPostRequest(document.location, "saveNotifications=" + str, saveNotificationsCB);
 	return false;
 }

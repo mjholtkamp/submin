@@ -105,28 +105,29 @@ def remove(userid):
 	storage.execute(storage.db.cursor(), """DELETE FROM users
 		WHERE id=?""", (userid,))
 
-def notification(userid, repository):
+def notification(userid, repository, vcstype):
 	cur = storage.db.cursor()
 	storage.execute(cur, """
-		SELECT allowed, enabled
+		SELECT 1
 		FROM notifications
-		WHERE userid=? AND repository=?""", (userid, repository))
+		WHERE userid=? AND repository=? and repositorytype=?""", 
+		(userid, repository, vcstype))
 	row = cur.fetchone()
 	if not row:
-		return None
+		return False
 
-	return row_dict(cur, row)
+	return True
 
-def set_notification(userid, repository, allowed, enabled):
-	try:
-		storage.execute(storage.db.cursor(), """INSERT INTO notifications
-		(userid, repository, allowed, enabled) VALUES (?, ?, ?, ?)""", 
-			(userid, repository, allowed, enabled))
-	except storage.SQLIntegrityError:
-		# already exists?
-		storage.execute(storage.db.cursor(), """UPDATE notifications
-		SET allowed = ?, enabled = ? WHERE userid = ? AND repository = ? """,
-		 (allowed, enabled, userid, repository))
+def set_notification(userid, repository, vcstype, enabled):
+	if enabled:
+		storage.execute(storage.db.cursor(), """INSERT OR REPLACE INTO notifications
+			(userid, repository, repositorytype)
+			VALUES (?, ?, ?)""", 
+			(userid, repository, vcstype))
+	else:
+		storage.execute(storage.db.cursor(), """DELETE FROM notifications
+			WHERE userid=? AND repository=? AND repositorytype=?""",
+			(userid, repository, vcstype))
 
 def ssh_keys(userid):
 	cur = storage.db.cursor()

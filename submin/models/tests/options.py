@@ -21,11 +21,11 @@ class OptionTests(unittest.TestCase):
 		storage.close()
 
 	def testNoOptions(self):
-		self.assertEquals(options.options(), [(u'git_dir', u'git'), (u'database_version', u'7')])
+		self.assertEquals(options.options(), [(u'git_dir', u'git'), (u'database_version', u'8')])
 
 	def testSetOption(self):
 		options.set_value("foo", "bar")
-		self.assertEquals(options.options(), [(u'git_dir', u'git'), (u'database_version', u'7'), (u'foo', u'bar')])
+		self.assertEquals(options.options(), [(u'git_dir', u'git'), (u'database_version', u'8'), (u'foo', u'bar')])
 
 	def testGetOption(self):
 		options.set_value("foo", "bar")

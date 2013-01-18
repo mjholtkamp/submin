@@ -318,17 +318,19 @@ class Users(View):
 	def saveNotifications(self, req, u):
 		session_user = req.session['user']
 		
-		notifications_str = req.post.get('saveNotifications').split(':')
+		notifications_str = req.post.get('saveNotifications').split('|')
 		notifications = {}
 		for n_str in notifications_str:
-			n = n_str.split(',')
-			if len(n) < 2:
-				return XMLStatusResponse('saveNotifications', False, 'badly formatted notifications')
+			try:
+				type_repos, enabled = n_str.split(',', 1)
+				vcstype, reposname = type_repos.split(':', 1)
+			except ValueError:
+				return XMLStatusResponse('saveNotifications', False,
+					'Badly formatted notifications, reload the page and try again')
 			try:
 				asking_user = user.User(session_user['name'])
-				allowed = (n[1] == "true")
-				enabled = (n[2] == "true")
-				u.set_notification(n[0], allowed, enabled, asking_user)
+				enabled = (enabled == "true")
+				u.set_notification(reposname, vcstype, enabled, asking_user)
 			except UserPermissionError, e:
 				return XMLStatusResponse('saveNotifications', False, str(e))
 

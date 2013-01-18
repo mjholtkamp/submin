@@ -1,6 +1,7 @@
 from submin import models
 from submin.hooks.common import trigger_hook
 from submin.models import options
+from submin.models import repository
 import validators
 storage = models.storage.get("user")
 
@@ -161,33 +162,33 @@ class User(object):
 	def nonmember_of(self):
 		return storage.nonmember_of(self._id)
 
-	def set_notification(self, repository, allowed, enabled, session_user):
+	def set_notification(self, reposname, vcstype, enabled, session_user):
 		if not session_user.is_admin:
-			permissions = storage.notification(self._id, repository)
-			if not permissions or not permissions['allowed']:
+			if not repository.userHasReadPermissions(self._name, reposname, vcstype):
 				raise UserPermissionError
 
-		# automatically allow if enabled
-		if enabled:
-			allowed = True
-
-		storage.set_notification(self._id, repository, allowed, enabled)
+		storage.set_notification(self._id, reposname, vcstype, enabled)
 		trigger_hook('user-notifications-update', username=self._name)
 
 	def notifications(self):
 		"""Returns a dict of dicts, in the following layout:
 		{
-			'reposname1': {'allowed': True, 'enabled': False},
-			'repos2': {'allowed': False, 'enabled': False}
+			'reposname1': {'vcs': 'git', 'enabled': False},
+			'repos2': {'vcs': 'svn', 'enabled': True}
 		}
 		"""
-		from repository import Repository
+		from submin.models.permissions import list_by_user
 		notifications = {}
-		for repository in Repository.list_all():
-			notification = storage.notification(self._id, repository['name'])
-			if notification == None:
-				notification = {'allowed': False, 'enabled': False}
-			notifications[repository['name']] = notification
+		for perms in list_by_user(self._name):
+			reposname = perms['repository']
+			if reposname in notifications:
+				continue
+
+			notification = {
+				'vcs': perms['vcs'],
+				'enabled': storage.notification(self._id, reposname, perms['vcs'])
+			}
+			notifications[perms['repository']] = notification
 
 		return notifications
 
@@ -327,9 +328,9 @@ Storage contract
 	Returns a dict of the notification, or None if it doesn't exist. The dict
 	looks like: {'allowed': True, 'enabled': False}
 
-* set_notification(userid, repository, allowed, enabled)
-	Set notification to *allowed*, *enabled* (both booleans) for user *userid*
-	on repository *repository*.
+* set_notification(userid, repository, vcstype, enabled)
+	Set notification *enabled* (both booleans) for user *userid*
+	on repository *repository* of type *vcstype*
 
 * ssh_keys(userid)
 	Returns a list of ssh_keys (dicts like

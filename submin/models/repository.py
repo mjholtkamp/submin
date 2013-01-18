@@ -20,6 +20,22 @@ def _vcs_display_name(vcs_type):
 def vcs_list():
 	return [x.strip() for x in options.value('vcs_plugins').split(',')]
 
+def userHasReadPermissions(username, reposname, vcs):
+	perms = permissions.list_by_user(username)
+	return _userHasReadPermissions(perms, reposname, vcs)
+
+def _userHasReadPermissions(perms, reposname, vcs):
+	for perm in perms:
+		name = reposname
+		if vcs == 'git':
+			name += '.git'
+		if perm['repository'] != name or perm['vcs'] != vcs:
+			continue
+		if perm['permission'] in ('r', 'rw'):
+			return True
+	return False
+
+
 class Repository(object):
 	@staticmethod
 	def list_all():
@@ -48,28 +64,10 @@ class Repository(object):
 			name = repository['name']
 			status = repository['status']
 			vcs = repository['vcs']
-			if Repository._userHasReadPermissions(perms, name, vcs):
+			if _userHasReadPermissions(perms, name, vcs):
 				filtered.append({"name": name, "status": status, "vcs": vcs})
 
 		return filtered
-
-	@staticmethod
-	def userHasReadPermissions(username, reposname, vcs):
-		perms = permissions.list_by_user(username)
-		return Repository._userHasReadPermissions(perms, reposname, vcs)
-
-	@staticmethod
-	def _userHasReadPermissions(perms, reposname, vcs):
-		for perm in perms:
-			name = reposname
-			if vcs == 'git':
-				name += '.git'
-			if perm['repository'] != name or perm['vcs'] != vcs:
-				continue
-			if perm['permission'] in ('r', 'rw'):
-				return True
-		return False
-
 
 	@staticmethod
 	def add(vcs_type, name, session_user):
