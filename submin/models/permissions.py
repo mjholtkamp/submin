@@ -14,22 +14,14 @@ def list_by_user(username):
 def list_readable_user_paths(repository, vcs_type, user):
 	"""Return a list of paths for this *repository* that the *user* is
 	   able to read. The *user* is a User object."""
-	groups = user.member_of()
-	user_paths = []
-	for path in list_paths(repository, vcs_type):
-		for perm in list_by_path(repository, vcs_type, path):
-			# due to lazy evaluation, user perms overrule group and 'all'
-			if (perm['type'] == 'user' and perm['name'] == user.name) or \
-					(perm['type'] == 'group' and perm['name'] in groups) or \
-					(perm['type'] == 'all'):
-				if perm['permission'] in ['r', 'rw']:
-					user_paths.append(path)
-
-	return set(user_paths) # remove double entries
+	return list_user_paths_by_permissions(repository, vcs_type, user, ("rw", "r"))
 
 def list_writeable_user_paths(repository, vcs_type, user):
 	"""Return a list of paths for this *repository* that the *user* is
 	   able to write. The *user* is a User object."""
+	return list_user_paths_by_permissions(repository, vcs_type, user, ("rw"))
+
+def list_user_paths_by_permissions(repository, vcs_type, user, permissions):
 	groups = user.member_of()
 	user_paths = []
 	for path in list_paths(repository, vcs_type):
@@ -38,7 +30,7 @@ def list_writeable_user_paths(repository, vcs_type, user):
 			if (perm['type'] == 'user' and perm['name'] == user.name) or \
 					(perm['type'] == 'group' and perm['name'] in groups) or \
 					(perm['type'] == 'all'):
-				if perm['permission'] == 'rw':
+				if perm['permission'] in permissions:
 					user_paths.append(path)
 
 	return set(user_paths) # remove double entries
