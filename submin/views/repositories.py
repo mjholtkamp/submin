@@ -6,6 +6,7 @@ from submin.dispatch.view import View
 from submin.models import user
 from submin.models import group
 from submin.models import permissions
+from submin.models import repository
 from submin.models.repository import Repository, DoesNotExistError, PermissionError
 from submin.models.trac import Trac, UnknownTrac, createTracEnv
 from submin.models import options
@@ -42,10 +43,10 @@ class Repositories(View):
 
 		u = user.User(req.session['user']['name'])
 		try:
-			repository = Repository(path[0], vcs_type)
+			repos = Repository(path[0], vcs_type)
 
 			# Lie if user has no permission to read
-			if not u.is_admin and not Repository.userHasReadPermissions(u.name, path[0], vcs_type):
+			if not u.is_admin and not repository.userHasReadPermissions(u.name, path[0], vcs_type):
 				raise DoesNotExistError
 		except DoesNotExistError:
 			return ErrorResponse('This repository does not exist.', request=req)
@@ -66,7 +67,7 @@ class Repositories(View):
 					'There is something missing in your config: %s' % str(e)
 
 			# this chops off the .git for git repositories, not for svn
-			repos_name = repository.name.replace(".git", "")
+			repos_name = repos.name.replace(".git", "")
 
 			trac_base_url = options.url_path('base_url_trac')
 			trac_http_url = str(trac_base_url + repos_name)
@@ -78,26 +79,26 @@ class Repositories(View):
 		}
 
 		try:
-			vcs_url = self.get_url(repository)
+			vcs_url = self.get_url(repos)
 		except UnknownKeyError:
 			vcs_url = ""
-			templatevars['vcs_url_error'] = vcs_url_error_msgs[repository.vcs_type]
+			templatevars['vcs_url_error'] = vcs_url_error_msgs[repos.vcs_type]
 
 		templatevars['vcs_url'] = vcs_url
-		templatevars['repository'] = repository
+		templatevars['repository'] = repos
 		templatevars['vcs_type'] = vcs_type
 		formatted = evaluate_main('repositories.html', templatevars, request=req)
 		return Response(formatted)
 
-	def get_url(self, repository):
-		if repository.vcs_type == 'git':
+	def get_url(self, repos):
+		if repos.vcs_type == 'git':
 			git_user = options.value("git_user")
 			git_host = options.value("git_ssh_host")
 			git_port = options.value("git_ssh_port")
-			return  'ssh://%s@%s:%s/%s' % (git_user, git_host, git_port, repository.name)
+			return  'ssh://%s@%s:%s/%s' % (git_user, git_host, git_port, repos.name)
 
-		vcs_base_url = options.url_path('base_url_%s' % repository.vcs_type)
-		return str(vcs_base_url + repository.name)
+		vcs_base_url = options.url_path('base_url_%s' % repos.vcs_type)
+		return str(vcs_base_url + repos.name)
 
 	def showAddForm(self, req, reposname, errormsg=''):
 		templatevars = {}
@@ -110,61 +111,61 @@ class Repositories(View):
 	@admin_required
 	def add(self, req, path, templatevars):
 		base_url = options.url_path('base_url_submin')
-		repository = ''
+		reposname = ''
 
 		if req.post and req.post['repository']:
 			import re, commands
 
-			repository = req.post.get('repository').strip()
-			if re.findall('[^a-zA-Z0-9_-]', repository):
-				return self.showAddForm(req, repository, 'Invalid characters in repository name')
+			reposname = req.post.get('repository').strip()
+			if re.findall('[^a-zA-Z0-9_-]', reposname):
+				return self.showAddForm(req, reposname, 'Invalid characters in repository name')
 
 			if "vcs" not in req.post or req.post.get("vcs").strip() == "":
-				return self.showAddForm(req, repository, "No repository type selected. Please select a repository type.")
+				return self.showAddForm(req, reposname, "No repository type selected. Please select a repository type.")
 
 			vcs_type = req.post.get("vcs").strip()
 
-			if repository == '':
-				return self.showAddForm(req, repository, 'Repository name not supplied')
+			if reposname == '':
+				return self.showAddForm(req, reposname, 'Repository name not supplied')
 
 			if vcs_type not in vcs_list():
-				return self.showAddForm(req, repository, "Invalid repository type supplied.")
+				return self.showAddForm(req, reposname, "Invalid repository type supplied.")
 
 			try:
-				a = Repository(repository, vcs_type)
-				return self.showAddForm(req, repository, 'Repository %s already exists' % repository)
+				a = Repository(reposname, vcs_type)
+				return self.showAddForm(req, reposname, 'Repository %s already exists' % reposname)
 			except DoesNotExistError:
 				pass
 
 			try:
 				asking_user = user.User(req.session['user']['name'])
-				Repository.add(vcs_type, repository, asking_user)
+				Repository.add(vcs_type, reposname, asking_user)
 			except PermissionError, e:
 				return ErrorResponse('could not create repository',
 					request=req, details=str(e))
 
 			url = '%s/repositories/show/%s/%s' % (base_url, vcs_type,
-					repository)
+					reposname)
 			return Redirect(url, req)
 
-		return self.showAddForm(req, repository)
+		return self.showAddForm(req, reposname)
 
 	@admin_required
-	def getsubdirs(self, req, repository):
+	def getsubdirs(self, req, repos):
 		svn_path = req.post.get('getSubdirs').strip('/')
-		dirs = repository.subdirs(svn_path)
+		dirs = repos.subdirs(svn_path)
 		templatevars = {'dirs': dirs}
 		return XMLTemplateResponse('ajax/repositorytree.xml', templatevars)
 
 	@admin_required
-	def getpermissions(self, req, repository):
+	def getpermissions(self, req, repos):
 		session_user = req.session['user']
 		asking_user = user.User(session_user['name'])
 		path = req.post.get('getPermissions')
 		branch_or_path = Path(path)
 
-		perms = permissions.list_by_path(repository.name,
-				repository.vcs_type, path)
+		perms = permissions.list_by_path(repos.name,
+				repos.vcs_type, path)
 
 		usernames = []
 		if 'userlist' in req.post:
@@ -174,23 +175,23 @@ class Repositories(View):
 		if 'grouplist' in req.post:
 			groupnames = group.list(asking_user)
 
-		templatevars = {'perms': perms, 'repository': repository.name,
+		templatevars = {'perms': perms, 'repository': repos.name,
 			'path': branch_or_path, 'usernames': usernames,
 			'groupnames': groupnames}
 		return XMLTemplateResponse('ajax/repositoryperms.xml', templatevars)
 
 	@admin_required
-	def getpermissionpaths(self, req, repository):
-		paths = permissions.list_paths(repository.name, repository.vcs_type)
-		templatevars = {'repository': repository.name, 'paths': paths}
+	def getpermissionpaths(self, req, repos):
+		paths = permissions.list_paths(repos.name, repos.vcs_type)
+		templatevars = {'repository': repos.name, 'paths': paths}
 		return XMLTemplateResponse('ajax/repositorypermpaths.xml', templatevars)
 
 	@admin_required
-	def addpermission(self, req, repository):
+	def addpermission(self, req, repos):
 		name = req.post.get('name')
 		type = req.post.get('type')
 		path = req.post.get('path')
-		vcs_type = repository.vcs_type
+		vcs_type = repos.vcs_type
 
 		default_perm = ''
 		if vcs_type == "git":
@@ -199,40 +200,40 @@ class Repositories(View):
 			else:
 				default_perm = "r"
 
-		permissions.add(repository.name, repository.vcs_type, path, name,
+		permissions.add(repos.name, repos.vcs_type, path, name,
 				type, default_perm)
 		return XMLStatusResponse('addPermission', True, ('User', 'Group')[type == 'group'] + ' %s added to path %s' % (name, path))
 
 	@admin_required
-	def removepermission(self, req, repository):
+	def removepermission(self, req, repos):
 		name = req.post.get('name')
 		type = req.post.get('type')
 		path = req.post.get('path')
 
-		permissions.remove(repository.name, repository.vcs_type, path,
+		permissions.remove(repos.name, repos.vcs_type, path,
 				name, type)
 		return XMLStatusResponse('removePermission', True, ('User', 'Group')[type == 'group'] + ' %s removed from path %s' % (name, path))
 
 	@admin_required
-	def setpermission(self, req, repository):
+	def setpermission(self, req, repos):
 		name = req.post.get('name')
 		type = req.post.get('type')
 		path = req.post.get('path')
 		permission = req.post.get('permission')
 
-		permissions.change(repository.name, repository.vcs_type, path,
+		permissions.change(repos.name, repos.vcs_type, path,
 				name, type, permission)
 		return XMLStatusResponse('setPermission', True, 'Permission for %s %s changed to %s' %
 			(('user', 'group')[type == 'group'], name, permission))
 
 	@admin_required
-	def setCommitEmails(self, req, repository):
+	def setCommitEmails(self, req, repos):
 		enable = req.post.get('setCommitEmails').lower() == "true"
 		change_msg = 'enabled'
 		if not enable:
 			change_msg = 'disabled'
 			
-		repository.enableCommitEmails(enable)
+		repos.enableCommitEmails(enable)
 		message = 'Sending of commit emails is %s' % change_msg
 		templatevars = {'command': 'setCommitEmails',
 				'enabled': str(enable), 'message': message}
@@ -240,8 +241,8 @@ class Repositories(View):
 				templatevars)
 
 	@admin_required
-	def commitEmailsEnabled(self, req, repository):
-		enabled = repository.commitEmailsEnabled()
+	def commitEmailsEnabled(self, req, repos):
+		enabled = repos.commitEmailsEnabled()
 		change_msg = 'enabled'
 		if not enabled:
 			change_msg = 'disabled'
@@ -252,13 +253,13 @@ class Repositories(View):
 				templatevars)
 
 	@admin_required
-	def setTracCommitHook(self, req, repository):
+	def setTracCommitHook(self, req, repos):
 		enable = req.post.get('setTracCommitHook').lower() == "true"
 		change_msg = 'enabled'
 		if not enable:
 			change_msg = 'disabled'
 			
-		repository.enableTracCommitHook(enable)
+		repos.enableTracCommitHook(enable)
 		message = 'Trac commit hook is %s' % change_msg
 		templatevars = {'command': 'setTracCommitHook',
 				'enabled': str(enable), 'message': message}
@@ -266,8 +267,8 @@ class Repositories(View):
 				templatevars)
 
 	@admin_required
-	def commitEmailsEnabled(self, req, repository):
-		enabled = repository.tracCommitHookEnabled()
+	def commitEmailsEnabled(self, req, repos):
+		enabled = repos.tracCommitHookEnabled()
 		change_msg = 'enabled'
 		if not enabled:
 			change_msg = 'disabled'
@@ -279,69 +280,69 @@ class Repositories(View):
 
 
 	@admin_required
-	def removeRepository(self, req, repository):
-		repository.remove()
-		return XMLStatusResponse('removeRepository', True, 'Repository %s deleted' % repository.name)
+	def removeRepository(self, req, repos):
+		repos.remove()
+		return XMLStatusResponse('removeRepository', True, 'Repository %s deleted' % repos.name)
 
 	@admin_required
-	def tracEnvCreate(self, req, repository):
-		repos_name = repository.name.replace(".git", "")
+	def tracEnvCreate(self, req, repos):
+		repos_name = repos.name.replace(".git", "")
 		asking_user = user.User(req.session['user']['name'])
 		createTracEnv(repos_name, asking_user)
 		return XMLStatusResponse('tracEnvCreate', True, 'Trac environment "%s" created.' % repos_name)
 
 	def ajaxhandler(self, req, path):
-		repositoryname = ''
+		reposname = ''
 
 		if len(path) < 3:
 			return XMLStatusResponse('', False, 'Invalid path')
 
 		action = path[0]
 		vcs_type = path[1]
-		repositoryname = path[2]
+		reposname = path[2]
 
-		repository = None
+		repos = None
 		try:
-			repository = Repository(repositoryname, vcs_type)
+			repos = Repository(reposname, vcs_type)
 		except (IndexError, DoesNotExistError):
 			return XMLStatusResponse('', False,
-				'Repository %s does not exist.' % repositoryname)
+				'Repository %s does not exist.' % reposname)
 
 		if action == 'delete':
-			return self.removeRepository(req, repository)
+			return self.removeRepository(req, repos)
 
 		if 'getSubdirs' in req.post:
-			return self.getsubdirs(req, repository)
+			return self.getsubdirs(req, repos)
 
 		if 'getPermissions' in req.post:
-			return self.getpermissions(req, repository)
+			return self.getpermissions(req, repos)
 
 		if 'getPermissionPaths' in req.post:
-			return self.getpermissionpaths(req, repository)
+			return self.getpermissionpaths(req, repos)
 
 		if 'addPermission' in req.post:
-			return self.addpermission(req, repository)
+			return self.addpermission(req, repos)
 
 		if 'removePermission' in req.post:
-			return self.removepermission(req, repository)
+			return self.removepermission(req, repos)
 
 		if 'setPermission' in req.post:
-			return self.setpermission(req, repository)
+			return self.setpermission(req, repos)
 
 		if 'setCommitEmails' in req.post:
-			return self.setCommitEmails(req, repository)
+			return self.setCommitEmails(req, repos)
 
 		if 'commitEmailsEnabled' in req.post:
-			return self.commitEmailsEnabled(req, repository)
+			return self.commitEmailsEnabled(req, repos)
 
 		if 'setTracCommitHook' in req.post:
-			return self.setTracCommitHook(req, repository)
+			return self.setTracCommitHook(req, repos)
 
 		if 'tracCommitHookEnabled' in req.post:
-			return self.tracCommitHookEnabled(req, repository)
+			return self.tracCommitHookEnabled(req, repos)
 
 		if 'tracEnvCreate' in req.post:
-			return self.tracEnvCreate(req, repository)
+			return self.tracEnvCreate(req, repos)
 
 		return XMLStatusResponse('', False, 'Unknown command')
 
