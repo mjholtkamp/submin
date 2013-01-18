@@ -36,6 +36,7 @@ def list_user_paths_by_permissions(repository, vcs_type, user, permissions):
 	return set(user_paths) # remove double entries
 
 def is_writeable(repository, vcs_type, user, path):
+	groups = user.member_of()
 	for perm in list_by_path(repository, vcs_type, path):
 		# due to lazy evaluation, user perms overrule group and 'all'
 		if (perm['type'] == 'user' and perm['name'] == user.name) or \
