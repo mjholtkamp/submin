@@ -4,6 +4,7 @@ import commands
 
 from submin.models import options
 from submin.template.shortcuts import evaluate
+from common import set_git_config, SetGitConfigError
 
 def run(reponame, enable=True):
 	if not reponame.endswith(".git"):
@@ -34,6 +35,14 @@ def run(reponame, enable=True):
 		except OSError, e:
 			raise PermissionError(
 				"Enabling hook failed: %s" % (str(e),))
+		try:
+			cfg = options.env_path() + 'git' + reponame + 'config'
+			set_git_config(cfg, 'multimailhook.emailmaxlines', '2000')
+			set_git_config(cfg, 'multimailhook.emailprefix', '[Submin]')
+		except SetGitConfigError, e:
+			raise PermissionError(
+				"Enabling hook succeeded, but configuring it failed: %s" %
+				(str(e)))
 	else:
 		try:
 			os.rename(hook_dest, str(hook_dest) + '.submin2.disabled')

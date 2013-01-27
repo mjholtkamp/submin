@@ -1,7 +1,7 @@
 from submin.models import repository
 from submin.models import user
 from submin.models import options
-import subprocess
+from common import set_git_config, SetGitConfigError
 
 class UpdateFailed(Exception):
 	pass
@@ -24,7 +24,7 @@ def run(reposname):
 	for reposname in repositories:
 		try:
 			update_notification(reposname, users)
-		except UpdateFailed, e:
+		except SetGitConfigError, e:
 			errors.append(str(e))
 			failed.append(reposname)
 		else:
@@ -53,18 +53,12 @@ def update_notification(reposname, users):
 	# make unique
 	emails = set(emails)
 
-	if len(emails) == 0:
-		return
-
 	# set git config
 	cfg = options.env_path() + 'git' + reposname + 'config'
-	set_git_config(cfg, 'multimailhook.mailinglist', ','.join(emails))
-	set_git_config(cfg, 'multimailhook.emailmaxlines', '2000')
-	set_git_config(cfg, 'multimailhook.emailprefix', '[Submin]')
 
-def set_git_config(configfile, key, val):
-	cmd = ["git", "config", "-f", configfile, key, val]
-	try:
-		subprocess.check_call(cmd)
-	except subprocess.CalledProcessError, e:
-		raise UpdateFailed(str(e))
+	if len(emails) > 0:
+		val = ','.join(emails)
+	else:
+		val = None
+
+	set_git_config(cfg, 'multimailhook.mailinglist', val)
