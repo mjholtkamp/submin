@@ -165,7 +165,9 @@ class User(object):
 	def set_notification(self, reposname, vcstype, enabled, session_user):
 		if not session_user.is_admin:
 			if not repository.userHasReadPermissions(self._name, reposname, vcstype):
-				raise UserPermissionError
+				raise UserPermissionError(
+					'User %s has no read permission on %s (%s)' %
+					(self._name, reposname, vcstype))
 
 		storage.set_notification(self._id, reposname, vcstype, enabled)
 		trigger_hook('user-notifications-update', username=self._name)
