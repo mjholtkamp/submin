@@ -319,7 +319,7 @@ class Users(View):
 		session_user = req.session['user']
 		
 		notifications_str = req.post.get('saveNotifications').split('|')
-		notifications = {}
+		notifications = []
 		for n_str in notifications_str:
 			try:
 				type_repos, enabled = n_str.split(',', 1)
@@ -327,8 +327,9 @@ class Users(View):
 			except ValueError:
 				return XMLStatusResponse('saveNotifications', False,
 					'Badly formatted notifications, reload the page and try again')
-				enabled = (enabled == "true")
-				notifications.append({'name': reposname, 'vcs': vcstype,
+
+			enabled = (enabled == "true")
+			notifications.append({'name': reposname, 'vcs': vcstype,
 					'enabled': enabled})
 		try:
 			asking_user = user.User(session_user['name'])
