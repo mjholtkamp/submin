@@ -399,9 +399,6 @@ function LogResponse(response) {
 }
 
 function XMLtoResponse(doc) {
-	if (doc == null)
-		return [];
-
 	var commands_xml = doc.getElementsByTagName('command');
 	var commands = [];
 	for (var i = 0; i < commands_xml.length; ++i) {
@@ -412,6 +409,11 @@ function XMLtoResponse(doc) {
 
 function Response(transport) {
 	var doc = transport.responseXML;
+	if (doc == null) {
+		Log("Something really bad happened: Didn't get any XML. RAW text: " + transport.responseText, false);
+		return [];
+	}
+
 	// DEBUG
 	if (submin.debug) {
 		var string = (new XMLSerializer()).serializeToString(doc);
