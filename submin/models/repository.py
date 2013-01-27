@@ -27,7 +27,7 @@ def userHasReadPermissions(username, reposname, vcs):
 def _userHasReadPermissions(perms, reposname, vcs):
 	for perm in perms:
 		name = reposname
-		if vcs == 'git':
+		if vcs == 'git' and not name.endswith('.git'):
 			name += '.git'
 		if perm['repository'] != name or perm['vcs'] != vcs:
 			continue
