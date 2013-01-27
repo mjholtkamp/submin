@@ -1,0 +1,57 @@
+#!/usr/bin/env python
+"""Script to call git_multimail.py
+
+This script is necessary because Submin makes some modifications
+in the templates, and it's better not to change the original script
+to do so.
+"""
+import sys
+
+LIBDIR = [val submin_lib_dir]
+sys.path.insert(0, LIBDIR)
+
+import git_multimail
+
+git_multimail.HEADER_TEMPLATE = """\
+To: %(recipients)s
+Subject: %(emailprefix)s\[%(repo_shortname)s\] %(refname_type)s %(short_refname)s %(change_type)sd (%(oldrev_short)s -> %(newrev_short)s)
+Content-Type: text/plain; charset=utf-8
+Message-ID: %(msgid)s
+From: %(sender)s
+Reply-To: %(pusher_email)s
+X-Git-Repo: %(repo_shortname)s
+X-Git-Refname: %(refname)s
+X-Git-Reftype: %(refname_type)s
+X-Git-Oldrev: %(oldrev)s
+X-Git-Newrev: %(newrev)s
+Auto-Submitted: auto-generated
+
+"""
+
+git_multimail.REVISION_HEADER_TEMPLATE = """\
+To: %(recipients)s
+Subject: %(emailprefix)s\[%(repo_shortname)s\] %(num)02d/%(tot)02d: %(oneline)s
+Content-Type: text/plain; charset=utf-8
+From: %(sender)s
+Reply-To: %(author)s
+In-Reply-To: %(reply_to_msgid)s
+X-Git-Repo: %(repo_shortname)s
+X-Git-Refname: %(refname)s
+X-Git-Reftype: %(refname_type)s
+X-Git-Rev: %(rev)s
+Auto-Submitted: auto-generated
+
+"""
+
+git_multimail.FOOTER_TEMPLATE = """\
+
+-- \n\
+This message was sent by Submin through git_multimail.
+To unsubscribe from this commit list, please login to [val submin_base_url] and change your preferences.
+"""
+git_multimail.REVISION_FOOTER_TEMPLATE = git_multimail.FOOTER_TEMPLATE
+
+config = git_multimail.Config('multimailhook')
+environment = git_multimail.GenericEnvironment(config)
+mailer = git_multimail.SendMailer(environment.get_envelopesender())
+git_multimail.run_as_post_receive_hook(environment, mailer)
