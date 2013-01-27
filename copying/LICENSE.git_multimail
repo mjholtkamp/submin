@@ -1,0 +1,6 @@
+Downloaded from https://github.com/mhagger/git-multimail @ 2013-01-27
+
+License unknown, but probably GPLv2 as it is based on a script part of
+the git repository. Please see:
+
+https://github.com/git/git/blob/master/contrib/hooks/post-receive-email
