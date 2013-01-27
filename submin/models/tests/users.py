@@ -107,7 +107,8 @@ class UserTests(unittest.TestCase):
 		self.assertEquals(str(self.u), "test")
 
 	def testNotAdmin(self):
-		self.assertRaises(UserPermissionError, self.u.set_notification, "repos", True, True, self.u)
+		self.assertRaises(UserPermissionError, self.u.set_notifications,
+			[{'name': 'repos', 'vcs': 'git', 'enabled': True}], self.u)
 
 	def testListUsersAdmin(self):
 		mock_user = Mock()
@@ -169,8 +170,10 @@ class UserTests(unittest.TestCase):
 		self.addRepository('repos', 'svn') # otherwise, we cannot add notifications
 		mock_admin = Mock()
 		mock_admin.is_admin = True
-		self.u.set_notification("repos", 'svn', True, mock_admin)
-		self.u.set_notification("non-existing", 'svn', True, mock_admin)
+		self.u.set_notifications([
+				{'name': 'repos', 'vcs': 'svn', 'enabled': True},
+				{'name': 'non-existing', 'vcs': 'svn', 'enabled': True}
+			], mock_admin)
 		notifications = self.u.notifications()
 		self.assertFalse(notifications.has_key("non-existing"))
 		u2 = user.User("test")
@@ -180,20 +183,22 @@ class UserTests(unittest.TestCase):
 	def testSaveNotificationsNonAdminNotAllowed(self):
 		"""If not allowed, should raise Exception"""
 		# default permissions are set to false
-		self.assertRaises(UserPermissionError, self.u.set_notification, "repos", "svn", True, self.u)
+		self.assertRaises(UserPermissionError, self.u.set_notifications,
+			[{'name': 'repos', 'vcs': 'svn', 'enabled': True}], self.u)
 
 	def testSaveNotificationsNonAdminAllowed(self):
 		"""First set allowed as admin, then set enabled as user"""
 		self.addRepository('repos', 'svn') # otherwise, we cannot add notifications
 		permissions.add('repos', 'svn', '/', self.u.name, 'user', 'r')
-		self.u.set_notification("repos", "svn", True, self.u)
+		self.u.set_notifications([{'name': 'repos', 'vcs': 'svn', 'enabled': True}], self.u)
 		notifications = self.u.notifications()
 		self.assertTrue(notifications["repos"]["enabled"])
 
 	def testNotificationWithEmptyPermission(self):
 		self.addRepository('repos', 'svn')
 		permissions.add('repos', 'svn', '/', self.u.name, 'user', '')
-		self.assertRaises(UserPermissionError, self.u.set_notification, "repos", "svn", True, self.u)
+		self.assertRaises(UserPermissionError, self.u.set_notifications,
+			[{'name': 'repos', 'vcs': 'svn', 'enabled': True}], self.u)
 
 	def testNotificationWithEmptyGroupPermission(self):
 		self.addRepository('repos', 'svn')
@@ -201,7 +206,8 @@ class UserTests(unittest.TestCase):
 		untrusted = group.Group('untrusted')
 		untrusted.add_member(self.u)
 		permissions.add('repos', 'svn', '/', 'untrusted', 'group', '')
-		self.assertRaises(UserPermissionError, self.u.set_notification, "repos", "svn", True, self.u)
+		self.assertRaises(UserPermissionError, self.u.set_notifications,
+			[{'name': 'repos', 'vcs': 'svn', 'enabled': True}], self.u)
 		n = self.u.notifications()
 		self.assertEquals(n, {})
 

@@ -162,14 +162,24 @@ class User(object):
 	def nonmember_of(self):
 		return storage.nonmember_of(self._id)
 
-	def set_notification(self, reposname, vcstype, enabled, session_user):
-		if not session_user.is_admin:
-			if not repository.userHasReadPermissions(self._name, reposname, vcstype):
-				raise UserPermissionError(
-					'User %s has no read permission on %s (%s)' %
-					(self._name, reposname, vcstype))
+	def set_notifications(self, notifications, session_user):
+		"""notifications is a list of dicts. Example:
+		     [{'name': 'foo', 'vcs': 'bar', 'enabled': True},
+		      {'name': 'baz', 'vcs': 'quux', 'enabled': False}]
+		"""
+		for n in notifications:
+			if not session_user.is_admin:
+				if not repository.userHasReadPermissions(self._name,
+						n['name'], n['vcs']):
+					raise UserPermissionError(
+						'User %s has no read permission on %s (%s)' %
+						(self._name, n['name'], n['vcs']))
 
-		storage.set_notification(self._id, reposname, vcstype, enabled)
+		# if no Exception was thrown, set all notifications
+		for n in notifications:
+			storage.set_notification(self._id,
+				n['name'], n['vcs'], n['enabled'])
+
 		trigger_hook('user-notifications-update', username=self._name)
 
 	def notifications(self):

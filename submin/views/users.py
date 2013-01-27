@@ -327,12 +327,14 @@ class Users(View):
 			except ValueError:
 				return XMLStatusResponse('saveNotifications', False,
 					'Badly formatted notifications, reload the page and try again')
-			try:
-				asking_user = user.User(session_user['name'])
 				enabled = (enabled == "true")
-				u.set_notification(reposname, vcstype, enabled, asking_user)
-			except UserPermissionError, e:
-				return XMLStatusResponse('saveNotifications', False, str(e))
+				notifications.append({'name': reposname, 'vcs': vcstype,
+					'enabled': enabled})
+		try:
+			asking_user = user.User(session_user['name'])
+			u.set_notifications(notifications, asking_user)
+		except UserPermissionError, e:
+			return XMLStatusResponse('saveNotifications', False, str(e))
 
 		return XMLStatusResponse("saveNotifications", True, "Saved notifications for user " + u.name)
 
