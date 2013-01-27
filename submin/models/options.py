@@ -43,12 +43,13 @@ def env_path(key=None):
 
 	return base + path
 
-def static_path(subdir):
+def lib_path():
 	# __file__ returns <submin-static-dir>/lib/models/options.py
-	base_lib = os.path.dirname(__file__)
-	base = Path(os.path.dirname(base_lib)) + 'static'
+	# by calling dirname() twice, we get the lib dir
+	return Path(os.path.dirname(os.path.dirname(__file__)))
 
-	return base + subdir
+def static_path(subdir):
+	return lib_path() + 'static' + subdir
 
 __doc__ = """
 Storage contract
