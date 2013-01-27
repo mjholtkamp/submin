@@ -89,6 +89,21 @@ Usage:
 			git.remove.run(repo)
 		elif cmd == 'update-auth':
 			git.update.run()
+		elif cmd.startswith('update-notifications'):
+			cmd_args = cmd.split(' ', 1)
+			reposname = None
+			if len(cmd_args) > 1 and cmd_args[1] != "":
+				reposname = cmd_args[1]
+
+			git.update_notifications.run(reposname)
+		elif cmd.startswith('post-receive-hook '):
+			cmd_args = cmd.split(' ', 2)
+			if len(cmd_args) != 3:
+				die('post-receive-hook')
+
+			enable, repo = cmd_args[1:]
+			repo = repo.strip()
+			git.post_receive_hook.run(repo, enable == 'enable')
 		else:
 			die("admin")
 

@@ -3,6 +3,7 @@ import glob
 import commands
 from submin.models import options
 from submin.models.repository import DoesNotExistError, PermissionError
+from submin.plugins.vcs.git import remote
 
 display_name = "Git"
 
@@ -46,7 +47,6 @@ def add(name):
 	if os.path.exists(str(reposdir)):
 		raise PermissionError("Could not create %s, already exists." % name)
 
-	from submin.plugins.vcs.git import remote
 	try:
 		remote.execute("create %s" % name)
 	except remote.NonZeroExitStatus, e:
@@ -105,7 +105,6 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		if not self.dir.exists():
 			raise Exception("Repository %s does not exist." % self.name)
 
-		from submin.plugins.vcs.git import remote
 		try:
 			remote.execute("remove %s" % self.name)
 		except remote.NonZeroExitStatus, e:
@@ -115,11 +114,18 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 
 	def enableCommitEmails(self, enable):
 		"""Enables sending of commit messages if *enable* is True."""
-		pass
+		if enable:
+			enable_str = "enable"
+		else:
+			enable_str = "disable"
+
+		remote.execute("post-receive-hook %s %s" % (enable_str, self.name))
 
 	def commitEmailsEnabled(self):
 		"""Returns True if sending of commit messages is enabled."""
-		return False
+		reposdir = options.env_path('git_dir')
+		hook = reposdir + self.name + 'hooks' + 'post-receive'
+		return os.path.exists(hook)
 
 	def tracCommitHookEnabled(self):
 		return False
