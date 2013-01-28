@@ -242,6 +242,9 @@ Usage:
 		git.create.rewrite_hook(reponame)
 		git.update_notifications.run(reponame)
 		git.post_receive_hook.rewrite_hook(reponame)
+		
+		# fix permissions because we ran this as root
+		self.sa.execute(['unixperms', 'fix'])
 
 	def chgrp_relevant_files(self, git_uid, git_gid):
 		from submin.models import options
