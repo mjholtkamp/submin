@@ -49,11 +49,11 @@ Usage:
 		from submin.models import options
 		self.sa.ensure_storage()
 
-		if len(argv) != 2:
+		if len(argv) < 2:
 			self.sa.execute(['help', 'config'])
 			return
 
-		options.set_value(argv[0], argv[1])
+		options.set_value(argv[0], ' '.join(argv[1:]))
 
 	def subcmd_unset(self, argv):
 		from submin.models import options
