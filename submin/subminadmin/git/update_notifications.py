@@ -18,12 +18,25 @@ def run(reposname):
 		# revoked). So regenerate for all repositories
 		repositories = [x['name'] for x in repository.Repository.list_all() if x['vcs'] == 'git']
 	
-	# get a list of all users
-	users = [user.User(name) for name in user.list(user.FakeAdminUser())]
+	# get a list of all users + their notifications as tuples: (u, n)
+	# We get the notifications straight away, otherwise we have to
+	# call it user * repositories times, and the u.notifications()
+	# function can be heavy on the database if called that many times
+	# (for a couple of users and 36 repositories, database was hit
+	# almost 3000 times during profiling)
+	user_notifications = []
+	for name in user.list(user.FakeAdminUser()):
+		u = user.User(name)
+		if not u.email:
+			# user without emails cannot be notified
+			continue
+
+		n = u.notifications()
+		user_notifications.append((u, n))
 
 	for reposname in repositories:
 		try:
-			update_notification(reposname, users)
+			update_notification(reposname, user_notifications)
 		except SetGitConfigError, e:
 			errors.append(str(e))
 			failed.append(reposname)
@@ -36,16 +49,13 @@ def run(reposname):
 			','.join(failed), len(failed), total)
 		raise UpdateFailed(msg)
 
-def update_notification(reposname, users):
+def update_notification(reposname, user_notifications):
 	if not reposname.endswith('.git'):
 		reposname += '.git'
 
 	emails = []
-	for u in users:
-		if not u.email:
-			continue
-
-		u_notif = u.notifications()
+	for u_n in user_notifications:
+		u, u_notif = u_n
 		if reposname in u_notif:
 			if u_notif[reposname]['enabled']:
 				emails.append(u.email)
