@@ -16,11 +16,13 @@ class ProgramNotFoundError(Exception):
 class c_git:
 	"""Commands related to git-support
 Usage:
-    git init               - Initialises git support; creates a user and more.
-                             Execute this as root!
-    git fix_perms          - Fixes unix permissions. Execute as root!
-    git hook update <repo> - Rewrite the git hook for <repo> (used for old
-                             style hooks). Execute as root!"""
+    git init                 - Initialises git support; creates a user and more.
+                               Execute this as root!
+    git fix_perms            - Fixes unix permissions. Execute as root!
+    git hook update [<repo>] - Rewrite the git hooks for <repo>. This includes
+                               the 'update' hooks, but also the 'post-receive'
+                               hooks. If no repository is given, all (git)
+                               repositories are updated. Execute as root!"""
 	# The following commands are not to be called by users, but are internal
 	# git-commands to be used via ssh. They are therefore not mentioned in the
 	# usage text above.
@@ -229,13 +231,17 @@ Usage:
 		self.chgrp_relevant_files(git_uid=git_pw.pw_uid, git_gid=git_pw.pw_gid)
 
 	def subcmd_hook(self, args):
-		if len(args) < 2 or args[0] != 'update':
+		if len(args) < 1 or args[0] != 'update':
 			self.sa.execute(['help', 'git'])
 			return
 
 		from submin.subminadmin import git
-		filename = unicode(args[1], 'utf-8')
-		git.create.rewrite_hook(filename)
+		reponame = None
+		if len(args) > 1:
+			reponame = unicode(args[1], 'utf-8')
+		git.create.rewrite_hook(reponame)
+		git.update_notifications.run(reponame)
+		git.post_receive_hook.rewrite_hook(reponame)
 
 	def chgrp_relevant_files(self, git_uid, git_gid):
 		from submin.models import options

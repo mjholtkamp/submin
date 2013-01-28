@@ -2,7 +2,7 @@ import os
 import sys
 import commands
 
-from submin.models import options
+from submin.models import options, repository
 from submin.template.shortcuts import evaluate
 from common import set_git_config, SetGitConfigError
 
@@ -34,7 +34,7 @@ def run(reponame, enable=True):
 
 			os.chmod(hook_dest, 0755)
 		except OSError, e:
-			raise PermissionError(
+			raise repository.PermissionError(
 				"Enabling hook failed: %s" % (str(e),))
 		try:
 			cfg = options.env_path() + 'git' + reponame + 'config'
@@ -43,12 +43,24 @@ def run(reponame, enable=True):
 			set_git_config(cfg, 'multimailhook.emailprefix', '[Submin]')
 			set_git_config(cfg, 'multimailhook.envelopesender', email)
 		except SetGitConfigError, e:
-			raise PermissionError(
+			raise repository.PermissionError(
 				"Enabling hook succeeded, but configuring it failed: %s" %
 				(str(e)))
 	else:
 		try:
 			os.rename(hook_dest, str(hook_dest) + '.submin2.disabled')
 		except OSError, e:
-			raise PermissionError(
+			raise repository.PermissionError(
 				"Renaming hook failed: %s" % (str(e),))
+
+def rewrite_hook(reponame):
+	if reponame:
+		repositories = [reponame]
+	else:
+		repositories = [x['name'] for x in repository.Repository.list_all() if x['vcs'] == 'git']
+
+	for reponame in repositories:
+		enabled = repository.Repository(reponame, 'git').commitEmailsEnabled()
+		# no need to disable if not enabled
+		if enabled:
+			run(reponame, enabled)

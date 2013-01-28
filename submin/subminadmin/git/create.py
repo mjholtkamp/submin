@@ -5,7 +5,7 @@ import commands
 import shutil
 
 from submin.common import shellscript
-from submin.models import options
+from submin.models import options, repository
 
 def run(reponame):
 	reposdir = _git_dirname(reponame)
@@ -24,14 +24,19 @@ def run(reponame):
 					(name, outtext))
 
 def rewrite_hook(reponame):
-	reposdir = _git_dirname(reponame)
-	hook = reposdir + 'hooks' + 'update'
-	try:
-		os.rename(hook, str(hook) + '.submin2.backup')
-	except OSError, e:
-		if e.errno != errno.ENOENT:
-			raise
-	_enable_hook(reposdir)
+	if reponame:
+		repositories = [reponame]
+	else:
+		repositories = [x['name'] for x in repository.Repository.list_all() if x['vcs'] == 'git']
+	for reponame in repositories:
+		reposdir = _git_dirname(reponame)
+		hook = reposdir + 'hooks' + 'update'
+		try:
+			os.rename(hook, str(hook) + '.submin2.backup')
+		except OSError, e:
+			if e.errno != errno.ENOENT:
+				raise
+		_enable_hook(reposdir)
 
 def _enable_hook(reposdir):
 	"""Assumes no hook is already there, or if there is, that is a shell script.
