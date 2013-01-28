@@ -10,6 +10,9 @@ def row_dict(cursor, row):
 
 all_fields = "id, name, email, fullname, is_admin"
 
+def commit():
+	storage.db.commit()
+
 def list():
 	"""Generator for sorted list of users"""
 	cur = storage.db.cursor()
@@ -118,16 +121,16 @@ def notification(userid, repository, vcstype):
 
 	return True
 
-def set_notification(userid, repository, vcstype, enabled):
+def set_notification(userid, repository, vcstype, enabled, commit=True):
 	if enabled:
 		storage.execute(storage.db.cursor(), """INSERT OR REPLACE INTO notifications
 			(userid, repository, repositorytype)
 			VALUES (?, ?, ?)""", 
-			(userid, repository, vcstype))
+			(userid, repository, vcstype), commit)
 	else:
 		storage.execute(storage.db.cursor(), """DELETE FROM notifications
 			WHERE userid=? AND repository=? AND repositorytype=?""",
-			(userid, repository, vcstype))
+			(userid, repository, vcstype), commit)
 
 def ssh_keys(userid):
 	cur = storage.db.cursor()

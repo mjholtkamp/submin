@@ -178,8 +178,12 @@ class User(object):
 		# if no Exception was thrown, set all notifications
 		for n in notifications:
 			storage.set_notification(self._id,
-				n['name'], n['vcs'], n['enabled'])
+				n['name'], n['vcs'], n['enabled'],
+				commit=False)
 
+		# This will speed up the database process if there are many notifications
+		# to save (users * repositories).
+		storage.commit()
 		trigger_hook('user-notifications-update', username=self._name)
 
 	def notifications(self):

@@ -14,6 +14,9 @@ class DBWrapper(threading.local):
 		if self.con:
 			self.con.close()
 
+	def commit(self):
+		self.con.commit()
+
 	def cursor(self):
 		return self.con.cursor()
 
