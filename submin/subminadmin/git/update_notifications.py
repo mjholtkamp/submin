@@ -58,7 +58,8 @@ def update_notification(reposname, user_notifications):
 		u, u_notif = u_n
 		if reposname in u_notif:
 			if u_notif[reposname]['enabled']:
-				emails.append(u.email)
+				email = "%s <%s>" % (u.fullname, u.email)
+				emails.append(email)
 
 	# make unique
 	emails = set(emails)

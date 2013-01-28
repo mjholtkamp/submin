@@ -16,7 +16,8 @@ def run(reponame, enable=True):
 	if enable:
 		variables = {
 			'submin_lib_dir': options.lib_path(),
-			'submin_base_url': options.url_path('base_url_submin')
+			'base_url': options.url_path('base_url_submin'),
+			'http_vhost': options.url_path('http_vhost'),
 		}
 		hook = evaluate('plugins/vcs/git/post-receive', variables)
 		try:
@@ -37,8 +38,10 @@ def run(reponame, enable=True):
 				"Enabling hook failed: %s" % (str(e),))
 		try:
 			cfg = options.env_path() + 'git' + reponame + 'config'
+			email = options.value('commit_email_from', 'Please configure commit_email_from <noreply@example.net>')
 			set_git_config(cfg, 'multimailhook.emailmaxlines', '2000')
 			set_git_config(cfg, 'multimailhook.emailprefix', '[Submin]')
+			set_git_config(cfg, 'multimailhook.envelopesender', email)
 		except SetGitConfigError, e:
 			raise PermissionError(
 				"Enabling hook succeeded, but configuring it failed: %s" %
