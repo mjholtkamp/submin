@@ -8,7 +8,10 @@ class WSGIRequest(Request):
 		Request.__init__(self)
 		self.__environ = environ
 
-		self.url = environ['REQUEST_URI']
+		if 'REQUEST_URI' in environ:
+			self.url = environ['REQUEST_URI']
+		else:
+			self.url = environ['PATH_INFO']
 		self.method = environ['REQUEST_METHOD']
 		input = environ['wsgi.input']
 		self.post = CGIFieldStorage(input, environ=environ, keep_blank_values=1)
