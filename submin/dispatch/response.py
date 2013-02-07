@@ -1,21 +1,33 @@
 import urlparse
 
 class Response(object):
-	def __init__(self, content=''):
+	def __init__(self, content='', status_message='Ok'):
 		self.content = content
 		self.status_code = 200
 		self.headers = {'Content-Type': 'text/html; charset=utf-8'}
+		self.status_message = status_message
 
 	def status(self):
-		# XXX provide a real status message
-		return str(self.status_code) + ' status'
+		return str(self.status_code) + ' ' + self.status_message
 
 	def setCookieHeaders(self, cookies):
 		self.headers['Set-Cookie'] = cookies
 
+	def encode_content(self):
+		return ''.join(self.content.encode('utf-8'))
+
+class FileResponse(Response):
+	def __init__(self, content, content_type):
+		Response.__init__(self, content)
+		self.headers.update({'Content-Type': content_type})
+
+	def encode_content(self):
+		# because these are files, don't encode
+		return self.content
+
 class Redirect(Response):
 	def __init__(self, url, request):
-		Response.__init__(self)
+		Response.__init__(self, status_message='The princess is in another castle')
 		if not request.is_ajax():
 			request.session['redirected_from'] = request.url
 
@@ -26,18 +38,24 @@ class Redirect(Response):
 			# to prevent accidental double slashes to be interpreted as netloc,
 			# we strip all leading slashes from the url
 			url = urlparse.urljoin(schema + request.http_host, url.lstrip('/'))
-		self.headers.update({'Location': url})
+		self.headers.update({'Location': url.encode('utf-8')})
 
 class HTTP404(Response):
 	def __init__(self, page='/'):
-		Response.__init__(self)
+		error_msg = 'Page %s not found.' % page
+		Response.__init__(self, error_msg, 'Not Found')
 		self.status_code = 404
-		self.content = 'Page %s not found.' % page
 
 class HTTP500(Response):
 	def __init__(self, content):
-		Response.__init__(self, content)
+		error_msg = 'Internal Server Error'
+		Response.__init__(self, error_msg, error_msg)
 		self.status_code = 500
+
+class TeapotResponse(Response):
+	def __init__(self, content):
+		Response.__init__(self, content, "I'm a teapot")
+		self.status_code = 418
 
 class XMLResponse(Response):
 	def __init__(self, content):

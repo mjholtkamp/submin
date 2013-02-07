@@ -10,38 +10,27 @@ from submin.views.intro import Intro
 from submin.views.ajax import Ajax
 from submin.views.upgrade import Upgrade
 from submin.views.diagnostics import Diagnostics
+from submin.views.passthrough import PassThrough
 from submin.models import options
 from submin.models.exceptions import UnknownKeyError
 from submin.dispatch.session import Session
 
 
 classes = {
-	'test': Test,
-	'users': Users,
-	'groups': Groups,
-	'login': Login,
-	'logout': Logout,
-	'x': Ajax,
-	'repositories': Repositories,
-	'upgrade': Upgrade,
-	'password': Password,
-	'diagnostics': Diagnostics,
-	'': Intro,
+	'users': (Users, None),
+	'groups': (Groups, None),
+	'login': (Login, None),
+	'logout': (Logout, None),
+	'x': (Ajax, None),
+	'repositories': (Repositories, None),
+	'upgrade': (Upgrade, None),
+	'password': (Password, None),
+	'diagnostics': (Diagnostics, None),
+	'': (Intro, None),
+	'css': (PassThrough, 'css'),
+	'js': (PassThrough, 'js'),
+	'img': (PassThrough, 'img'),
 }
-
-def init_tests():
-	"""Initialize url-coupling to test-views
-	Only loaded if config-options in section "tests" are present
-	"""
-	try:
-		options.value("tests_scenarios_file")
-	except UnknownKeyError:
-		return
-
-	from submin.views.uiscenarios import UIScenarios
-	classes["uiscenarios"] = UIScenarios
-
-init_tests()
 
 def dispatcher(request):
 	# Add session information to request
@@ -51,7 +40,8 @@ def dispatcher(request):
 
 	handlerName = 'handler'
 	if path[0].lower() in classes:
-		cls = classes[path[0].lower()](request)
+		tupl = classes[path[0].lower()]
+		cls = tupl[0](request, tupl[1])
 		if not hasattr(cls, handlerName):
 			raise Exception, "No handler %r found for view %r" % (handlerName, path[0].lower())
 
