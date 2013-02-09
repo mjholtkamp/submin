@@ -29,6 +29,7 @@ def run_autoreload():
 	programname = os.path.abspath(sys.argv[0])
 	while True:
 		new_time = old_time = os.path.getmtime(programname)
+		print 'starting WSGI server'
 		while True:
 			try:
 				child = subprocess.Popen(sys.argv[0:1])
@@ -56,5 +57,4 @@ if '--auto-reload' in sys.argv:
 	print 'starting auto-reload server'
 	run_autoreload()
 else:
-	print 'starting WSGI server'
 	run()
