@@ -46,7 +46,6 @@ def run_autoreload():
 					print "Could not stat file %s" % programname
 					pass
 
-			print "reloading..."
 		except KeyboardInterrupt:
 			return
 		finally:
@@ -57,5 +56,5 @@ if '--auto-reload' in sys.argv:
 	print 'starting auto-reload server'
 	run_autoreload()
 else:
-	print 'starting non-auto-reload server'
+	print 'starting WSGI server'
 	run()
