@@ -1,7 +1,11 @@
 #!/usr/bin/python
 
 import os
-os.environ.clear()
+import sys
+import time
+import signal
+import subprocess
+import errno
 os.environ['SUBMIN_ENV'] = '/var/lib/submin'
 from submin.models import storage, options
 
@@ -16,6 +20,42 @@ class NoLogHandler(simple_server.WSGIRequestHandler):
     def log_message(self, *args):
         pass
 
-httpd = simple_server.WSGIServer(('',8000), NoLogHandler)
-httpd.set_app(application)
-httpd.serve_forever()
+def run():
+	httpd = simple_server.WSGIServer(('',8000), NoLogHandler)
+	httpd.set_app(application)
+	httpd.serve_forever()
+
+def run_autoreload():
+	programname = os.path.abspath(sys.argv[0])
+	while True:
+		new_time = old_time = os.path.getmtime(programname)
+		while True:
+			try:
+				child = subprocess.Popen(sys.argv[0:1])
+			except OSError, e:
+				if e.errno == errno.ETXTBSY:
+					pass	
+			else:
+				break
+		try:
+			while new_time == old_time:
+				time.sleep(1)
+				try:
+					new_time = os.path.getmtime(programname)
+				except OSError:
+					print "Could not stat file %s" % programname
+					pass
+
+			print "reloading..."
+		except KeyboardInterrupt:
+			return
+		finally:
+			if child:
+				child.terminate()
+
+if '--auto-reload' in sys.argv:
+	print 'starting auto-reload server'
+	run_autoreload()
+else:
+	print 'starting non-auto-reload server'
+	run()
