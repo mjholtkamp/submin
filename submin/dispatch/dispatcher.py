@@ -1,7 +1,6 @@
 from submin.dispatch.response import Response, HTTP404, XMLStatusResponse
 
 from submin.views.error import ErrorResponse
-from submin.views.test import Test
 from submin.views.users import Users
 from submin.views.groups import Groups
 from submin.views.authviews import Login, Logout, Password
