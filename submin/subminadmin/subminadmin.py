@@ -1,5 +1,6 @@
 import sys
 import os
+import os.path
 
 from submin.path.path import Path
 from submin.models import storage
@@ -67,7 +68,7 @@ class SubminAdmin:
 			self.usage()
 			return False
 
-		self.env = self.argv[1]
+		self.env = os.path.realpath(self.argv[1])
 		if self.env[0] != os.path.sep:
 			self.env = os.path.join(os.getcwd(), self.env)
 
