@@ -3,6 +3,12 @@ import sys
 import os
 
 def application(environ, start_response):
+	for key in ['SUBMIN_ENV', 'SUBMIN_REMOVE_BASE_URL']:
+		if key in os.environ and not key in environ:
+			environ[key] = os.environ[key]
+		if key in environ:
+			os.environ[key] = environ[key]
+
 	# __file__ contains <submin-dir>/static/www/submin.wsgi
 	submin_www_dir = os.path.dirname(__file__)
 	submin_static_dir = os.path.dirname(submin_www_dir)
@@ -14,8 +20,6 @@ def application(environ, start_response):
 	if not check.ok:
 		start_response("500 Not Ok", [])
 		return check.error_page().encode("utf-8")
-
-	os.environ['SUBMIN_ENV'] = environ['SUBMIN_ENV']
 
 	from submin.models import storage
 	storage.open()

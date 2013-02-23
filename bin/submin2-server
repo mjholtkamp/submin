@@ -6,7 +6,8 @@ import time
 import signal
 import subprocess
 import errno
-os.environ['SUBMIN_ENV'] = '/var/lib/submin'
+if not 'SUBMIN_ENV' in os.environ:
+	os.environ['SUBMIN_ENV'] = '/var/lib/submin'
 from submin.models import storage, options
 
 storage.open()

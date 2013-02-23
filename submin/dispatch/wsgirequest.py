@@ -1,5 +1,6 @@
 import os
 import sys
+from submin.models import options
 
 from request import Request, CGIGet, CGIFieldStorage
 
@@ -29,8 +30,9 @@ class WSGIRequest(Request):
 		# When running from stand-alone WSGI-server, we have no Alias.
 		# Instead, we can define part of the URL to be cut so we can
 		# use e.g. /submin/ in front of the URL.
-		if 'SUBMIN_ALIAS' in environ:
-			alias = environ['SUBMIN_ALIAS']
+		if 'SUBMIN_REMOVE_BASE_URL' in environ:
+			self.remove_base_url = True
+			alias = options.value('base_url_submin')
 			if self.path_info.startswith(alias):
 				self.path_info = self.path_info[len(alias):]
 

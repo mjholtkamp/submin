@@ -16,6 +16,7 @@ class Request(object):
 		self.remote_address = ''
 		self.https = False # is HTTPS set?
 		self.http_host = ''
+		self.remove_base_url = False # needed for WSGI
 		self.headers = {'Content-Type': 'text/html'}
 
 		self._incookies = SimpleCookie()

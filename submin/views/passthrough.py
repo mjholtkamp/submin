@@ -15,9 +15,14 @@ class PassThrough(View):
 		fullpath = wwwroot + self.custom + '/'.join(path)
 		canonicalpath = os.path.realpath(fullpath)
 
-		# Someone is trying to be funny? We can be funny too!
-		if not canonicalpath.startswith(wwwroot):
-			return TeapotResponse("You tried to brew coffee, but I'm a teapot!")
+		if not req.remove_base_url:
+			# Someone is trying to be funny? We can be funny too!
+			if not canonicalpath.startswith(wwwroot):
+				return TeapotResponse("You tried to brew coffee, but I'm a teapot!")
+		else:
+			# more difficult check
+			if '/../' in fullpath:
+				return TeapotResponse("You tried to brew coffee, but I'm a teapot!")
 
 		_, ext = os.path.splitext(fullpath)
 		
