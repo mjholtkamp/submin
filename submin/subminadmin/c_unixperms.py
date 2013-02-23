@@ -1,6 +1,8 @@
 from submin.path.path import Path
 import os
 
+from common import www_user
+
 class c_unixperms():
 	'''Commands regarding unix permissions
 Usage:
@@ -44,7 +46,7 @@ This should also remove possible following warnings.
 	def _fix(self, unixuser):
 		base_dir = Path(self.sa.env)
 
-		apache = self.apache_user(unixuser)
+		apache = www_user(unixuser)
 		directory = str(base_dir)
 		user = apache.pw_uid
 		group = apache.pw_gid
@@ -96,23 +98,6 @@ This should also remove possible following warnings.
 				success = False
 
 		return success
-
-	def apache_user(self, preferred=''):
-		"""Returns most probably www-user"""
-		from pwd import getpwnam
-		users = []
-		known = [preferred, 'www-data', 'httpd', 'apache', '_www', 
-					'wwwrun', 'www']
-		for user in known:
-			pwd = ()
-			try:
-				pwd = getpwnam(user)
-			except KeyError, e:
-				pass
-			else:
-				return pwd
-
-		return
 
 	def run(self):
 		if len(self.argv) < 1:

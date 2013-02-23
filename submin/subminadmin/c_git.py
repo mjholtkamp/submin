@@ -1,6 +1,6 @@
 import os
 import sys
-from common import executeCmd, which, CmdException, SubminAdminCmdException
+from common import executeCmd, which, CmdException, SubminAdminCmdException, www_user
 
 ERROR_STR = "submin2-admin git %s is not supposed to be called by users."
 
@@ -122,7 +122,7 @@ Usage:
 			raise SubminAdminCmdException('Could not find %s, which is required for git init.' % e.prog)
 
 		from submin.subminadmin import c_unixperms
-		apache = c_unixperms.c_unixperms(None, None).apache_user()
+		apache = www_user()
 		self.create_ssh_key(owner=apache)
 
 		# Ask the name of the git user, if it exists ask to use it or bail
@@ -258,7 +258,7 @@ Usage:
 
 		# now make everything in git's home-dir owned by the git user and apache group
 		from submin.subminadmin import c_unixperms
-		apache = c_unixperms.c_unixperms(None, None).apache_user()
+		apache = www_user()
 		git_dir = options.env_path("git_dir")
 		ssh_dir = git_dir + ".ssh"
 		for root, dirs, files in os.walk(git_dir):

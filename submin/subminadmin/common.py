@@ -45,3 +45,17 @@ def which(program):
 	raise ProgramNotFoundError(program, env_path)
 
 
+def www_user(preferred=''):
+	"""Returns pwnam entry of most probably www-user"""
+	from pwd import getpwnam
+	users = []
+	known = [preferred, 'www-data', 'httpd', 'apache', '_www', 'wwwrun', 'www']
+	for user in known:
+		pwd = ()
+		try:
+			pwd = getpwnam(user)
+		except KeyError, e:
+			pass
+		else:
+			return pwd
+
