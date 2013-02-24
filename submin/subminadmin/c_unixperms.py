@@ -60,7 +60,9 @@ This should also remove possible following warnings.
 			for f in files:
 				path = os.path.join(root, f)
 				self._change_item(path, user, group)
-			for d in dirs:
+			# make a copy of dirs, because we might change it while we
+			# iterate over it.
+			for d in list(dirs):
 				path = os.path.join(root, d)
 				if path in self.ignore_dirs:
 					dirs.remove(d)
