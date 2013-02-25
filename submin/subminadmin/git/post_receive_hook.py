@@ -37,7 +37,7 @@ def run(reponame, enable=True):
 			raise repository.PermissionError(
 				"Enabling hook failed: %s" % (str(e),))
 		try:
-			cfg = options.env_path() + 'git' + reponame + 'config'
+			cfg = options.env_path('git_dir') + reponame + 'config'
 			email = options.value('commit_email_from', 'Please configure commit_email_from <noreply@example.net>')
 			set_git_config(cfg, 'multimailhook.emailmaxlines', '2000')
 			set_git_config(cfg, 'multimailhook.emailprefix', '[Submin]')

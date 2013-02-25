@@ -65,7 +65,7 @@ def update_notification(reposname, user_notifications):
 	emails = set(emails)
 
 	# set git config
-	cfg = options.env_path() + 'git' + reposname + 'config'
+	cfg = options.env_path('git_dir') + reposname + 'config'
 
 	if len(emails) > 0:
 		val = ','.join(emails)
