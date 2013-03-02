@@ -2,6 +2,14 @@
 import sys
 import os
 
+try:
+	import uwsgi
+	from uwsgidecorators import filemon
+except ImportError, e:
+	pass
+else:
+	filemon(__file__)(uwsgi.reload)
+
 def application(environ, start_response):
 	for key in ['SUBMIN_ENV', 'SUBMIN_REMOVE_BASE_URL']:
 		if key in os.environ and not key in environ:
