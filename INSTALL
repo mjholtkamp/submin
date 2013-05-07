@@ -44,8 +44,14 @@ Run the following command as root and follow the instructions:
 Configure Apache2 Webserver
 ---------------------------
 
-To activate the submin2 website, the configuration should be included into
-Apache2. If you have used defaults, run the following command as root:
+Submin2 can create all kinds of configs for you, to create all different kinds
+of Apache config files, run the following command:
+
+    submin2-admin /var/lib/submin apacheconf create all /var/lib/submin/conf/apache.conf
+
+Now to activate the submin2 website, the configuration should be included into
+Apache2. To use for example CGI, execute the following command as root (on
+Debian systems):
 
     ln -s /var/lib/submin/conf/apache.cgi.conf /etc/apache2/conf.d/
 
