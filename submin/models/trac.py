@@ -1,6 +1,7 @@
 import exceptions
 import subprocess
 import os
+import errno
 from submin.models import options
 from submin.models.exceptions import UnknownKeyError
 
