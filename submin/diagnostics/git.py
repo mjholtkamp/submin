@@ -32,7 +32,7 @@ def diagnostics():
 
 	try:
 		remote.execute("update-auth")
-	except remote.NonZeroExitStatus, e:
+	except (remote.NonZeroExitStatus, UnknownKeyError), e:
 		results['git_admin_test'] = False
 		results['git_admin_test_errmsg'] = str(e)
 	else:
