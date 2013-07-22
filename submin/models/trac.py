@@ -4,6 +4,7 @@ import os
 import errno
 from submin.models import options
 from submin.models.exceptions import UnknownKeyError
+from submin.common.execute import check_output
 
 class UnknownTrac(Exception):
 	def __init__(self, name):
@@ -51,7 +52,7 @@ def trac_admin_command(trac_dir, args):
 	env_copy['PATH'] = path
 
 	try:
-		return subprocess.check_output(cmd, stderr=subprocess.STDOUT, env=env_copy)
+		return check_output(cmd, stderr=subprocess.STDOUT, env=env_copy)
 	except subprocess.CalledProcessError, e:
 		raise TracAdminError(' '.join(cmd), e.returncode, e.output)
 
