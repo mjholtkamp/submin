@@ -6,6 +6,16 @@ import subprocess
 
 def check_output(*args, **kwargs):
 	"""Because python 2.6 doesn't have this, create our own version"""
+	try:
+		return subprocess.check_output(*args, **kwargs)
+	except AttributeError:
+		pass
+
 	p = subprocess.Popen(*args, stdout=subprocess.PIPE, **kwargs)
 	(out, err) = p.communicate()
+	if p.returncode:
+		""" python 2.6 version of subprocess does not support 3rd argument
+		(output), so only returncode and cmd are given"""
+		raise subprocess.CalledProcessError(p.returncode, ' '.join(*args))
+
 	return out
