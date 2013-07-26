@@ -1,3 +1,9 @@
+submin (2.1.1-0) testing; urgency=low
+
+  * New release: 2.1.1
+
+ -- Michiel Holtkamp <michiel@supermind.nl>  Fri, 26 Jul 2013 20:16:34 +0000
+
 submin (2.1.0-1) testing; urgency=low
 
   * New release: 2.1.0
