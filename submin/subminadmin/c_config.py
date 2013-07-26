@@ -1,7 +1,7 @@
 import os, sys
 
 from submin.path.path import Path
-from submin.models.exceptions import StorageAlreadySetup
+from submin.models.exceptions import StorageAlreadySetup, UnknownKeyError
 from submin.subminadmin import common
 
 class c_config():
@@ -33,8 +33,12 @@ Usage:
 		self.sa.ensure_storage()
 
 		if len(argv) == 1:
-			value = options.value(argv[0])
-			self._printkeyvalue(argv[0], value, len(argv[0]))
+			try:
+				value = options.value(argv[0])
+			except UnknownKeyError, e:
+				print 'ERROR: %s does not exist' % argv[0]
+			else:
+				self._printkeyvalue(argv[0], value, len(argv[0]))
 		else:
 			all_options = options.options()
 			all_options.sort()
