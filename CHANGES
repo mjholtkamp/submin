@@ -1,6 +1,15 @@
 Changes since 2.1.1:
- - Password reset functionality is now easier: no need to check your mail multiple times
- - Removed Diagnostics from displaying for non-admins
+ - Added NGINX/uWSGI support for the webui (you still need Apache for subversion).
+ - Password (re)set functionality is now easier: no need to check your mail multiple times
+ - Increased notification performance (sending, saving)
+ - Notifications/commit email improvements: check if user has read permission, instead of some weird 'allow' field
+ - Git commit email is handled by git-multimail (https://github.com/mhagger/git-multimail) license is compatible
+ - Git stability improvements (fixes #298, #302)
+ - Added Git admin command: hook updates
+ - Fixed python 2.6 compatibility: missing check_output (fixes #305, #315)
+ - Minor enhancements in the UI (hint to change password, CSS ellipsis, links to repositories, Javascript robustness, hide admin functionality for non-admins)
+ - Code cleanup and refactoring
+ - Other bugfixes (#307, #310, #311)
 
 Changes since 2.1.0:
  - Apache config files are now generated separately (Trac, submin web UI, SVN and also CGI, WSGI, FCGI)
