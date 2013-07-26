@@ -3,7 +3,7 @@ from submin.dispatch.response import Response
 from submin.dispatch.view import View
 from submin.auth.decorators import admin_required
 from submin.models import options
-from submin.diagnostics import trac, git, svn
+from submin.diagnostics import trac, git, svn, email
 
 class Diagnostics(View):
 	@admin_required
@@ -14,6 +14,7 @@ class Diagnostics(View):
 		diagnostics.update(trac.diagnostics())
 		diagnostics.update(svn.diagnostics())
 		diagnostics.update(git.diagnostics())
+		diagnostics.update(email.diagnostics())
 		localvars['diag'] = diagnostics
 		localvars['subminenv'] = options.env_path()
 

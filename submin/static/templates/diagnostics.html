@@ -3,6 +3,51 @@
 		<h1>Diagnostics</h1>
 		<p>This page shows some tests which make it easier to hunt down why things are not working as they should</p>
 		<div>
+			<h2 class="diag">Email support correctly configured: <span class="diag_[test:diag.email_all yes][else no]"></span></h2>
+			<ul>
+				<li>
+					<label class="diag">Commit email set in config</label>
+					<div class="diag_result">
+						<span class="diag_[test:diag.email_commit_set yes][else no]"></span>
+						<div class="diag_note">
+							The 'commit_email_from' option is used when sending commit emails. This will be set as the 'From:' field and the envelope.
+							[test:diag.email_commit_set]
+							[else If no 'commit_email_from' is set, the mail is sent from a warning email address. This does not always work. To ensure delivery to everyone (and because it looks nicer), please consider setting it to a sane value. To set the commit_email_from, run the following command: 'submin2-admin [val subminenv] config set commit_email_from Submin &lt;submin@example.tld&gt;']
+						</div>
+					</div>
+				</li>
+				<li>
+					<label class="diag">Commit email sane</label>
+					<div class="diag_result">
+						<span class="diag_[test:diag.email_commit_sane yes][else no]"></span>
+						<div class="diag_note">
+							[test:diag.email_commit_sane]
+							[else The 'commit_email_from' should contain a name and a valid email address between angle brackets, e.g. "Submin &lt;submin@example.tld&gt;"]
+						</div>
+					</div>
+				</li>
+				<li>
+					<label class="diag">SMTP From email set in config</label>
+					<div class="diag_result">
+						<span class="diag_[test:diag.email_from_set yes][else no]"></span>
+						<div class="diag_note">
+							The 'smtp_from' option is the From: email address used when sending account (re)set emails.
+							[test:diag.email_from_set]
+							[else If no 'smtp_from' is set, the mail is sent from 'root@localhost'. This does not always work. To ensure delivery to everyone (and because it looks nicer), please consider setting it to a sane value. To set the smtp_from, run the following command: 'submin2-admin [val subminenv] config set smtp_from Submin &lt;submin@example.tld&gt;']
+						</div>
+					</div>
+				</li>
+				<li>
+					<label class="diag">SMTP From email sane</label>
+					<div class="diag_result">
+						<span class="diag_[test:diag.email_from_sane yes][else no]"></span>
+						<div class="diag_note">
+							[test:diag.email_from_sane]
+							[else The 'smtp_from' should contain a name and a valid email address between angle brackets, e.g. "Submin &lt;submin@example.tld&gt;"]
+						</div>
+					</div>
+				</li>
+			</ul>
 			<h2 class="diag">Git support working correctly: <span class="diag_[test:diag.git_all yes][else no]"></span></h2>
 			<ul>
 				<li>
