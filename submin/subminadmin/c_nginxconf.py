@@ -112,6 +112,8 @@ Usage:
 			'www_uid': user.pw_uid,
 			'www_gid': user.pw_gid,
 		}
+		self.init_vars['real_wsgi'] = os.path.realpath(
+			os.path.join(self.init_vars['www_dir'], 'submin.wsgi'))
 
 		try:
 			subcmd = getattr(self, 'subcmd_%s' % self.argv[0])
