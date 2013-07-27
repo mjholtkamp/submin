@@ -1,3 +1,8 @@
+Changes since 2.1.2:
+ - Better uWSGI reloading
+ - Added email diagnostics
+ - submin2-admin fixes
+
 Changes since 2.1.1:
  - Added NGINX/uWSGI support for the webui (you still need Apache for subversion).
  - Password (re)set functionality is now easier: no need to check your mail multiple times
