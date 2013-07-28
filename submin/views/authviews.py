@@ -42,7 +42,10 @@ class Login(View):
 
 		url = options.url_path('base_url_submin')
 		if 'redirected_from' in request.session:
+			login_url = options.url_path('base_url_submin') + 'login'
 			url = request.session['redirected_from']
+			if url == login_url:
+				url = options.url_path('base_url_submin')
 
 		if not database_isuptodate():
 			localvalues = {}
