@@ -1,6 +1,8 @@
-from submin.path.path import Path
 import os
 import re
+
+from submin.path.path import Path
+from submin.template.shortcuts import evaluate
 
 class c_apacheconf():
 	'''Commands to change apache config
@@ -25,6 +27,7 @@ Usage:
      - XYZ-trac-modpython.conf
      - XYZ-trac-modwsgi.conf
      - XYZ-trac-fcgid.conf
+     - XYZ-trac-no-anon.conf
 
     By default <template> is '<submin env>/conf/apache.conf'.
 
@@ -151,6 +154,7 @@ recommended way is to include it in a VirtualHost.
 		submin_trac_cgi = self._apache_conf_trac_cgi(self.init_vars)
 		submin_trac_modwsgi = self._apache_conf_trac_modwsgi(self.init_vars)
 		submin_trac_fcgid = self._apache_conf_trac_fcgid(self.init_vars)
+		submin_trac_no_anon = evaluate('subminadmin/trac-no-anonymous.conf', self.init_vars)
 
 		if self.auth_type == "sql":
 			footer = self._apache_conf_auth_sql_foot(self.init_vars)
@@ -167,6 +171,7 @@ recommended way is to include it in a VirtualHost.
 			fname_trac_cgi = template + '-trac-cgi.conf'
 			fname_trac_fcgid = template + '-trac-fcgid.conf'
 			fname_trac_modwsgi = template + '-trac-modwsgi.conf'
+			fname_trac_no_anon = template + '-trac-no-anonymous.conf'
 			file(fname_submin_cgi, 'w').write(header_webui + submin_cgi)
 			file(fname_submin_wsgi, 'w').write(header_webui + submin_wsgi)
 			file(fname_svn, 'w').write(header_svn + submin_svn + footer)
@@ -174,9 +179,11 @@ recommended way is to include it in a VirtualHost.
 			file(fname_trac_cgi, 'w').write(header_trac + submin_trac_cgi + footer)
 			file(fname_trac_fcgid, 'w').write(header_trac + submin_trac_fcgid + footer)
 			file(fname_trac_modwsgi, 'w').write(header_trac + submin_trac_modwsgi + footer)
+			file(fname_trac_no_anon, 'w').write(header_trac + submin_trac_no_anon + footer)
 			print 'Apache files created:\n', "\n".join([fname_submin_cgi,
 				fname_submin_wsgi, fname_svn, fname_trac_modpy,
-				fname_trac_cgi, fname_trac_fcgid, fname_trac_modwsgi])
+				fname_trac_cgi, fname_trac_fcgid, fname_trac_modwsgi,
+				fname_trac_no_anon])
 		else:
 			submin_type = submin_cgi if output_type == 'cgi' else submin_wsgi
 			contents = header + submin_type + submin_svn + submin_trac + footer
@@ -333,8 +340,8 @@ recommended way is to include it in a VirtualHost.
 
 		if component in ("trac", "all"):
 			conf += '''
-    AliasMatch "^%(trac base url)s" %(www dir)s/nomodauthndbd.html
-    <Location "%(trac base url)s">
+    AliasMatch "^%(trac_base_url)s" %(www dir)s/nomodauthndbd.html
+    <Location "%(trac_base_url)s">
         Order allow,deny
         Allow from all
     </Location>''' % self.init_vars
@@ -386,29 +393,29 @@ recommended way is to include it in a VirtualHost.
 		apache_conf_trac = '''
     # Only load if mod_python is available
     <IfModule mod_python.c>
-        <Location "%(trac base url)s">
+        <Location "%(trac_base_url)s">
             SetHandler mod_python
             PythonInterpreter main_interpreter
             PythonHandler trac.web.modpython_frontend
             PythonOption TracEnvParentDir "%(trac dir)s"
-            PythonOption TracUriRoot "%(trac base url)s"
+            PythonOption TracUriRoot "%(trac_base_url)s"
         </Location>
 
-        <LocationMatch "%(trac base url)s/[^/]+/login">
+        <LocationMatch "%(trac_base_url)s/[^/]+/login">
             AuthType Basic
             AuthName "Trac"
 %(apache_conf_auth)s
             Require valid-user
         </LocationMatch>
-        AliasMatch "%(trac base url)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs/site
+        AliasMatch "%(trac_base_url)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs/site
         <Directory %(trac dir)s/*/htdocs>
           Order allow,deny
           Allow from all
         </Directory>
     </IfModule>
     <IfModule !mod_python.c>
-        AliasMatch "^%(trac base url)s" %(www dir)s/nomodpython.html
-        <Location "%(trac base url)s">
+        AliasMatch "^%(trac_base_url)s" %(www dir)s/nomodpython.html
+        <Location "%(trac_base_url)s">
             Order allow,deny
             Allow from all
         </Location>
@@ -422,18 +429,18 @@ recommended way is to include it in a VirtualHost.
 		# only include it once. Since we assume <2.3, we have to include it
 		# twice (or make another file and include that twice)
 		cgi_directives = '''
-        ScriptAlias %(trac base url)s %(cgi-bin dir)s/trac.cgi
-        <Location "%(trac base url)s">
+        ScriptAlias %(trac_base_url)s %(cgi-bin dir)s/trac.cgi
+        <Location "%(trac_base_url)s">
           SetEnv TRAC_ENV_PARENT_DIR "%(trac dir)s"
         </Location>
 
-        <LocationMatch "%(trac base url)s/[^/]+/login">
+        <LocationMatch "%(trac_base_url)s/[^/]+/login">
             AuthType Basic
             AuthName "Trac"
 %(apache_conf_auth)s
             Require valid-user
         </LocationMatch>
-        AliasMatch "%(trac base url)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs/site
+        AliasMatch "%(trac_base_url)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs/site
         <Directory %(trac dir)s/*/htdocs>
           Order allow,deny
           Allow from all
@@ -456,8 +463,8 @@ recommended way is to include it in a VirtualHost.
     # only show the error page if both cgi and cgid are not loaded
     <IfModule !mod_cgi.c>
         <IfModule !mod_cgid.c>
-            AliasMatch "^%(trac base url)s" %(www dir)s/nocgi.html
-            <Location "%(trac base url)s">
+            AliasMatch "^%(trac_base_url)s" %(www dir)s/nocgi.html
+            <Location "%(trac_base_url)s">
                 Order allow,deny
                 Allow from all
             </Location>
@@ -470,26 +477,26 @@ recommended way is to include it in a VirtualHost.
 		apache_conf_trac = '''
     <IfModule mod_fcgid.c>
         # Slash at the end is important here!
-        ScriptAlias %(trac base url)s %(cgi-bin dir)s/trac.fcgi/
-        <Location "%(trac base url)s">
+        ScriptAlias %(trac_base_url)s %(cgi-bin dir)s/trac.fcgi/
+        <Location "%(trac_base_url)s">
           SetEnv TRAC_ENV_PARENT_DIR "%(trac dir)s"
         </Location>
 
-        <LocationMatch "%(trac base url)s/[^/]+/login">
+        <LocationMatch "%(trac_base_url)s/[^/]+/login">
             AuthType Basic
             AuthName "Trac"
 %(apache_conf_auth)s
             Require valid-user
         </LocationMatch>
-        AliasMatch "%(trac base url)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs/site
+        AliasMatch "%(trac_base_url)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs/site
         <Directory %(trac dir)s/*/htdocs>
           Order allow,deny
           Allow from all
         </Directory>
     </IfModule>
     <IfModule !mod_fcgid.c>
-        AliasMatch "^%(trac base url)s" %(www dir)s/nofcgid.html
-        <Location "%(trac base url)s">
+        AliasMatch "^%(trac_base_url)s" %(www dir)s/nofcgid.html
+        <Location "%(trac_base_url)s">
             Order allow,deny
             Allow from all
         </Location>
@@ -503,34 +510,33 @@ recommended way is to include it in a VirtualHost.
 
 		apache_conf_trac = '''
     <IfModule mod_wsgi.c>
-        WSGIScriptAlias %(trac base url)s %(cgi-bin dir)s/trac.wsgi
+        WSGIScriptAlias %(trac_base_url)s %(cgi-bin dir)s/trac.wsgi
         <Directory "%(cgi-bin dir)s">
             WSGIApplicationGroup %(GLOBAL)s
             Order Deny,Allow
          </Directory>
 
-        <LocationMatch "%(trac base url)s/[^/]+/login">
+        <LocationMatch "%(trac_base_url)s/[^/]+/login">
             AuthType Basic
             AuthName "Trac"
 %(apache_conf_auth)s
             Require valid-user
         </LocationMatch>
-        AliasMatch "%(trac base url)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs/site
+        AliasMatch "%(trac_base_url)s/[^/]+/chrome/site" %(trac dir)s/$1/htdocs/site
         <Directory %(trac dir)s/*/htdocs>
           Order allow,deny
           Allow from all
         </Directory>
     </IfModule>
     <IfModule !mod_wsgi.c>
-        AliasMatch "^%(trac base url)s" %(www dir)s/nowsgi.html
-        <Location "%(trac base url)s">
+        AliasMatch "^%(trac_base_url)s" %(www dir)s/nowsgi.html
+        <Location "%(trac_base_url)s">
             Order allow,deny
             Allow from all
         </Location>
     </IfModule>
 ''' % vars
 		return apache_conf_trac
-
 
 	def urlpath(self, url):
 		"""Strip scheme and hostname from url, leaving only the path. Also
@@ -570,7 +576,7 @@ recommended way is to include it in a VirtualHost.
 			'cgi-bin dir': self.canonicalize(str(cgi_bin_dir)),
 			'submin base url': self.urlpath(options.value('base_url_submin')),
 			'svn base url': self.urlpath(options.value('base_url_svn')),
-			'trac base url': self.urlpath(options.value('base_url_trac')),
+			'trac_base_url': self.urlpath(options.value('base_url_trac')),
 			'svn dir': options.env_path('svn_dir'),
 			'trac dir': options.env_path('trac_dir'),
 			'authz file': options.env_path('svn_authz_file'),
