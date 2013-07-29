@@ -98,7 +98,7 @@ ul.selector li .adder {
 div.error, div.hint {
 	border: 1px solid #666;
 	text-align: center;
-	padding: 1.5em 0 1.5em 0;
+	padding: 1.5em 1em 1.5em 1em;
 	margin: 1em;
 }
 
@@ -202,4 +202,8 @@ label.diag {
 	background: #eee;
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
+}
+
+.hidden {
+	display: none;
 }

@@ -20,6 +20,20 @@ window.onload = function() {
 
 		initPermissionsEditor('/');
 	}
+	if (window.location.href.indexOf('?show_hint=1') > -1) {
+		/* This is a HACK needed because the page is reloaded in a lazy way.
+		 * The goal of the 'show_hint' parameter is to show the hint only
+		 * once. The URL is modified so when the user goes forward and then
+		 * back again (or simply refreshes the page), the hint is not displayed
+		 * again. Kind of lame, but it works without a reload, so the user will
+		 * probably not notice this, so it's OK for now.
+		 */
+		var hint = document.getElementById('hint_trac_permissions');
+		if (hint) {
+			removeClassName(hint, 'hidden');
+		}
+		history.replaceState(null, "", window.location.href.replace('?show_hint=1', ''));
+	}
 }
 
 var repos_old_resize = window.onresize;
@@ -517,6 +531,8 @@ function trac_env_createCB(response) {
 	if (!s)
 		return;
 	if (s == "True") {
-		window.location.href = window.location.href;
+		/* XXX: ?show_hint=1 is a HACK, it is removed from the URL in the
+		* beginning of this script */
+		window.location.href = window.location.href + '?show_hint=1';
 	}
 }
