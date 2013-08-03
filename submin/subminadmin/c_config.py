@@ -140,7 +140,7 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 		if os.environ.has_key("PYTHONPATH"):
 			suggestion = os.path.abspath(os.environ["PYTHONPATH"].split(":")[0])
 
-		fp.write("""#!/usr/bin/env python
+		fp.write("""#!/usr/bin/env python2
 
 # If you installed submin in a non-standard path, uncomment the two lines below
 # and insert your submin path.

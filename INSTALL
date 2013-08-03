@@ -1,3 +1,10 @@
+Submin prerequisites
+--------------------
+
+Submin is tested with Python 2.x exclusively, it probably does (not) yet work
+with Python 3.x. If you have fixes for 3.x, please let us know.
+
+
 Submin Installation
 -------------------
 
@@ -10,7 +17,7 @@ Installing from source:
 
     Download tarball from http://supermind.nl/submin/download.html
     Extract the tarball
-    execute: python setup.py install
+    execute: python2 setup.py install
     => submin will be installed in site-packages, an executable submin2-admin
        will be installed in /usr/bin
 
@@ -28,8 +35,8 @@ To create a submin environment, follow instructions after executing:
 
 For help on submin-admin, execute the following command:
 
-    submin2-admin <anything> help
-    submin2-admin <anything> help <subcommand>
+    submin2-admin /var/lib/submin help
+    submin2-admin /var/lib/submin help <subcommand>
 
 
 Git support (optional)

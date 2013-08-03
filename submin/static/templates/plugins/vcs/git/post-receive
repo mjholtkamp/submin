@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 """Script to call git_multimail.py
 
 This script is necessary because Submin makes some modifications
