@@ -30,7 +30,7 @@ Notes:
 	needs_env = False
 
 	def __init__(self, sa, argv):
-		import platform
+		import socket
 		self.sa = sa
 		self.env = Path(self.sa.env)
 		self.argv = argv
@@ -39,7 +39,7 @@ Notes:
 			'git_dir': Path('git'),
 			'trac_dir': Path('trac'),
 			'http_base': Path('/'),
-			'http_vhost': platform.node(),
+			'http_vhost': socket.getfqdn(),
 			'trac_url': Path('trac'),
 			'submin_url': Path('submin'),
 			'svn_url': Path('svn'),
@@ -103,7 +103,8 @@ the full path.
 		print '''
 Please provide a hostname that can be used to reach the web interface. This
 hostname will be used in communication to the user (a link in email, links
-in the web interface).
+in the web interface). The hostname should be a FQDN, so instead of 'foo' it
+should be 'foo.example.com'. Please correct if the default is incorrect.
 '''
 		self.prompt_user("Hostname?", 'http_vhost')
 
