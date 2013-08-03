@@ -116,6 +116,17 @@
 						</div>
 					</div>
 				</li>
+				[test:diag.svn_apache_modules_err
+				<li>
+					<label class="diag">Apache modules</label>
+					<div class="diag_result">
+						<span class="diag_no"></span>
+						<div class="diag_note">
+							Could not execute apachectl to test if modules are loaded. Error message was: [val diag.svn_apache_modules_errmsg]
+						</div>
+					</div>
+				</li>
+				][else
 				[iter:diag.svn_apache_modules
 				<li>
 					<label class="diag">Apache '[ikey]'</label>
@@ -127,6 +138,7 @@
 						</div>
 					</div>
 				</li>]
+				]
 				<li>
 					<label class="diag">SVN enabled</label>
 					<div class="diag_result">
