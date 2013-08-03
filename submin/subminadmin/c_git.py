@@ -188,9 +188,9 @@ Usage:
 
 		return a
 
-	def create_user(self, username, homedir):
+	def create_user_adduser(self, username, homedir):
 		cmd = ["adduser",
-		       "--system",
+			   "--system",
 			   "--shell /bin/sh",
 			   "--gecos 'git version control'",
 			   "--group",
@@ -200,6 +200,26 @@ Usage:
 			  ]
 		cmd = ' '.join(cmd)
 		executeCmd(cmd, "Could not create user %s" % username)
+
+	def create_user_useradd(self, username, homedir):
+		cmd = ["useradd",
+			   "--system",
+			   "--shell /bin/sh",
+			   "--comment 'git version control'",
+			   "--user-group",
+			   "--home %s" % homedir,
+			   "%s" % username
+			  ]
+		cmd = ' '.join(cmd)
+		executeCmd(cmd, "Could not create user %s" % username)
+
+	def create_user(self, username, homedir):
+		try:
+			self.create_user_adduser(username, homedir)
+		except CmdException, e:
+			self.create_user_useradd(username, homedir)
+			# if this fails, it will raise another CmdException,
+			# which is not caught.
 
 	def create_ssh_key(self, owner):
 		from submin.models import options
