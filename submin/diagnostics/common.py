@@ -2,8 +2,9 @@ import os
 
 from submin.models import options
 from submin.common.execute import check_output
+from subprocess import CalledProcessError
 
-class ApacheCtlNotFound(Exception):
+class ApacheCtlError(Exception):
 	pass
 
 def apache_modules():
@@ -14,17 +15,23 @@ def apache_modules():
 	env_copy = os.environ.copy()
 	env_copy['PATH'] = path
 	modules = []
-	apachectl_names = ['apachectl', 'apache2ctl']
+	cmds = [
+		['apachectl', '-t', '-D', 'DUMP_MODULES'],
+		['apache2ctl', '-t', '-D', 'DUMP_MODULES'],
+		# Gentoo specific workaround (see #326)
+		['apache2ctl', 'modules'],
+	]
 
-	for apachectl in apachectl_names:
-		cmd = [apachectl, '-t', '-D', 'DUMP_MODULES']
+	for cmd in cmds:
 		try:
 			for line in check_output(cmd, env=env_copy).split('\n'):
 				if line.endswith('(shared)') or line.endswith('(static)'):
 					modules.append(line.strip().split(' ')[0])
 		except OSError:
-			continue # try the next executable
+			continue # try the next command, if any
+		except CalledProcessError, e:
+			raise ApacheCtlError(e)
 		else:
 			return modules
 
-	raise ApacheCtlNotFound('Tried: ' + ', '.join(apachectl_names))
+	raise ApacheCtlError('Executable apachectl not found, tried: ' + (', '.join(["'" + ' '.join(x) + "'" for x in cmds])))

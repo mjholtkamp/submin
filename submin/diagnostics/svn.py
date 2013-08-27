@@ -1,7 +1,7 @@
 from submin.models import options
 from submin.models.exceptions import UnknownKeyError
 
-from common import apache_modules, ApacheCtlNotFound
+from common import apache_modules, ApacheCtlError
 
 def diagnostics():
 	results = {}
@@ -19,7 +19,7 @@ def diagnostics():
 	required_mods = ['dav_module', 'dav_svn_module', 'authz_svn_module', 'authn_dbd_module']
 	try:
 		amods = apache_modules()
-	except ApacheCtlNotFound, e:
+	except ApacheCtlError, e:
 		results['svn_apache_modules_err'] = True
 		results['svn_apache_modules_errmsg'] = str(e)
 
