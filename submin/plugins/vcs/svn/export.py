@@ -77,7 +77,8 @@ def export_notifications(**args):
 				"for_paths": for_paths, "username": u.name}
 			groups.append(g)
 
-	templatevariables = {"groups": groups}
+	email = options.value('commit_email_from', 'Please configure commit_email_from <noreply@example.net>')
+	templatevariables = {"groups": groups, 'from_addr': email}
 
 	from submin.template.shortcuts import evaluate
 	content = evaluate("plugins/vcs/svn/mailer.conf", templatevariables)
