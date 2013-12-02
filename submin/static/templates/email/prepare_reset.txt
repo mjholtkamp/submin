@@ -9,7 +9,7 @@ the reset request will expire automatically.
 If you requested this passwod reset, you can reset your password by going to
 the following URL:
 
-http://[val http_vhost][val base_url]password/[val username]/[val key]
+[val http_vhost][val base_url]password/[val username]/[val key]
 
 Kind regards,
 Submin

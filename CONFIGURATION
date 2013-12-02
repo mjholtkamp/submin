@@ -83,8 +83,9 @@ Options:
 
  * http_vhost
     The hostname to use when the hostname can not be guessed (e.g. in e-mails).
-    The scheme is not included, this is simply the hostname, so do not add
-    "http://" or "https://". Example: "example.org"
+    If the scheme is not included, it is prepended with 'http://'. If you want
+    to run only on HTTPS, prepend 'https://' yourself.
+    Example: "https://example.org".
 
  * session_salt
     For internal use. Do not change.

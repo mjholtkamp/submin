@@ -17,7 +17,7 @@ def run(reponame, enable=True):
 		variables = {
 			'submin_lib_dir': options.lib_path(),
 			'base_url': options.url_path('base_url_submin'),
-			'http_vhost': options.url_path('http_vhost'),
+			'http_vhost': options.http_vhost(),
 		}
 		hook = evaluate('plugins/vcs/git/post-receive', variables)
 		try:

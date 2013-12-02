@@ -43,6 +43,12 @@ def env_path(key=None):
 
 	return base + path
 
+def http_vhost():
+	vhost = value('http_vhost')
+	if vhost.startswith('http://') or vhost.startswith('https://'):
+		return vhost
+	return 'http://' + vhost
+
 def lib_path():
 	# __file__ returns <submin-static-dir>/lib/models/options.py
 	# by calling dirname() twice, we get the lib dir

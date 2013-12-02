@@ -135,7 +135,7 @@ class User(object):
 			'username': self.name,
 			'key': key,
 			'password': password,
-			'http_vhost': options.value('http_vhost'),
+			'http_vhost': options.http_vhost(),
 			'base_url': options.url_path("base_url_submin"),
 			'origin': origin,
 		}

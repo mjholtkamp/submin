@@ -45,7 +45,7 @@ git_multimail.FOOTER_TEMPLATE = """\
 
 --
 This message was sent by Submin through git_multimail.
-To unsubscribe from this commit list, please login to http://[val http_vhost][val base_url] and change your preferences.
+To unsubscribe from this commit list, please login to [val http_vhost][val base_url] and change your preferences.
 """
 git_multimail.REVISION_FOOTER_TEMPLATE = git_multimail.FOOTER_TEMPLATE
 
