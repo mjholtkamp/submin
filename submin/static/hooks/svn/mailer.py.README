@@ -1,0 +1,17 @@
+This version is downloaded from http://svn.apache.org/repos/asf/subversion/trunk/tools/hook-scripts/mailer/mailer.py
+but modified to work with exim's different behaviour.
+
+The difference is that exim's implementation will -remove- addresses that
+are added on the commandline, whereas other implementation will -add- (if
+not already existing in the 'To:' headers.
+
+Exim will give this error message when you specify the same email addresses
+on the commandline as well as in the headers:
+  A message that you sent using the -t command line option contained no
+  addresses that were not also on the command line, and were therefore
+  suppressed. This left no recipient addresses, and so no delivery could
+  be attempted.
+
+The change is in the PipeOutput class in the 'start' method. The
+self.to_addrs are not added to the cmd.
+

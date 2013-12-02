@@ -301,7 +301,7 @@ class PipeOutput(MailedOutput):
 
     ### gotta fix this. this is pretty specific to sendmail and qmail's
     ### mailwrapper program. should be able to use option param substitution
-    cmd = self.cmd + [ '-f', self.from_addr ] + self.to_addrs
+    cmd = self.cmd + [ '-f', self.from_addr ] #+ self.to_addrs
 
     # construct the pipe for talking to the mailer
     self.pipe = subprocess.Popen(cmd, stdin=subprocess.PIPE,
