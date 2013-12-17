@@ -15,7 +15,7 @@ class Login(View):
 			username = request.session['auto_authenticate']
 		else:
 			if not request.post:
-				return self.evaluate_form()
+				return self.evaluate_form(session=request.session)
 			username = request.post.get('username', '')
 			password = request.post.get('password', '')
 
@@ -63,13 +63,18 @@ class Login(View):
 		return Redirect(url, request)
 
 
-	def evaluate_form(self, msg=''):
+	def evaluate_form(self, msg='', session=None):
 		localvalues = {}
 		localvalues['msg'] = msg
 		base_url = options.value('base_url_submin')
 		if base_url[-1] != '/':
 			base_url += '/'
 		localvalues['base_url'] = base_url
+		if session and 'user' in session and 'is_authenticated' in session['user']:
+			if session['user']['is_authenticated']:
+				localvalues['is_authenticated'] = True
+				localvalues['username'] = session['user']['name']
+
 		return Response(evaluate('login.html', localvalues))
 
 class Password(View):
