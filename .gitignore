@@ -18,26 +18,4 @@
 /dev/conf/ssh_host_dsa_key.pub
 /dev/conf/sshd.pid
 
-# /submin/
-/submin/*.pyc
-
-# /submin/auth/
-/submin/auth/*.pyc
-
-# /submin/dispatch/
-/submin/dispatch/*.pyc
-
-# /submin/models/
-/submin/models/*.pyc
-
-# /submin/path/
-/submin/path/*.pyc
-
-# /submin/subminadmin/
-/submin/subminadmin/*.pyc
-
-# /submin/template/
-/submin/template/*.pyc
-
-# /submin/views/
-/submin/views/*.pyc
+*.pyc
