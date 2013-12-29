@@ -193,6 +193,10 @@ div.c_icon.minus {
 .diag_result:hover .diag_note {
 	color: inherit;
 }
+.diag_pre {
+	white-space: pre;
+	font-family: monospace;
+}
 
 label.diag {
 	width: 15em;

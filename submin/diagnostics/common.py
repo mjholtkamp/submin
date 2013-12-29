@@ -21,17 +21,27 @@ def apache_modules():
 		# Gentoo specific workaround (see #326)
 		['apache2ctl', 'modules'],
 	]
+	errormsgs = []
 
 	for cmd in cmds:
 		try:
 			for line in check_output(cmd, env=env_copy).split('\n'):
 				if line.endswith('(shared)') or line.endswith('(static)'):
 					modules.append(line.strip().split(' ')[0])
-		except OSError:
+		except OSError, e:
+			errormsgs.append(str(e))
 			continue # try the next command, if any
 		except CalledProcessError, e:
-			raise ApacheCtlError(e)
+			errormsgs.append(str(e))
+			continue # try the next command, if any
 		else:
-			return modules
+			errormsgs.append('')
 
-	raise ApacheCtlError('Executable apachectl not found, tried: ' + (', '.join(["'" + ' '.join(x) + "'" for x in cmds])))
+		if len(modules) > 0:
+			return modules # return if any command doing the work
+
+	errormsg = 'executable apachectl not found, tried:\n'
+	for cmd, msg in zip(cmds, errormsgs):
+		errormsg += "'" + ' '.join(cmd) + "', errormsg: " + msg + '\n'
+
+	raise ApacheCtlError(errormsg)
