@@ -1,3 +1,11 @@
+submin (2.1.2-1) testing; urgency=low
+
+  * Went from svn to git repository. Bump debian package version so apt
+    will see that next versions are newer (submin2_2.1.2-0-git-*.deb is
+    'older' than submin2_2.1.2-0-svn-*.deb, since 'g' < 's').
+
+ -- Michiel Holtkamp <michiel@supermind.nl>  Sun, 29 Dec 2013 18:18:57 +0000
+
 submin (2.1.2-0) testing; urgency=low
 
   * New release: 2.1.2
