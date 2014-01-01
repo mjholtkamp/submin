@@ -20,6 +20,12 @@ For example, to set 'base_url_submin' to "/submin", use the following command:
 
 Options:
 
+ * apache_server_info_url
+    Only set this when you are really sure what you are doing. This URL is
+    used when 'apachectl' (or variants) can not list the apache modules for
+    diagnostics purposes. You can find this list of modules in the Diagnostics
+    menu when logged in as an administrator, under Subversion checks.
+
  * auth_type
     The storage used for authentication and others. Currently, only "sql"
     is supported.

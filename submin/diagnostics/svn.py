@@ -16,7 +16,7 @@ def diagnostics():
 
 	found_mods = {}
 	amods = []
-	required_mods = ['dav_module', 'dav_svn_module', 'authz_svn_module', 'authn_dbd_module']
+	required_mods = ['dav', 'dav_svn', 'authz_svn', 'authn_dbd']
 	try:
 		amods = apache_modules()
 	except ApacheCtlError, e:
