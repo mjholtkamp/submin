@@ -124,12 +124,13 @@
 						<div class="diag_note">
 							Could not execute apachectl to test if modules are loaded. Error message was:
 							<div class="diag_pre">[val diag.svn_apache_modules_errmsg]</div>
-							If the above commands all say 'No such file or directory', then maybe the 'apachectl' binary is called different on your system. Please report this as a bug.
-							If the above commands can be found, but fail to verify because 'apachectl' complains about lack of permissions, you can make sure that the apache module 'info'
-							is loaded and reachable from localhost. Submin will then try to get the list of modules from the 'info' modules by retrieving a URL.
+							<p>If the above commands all fail with 'No such file or directory', then maybe the 'apachectl' binary is named differently on your system. Please report this as a bug.</p>
 
-							By default, this URL is 'http://localhost/server-info?list', but if you need to change it for some reason, you can do so with the following command:
-							'submin2-admin [val subminenv] config set apache_server_info_url "http://localhost/server-info?list"'
+							<p>If the above commands can be found, but fail to verify because 'apachectl' complains about lack of permissions, you can make sure that the apache module 'info'
+							is loaded and reachable from localhost. Submin will then try to get the list of modules from the 'info' modules by retrieving a URL.</p>
+
+							<p>By default, this URL is 'http://localhost/server-info?list', but if you need to change it for some reason, you can do so with the following command:
+							'submin2-admin [val subminenv] config set apache_server_info_url "http://localhost/server-info?list"'</p>
 						</div>
 					</div>
 				</li>

@@ -4,7 +4,7 @@ import re
 
 from submin.models import options
 from submin.common.execute import check_output
-from subprocess import CalledProcessError
+from subprocess import CalledProcessError, STDOUT
 
 class ApacheCtlError(Exception):
 	pass
@@ -30,18 +30,20 @@ def apache_modules():
 
 	for cmd in cmds:
 		try:
-			for line in check_output(cmd, env=env_copy).split('\n'):
-				if line.endswith('(shared)') or line.endswith('(static)'):
-					module = line.strip().split(' ')[0]
-					modules.append(module.replace('_module', ''))
+			output = check_output(cmd, stderr=STDOUT, env=env_copy)
 		except OSError, e:
 			errormsgs.append(str(e))
 			continue # try the next command, if any
 		except CalledProcessError, e:
-			errormsgs.append(str(e))
+			errormsgs.append(e.output)
 			continue # try the next command, if any
 		else:
 			errormsgs.append('')
+
+			for line in output.split('\n'):
+				if line.endswith('(shared)') or line.endswith('(static)'):
+					module = line.strip().split(' ')[0]
+					modules.append(module.replace('_module', ''))
 
 		if len(modules) > 0:
 			return modules # return if any command doing the work
@@ -53,7 +55,7 @@ def apache_modules():
 	try:
 		response = urllib2.urlopen(server_info_url)
 	except urllib2.HTTPError, e:
-		errormsgs.append('HTTP error %u: %s' % (e.code, e.read()))
+		errormsgs.append('HTTP error %u' % (e.code, ))
 	except urllib2.URLError, e:
 		errormsgs.append('URL error %u: %s' % (e.reason[0], e.reason[1]))
 	else:
@@ -67,6 +69,8 @@ def apache_modules():
 	# That failed too, give up and show our attempts
 	errormsg = 'executable apachectl not found, tried:\n'
 	for cmd, msg in zip(cmds, errormsgs):
-		errormsg += "'" + ' '.join(cmd) + "', errormsg: " + msg + '\n'
+		errormsg += " * command: '%s', errormsg:\n\n%s\n\n" % \
+				(' '.join(cmd), msg)
 
+	errormsg = errormsg.replace('<', '&lt;').replace('>', '&gt;')
 	raise ApacheCtlError(errormsg)
