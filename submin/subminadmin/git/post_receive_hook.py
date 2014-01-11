@@ -6,6 +6,8 @@ from submin.models import options, repository
 from submin.template.shortcuts import evaluate
 from common import set_git_config, SetGitConfigError
 
+HOOK_VERSION = 3
+
 def run(reponame, enable=True):
 	if not reponame.endswith(".git"):
 		reponame += ".git"
@@ -18,6 +20,7 @@ def run(reponame, enable=True):
 			'submin_lib_dir': options.lib_path(),
 			'base_url': options.url_path('base_url_submin'),
 			'http_vhost': options.http_vhost(),
+			'hook_version': HOOK_VERSION,
 		}
 		hook = evaluate('plugins/vcs/git/post-receive', variables)
 		try:

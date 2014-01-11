@@ -61,11 +61,11 @@
 					</div>
 				</li>
 				<li>
-					<label class="diag">Only new-style hooks</label>
+					<label class="diag">Up-to-date hooks</label>
 					<div class="diag_result">
 						<span class="diag_[test:diag.git_hooks_all_new yes][else no]"></span>
 						<div class="diag_note">
-							[test:diag.git_hooks_all_new][else The following repositories have old-style hooks: <ul>[iter:diag.git_old_hook_repos <li>[ival]</li>]</ul>They can be upgraded to new-style hooks with: 'submin2-admin [val subminenv] git hook update <em>reponame</em>']
+							[test:diag.git_hooks_all_new][else The following repositories have outdated hooks: <ul>[iter:diag.git_old_hook_repos <li>[ival]</li>]</ul>They can be upgraded with: 'submin2-admin [val subminenv] git hook update <em>reponame</em>']
 						</div>
 					</div>
 				</li>

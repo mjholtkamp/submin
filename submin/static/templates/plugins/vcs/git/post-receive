@@ -7,6 +7,8 @@ to do so.
 """
 import sys
 
+# To check if this hook is up-to-date
+HOOK_VERSION = [val hook_version]
 LIBDIR = '[val submin_lib_dir]/static/hooks/git'
 sys.path.append(LIBDIR)
 

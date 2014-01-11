@@ -1,9 +1,12 @@
 import os
+import re
 import errno
 
 from submin.models import options
 from submin.models.exceptions import UnknownKeyError
 from submin.plugins.vcs.git import remote
+from submin.subminadmin.git.post_receive_hook import HOOK_VERSION
+from submin.common import shellscript
 
 def diagnostics():
 	results = {}
@@ -42,6 +45,25 @@ def diagnostics():
 	
 	return results
 
+def hook_uptodate(filename, version_re, newest_version):
+	"""For hooks that are generated from a template, they may be out of
+	date if the template is newer than the generated template. The version_re
+	is a regular expression with one capture group (the version as a number)"""
+	try:
+		hook = file(filename, 'r').readlines()
+	except IOError, e:
+		if e.errno == errno.ENOENT:
+			return False
+
+	versions = re.findall(version_re, "\n".join(hook))
+	if len(versions) != 1:
+		return False
+
+	if int(versions[0]) < newest_version:
+		return False
+
+	return True
+
 def old_hook_dirs(git_dir_root):
 	signature = '### SUBMIN GIT AUTOCONFIG, DO NOT ALTER FOLLOWING LINE ###\n'
 	git_dirs = []
@@ -51,14 +73,16 @@ def old_hook_dirs(git_dir_root):
 				git_dirs.append(d)
 		break
 
-	for git_dir in git_dirs:
-		try:
-			hook = file(os.path.join(git_dir_root, git_dir, 'hooks', 'update'), 'r').readlines()
-		except IOError, e:
-			if e.errno == errno.ENOENT:
-				continue
+	for git_dir in sorted(git_dirs):
+		# check update hook
+		filename = os.path.join(git_dir_root, git_dir, 'hooks', 'update')
+		if not shellscript.hasSignature(filename, signature):
+			yield git_dir
+			continue # no need to check other hooks
 
-		if signature not in hook:
+		# check post-receive hook
+		filename = os.path.join(git_dir_root, git_dir, 'hooks', 'post-receive')
+		if not hook_uptodate(filename, 'HOOK_VERSION = (\d+)', HOOK_VERSION):
 			yield git_dir
 	return
 
