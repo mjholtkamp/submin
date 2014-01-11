@@ -1,4 +1,5 @@
 import os
+import errno
 
 def rewriteWithSignature(filename, signature, new_hook, enable, mode=None):
 	line_altered = False
@@ -42,7 +43,9 @@ def rewriteWithSignature(filename, signature, new_hook, enable, mode=None):
 def hasSignature(filename, signature):
 	try:
 		f = open(filename, 'r')
-	except IOError:
-		return False # no file = no signature
+	except IOError, e:
+		if e.errno == errno.ENOENT:
+			return False
+		raise
 
 	return signature in f.readlines()
