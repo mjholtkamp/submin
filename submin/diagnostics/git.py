@@ -82,7 +82,9 @@ def old_hook_dirs(git_dir_root):
 
 		# check post-receive hook
 		filename = os.path.join(git_dir_root, git_dir, 'hooks', 'post-receive')
-		if not hook_uptodate(filename, 'HOOK_VERSION = (\d+)', HOOK_VERSION):
-			yield git_dir
+		# no post-receive hook = no commit emails enabled
+		if os.path.exists(filename):
+			if not hook_uptodate(filename, 'HOOK_VERSION = (\d+)', HOOK_VERSION):
+				yield git_dir
 	return
 
