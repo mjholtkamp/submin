@@ -52,6 +52,14 @@ To unsubscribe from this commit list, please login to [val http_vhost][val base_
 git_multimail.REVISION_FOOTER_TEMPLATE = git_multimail.FOOTER_TEMPLATE
 
 config = git_multimail.Config('multimailhook')
+
+# If no e-mail recipients are configured, no need to continue. So ...
+if not config.get('mailinglist'):
+	# ... either configure mailinglist ...
+	if not config.get('refchangelist') or not config.get('commitlist'):
+		# ... or both refchangelist and commitlist.
+		raise SystemExit
+
 environment = git_multimail.GenericEnvironment(config)
 mailer = git_multimail.SendMailer(environment.sender)
 git_multimail.run_as_post_receive_hook(environment, mailer)
