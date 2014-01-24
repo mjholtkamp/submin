@@ -1,5 +1,6 @@
 import os
 import sys
+import stat
 from common import executeCmd, which, CmdException, SubminAdminCmdException, www_user
 from submin.common.osutils import mkdirs
 
@@ -301,8 +302,12 @@ Usage:
 					os.chown(path, int(git_uid), int(git_gid))
 					os.chmod(path, 0700)
 				else:
-					os.chown(path, int(git_uid), int(apache.pw_gid))
-					os.chmod(path, 0750)
+					# in Python 3.3, we can use follow_symlinks=False, instead
+					# of this more complex way
+					statinfo = os.lstat(path)
+					if not stat.S_ISLNK(statinfo.st_mode):
+						os.chown(path, int(git_uid), int(apache.pw_gid))
+						os.chmod(path, 0750)
 			for d in dirs:
 				path = os.path.join(root, d)
 				os.chown(path, int(git_uid), int(apache.pw_gid))
