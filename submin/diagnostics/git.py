@@ -80,11 +80,32 @@ def old_hook_dirs(git_dir_root):
 			yield git_dir
 			continue # no need to check other hooks
 
-		# check post-receive hook
+		# check multiplexer script
 		filename = os.path.join(git_dir_root, git_dir, 'hooks', 'post-receive')
+		if not os.path.exists(filename):
+			yield git_dir
+			continue
+
+		# ok, it exists, but does it point to the right place?
+		hook_to = options.static_path('hooks') + 'git' + 'hook-mux'
+		target = None
+		try:
+			target = os.readlink(filename)
+		except OSError, e:
+			if e.errno != errno.EINVAL:
+				raise
+
+		if target != hook_to:
+			yield git_dir
+			continue
+
+		# check commit-email hook
+		filename = os.path.join(git_dir_root, git_dir, 'hooks',
+				'post-receive.d', '001-commit-email.hook')
 		# no post-receive hook = no commit emails enabled
 		if os.path.exists(filename):
 			if not hook_uptodate(filename, 'HOOK_VERSION = (\d+)', HOOK_VERSION):
 				yield git_dir
+
 	return
 
