@@ -99,14 +99,22 @@ Usage:
 				reposname = cmd_args[1]
 
 			git.update_notifications.run(reposname)
-		elif cmd.startswith('post-receive-hook '):
+		elif cmd.startswith('commit-email-hook '):
 			cmd_args = cmd.split(' ', 2)
 			if len(cmd_args) != 3:
-				die('post-receive-hook')
+				die('commit-email-hook')
 
 			enable, repo = cmd_args[1:]
 			repo = repo.strip()
-			git.post_receive_hook.run(repo, enable == 'enable')
+			git.post_receive_hook.setCommitEmailHook(repo, enable == 'enable')
+		elif cmd.startswith('trac-sync-hook '):
+			cmd_args = cmd.split(' ', 2)
+			if len(cmd_args) != 3:
+				die('trac-sync-hook')
+
+			enable, repo = cmd_args[1:]
+			repo = repo.strip()
+			git.post_receive_hook.setTracSyncHook(repo, enable == 'enable')
 		else:
 			die("admin")
 

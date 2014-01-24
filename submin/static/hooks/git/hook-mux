@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Runs all executable <hookname>.d/* hooks and exits after,
+# if any of them was not successful.
+#
+# This should work on the following hooks:
+#  * pre-commit
+#  * post-commit
+#  * pre-receive
+#  * post-receive
+# (from http://longair.net/blog/2011/04/09/missing-git-hooks-documentation/
+# and githooks(5) man page)
+#
+# Based on
+# https://github.com/henrik/dotfiles/blob/master/git_template/hooks/pre-commit
+# (version from 2012-06-19 13:14:13)
+
+data=$(cat)
+exitcodes=()
+hookname=`basename $0`
+
+# Run each hook, passing through STDIN and storing the exit code.
+# We don't want to bail at the first failure, as the user might
+# then bypass the hooks without knowing about additional issues.
+
+for hook in $GIT_DIR/hooks/$hookname.d/*; do
+  test -x "$hook" || continue
+  echo "$data" | "$hook"
+  exitcodes+=($?)
+done
+
+# If any exit code isn't 0, bail.
+
+for i in "${exitcodes[@]}"; do
+  [ "$i" == 0 ] || exit $i
+done

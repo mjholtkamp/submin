@@ -119,19 +119,27 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		else:
 			enable_str = "disable"
 
-		remote.execute("post-receive-hook %s %s" % (enable_str, self.name))
+		remote.execute("commit-email-hook %s %s" % (enable_str, self.name))
 
 	def commitEmailsEnabled(self):
 		"""Returns True if sending of commit messages is enabled."""
-		reposdir = options.env_path('git_dir')
-		hook = reposdir + self.name + 'hooks' + 'post-receive'
+		hookdir = options.env_path('git_dir') + self.name + 'hooks'
+		hook = hookdir + 'post-receive.d' + '001-commit-email.hook'
 		return os.path.exists(hook)
 
-	def tracCommitHookEnabled(self):
-		return False
-
 	def enableTracCommitHook(self, enable):
-		pass
+		if enable:
+			enable_str = "enable"
+		else:
+			enable_str = "disable"
+
+		remote.execute("trac-sync-hook %s %s" % (enable_str, self.name))
+
+	def tracCommitHookEnabled(self):
+		"""Returns True if trac sync is enabled."""
+		hookdir = options.env_path('git_dir') + self.name + 'hooks'
+		hook = hookdir + 'post-receive.d' + '002-trac-sync.hook'
+		return os.path.exists(hook)
 
 	def __str__(self):
 		return self.display_name()
