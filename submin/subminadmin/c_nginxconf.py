@@ -1,5 +1,6 @@
 from submin.path.path import Path
 from submin.template.shortcuts import evaluate
+from submin.common.osutils import mkdirs
 import os
 import re
 import errno
@@ -43,11 +44,7 @@ Usage:
 		else: #  argv[0] must be 'all'
 			self.init_vars['output'] = options.env_path() + 'conf' + 'nginx.conf'
 
-		try:
-			os.makedirs(self.sa.env + '/run')
-		except OSError, e:
-			if e.errno == errno.EEXIST:
-				pass
+		mkdirs(self.sa.env + '/run')
 
 		self._nginx_conf_create()
 		self.sa.execute(['unixperms', 'fix'])

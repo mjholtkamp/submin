@@ -5,6 +5,7 @@ import errno
 from submin.models import options
 from submin.models.exceptions import UnknownKeyError
 from submin.common.execute import check_output
+from submin.common.osutils import mkdirs
 
 class UnknownTrac(Exception):
 	def __init__(self, name):
@@ -32,8 +33,7 @@ def tracBaseDir():
 
 def createTracEnv(repository, adminUser):
 	basedir = tracBaseDir()
-	if not os.path.isdir(str(basedir)):
-		os.makedirs(str(basedir))
+	mkdirs(str(basedir))
 
 	tracenv = basedir + repository
 	projectname = repository

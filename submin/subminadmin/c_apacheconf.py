@@ -3,6 +3,7 @@ import re
 
 from submin.path.path import Path
 from submin.template.shortcuts import evaluate
+from submin.common.osutils import mkdirs
 
 class c_apacheconf():
 	'''Commands to change apache config
@@ -187,11 +188,7 @@ recommended way is to include it in a VirtualHost.
 		else:
 			submin_type = submin_cgi if output_type == 'cgi' else submin_wsgi
 			contents = header + submin_type + submin_svn + submin_trac + footer
-			try:
-				os.makedirs(os.path.dirname(self.init_vars['output']))
-			except IOError:
-				# Assume 'directory exists', else, exception will follow
-				pass
+			mkdirs(os.path.dirname(self.init_vars['output']))
 
 			file(str(self.init_vars['output']), 'w').write(contents)
 

@@ -3,6 +3,7 @@ import os, sys
 from submin.path.path import Path
 from submin.models.exceptions import StorageAlreadySetup, UnknownKeyError
 from submin.subminadmin import common
+from submin.common.osutils import mkdirs
 
 class c_config():
 	'''Commands to change config
@@ -92,11 +93,7 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 '''
 
 		dirname = os.path.dirname(filename)
-		try:
-			os.makedirs(dirname)
-		except OSError, e:
-			if e.errno == 17: # file exists
-				pass
+		mkdirs(dirname)
 
 		file(filename, 'w').write(submin_settings)
 

@@ -1,6 +1,7 @@
 import unittest
 import subprocess
 from common import execute
+from common import osutils
 
 class ExecuteTests(unittest.TestCase):
 	def testOutput(self):
@@ -12,6 +13,10 @@ class ExecuteTests(unittest.TestCase):
 
 	def testTrue(self):
 		execute.check_output(["/bin/true"])
+
+class OSUtils(unittest.TestCase):
+	def testMkDirs(self):
+		osutils.mkdirs('/tmp/')
 
 if __name__ == "__main__":
 	unittest.main()
