@@ -7,6 +7,7 @@ from submin.views.authviews import Login, Logout, Password
 from submin.views.repositories import Repositories
 from submin.views.intro import Intro
 from submin.views.ajax import Ajax
+from submin.views.hooks import Hooks
 from submin.views.upgrade import Upgrade
 from submin.views.diagnostics import Diagnostics
 from submin.views.passthrough import PassThrough
@@ -21,6 +22,7 @@ classes = {
 	'login': (Login, None),
 	'logout': (Logout, None),
 	'x': (Ajax, None),
+	'hooks': (Hooks, None),
 	'repositories': (Repositories, None),
 	'upgrade': (Upgrade, None),
 	'password': (Password, None),

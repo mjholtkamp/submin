@@ -28,6 +28,19 @@ def admin_required(fun):
 		return fun(self, *args, **kwargs)
 	return _decorator
 
+def acl_required(acl_name):
+	def _decorator(fun):
+		acl = options.value(acl_name, '127.0.0.1, ::1').split(',')
+		acl = [x.strip() for x in acl]
+		def _wrapper(self, *args, **kwargs):
+			address = self.request.remote_address
+			if not address in acl:
+				raise Unauthorized(
+					"Your IP address [%s] does not have access" % address)
+			return fun(self, *args, **kwargs)
+		return _wrapper
+	return _decorator
+
 def upgrade_user_required(fun):
 	"""Test if the upgrade_user is set (by the login view), otherwise
 	redirect to login, or if the user is logged in, redirect to main url"""

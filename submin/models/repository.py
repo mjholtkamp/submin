@@ -118,8 +118,10 @@ class Repository(object):
 			enable = False
 
 		if enable:
+			# another inconsistent usage of .git/not .git.. (ticket #296)
+			trac_name = self.name.replace('.git', '')
 			try:
-				trac = Trac(self.name)
+				trac = Trac(trac_name)
 			except UnknownTrac:
 				enable = False
 

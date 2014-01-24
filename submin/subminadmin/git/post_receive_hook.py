@@ -8,7 +8,7 @@ from submin.template.shortcuts import evaluate
 from submin.common.osutils import mkdirs
 from common import set_git_config, SetGitConfigError
 
-HOOK_VERSION = 3
+HOOK_VERSION = 4
 
 def prepare(reponame):
 	"""Make sure basic things are in place for post-receive scripts to work.
@@ -100,6 +100,30 @@ def setCommitEmailHook(reponame, enable):
 
 def setTracSyncHook(reponame, enable):
 	prepare(reponame)
+
+	hook_dir = options.env_path('git_dir') + reponame + 'hooks'
+	hook = hook_dir + 'post-receive.d' + '002-trac-sync.hook'
+
+	try:
+		os.unlink(hook)
+	except OSError, e:
+		if e.errno != errno.ENOENT:
+			raise repository.PermissionError(
+				"Removing trac-sync hook failed: %s" % (str(e),))
+
+	if not enable:
+		return
+
+	variables = {
+		'submin_env': str(options.env_path()),
+		'repository': reponame,
+		'hook_version': HOOK_VERSION,
+	}
+	contents = evaluate('plugins/vcs/git/trac-sync', variables)
+	with file(hook, 'w') as f:
+		f.writelines(contents)
+
+	os.chmod(hook, 0755)
 
 def rewrite_hook(reponame):
 	if reponame:

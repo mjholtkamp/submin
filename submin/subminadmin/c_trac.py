@@ -1,4 +1,5 @@
 import os
+import sys
 import commands
 import shutil
 
@@ -62,6 +63,42 @@ Usage:
 		# finally, set all permissions and ownerships
 		self.sa.execute(['unixperms', 'fix'])
 		return
+
+	def subcmd_hook(self, argv):
+		"""This is hidden from help because it is not meant to be run, except
+		from commit/receive hooks
+		"""
+		from submin.path.path import Path
+		from submin.models import hookjobs
+		from submin.models import options
+		from submin.subminadmin import trac
+		import urllib2
+
+		if argv[0] != 'queue' or len(argv) != 4:
+			print 'Unknown command'
+			return
+
+		vcs_type, repository, hooktype = argv[1:]
+		content = ''.join(sys.stdin.readlines())
+		print 'Notifying Trac of changes...'
+		hookjobs.queue(vcs_type, repository, hooktype, content)
+
+		baseurl = Path(options.http_vhost()
+					+ options.url_path('base_url_submin'))
+		joburl = str(baseurl + 'hooks' + vcs_type + repository + hooktype)
+
+		try:
+			response = urllib2.urlopen(joburl)
+		except urllib2.HTTPError, e:
+			print('Job queued, but could not sync to "%s", HTTP error %u' %
+				(joburl, e.code, ))
+		except urllib2.URLError, e:
+			print('Job queued, but URL invalid %u: %s' %
+				(e.reason[0], e.reason[1]))
+		else:
+			xml = response.read()
+			if not 'success="True"' in xml:
+				print('Failed to sync:\n%s' % xml)
 
 	def generate_Xgi_script(self, src, dst):
 		"""Copy CGI/FCGI/WSGI script with small adjustments

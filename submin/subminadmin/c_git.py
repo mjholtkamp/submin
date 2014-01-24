@@ -315,6 +315,7 @@ Usage:
 
 		# The git-directory itself should also be available to the apache-user,
 		# So it can list the repositories
+		os.chmod(git_dir, 0750)
 		os.chown(git_dir, int(git_uid), int(apache.pw_gid))
 
 		# The ssh-directory can be really strict, only allow git
@@ -332,3 +333,10 @@ Usage:
 		# can add the public key to the authorized_keys file.
 		os.chown(str(conf_dir + "id_dsa.pub"), -1, int(git_gid))
 		os.chmod(str(conf_dir + "id_dsa"), 0600)
+
+		# now check if trac is enabled, because we need access to it
+		# if the trac-sync script is enabled
+		if options.value('enabled_trac', 'no') != 'no':
+			trac_dir = options.env_path('trac_dir')
+			os.chown(trac_dir, int(apache.pw_uid), int(git_gid))
+			os.chmod(trac_dir, 02770) # set-gid

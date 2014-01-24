@@ -1,0 +1,5 @@
+<response>
+	<command name="[val command]" success="[val success]">
+		<errormsgs>[iter:errormsgs <msg>[ival]</msg>]</errormsgs>
+	</command>
+</response>

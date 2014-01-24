@@ -5,6 +5,14 @@ schema are first in the list. The first entry in this list is always the
 current schema version.
 """
 sql_scripts = [
+	(9, """CREATE TABLE hook_jobs (
+			jobid            integer primary key autoincrement,
+			repository       text not null,
+			repositorytype   text not null,
+			hooktype         text not null,
+			content          text not null
+	);
+	"""),
 	(8, """DROP TABLE IF EXISTS notifications_tmp;
 		CREATE TABLE notifications_tmp
 		(
