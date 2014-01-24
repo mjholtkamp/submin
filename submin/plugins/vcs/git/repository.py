@@ -62,7 +62,6 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		self.name = name
 		if not self.name.endswith(".git"):
 			self.name += ".git"
-		self.signature = "### SUBMIN AUTOCONFIG, DO NOT ALTER FOLLOWING LINE ###\n"
 
 		reposdir = options.env_path('git_dir')
 		# FIXME: reposdir encoding?
