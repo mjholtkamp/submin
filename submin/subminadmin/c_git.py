@@ -1,6 +1,7 @@
 import os
 import sys
 from common import executeCmd, which, CmdException, SubminAdminCmdException, www_user
+from submin.common.osutils import mkdirs
 
 ERROR_STR = "submin2-admin git %s is not supposed to be called by users."
 
@@ -281,6 +282,10 @@ Usage:
 		apache = www_user()
 		git_dir = options.env_path("git_dir")
 		ssh_dir = git_dir + ".ssh"
+
+		# make ssh dir, if not already exists
+		mkdirs(ssh_dir)
+
 		for root, dirs, files in os.walk(git_dir):
 			for f in files:
 				path = os.path.join(root, f)
