@@ -65,7 +65,8 @@ def val(node, tpl):
 	# evaluate always returns a string (possibly empty), or raises an Exception
 	text = node.nodes[0].evaluate()
 	value = tpl.variable_value(text)
-	if value:
+
+	if not value is None:
 		return value
 	return ''
 
