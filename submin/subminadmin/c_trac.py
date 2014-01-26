@@ -85,7 +85,7 @@ Usage:
 
 		baseurl = Path(options.http_vhost()
 					+ options.url_path('base_url_submin'))
-		joburl = str(baseurl + 'hooks' + vcs_type + repository + hooktype)
+		joburl = str(baseurl + 'hooks' + hooktype + vcs_type + repository)
 
 		try:
 			response = urllib2.urlopen(joburl)

@@ -12,48 +12,54 @@ from submin.models import options
 class Hooks(View):
 	def handler(self, req, path):
 		template = 'ajax/hooks.xml'
-		self.tvars = {
+		tvars = {
 			'command': '/'.join(path),
 			'success': False,
+			'inacl': True,
 		}
 
-		if len(path) != 3:
-			self.tvars['errormsgs'] = ['path is incorrect']
-			return XMLTemplateResponse(template, self.tvars)
+		if len(path) < 1:
+			tvars['errormsgs'] = ['path is incorrect']
+			return XMLTemplateResponse(template, tvars)
 
-		self.vcs_type, self.repo, self.hook_type = path[0:3]
+		hook_type = path[0]
 		try:
-			if self.hook_type == 'trac-sync':
-				return self.handle_trac_sync()
-			if self.hook_type == 'test-acl':
-				return self.handle_test_acl()
+			subcmd_name = 'handle_%s' % (hook_type.replace('-', '_'))
+			subcmd = getattr(self, subcmd_name)
+		except AttributeError:
+			tvars['errormsgs'] = ['unknown hook type']
+			return XMLTemplateResponse(template, tvars)
+
+		try:
+			extra_vars = subcmd(path[1:])
 		except Unauthorized, e:
-			self.tvars['errormsgs'] = [str(e)]
-			return XMLTemplateResponse(template, self.tvars)
+			tvars['errormsgs'] = [str(e)]
+			tvars['inacl'] = False
+			return XMLTemplateResponse(template, tvars)
 		
-		self.tvars['errormsgs'] = ['unknown hook type']
-		return XMLTemplateResponse(template, self.tvars)
+		tvars.update(extra_vars)
+		return XMLTemplateResponse(template, tvars)
 
 	@acl_required('acl_hook')
-	def handle_test_acl(self):
-		self.tvars['success'] = True
-		return XMLTemplateResponse('ajax/hooks.xml', self.tvars)
+	def handle_trac_sync(self, path):
+		if len(path) != 2:
+			return {'errormsgs': ['wrong path']}
 
-	@acl_required('acl_hook')
-	def handle_trac_sync(self):
+		self.vcs_type, self.repo = path
+
 		errormsgs = []
-		env_copy = os.environ.copy()
-		env_copy['PATH'] = options.value('env_path', '/bin:/usr/bin')
+		self.env_copy = os.environ.copy()
+		self.env_copy['PATH'] = options.value('env_path', '/bin:/usr/bin')
 		trac_dir = options.env_path('trac_dir')
 		repo_dir = options.env_path('git_dir') + self.repo
-		trac_env = trac_dir + self.repo.replace('.git', '')
+		self.trac_env = trac_dir + self.repo.replace('.git', '')
 
 		oldwd = os.getcwd()
 		os.chdir(repo_dir)
-		for jobid, lines in jobs(self.vcs_type, self.repo, self.hook_type):
+		for jobid, lines in jobs(self.vcs_type, self.repo, 'trac-sync'):
 			job_succeeded = True
 
-			errormsg = self.job_sync(lines, env_copy, trac_env)
+			errormsg = self.job_sync(jobid, lines)
 			if len(errormsg) == 0:
 				job_done(jobid)
 			else:
@@ -61,29 +67,26 @@ class Hooks(View):
 
 		os.chdir(oldwd)
 
-		self.tvars['errormsgs'] = errormsgs
-		self.tvars['success'] = True
+		return {'errormsgs': errormsgs, 'success': True}
 
-		return XMLTemplateResponse('ajax/hooks.xml', self.tvars)
-
-	def job_sync(self, lines, env_copy, trac_env):
+	def job_sync(self, jobid, lines):
 		for line in lines.strip().split('\n'):
 			try:
 				oldrev, newrev, refname = line.split()
 			except ValueError, e:
-				return '%s/%s/%s/%s: %s' % (job,
-					self.vcs_type, self.repo, self.hook_type, str(e))
+				return 'trac-sync/%s/%s/%s: %s' % (
+					self.vcs_type, self.repo, jobid, str(e))
 
 			cmd = ['git', 'rev-list', '--reverse', newrev, '^' + oldrev]
 
 			try:
-				revs = check_output(cmd, stderr=STDOUT, env=env_copy)
+				revs = check_output(cmd, stderr=STDOUT, env=self.env_copy)
 			except CalledProcessError, e:
 				return 'cmd [%s] failed: %s', (cmd, e.output)
 
 			for rev in revs.strip().split('\n'):
 				args = ['changeset', 'added', '(default)', rev]
-				output = trac_admin_command(trac_env, args)
+				output = trac_admin_command(self.trac_env, args)
 				if output:
 					return 'trac-admin %s: %s' % (' '.join(args), output)
 

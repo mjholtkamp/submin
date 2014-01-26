@@ -36,7 +36,9 @@ def diagnostics():
 
 def have_trac_sync_access():
 	baseurl = Path(options.http_vhost() + options.url_path('base_url_submin'))
-	joburl = str(baseurl + 'hooks' + 'git' + 'dummy' + 'test-acl')
+	# because we don't specify a full path, this will never succeed, but
+	# it will set the 'inacl' attribute to True/False
+	joburl = str(baseurl + 'hooks' + 'trac-sync')
 
 	try:
 		response = urllib2.urlopen(joburl, timeout=5)
@@ -52,6 +54,6 @@ def have_trac_sync_access():
 	if not command:
 		raise SyncError(root)
 
-	if 'success' not in command.attrib or command.attrib['success'].lower() == 'false':
+	if 'inacl' not in command.attrib or command.attrib['inacl'].lower() == 'false':
 		msgnodes = root.findall('./command/errormsgs/msg')
 		raise SyncError('\n'.join([x.text for x in msgnodes]))
