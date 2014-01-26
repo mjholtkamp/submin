@@ -5,7 +5,7 @@ import errno
 from submin.models import options
 from submin.models.exceptions import UnknownKeyError
 from submin.plugins.vcs.git import remote
-from submin.subminadmin.git.post_receive_hook import HOOK_VERSION
+from submin.subminadmin.git.post_receive_hook import HOOK_VERSIONS
 from submin.common import shellscript
 
 def diagnostics():
@@ -104,8 +104,19 @@ def old_hook_dirs(git_dir_root):
 				'post-receive.d', '001-commit-email.hook')
 		# no post-receive hook = no commit emails enabled
 		if os.path.exists(filename):
-			if not hook_uptodate(filename, 'HOOK_VERSION = (\d+)', HOOK_VERSION):
+			if not hook_uptodate(filename, 'HOOK_VERSION = (\d+)',
+					HOOK_VERSIONS['commit-email']):
 				yield git_dir
+
+		# check trac-sync hook
+		filename = os.path.join(git_dir_root, git_dir, 'hooks',
+				'post-receive.d', '002-trac-sync.hook')
+		# no post-receive hook = no trac-sync enabled
+		if os.path.exists(filename):
+			if not hook_uptodate(filename, 'HOOK_VERSION=(\d+)',
+					HOOK_VERSIONS['trac-sync']):
+				yield git_dir
+
 
 	return
 

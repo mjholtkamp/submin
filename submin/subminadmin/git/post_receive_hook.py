@@ -8,7 +8,10 @@ from submin.template.shortcuts import evaluate
 from submin.common.osutils import mkdirs
 from common import set_git_config, SetGitConfigError
 
-HOOK_VERSION = 4
+HOOK_VERSIONS = {
+	'commit-email': 4,
+	'trac-sync': 4,
+}
 
 def prepare(reponame):
 	"""Make sure basic things are in place for post-receive scripts to work.
@@ -63,7 +66,7 @@ def setCommitEmailHook(reponame, enable):
 			'submin_lib_dir': options.lib_path(),
 			'base_url': options.url_path('base_url_submin'),
 			'http_vhost': options.http_vhost(),
-			'hook_version': HOOK_VERSION,
+			'hook_version': HOOK_VERSIONS['commit-email'],
 		}
 		hook = evaluate('plugins/vcs/git/post-receive', variables)
 		try:
@@ -117,7 +120,7 @@ def setTracSyncHook(reponame, enable):
 	variables = {
 		'submin_env': str(options.env_path()),
 		'repository': reponame,
-		'hook_version': HOOK_VERSION,
+		'hook_version': HOOK_VERSIONS['trac-sync'],
 	}
 	contents = evaluate('plugins/vcs/git/trac-sync', variables)
 	with file(hook, 'w') as f:
