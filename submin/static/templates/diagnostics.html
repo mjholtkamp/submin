@@ -12,7 +12,7 @@
 						<div class="diag_note">
 							The 'commit_email_from' option is used when sending commit emails. This will be set as the 'From:' field and the envelope.
 							[test:diag.email_commit_set]
-							[else If no 'commit_email_from' is set, the mail is sent from a warning email address. This does not always work. To ensure delivery to everyone (and because it looks nicer), please consider setting it to a sane value. To set the commit_email_from, run the following command: 'submin2-admin [val subminenv] config set commit_email_from Submin &lt;submin@example.tld&gt;']
+							[else If no 'commit_email_from' is set, the mail is sent from a warning email address. This does not always work. To ensure delivery to everyone (and because it looks nicer), please consider setting it to a sane value. To set the commit_email_from, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set commit_email_from Submin &lt;submin@example.tld&gt;</span>]
 						</div>
 					</div>
 				</li>
@@ -33,7 +33,7 @@
 						<div class="diag_note">
 							The 'smtp_from' option is the From: email address used when sending account (re)set emails.
 							[test:diag.email_from_set]
-							[else If no 'smtp_from' is set, the mail is sent from 'root@localhost'. This does not always work. To ensure delivery to everyone (and because it looks nicer), please consider setting it to a sane value. To set the smtp_from, run the following command: 'submin2-admin [val subminenv] config set smtp_from Submin &lt;submin@example.tld&gt;']
+							[else If no 'smtp_from' is set, the mail is sent from 'root@localhost'. This does not always work. To ensure delivery to everyone (and because it looks nicer), please consider setting it to a sane value. To set the smtp_from, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set smtp_from Submin &lt;submin@example.tld&gt;</span>]
 						</div>
 					</div>
 				</li>
@@ -56,7 +56,7 @@
 						<span class="diag_[test:diag.git_dir_set yes][else no]"></span>
 						<div class="diag_note">
 							[test:diag.git_dir_set]
-							[else To set the git_dir, run the following command: 'submin2-admin [val subminenv] config set git_dir git']
+							[else To set the git_dir, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set git_dir git</span>]
 						</div>
 					</div>
 				</li>
@@ -65,8 +65,8 @@
 					<div class="diag_result">
 						<span class="diag_[test:diag.git_hooks_all_new yes][else no]"></span>
 						<div class="diag_note">
-							[test:diag.git_hooks_all_new][else The following repositories have outdated hooks: <ul>[iter:diag.git_old_hook_repos <li>[ival]</li>]</ul>They can be upgraded with: 'submin2-admin [val subminenv] git hook update <em>reponame</em>'
-<p>If you want to upgrade all repositories at once, run the following command: 'submin2-admin /var/lib/submin git hook update' (without any repository name)]
+							[test:diag.git_hooks_all_new][else The following repositories have outdated hooks: <ul>[iter:diag.git_old_hook_repos <li>[ival]</li>]</ul>They can be upgraded with: <span class="diag_cmd">submin2-admin [val subminenv] git hook update <em>reponame</em></span>
+<p>If you want to upgrade all repositories at once, run the following command: <span class="diag_cmd">submin2-admin /var/lib/submin git hook update</span> (note: without any repository name)]
 						</div>
 					</div>
 				</li>
@@ -76,7 +76,7 @@
 						<span class="diag_[test:diag.git_hostname_ok yes][else no]"></span>
 						<div class="diag_note">
 							[test:diag.git_hostname_ok ]
-							[else The 'git_ssh_host' config is not set, or it is set to a local address. Please set a good hostname reachable by everyone with the following command: 'submin2-admin [val subminenv] config set git_ssh_host <em>public_hostname</em>']
+							[else The 'git_ssh_host' config is not set, or it is set to a local address. Please set a good hostname reachable by everyone with the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set git_ssh_host <em>public_hostname</em></span>]
 						</div>
 					</div>
 				</li>
@@ -89,7 +89,7 @@
 							[else Could not issue admin commands, error message:
 <p>"[val diag.git_admin_test_errmsg]".</p>
 
-<p>Please check that git_ssh_host_internal, git_ssh_port and git_user are setup correctly. You can check this with: 'submin2-admin [val subminenv] config get <em>value</em>'. Next check that you can actually connect to SSH: 'ssh <em>git_user</em>@<em>git_ssh_host_internal</em> -p <em>git_ssh_port</em> -i [val subminenv]/conf/id_dsa' (it should give a message like: 'submin2-admin git admin is not supposed to be called by users.')
+<p>Please check that git_ssh_host_internal, git_ssh_port and git_user are setup correctly. You can check this with: <span class="diag_cmd">submin2-admin [val subminenv] config get <em>value</em></span>. Next check that you can actually connect to SSH: <span class="diag_cmd">ssh <em>git_user</em>@<em>git_ssh_host_internal</em> -p <em>git_ssh_port</em> -i [val subminenv]/conf/id_dsa</span> (it should give a message like: <span class="diag_cmd">submin2-admin git admin is not supposed to be called by users.</span>)
 </p>]
 						</div>
 					</div>
@@ -99,8 +99,8 @@
 					<div class="diag_result">
 						<span class="diag_[test:diag.enabled_git yes][else no]"></span>
 						<div class="diag_note">
-							[test:diag.enabled_git To disable, run the following command: 'submin2-admin [val subminenv] config set vcs_plugins svn']
-							[else To enable, run the following command: 'submin2-admin [val subminenv] config set vcs_plugins git,svn']
+							[test:diag.enabled_git To disable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set vcs_plugins svn</span>]
+							[else To enable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set vcs_plugins git,svn</span>]
 						</div>
 					</div>
 				</li>
@@ -113,7 +113,7 @@
 						<span class="diag_[test:diag.svn_dir_set yes][else no]"></span>
 						<div class="diag_note">
 							[test:diag.svn_dir_set]
-							[else To set the svn_dir, run the following command: 'submin2-admin [val subminenv] config set svn_dir svn']
+							[else To set the svn_dir, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set svn_dir svn</span>]
 						</div>
 					</div>
 				</li>
@@ -131,7 +131,7 @@
 							is loaded and reachable from localhost. Submin will then try to get the list of modules from the 'info' modules by retrieving a URL.</p>
 
 							<p>By default, this URL is 'http://localhost/server-info?list', but if you need to change it for some reason, you can do so with the following command:
-							'submin2-admin [val subminenv] config set apache_server_info_url "http://localhost/server-info?list"'</p>
+							<span class="diag_cmd">submin2-admin [val subminenv] config set apache_server_info_url "http://localhost/server-info?list"</span></p>
 						</div>
 					</div>
 				</li>
@@ -153,8 +153,8 @@
 					<div class="diag_result">
 						<span class="diag_[test:diag.enabled_svn yes][else no]"></span>
 						<div class="diag_note">
-							[test:diag.enabled_svn To disable, run the following command: 'submin2-admin [val subminenv] config set vcs_plugins git']
-							[else To enable, run the following command: 'submin2-admin [val subminenv] config set vcs_plugins git,svn']
+							[test:diag.enabled_svn To disable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set vcs_plugins git</span>]
+							[else To enable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set vcs_plugins git,svn</span>]
 						</div>
 					</div>
 				</li>
@@ -167,7 +167,7 @@
 						<span class="diag_[test:diag.installed_trac yes][else no]"></span>
 						<div class="diag_note">
 							[test:diag.installed_trac]
-							[else trac-admin was not found, please install Trac. If you have installed Trac, but it cannot be found, check if the env_path config value is set correctly: 'submin2-admin [val subminenv] config get env_path'. Set it with 'submin2-admin [val subminenv] config set env_path <em>yourpath</em>']
+							[else trac-admin was not found, please install Trac. If you have installed Trac, but it cannot be found, check if the env_path config value is set correctly: <span class="diag_cmd">submin2-admin [val subminenv] config get env_path</span>. Set it with <span class="diag_cmd">submin2-admin [val subminenv] config set env_path <em>yourpath</em></span>]
 						</div>
 					</div>
 				</li>
@@ -177,7 +177,7 @@
 						<span class="diag_[test:diag.trac_dir_set yes][else no]"></span>
 						<div class="diag_note">
 							[test:diag.trac_dir_set]
-							[else To set the trac_dir, run the following command: 'submin2-admin [val subminenv] config set trac_dir trac']
+							[else To set the trac_dir, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set trac_dir trac</span>]
 						</div>
 					</div>
 				</li>
@@ -186,8 +186,19 @@
 					<div class="diag_result">
 						<span class="diag_[test:diag.enabled_trac yes][else no]"></span>
 						<div class="diag_note">
-							[test:diag.enabled_trac To disable, run the following command: 'submin2-admin [val subminenv] config set enabled_trac no']
-							[else To enable, run the following command: 'submin2-admin [val subminenv] config set enabled_trac yes']
+							[test:diag.enabled_trac To disable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set enabled_trac no</span>]
+							[else To enable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set enabled_trac yes</span>]
+						</div>
+					</div>
+				</li>
+				<li>
+					<label class="diag">Trac sync configured</label>
+					<div class="diag_result">
+						<span class="diag_[test:diag.trac_acl_hook yes][else warn]"></span>
+						<div class="diag_note">
+							[test:diag.trac_acl_hook]
+							[else <p>The variable 'acl_hook' has not been set. It probably works on the defaults, but leaving it unconfigured can cause slow down during commits because of DNS resolving if trac sync is enabled.
+							We recommend setting the ACL like this: <span class="diag_cmd">submin2-admin [val subminenv] config set acl_hook <em>[val diag.trac_acl_hook_recommendation]</em></span>.</p>]
 						</div>
 					</div>
 				</li>
@@ -198,7 +209,7 @@
 						<div class="diag_note">
 							[test:diag.trac_sync_access]
 							[else <p>Git hook does not have access to submin to sync trac.
-							Please make sure that the IP-address is in the ACL. Set it with: 'submin2-admin [val subminenv] config set acl_hooks 127.0.0.1, ::1, <em>your_ip</em>'.</p>
+							Please make sure that the IP-address is in the ACL. Set it with: <span class="diag_cmd">submin2-admin [val subminenv] config set acl_hooks 127.0.0.1, ::1, <em>your_ip</em></span>.</p>
 
 							<p>Error message: [val diag.trac_sync_access_msg].</p>]
 						</div>

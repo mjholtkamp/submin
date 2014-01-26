@@ -185,6 +185,13 @@ div.c_icon.minus {
 .diag_no:before {
 	content: 'No';
 }
+.diag_warn {
+	background: #fa6;
+	padding: 0 0.2em;
+}
+.diag_warn:before {
+	content: 'No';
+}
 
 .diag_result .diag_note {
 	padding: 0.5em;
@@ -196,6 +203,12 @@ div.c_icon.minus {
 .diag_pre {
 	white-space: pre;
 	font-family: monospace;
+}
+.diag_cmd {
+	font-family: monospace;
+	padding: 0 0.5em;
+	background-color: #eee;
+	border: 1px solid #ccc;
 }
 
 label.diag {

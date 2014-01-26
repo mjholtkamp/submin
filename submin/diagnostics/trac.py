@@ -2,6 +2,7 @@ import urllib2
 import socket # for urllib timeout
 import xml.etree.ElementTree as ET
 
+from submin.auth.decorators import generate_acl_list
 from submin.path.path import Path
 from submin.models import options
 from submin.models import trac
@@ -15,6 +16,8 @@ def diagnostics():
 	results['enabled_trac'] = options.value('enabled_trac', 'no') != 'no'
 	results['installed_trac'] = trac.tracAdminExists()
 
+	results['trac_acl_hook'] = options.value('acl_hook', '') != ''
+	results['trac_acl_hook_recommendation'] = ', '.join(generate_acl_list())
 	results['trac_sync_access'] = True
 	try:
 		have_trac_sync_access()

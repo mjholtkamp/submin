@@ -1,7 +1,10 @@
 import os
+import socket
+
 from submin.dispatch.response import Response, Redirect
 from submin.views.error import ErrorResponse
 from submin.models import options
+from submin.models.exceptions import UnknownKeyError
 
 class Unauthorized(Exception):
 	pass
@@ -28,13 +31,39 @@ def admin_required(fun):
 		return fun(self, *args, **kwargs)
 	return _decorator
 
+def generate_acl_list():
+	"""A helper function for the decorator
+	set a sane default, loopback IP's and the IP addresses that
+	are used for the web server address. If this is not enough,
+	the user should set the IP-address (see diagnostics).
+	Since this might resolve, only use it when necessary.
+	"""
+	acls = ['127.0.0.1', '::1']
+	vhost = options.value('http_vhost', 'localhost')
+	netloc = vhost.replace('https://', '').replace('http://', '')
+	hostname = netloc.split(':')[0]
+	try:
+		submin_addresses = set(
+			[x[4][0] for x in socket.getaddrinfo(hostname, 0)])
+	except socket.gaierror, e:
+		# ok, that failed, just return the local addresses then
+		return acls
+
+	acls.extend(submin_addresses)
+	return acls
+
 def acl_required(acl_name):
 	def _decorator(fun):
-		acl = options.value(acl_name, '127.0.0.1, ::1').split(',')
-		acl = [x.strip() for x in acl]
+		try:
+			acls = options.value(acl_name)
+		except UnknownKeyError, e:
+			acls = generate_acl_list()
+		else:
+			acls = [x.strip() for x in acls.split(',')]
+
 		def _wrapper(self, *args, **kwargs):
 			address = self.request.remote_address
-			if not address in acl:
+			if not address in acls:
 				raise Unauthorized(
 					"Your IP address [%s] does not have access" % address)
 			return fun(self, *args, **kwargs)
