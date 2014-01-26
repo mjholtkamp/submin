@@ -25,12 +25,19 @@ class Hooks(View):
 		try:
 			if self.hook_type == 'trac-sync':
 				return self.handle_trac_sync()
+			if self.hook_type == 'test-acl':
+				return self.handle_test_acl()
 		except Unauthorized, e:
 			self.tvars['errormsgs'] = [str(e)]
 			return XMLTemplateResponse(template, self.tvars)
 		
 		self.tvars['errormsgs'] = ['unknown hook type']
 		return XMLTemplateResponse(template, self.tvars)
+
+	@acl_required('acl_hook')
+	def handle_test_acl(self):
+		self.tvars['success'] = True
+		return XMLTemplateResponse('ajax/hooks.xml', self.tvars)
 
 	@acl_required('acl_hook')
 	def handle_trac_sync(self):
