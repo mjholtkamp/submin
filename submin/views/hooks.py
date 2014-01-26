@@ -3,15 +3,15 @@ from subprocess import CalledProcessError, STDOUT
 
 from submin.dispatch.view import View
 from submin.dispatch.response import XMLTemplateResponse
-from submin.auth.decorators import acl_required
+from submin.auth.decorators import acl_required, Unauthorized
 from submin.common.execute import check_output
 from submin.models.hookjobs import jobs, done as job_done
 from submin.models.trac import trac_admin_command
 from submin.models import options
 
 class Hooks(View):
-	@acl_required('acl_hook')
 	def handler(self, req, path):
+		template = 'ajax/hooks.xml'
 		self.tvars = {
 			'command': '/'.join(path),
 			'success': False,
@@ -19,15 +19,20 @@ class Hooks(View):
 
 		if len(path) != 3:
 			self.tvars['errormsgs'] = ['path is incorrect']
-			return XMLTemplateResponse('ajax/hooks.xml', self.tvars)
+			return XMLTemplateResponse(template, self.tvars)
 
 		self.vcs_type, self.repo, self.hook_type = path[0:3]
-		if self.hook_type == 'trac-sync':
-			return self.handle_trac_sync()
+		try:
+			if self.hook_type == 'trac-sync':
+				return self.handle_trac_sync()
+		except Unauthorized, e:
+			self.tvars['errormsgs'] = [str(e)]
+			return XMLTemplateResponse(template, self.tvars)
 		
 		self.tvars['errormsgs'] = ['unknown hook type']
-		return XMLTemplateResponse('ajax/hooks.xml', self.tvars)
+		return XMLTemplateResponse(template, self.tvars)
 
+	@acl_required('acl_hook')
 	def handle_trac_sync(self):
 		errormsgs = []
 		env_copy = os.environ.copy()
