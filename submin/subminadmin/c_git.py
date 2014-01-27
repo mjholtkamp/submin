@@ -302,10 +302,8 @@ Usage:
 					os.chown(path, int(git_uid), int(git_gid))
 					os.chmod(path, 0700)
 				else:
-					# in Python 3.3, we can use follow_symlinks=False, instead
-					# of this more complex way
-					statinfo = os.lstat(path)
-					if not stat.S_ISLNK(statinfo.st_mode):
+					# don't chown anything that is symlinked
+					if not os.path.islink(path):
 						os.chown(path, int(git_uid), int(apache.pw_gid))
 						os.chmod(path, 0750)
 			for d in dirs:
