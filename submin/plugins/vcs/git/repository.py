@@ -124,7 +124,9 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		"""Returns True if sending of commit messages is enabled."""
 		hookdir = options.env_path('git_dir') + self.name + 'hooks'
 		hook = hookdir + 'post-receive.d' + '001-commit-email.hook'
-		return os.path.exists(hook)
+		old_hook = hookdir + 'post-receive'
+		return os.path.exists(hook) or (
+			os.path.exists(old_hook) and not os.path.islink(old_hook))
 
 	def enableTracCommitHook(self, enable):
 		if enable:
