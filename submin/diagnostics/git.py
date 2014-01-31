@@ -88,14 +88,7 @@ def old_hook_dirs(git_dir_root):
 
 		# ok, it exists, but does it point to the right place?
 		hook_to = options.static_path('hooks') + 'git' + 'hook-mux'
-		target = None
-		try:
-			target = os.readlink(filename)
-		except OSError, e:
-			if e.errno != errno.EINVAL:
-				raise
-
-		if target != hook_to:
+		if not os.path.samefile(filename, hook_to):
 			yield git_dir
 			continue
 
@@ -107,6 +100,7 @@ def old_hook_dirs(git_dir_root):
 			if not hook_uptodate(filename, 'HOOK_VERSION = (\d+)',
 					HOOK_VERSIONS['commit-email']):
 				yield git_dir
+				continue
 
 		# check trac-sync hook
 		filename = os.path.join(git_dir_root, git_dir, 'hooks',
@@ -116,7 +110,7 @@ def old_hook_dirs(git_dir_root):
 			if not hook_uptodate(filename, 'HOOK_VERSION=(\d+)',
 					HOOK_VERSIONS['trac-sync']):
 				yield git_dir
-
+				continue
 
 	return
 
