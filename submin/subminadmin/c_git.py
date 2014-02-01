@@ -269,9 +269,9 @@ Usage:
 		reponame = None
 		if len(args) > 1:
 			reponame = unicode(args[1], 'utf-8')
-		git.create.rewrite_hook(reponame)
+		git.create.rewrite_hooks(reponame)
 		git.update_notifications.run(reponame)
-		git.post_receive_hook.rewrite_hook(reponame)
+		git.post_receive_hook.rewrite_hooks(reponame)
 		
 		# fix permissions because we ran this as root
 		self.sa.execute(['unixperms', 'fix'])

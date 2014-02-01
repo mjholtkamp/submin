@@ -6,6 +6,7 @@ from submin.models import options
 from submin.models.exceptions import UnknownKeyError
 from submin.plugins.vcs.git import remote
 from submin.subminadmin.git.post_receive_hook import HOOK_VERSIONS
+from submin.subminadmin.git.common import signature
 from submin.common import shellscript
 
 def diagnostics():
@@ -77,19 +78,18 @@ def old_hook_dirs(git_dir_root):
 		# check update hook
 		filename = os.path.join(git_dir_root, git_dir, 'hooks', 'update')
 		if not shellscript.hasSignature(filename, signature):
-			yield git_dir
+			yield (git_dir, 'update hook out-of-date')
 			continue # no need to check other hooks
 
 		# check multiplexer script
 		filename = os.path.join(git_dir_root, git_dir, 'hooks', 'post-receive')
 		if not os.path.exists(filename):
-			yield git_dir
+			yield (git_dir, 'post-receive does not exist')
 			continue
 
-		# ok, it exists, but does it point to the right place?
-		hook_to = options.static_path('hooks') + 'git' + 'hook-mux'
-		if not os.path.samefile(filename, hook_to):
-			yield git_dir
+		# ok, it exists, but does it contain the right stuff?
+		if not shellscript.hasSignature(filename, signature):
+			yield (git_dir, 'post-receive does not call hook-mux')
 			continue
 
 		# check commit-email hook
@@ -99,7 +99,7 @@ def old_hook_dirs(git_dir_root):
 		if os.path.exists(filename):
 			if not hook_uptodate(filename, 'HOOK_VERSION = (\d+)',
 					HOOK_VERSIONS['commit-email']):
-				yield git_dir
+				yield (git_dir, 'commit email hook version incorrect')
 				continue
 
 		# check trac-sync hook
@@ -109,7 +109,7 @@ def old_hook_dirs(git_dir_root):
 		if os.path.exists(filename):
 			if not hook_uptodate(filename, 'HOOK_VERSION=(\d+)',
 					HOOK_VERSIONS['trac-sync']):
-				yield git_dir
+				yield (git_dir, 'trac sync hook version incorrect')
 				continue
 
 	return

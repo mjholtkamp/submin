@@ -4,6 +4,8 @@ import commands
 from submin.models import options
 from submin.models.repository import DoesNotExistError, PermissionError
 from submin.plugins.vcs.git import remote
+from submin.subminadmin.git.common import signature as hook_signature
+from submin.common import shellscript
 
 display_name = "Git"
 
@@ -126,7 +128,8 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		hook = hookdir + 'post-receive.d' + '001-commit-email.hook'
 		old_hook = hookdir + 'post-receive'
 		return os.path.exists(hook) or (
-			os.path.exists(old_hook) and not os.path.islink(old_hook))
+			os.path.exists(old_hook) and
+			not shellscript.hasSignature(old_hook, hook_signature))
 
 	def enableTracCommitHook(self, enable):
 		if enable:

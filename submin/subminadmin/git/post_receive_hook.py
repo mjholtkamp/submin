@@ -6,7 +6,9 @@ import errno
 from submin.models import options, repository
 from submin.template.shortcuts import evaluate
 from submin.common.osutils import mkdirs
-from common import set_git_config, SetGitConfigError
+from common import git_dirname, set_git_config, SetGitConfigError
+from common import rewrite_hook, signature
+from submin.common import shellscript
 
 HOOK_VERSIONS = {
 	'commit-email': 4,
@@ -24,25 +26,15 @@ def prepare(reponame):
 	if not reponame.endswith(".git"):
 		reponame += ".git"
 
-	# make sure multiplexer script is in place (symlink to 'hook-mux')
 	hook_dir = options.env_path('git_dir') + reponame + 'hooks'
-	hook_from = hook_dir + 'post-receive'
-	hook_to = options.static_path('hooks') + 'git' + 'hook-mux'
-	target = None
-	try:
-		target = os.readlink(hook_from)
-	except OSError, e:
-		if not e.errno in (errno.EINVAL, errno.ENOENT):
-			raise
 
-	# fix symlink, if necessary
-	if target != hook_to:
-		try:
-			os.rename(hook_from, str(hook_from) + '.submin2.backup')
-		except OSError, e:
-			if e.errno != errno.ENOENT:
-				raise
-		os.symlink(hook_to, hook_from)
+	# Make sure multiplexer script is in place. It should be a shell script
+	# that calls the actual real script. The old situation is that the
+	# post-receive script was actually a script to call only git-multimail.py.
+	# The reason why we have a call to the script instead of a symlink, is
+	# because we can not guarantee the executable bit of the target.
+	if not shellscript.hasSignature(hook_dir + 'post-receive', signature):
+		rewrite_hook(reponame, 'post-receive', 'hook-mux')
 
 	# make sure multiplexer dir exists
 	# because www user can check if files in this directory exists, but
@@ -104,7 +96,7 @@ def setCommitEmailHook(reponame, enable):
 def setTracSyncHook(reponame, enable):
 	prepare(reponame)
 
-	hook_dir = options.env_path('git_dir') + reponame + 'hooks'
+	hook_dir = git_dirname(reponame) + 'hooks'
 	hook = hook_dir + 'post-receive.d' + '002-trac-sync.hook'
 
 	try:
@@ -128,7 +120,7 @@ def setTracSyncHook(reponame, enable):
 
 	os.chmod(hook, 0755)
 
-def rewrite_hook(reponame):
+def rewrite_hooks(reponame):
 	if reponame:
 		repositories = [reponame]
 	else:
