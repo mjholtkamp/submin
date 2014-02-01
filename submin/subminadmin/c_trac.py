@@ -93,8 +93,8 @@ Usage:
 			print('Job queued, but could not sync to "%s", HTTP error %u' %
 				(joburl, e.code, ))
 		except urllib2.URLError, e:
-			print('Job queued, but URL invalid %u: %s' %
-				(e.reason[0], e.reason[1]))
+			print('Job queued, but URL invalid %s: %s' %
+				(joburl, str(e)))
 		else:
 			xml = response.read()
 			if not 'success="True"' in xml:
