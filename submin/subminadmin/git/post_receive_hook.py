@@ -17,9 +17,8 @@ HOOK_VERSIONS = {
 
 def prepare(reponame):
 	"""Make sure basic things are in place for post-receive scripts to work.
-	For the post-receive-hook, we put a symlink to the hook-mux script, which
-	multiplexes everything on standard input to multiple scripts found in the
-	post-recieve.d directory.
+	The post-receive hook calls hook-mux, which multiplexes everything on
+	standard input to multiple scripts found in the post-recieve.d directory.
 
 	This makes it possible to have multiple (post-receive) hooks.
 	"""
@@ -34,7 +33,8 @@ def prepare(reponame):
 	# The reason why we have a call to the script instead of a symlink, is
 	# because we can not guarantee the executable bit of the target.
 	if not shellscript.hasSignature(hook_dir + 'post-receive', signature):
-		rewrite_hook(reponame, 'post-receive', 'hook-mux')
+		rewrite_hook(reponame, 'post-receive', 'hook-mux',
+			interpreter='/bin/bash')
 
 	# make sure multiplexer dir exists
 	# because www user can check if files in this directory exists, but
