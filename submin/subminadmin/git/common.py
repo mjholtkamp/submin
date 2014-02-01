@@ -22,7 +22,8 @@ def set_git_config(configfile, key, val):
 		if e.returncode != 5: # unset an option that doesn't exist
 			raise SetGitConfigError(str(e))
 
-def rewrite_hook(reponame, hookname, targetname, interpreter='/usr/bin/python'):
+def rewrite_hook(reponame, hookname, targetname,
+			interpreter='/usr/bin/python', args='"$@"'):
 	if reponame:
 		repositories = [reponame]
 	else:
@@ -30,7 +31,7 @@ def rewrite_hook(reponame, hookname, targetname, interpreter='/usr/bin/python'):
 	for reponame in repositories:
 		reposdir = git_dirname(reponame)
 		backup_old_hook(reposdir, hookname)
-		enable_hook(reposdir, hookname, targetname, interpreter)
+		enable_hook(reposdir, hookname, targetname, interpreter, args)
 
 def backup_old_hook(reposdir, hookname):
 	hook = reposdir + 'hooks' + hookname
@@ -40,11 +41,12 @@ def backup_old_hook(reposdir, hookname):
 		if e.errno != errno.ENOENT:
 			raise
 
-def enable_hook(reposdir, hookname, targetname, interpreter='/usr/bin/python'):
+def enable_hook(reposdir, hookname, targetname,
+			interpreter='/usr/bin/python', args='"$@"'):
 	"""Assumes no hook is already there, or if there is, that is a shell script.
 	If you want to overwrite the hook with a clean submin-hook, call rewrite_hook instead."""
 	target_script = options.static_path("hooks") + "git" + targetname
-	new_hook = '%s "%s" "$@"\n' % (interpreter, target_script, )
+	new_hook = '%s %s %s\n' % (interpreter, target_script, args)
 	hook = reposdir + 'hooks' + hookname
 
 	if shellscript.hasSignature(hook, signature):

@@ -34,7 +34,7 @@ def prepare(reponame):
 	# because we can not guarantee the executable bit of the target.
 	if not shellscript.hasSignature(hook_dir + 'post-receive', signature):
 		rewrite_hook(reponame, 'post-receive', 'hook-mux',
-			interpreter='/bin/bash')
+			interpreter='/bin/bash', args='post-receive')
 
 	# make sure multiplexer dir exists
 	# because www user can check if files in this directory exists, but

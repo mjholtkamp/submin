@@ -46,13 +46,14 @@ class Hooks(View):
 			return {'errormsgs': ['wrong path']}
 
 		self.vcs_type, self.repo = path
+		repo_git = self.repo + '.git'
 
 		errormsgs = []
 		self.env_copy = os.environ.copy()
 		self.env_copy['PATH'] = options.value('env_path', '/bin:/usr/bin')
 		trac_dir = options.env_path('trac_dir')
-		repo_dir = options.env_path('git_dir') + self.repo
-		self.trac_env = trac_dir + self.repo.replace('.git', '')
+		repo_dir = options.env_path('git_dir') + repo_git
+		self.trac_env = trac_dir + self.repo
 
 		oldwd = os.getcwd()
 		os.chdir(repo_dir)
