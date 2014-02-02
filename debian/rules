@@ -24,6 +24,11 @@ install: build clean_dh
         --root=$(CURDIR)/debian/submin2-core \
 	--prefix=/usr
 	find $(CURDIR)/debian/submin2-core -name ._\* -delete
+	$(installdata) -D $(CURDIR)/doc/README.Debian.submin2 $(CURDIR)/debian/submin2/usr/share/doc/submin2
+	$(installdata) -D $(CURDIR)/doc/README.Debian.full $(CURDIR)/debian/submin2-full/usr/share/doc/submin2
+	$(installdata) -D $(CURDIR)/doc/README.Debian.git $(CURDIR)/debian/submin2-git/usr/share/doc/submin2
+	$(installdata) -D $(CURDIR)/doc/README.Debian.svn $(CURDIR)/debian/submin2-svn/usr/share/doc/submin2
+	$(installdata) -D $(CURDIR)/doc/README.Debian.trac $(CURDIR)/debian/submin2-trac/usr/share/doc/submin2
 
 binary-indep: build install
 	dh_testdir
