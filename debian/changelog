@@ -1,3 +1,10 @@
+submin (2.1.2-2) testing; urgency=low
+
+  * Splitted the debian packages for managing the dependencies of different
+    submin2 modules like subversion and git.
+
+ -- Jean-Paul van Oosten <submin@jpvanoosten.nl>  Sun, 02 Feb 2014 14:13:18 +0000
+
 submin (2.1.2-1) testing; urgency=low
 
   * Went from svn to git repository. Bump debian package version so apt
