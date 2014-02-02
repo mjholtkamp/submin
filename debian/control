@@ -46,6 +46,7 @@ Description: A web admin interface for local svn/git repositories
 
 Package: submin2-svn
 Architecture: all
+Enhances: submin2-core
 Depends: submin2-core, python-subversion, apache2-mpm-prefork | apache2-mpm, libapache2-svn, ${python:Depends}
 XB-Python-Version: ${python:Versions}
 Description: Subversion support for submin2
@@ -58,6 +59,7 @@ Description: Subversion support for submin2
 
 Package: submin2-git
 Architecture: all
+Enhances: submin2-core
 Depends: submin2-core, git, openssh-client, openssh-server, ${python:Depends}
 XB-Python-Version: ${python:Versions}
 Description: Git support for submin2
@@ -69,6 +71,7 @@ Description: Git support for submin2
 
 Package: submin2-trac
 Architecture: all
+Enhances: submin2-core
 Depends: submin2-core, trac, ${python:Depends}
 Suggests: uwsgi, python-uwsgidecorators, nginx-full
 XB-Python-Version: ${python:Versions}
