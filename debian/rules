@@ -28,7 +28,7 @@ install: build clean_dh
 binary-indep: build install
 	dh_testdir
 	dh_testroot
-	dh_installman man/submin2-admin.1
+	dh_installman
 	dh_pycentral
 	dh_compress -X.py
 	dh_fixperms
