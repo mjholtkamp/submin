@@ -215,6 +215,28 @@
 						</div>
 					</div>
 				</li>
+				<li>
+					<label class="diag">htpasswd export directory exists</label>
+					<div class="diag_result">
+						[test:diag.trac_htpasswd_file
+						<span class="diag_[test:diag.trac_htpasswd_dir_exists yes][else no]"></span>
+						<div class="diag_note">
+							[test:diag.trac_htpasswd_dir_exists]
+							[else <p>The setting htpasswd_file is set, but the directory does not exist.
+							To export the htpasswd_file, please make sure that [val diag.trac_htpasswd_dir] exists.</p>]
+						</div>
+						][else
+						<span class="diag_warn"></span>
+						<div class="diag_note">
+							<p>The setting htpasswd_file is not set. We will
+							not export an htpasswd file for trac. If you don't
+							use tracd for running your trac-environment you are
+							probably fine. Otherwise, please point
+							htpasswd_file to the proper location for your
+							password file.</p>
+						</div>]
+					</div>
+				</li>
 			</ul>
 		</div>
 	</div>

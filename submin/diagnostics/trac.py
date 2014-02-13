@@ -1,3 +1,4 @@
+import os
 import urllib2
 import socket # for urllib timeout
 import xml.etree.ElementTree as ET
@@ -32,6 +33,14 @@ def diagnostics():
 		results['trac_dir_set'] = False
 	else:
 		results['trac_dir_set'] = True
+
+	try:
+		htpasswd_file = options.env_path("htpasswd_file")
+		results['trac_htpasswd_file'] = htpasswd_file
+		results['trac_htpasswd_dir_exists'] = os.path.exists(htpasswd_file.dirname())
+		results['trac_htpasswd_dir'] = htpasswd_file.dirname()
+	except UnknownKeyError:
+		results['trac_htpasswd_file'] = ""
 
 	results['trac_all'] = False not in results.values()
 	

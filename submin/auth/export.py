@@ -11,7 +11,6 @@ def export_htpasswd(*args, **kwargs):
 	except UnknownKeyError:
 		return
 
-	# XXX This should raise a flag in diagnostics, maybe?
 	if not os.path.exists(htpasswd_file.dirname()):
 		return
 
