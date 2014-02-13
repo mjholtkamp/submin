@@ -94,6 +94,9 @@ class User(object):
 		if send_email:
 			self.email_user(password=password)
 
+	def get_password_hash(self):
+		return storage.get_password_hash(self._id)
+
 	def set_md5_password(self, password):
 		storage.set_md5_password(self._id, password)
 
@@ -299,7 +302,12 @@ Storage contract
 * set_password(id, password)
 	Sets the password for a user with userid *id* to *password*, in storage's
 	native format.
-	
+
+* get_password_hash(id)
+	Gets the password hash for a user with userid *id* from storage. Please use
+	this wisely and minimise exposing these hashes. They are useful for
+	exporting to an htpasswd-file for example.
+
 * set_md5_password(id, password)
 	Sets the md5 password for a user with userid *id* to *password*. If this is
 	not supported by the module, it raises an MD5NotSupported error. This

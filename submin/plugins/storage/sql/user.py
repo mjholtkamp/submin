@@ -57,6 +57,12 @@ def set_password(userid, password):
 	password = _pw_hash(password)
 	set_md5_password(userid, password)
 
+def get_password_hash(userid):
+	cur = storage.db.cursor()
+	storage.execute(cur, "SELECT password FROM users WHERE id=?", (userid,))
+	row = cur.fetchone()
+	return row[0]
+
 def set_md5_password(userid, password):
 	storage.execute(storage.db.cursor(), """UPDATE users
 		SET password=? WHERE id=?""", (password, userid))
