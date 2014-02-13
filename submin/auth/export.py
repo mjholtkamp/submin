@@ -20,3 +20,4 @@ def export_htpasswd(*args, **kwargs):
 			u = user.User(username)
 			htpasswd.write("%s:%s\n" % (username, u.get_password_hash()))
 
+	os.chmod(htpasswd_file, 0600)
