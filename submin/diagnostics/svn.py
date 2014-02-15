@@ -7,6 +7,10 @@ def diagnostics():
 	results = {}
 	results['enabled_svn'] = 'svn' in options.value('vcs_plugins', '')
 
+	if not results['enabled_svn']:
+		results['svn_all'] = False
+		return results
+
 	try:
 		svn_dir = options.env_path('svn_dir')
 	except UnknownKeyError:

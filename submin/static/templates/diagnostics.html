@@ -51,6 +51,17 @@
 			<h2 class="diag">Git support working correctly: <span class="diag_[test:diag.git_all yes][else no]"></span></h2>
 			<ul>
 				<li>
+					<label class="diag">Git enabled</label>
+					<div class="diag_result">
+						<span class="diag_[test:diag.enabled_git yes][else warn]"></span>
+						<div class="diag_note">
+							[test:diag.enabled_git To disable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set vcs_plugins svn</span>]
+							[else To enable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set vcs_plugins git,svn</span>]
+						</div>
+					</div>
+				</li>
+				[test:diag.enabled_git
+				<li>
 					<label class="diag">Git dir set in config</label>
 					<div class="diag_result">
 						<span class="diag_[test:diag.git_dir_set yes][else no]"></span>
@@ -94,19 +105,21 @@
 						</div>
 					</div>
 				</li>
+				]
+			</ul>
+			<h2 class="diag">Svn support working correctly: <span class="diag_[test:diag.svn_all yes][else no]"></span></h2>
+			<ul>
 				<li>
-					<label class="diag">Git enabled</label>
+					<label class="diag">SVN enabled</label>
 					<div class="diag_result">
-						<span class="diag_[test:diag.enabled_git yes][else no]"></span>
+						<span class="diag_[test:diag.enabled_svn yes][else warn]"></span>
 						<div class="diag_note">
-							[test:diag.enabled_git To disable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set vcs_plugins svn</span>]
+							[test:diag.enabled_svn To disable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set vcs_plugins git</span>]
 							[else To enable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set vcs_plugins git,svn</span>]
 						</div>
 					</div>
 				</li>
-			</ul>
-			<h2 class="diag">Svn support working correctly: <span class="diag_[test:diag.svn_all yes][else no]"></span></h2>
-			<ul>
+				[test:diag.enabled_svn
 				<li>
 					<label class="diag">SVN dir set in config</label>
 					<div class="diag_result">
@@ -148,19 +161,21 @@
 					</div>
 				</li>]
 				]
-				<li>
-					<label class="diag">SVN enabled</label>
-					<div class="diag_result">
-						<span class="diag_[test:diag.enabled_svn yes][else no]"></span>
-						<div class="diag_note">
-							[test:diag.enabled_svn To disable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set vcs_plugins git</span>]
-							[else To enable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set vcs_plugins git,svn</span>]
-						</div>
-					</div>
-				</li>
+				]
 			</ul>
 			<h2 class="diag">Trac support working correctly: <span class="diag_[test:diag.trac_all yes][else no]"></span></h2>
 			<ul>
+				<li>
+					<label class="diag">Trac enabled</label>
+					<div class="diag_result">
+						<span class="diag_[test:diag.enabled_trac yes][else warn]"></span>
+						<div class="diag_note">
+							[test:diag.enabled_trac To disable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set enabled_trac no</span>]
+							[else To enable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set enabled_trac yes</span>]
+						</div>
+					</div>
+				</li>
+				[test:diag.enabled_trac
 				<li>
 					<label class="diag">Trac installed</label>
 					<div class="diag_result">
@@ -178,16 +193,6 @@
 						<div class="diag_note">
 							[test:diag.trac_dir_set]
 							[else To set the trac_dir, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set trac_dir trac</span>]
-						</div>
-					</div>
-				</li>
-				<li>
-					<label class="diag">Trac enabled</label>
-					<div class="diag_result">
-						<span class="diag_[test:diag.enabled_trac yes][else no]"></span>
-						<div class="diag_note">
-							[test:diag.enabled_trac To disable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set enabled_trac no</span>]
-							[else To enable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set enabled_trac yes</span>]
 						</div>
 					</div>
 				</li>
@@ -237,6 +242,7 @@
 						</div>]
 					</div>
 				</li>
+				]
 			</ul>
 		</div>
 	</div>

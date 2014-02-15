@@ -15,6 +15,11 @@ class SyncError(Exception):
 def diagnostics():
 	results = {}
 	results['enabled_trac'] = options.value('enabled_trac', 'no') != 'no'
+
+	if not results['enabled_trac']:
+		results['trac_all'] = False
+		return results
+
 	results['installed_trac'] = trac.tracAdminExists()
 
 	results['trac_acl_hook'] = options.value('acl_hook', '') != ''

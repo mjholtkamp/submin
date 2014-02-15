@@ -13,6 +13,10 @@ def diagnostics():
 	results = {}
 	results['enabled_git'] = 'git' in options.value('vcs_plugins', '')
 
+	if not results['enabled_git']:
+		results['git_all'] = False
+		return results
+
 	try:
 		git_dir = options.env_path('git_dir')
 	except UnknownKeyError:
