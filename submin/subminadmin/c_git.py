@@ -1,6 +1,7 @@
 import os
 import sys
 import stat
+import socket
 from common import executeCmd, which, CmdException, SubminAdminCmdException, www_user
 from submin.common.osutils import mkdirs
 
@@ -162,13 +163,16 @@ Usage:
 		options.set_value("git_user", git_user)
 
 		# Ask public ssh-host
-		ssh_host = self.prompt_user("What is the public host-name of the ssh-server?",
-				"localhost")
+		ssh_host = self.prompt_user(
+				"What is the public host-name of the ssh-server?",
+				socket.getfqdn())
 		options.set_value("git_ssh_host", ssh_host)
 
 		# Ask internal ssh-host
-		internal_ssh_host = self.prompt_user("What is the internal host-name of the ssh-server\n(used to, e.g., create repositories over fast local network)?",
-				ssh_host)
+		internal_ssh_host = self.prompt_user(
+				"What is the internal host-name of the ssh-server\n" +
+				"(used to, e.g., create repositories over fast local network)?",
+				"localhost")
 		options.set_value("git_ssh_host_internal", internal_ssh_host)
 
 		# Ask ssh-port (default 22)
