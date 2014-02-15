@@ -1,21 +1,17 @@
-
-# /
 /build
-
-# /debian/
 /debian/*.debhelper
 /debian/*.debhelper.log
 /debian/files
 /debian/submin2
+/debian/submin2-core/
+/debian/submin2-full/
+/debian/submin2-git/
+/debian/submin2-svn/
+/debian/submin2-trac/
 /debian/*.substvars
-
-# /dev/
-/dev/coverage-annotate
-
-# /dev/conf/
 /dev/conf/sshd_config
+/dev/conf/sshd.pid
 /dev/conf/ssh_host_dsa_key
 /dev/conf/ssh_host_dsa_key.pub
-/dev/conf/sshd.pid
-
+/dev/coverage-annotate
 *.pyc
