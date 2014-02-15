@@ -627,7 +627,10 @@ class Change(object):
 
         values = self.get_values(**extra_values)
         for line in template.splitlines():
-            (name, value) = line.split(':', 1)
+            try:
+                (name, value) = line.split(':', 1)
+            except ValueError, e:
+                continue
 
             try:
                 value = value % values
@@ -1358,7 +1361,7 @@ class SendMailer(Mailer):
                 'Try setting multimailhook.sendmailCommand.'
                 )
 
-    def __init__(self, command=None, envelopesender=None):
+    def __init__(self, envelopesender=None, command=None):
         """Construct a SendMailer instance.
 
         command should be the command and arguments used to invoke
@@ -1783,6 +1786,7 @@ class ConfigOptionsEnvironmentMixin(ConfigEnvironmentMixin):
 
     def get_sender(self):
         return self.config.get('envelopesender')
+    sender = property(get_sender, None, None, None)
 
     def get_fromaddr(self):
         fromaddr = self.config.get('from')
@@ -2041,7 +2045,8 @@ class GenericEnvironment(
     GenericEnvironmentMixin,
     Environment,
     ):
-    pass
+    def __init__(self, config):
+        super(GenericEnvironment, self).__init__(config=config)
 
 
 class GitoliteEnvironmentMixin(Environment):
