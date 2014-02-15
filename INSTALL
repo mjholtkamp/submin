@@ -1,12 +1,30 @@
-Submin prerequisites
---------------------
+Table of Contents
+=================
+
+ * Prerequisites
+ * Installation
+ * Submin environment
+ * Git support (optional)
+ * Apache
+ * Login to submin
+ * Final touches
+
+
+Prerequisites
+=============
 
 Submin is tested with Python 2.x exclusively, it probably does not (yet) work
 with Python 3.x. If you have fixes for 3.x, please let us know.
 
+Depending on your choices, you also need either git or subversion, and
+optionally trac for ticket supports.
 
-Submin Installation
--------------------
+If you want subversion, you also need apache. If only git is needed, you can
+also install nginx.
+
+
+Installation
+============
 
 Installing from debian package: 
 
@@ -23,7 +41,7 @@ Installing from source:
 
 
 Create submin environment
--------------------------
+=========================
 
 Multiple submin installations can co-exist on the same server. Therefore, for
 each installation, an environment must be created. All data (repositories,
@@ -40,7 +58,7 @@ For help on submin-admin, execute the following command:
 
 
 Git support (optional)
-----------------------
+======================
 
 Git support requires a special user to be created and some additional settings.
 Run the following command as root and follow the instructions:
@@ -48,14 +66,23 @@ Run the following command as root and follow the instructions:
     submin2-admin /var/lib/submin git init
 
 
-Configure Apache2 Webserver
----------------------------
+Configure Webserver
+===================
 
-Submin2 can create all kinds of configs for you, to create all different kinds
-of Apache config files, run the following command (this is already done if you
-have run initenv):
+Submin2 can create all kinds of configs for you, for both apache and nginx.
+If you only need git you can install nginx, otherwise you need to install
+Apache.
 
-    submin2-admin /var/lib/submin apacheconf create all /var/lib/submin/conf/apache.conf
+For advanced usage, you can mix Apache and NGINX config!
+
+
+Configure Apache
+----------------
+
+After running initenv above, the apache config files are created. If you want
+to create them again for any reason, run the following command:
+
+    submin2-admin /var/lib/submin apacheconf create all
 
 Now to activate the submin2 website, the configuration should be included into
 Apache2. To use for example CGI and SVN, execute the following commands as
@@ -69,11 +96,33 @@ Now restart your webserver to activate the new settings.
     apachectl restart
 
 
+Configure NGINX
+---------------
+
+To generate NGINX config files, run the following command:
+
+    submin2-admin /var/lib/submin nginxconf create all
+
+To activate submin2 in nginx, see instructions in the generated nginx config 
+file /var/lib/submin/conf/nginx-webui-wsgi.conf
+
+
 Login to your Submin2 website
------------------------------
+=============================
 
 The email-address you have provided with the 'initenv' command above has
 received a password reset email. Read your email and click the link. You will
 get another email with the password. You can use this to login.
+
+
+Final touches
+=============
+
+Be sure to check the Diagnostics page after logging in as admin, it will help
+with fine-tuning your configuration for your installation.
+
+With new submin versions, sometimes new checks are added on this page, so be
+sure to check back here after upgrading submin.
+
 
 Happy subminning :)
