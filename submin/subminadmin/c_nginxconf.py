@@ -51,19 +51,22 @@ Usage:
 
 	def _nginx_conf_create(self):
 		from time import strftime
-		self.init_vars['datetime_generated'] = strftime("%Y-%m-%d %H:%M:%S")
-		header = evaluate('subminadmin/nginx-header.conf', self.init_vars)
-		submin_wsgi = evaluate('subminadmin/nginx-webui-wsgi.conf', self.init_vars)
-		uwsgi_ini = evaluate('subminadmin/uwsgi-webui.ini', self.init_vars)
 
 		template = str(self.init_vars['output'])
 		if template.endswith('.conf'):
 			template = template[:-len('.conf')]
 
-		header_webui = header
-
 		fname_submin_wsgi = template + '-webui-wsgi.conf'
 		fname_uwsgi_ini = template + '-webui-uwsgi.ini'
+
+		self.init_vars['submin_wsgi'] = fname_submin_wsgi
+		self.init_vars['uwsgi_ini'] = fname_uwsgi_ini
+		self.init_vars['datetime_generated'] = strftime("%Y-%m-%d %H:%M:%S")
+
+		header_webui = evaluate('subminadmin/nginx-header.conf', self.init_vars)
+		submin_wsgi = evaluate('subminadmin/nginx-webui-wsgi.conf', self.init_vars)
+		uwsgi_ini = evaluate('subminadmin/uwsgi-webui.ini', self.init_vars)
+
 		file(fname_submin_wsgi, 'w').write(header_webui + submin_wsgi)
 		file(fname_uwsgi_ini, 'w').write(uwsgi_ini)
 		print 'Nginx files created:\n', "\n".join([fname_submin_wsgi, fname_uwsgi_ini])
