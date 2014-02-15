@@ -54,7 +54,7 @@ def trac_admin_command(trac_dir, args):
 	try:
 		return check_output(cmd, stderr=subprocess.STDOUT, env=env_copy)
 	except subprocess.CalledProcessError, e:
-		raise TracAdminError(' '.join(cmd), e.returncode, e.output)
+		raise TracAdminError(' '.join(cmd), e.returncode, e.message)
 
 def tracAdminExists():
 	try:

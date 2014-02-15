@@ -44,7 +44,7 @@ Usage:
 
 		# first, create a temp trac env, because 'deploy' needs a working trac
 		# env (sigh)
-		trac.initenv(str(tmp_trac_dir), 'dummy')
+		trac.initenv(str(tmp_trac_dir), 'dummy', 'svn', '/tmp/non-existing')
 
 		# then generate the scripts
 		trac.deploy(str(tmp_trac_dir), str(tmp_deploy_dir))

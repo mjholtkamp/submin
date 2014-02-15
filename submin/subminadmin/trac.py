@@ -4,7 +4,7 @@ from submin.models import trac
 def trac_admin_command(trac_dir, args):
 	try:
 		trac.trac_admin_command(trac_dir, args)
-	except TracAdminError, e:
+	except trac.TracAdminError, e:
 		print "Trac command '%s' failed with exitcode %s" % (e.cmd, e.exitstatus)
 		print 'Error message:'
 		print e.outtext
@@ -16,5 +16,7 @@ def deploy(trac_dir, deploy_dir):
 def exists():
 	return trac.tracAdminExists()
 
-def initenv(trac_dir, trac_name):
-	trac_admin_command(trac_dir, ['initenv', trac_name, 'sqlite:db/trac.db'])
+def initenv(trac_dir, trac_name, vcs_type, vcs_path):
+	trac_admin_command(trac_dir, ['initenv', trac_name,
+		'sqlite:db/trac.db', vcs_type, vcs_path
+	])
