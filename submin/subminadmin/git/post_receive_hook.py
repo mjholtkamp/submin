@@ -11,7 +11,7 @@ from common import rewrite_hook, signature
 from submin.common import shellscript
 
 HOOK_VERSIONS = {
-	'commit-email': 4,
+	'commit-email': 5,
 	'trac-sync': 4,
 }
 
@@ -79,7 +79,8 @@ def setCommitEmailHook(reponame, enable):
 			cfg = options.env_path('git_dir') + reponame + 'config'
 			email = options.value('commit_email_from', 'Please configure commit_email_from <noreply@example.net>')
 			set_git_config(cfg, 'multimailhook.emailmaxlines', '2000')
-			set_git_config(cfg, 'multimailhook.emailprefix', '[Submin]')
+			prefix = '[%s]' % reponame.replace('.git', '')
+			set_git_config(cfg, 'multimailhook.emailprefix', prefix)
 			set_git_config(cfg, 'multimailhook.envelopesender', email)
 		except SetGitConfigError, e:
 			raise repository.PermissionError(
