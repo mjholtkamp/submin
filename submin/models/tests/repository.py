@@ -43,29 +43,44 @@ class RepositoryTests(unittest.TestCase):
 
 		# now make some repositories
 		self.repositories = [
-			{'name': 'foo', 'status': 'ok', 'vcs': 'svn'},
-			{'name': 'invalidperm', 'status': 'permission denied', 'vcs': 'svn'},
-			{'name': 'invalidperm2', 'status': 'permission denied', 'vcs': 'svn'},
-			{'name': 'example', 'status': 'ok', 'vcs': 'svn'},
-			{'name': 'subdirs', 'status': 'ok', 'vcs': 'svn'},
+			{'name': 'foo', 'display_name': 'foo', 'status': 'ok', 'vcs': 'svn'},
+			{'name': 'invalidperm', 'display_name': 'invalidperm', 'status': 'permission denied', 'vcs': 'svn'},
+			{'name': 'invalidperm2', 'display_name': 'invalidperm2', 'status': 'permission denied', 'vcs': 'svn'},
+			{'name': 'example', 'display_name': 'example', 'status': 'ok', 'vcs': 'svn'},
+			{'name': 'subdirs', 'display_name': 'subdirs', 'status': 'ok', 'vcs': 'svn'},
 		]
-		for r in self.repositories:
-			os.system("svnadmin create '%s'" % os.path.join(self.svn_dir, r['name']))
+		self.has_invalidperm = False
+		self.has_invalidperm2 = False
 
-		os.system("chmod 000 '%s'" % \
-			os.path.join(self.svn_dir, 'invalidperm'))
+	def _createRepos(self, reponames):
+		for repo in filter(lambda x: x['name'] in reponames, self.repositories):
+			#[x for x in self.repositories if x['name'] in reponames]:
+			os.system("svnadmin create '%s'" % os.path.join(self.svn_dir, repo['name']))
+			if repo['name'] == 'invalidperm':
+				self.has_invalidperm = True
+				os.system("chmod 000 '%s'" % \
+					os.path.join(self.svn_dir, 'invalidperm'))
 
-		os.system("chmod 000 '%s'" % \
-			os.path.join(self.svn_dir, 'invalidperm2', 'db', 'revs'))
+			if repo['name'] == 'invalidperm2':
+				self.has_invalidperm2 = True
+				os.system("chmod 000 '%s'" % \
+					os.path.join(self.svn_dir, 'invalidperm2', 'db', 'revs'))
 
 	def tearDown(self):
 		storage.close()
-		os.system("chmod 777 '%s'" % os.path.join(self.svn_dir, 'invalidperm'))
-		os.system("chmod 777 '%s'" % \
-			os.path.join(self.svn_dir, 'invalidperm2', 'db', 'revs'))
+		if self.has_invalidperm:
+			os.system("chmod 777 '%s'" % os.path.join(self.svn_dir, 'invalidperm'))
+			self.has_invalidperm = False
+
+		if self.has_invalidperm2:
+			os.system("chmod 777 '%s'" % \
+				os.path.join(self.svn_dir, 'invalidperm2', 'db', 'revs'))
+			self.has_invalidperm2
+
 		os.system("rm -rf '%s'" % self.submin_env)
 
 	def testRepositoriesOnDisk(self):
+		self._createRepos([x['name'] for x in self.repositories])
 		result = repository.Repository.list_all()
 		result.sort()
 		copy = self.repositories[:]
@@ -74,6 +89,7 @@ class RepositoryTests(unittest.TestCase):
 
 	def testListRepositoriesAll(self):
 		"""Test listRepositories, which checks for valid permissions of repositories"""
+		self._createRepos([x['name'] for x in self.repositories])
 		mock_admin = Mock()
 		mock_admin.is_admin = True
 		u = user.add('bar', 'a@a.a', send_mail=False)
@@ -92,19 +108,23 @@ class RepositoryTests(unittest.TestCase):
 		self.assertEquals(result, copy)
 
 	def testExistingRepository(self):
+		self._createRepos(['foo'])
 		r = repository.Repository('foo', 'svn')
 		self.assertEquals(r.name, 'foo')
 
 	def testInvalidPermRepository(self):
+		self._createRepos(['invalidperm'])
 		self.assertRaises(repository.PermissionError, repository.Repository, "invalidperm", "svn")
 
 	def testInvalidPermRepository2(self):
+		self._createRepos(['invalidperm2'])
 		self.assertRaises(repository.PermissionError, repository.Repository, "invalidperm2", "svn")
 
 	def testUnknownRepository(self):
 		self.assertRaises(repository.DoesNotExistError, repository.Repository, "non-existing-repository", "svn")
 
 	def testHasSubDirs(self):
+		self._createRepos(['subdirs'])
 		for subdir in ['test', 'test/subdir']:
 			os.system("svn mkdir -m '' file://'%s' >/dev/null" % \
 				os.path.join(self.svn_dir, 'subdirs', subdir))
@@ -114,6 +134,7 @@ class RepositoryTests(unittest.TestCase):
 		self.assertEquals(subdirs, expected)
 
 	def testSubDirsContents(self):
+		self._createRepos(['subdirs'])
 		for subdir in ['test', 'test/subdir', 'nosubdirs']:
 			os.system("svn mkdir -m '' file://'%s' >/dev/null" % \
 				os.path.join(self.svn_dir, 'subdirs', subdir))
@@ -127,11 +148,13 @@ class RepositoryTests(unittest.TestCase):
 		self.assertEquals(result, expected_result)
 
 	def testRemoveRepository(self):
+		self._createRepos(['subdirs'])
 		r = repository.Repository('subdirs', 'svn')
 		r.remove()
 		self.assertRaises(repository.DoesNotExistError, repository.Repository, 'subdirs', 'svn')
 
 	def testChangeNotificationsEmptyHook(self):
+		self._createRepos(['foo'])
 		expected_hook = '''#!/bin/sh
 ### SUBMIN AUTOCONFIG, DO NOT ALTER FOLLOWING LINE ###
 /usr/bin/python /bin/post-commit.py "%s" "$1" "$2"
@@ -145,6 +168,7 @@ class RepositoryTests(unittest.TestCase):
 		self.assertTrue('mailer.py.conf' in hook)
 
 	def testChangeNotificationsExistingHook(self):
+		self._createRepos(['foo'])
 		expected_hook = '''#!/bin/sh
 # just a comment
 '''
@@ -161,6 +185,7 @@ class RepositoryTests(unittest.TestCase):
 		self.assertEquals(hook, expected_hook)
 
 	def testNotificationsEnabled(self):
+		self._createRepos(['foo'])
 		r = repository.Repository('foo', 'svn')
 		# first time, because no file is present
 		self.assertFalse(r.commitEmailsEnabled())
