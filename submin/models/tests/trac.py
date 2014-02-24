@@ -1,6 +1,7 @@
 import os
 import unittest
 import tempfile
+import subprocess
 from mock import *
 
 mock_settings = Mock()
@@ -14,6 +15,16 @@ setSettings(mock_settings)
 from submin.models import storage
 from submin.models import options
 from submin.models import trac
+
+def trac_installed():
+	"""Simpeler test than trac.tracAdminExists"""
+	try:
+		subprocess.check_output(['which', 'trac-admin'])
+	except subprocess.CalledProcessError:
+		return False
+	return True
+
+has_trac = trac_installed()
 
 class TracTests(unittest.TestCase):
 	def setUp(self):
@@ -39,12 +50,14 @@ class TracTests(unittest.TestCase):
 		storage.close()
 		os.system("rm -rf '%s'" % self.submin_env)
 
+	@unittest.skipUnless(has_trac, "No Trac found, can't run tests")
 	def testExits(self):
 		# Assumes trac-admin is actually installed, but since the rest of
 		# the tests need trac-admin, this is not a big problem IMHO.
 		# -- Michiel
 		self.assertEquals(trac.tracAdminExists(), True)
 
+	@unittest.skipUnless(has_trac, "No Trac found, can't run tests")
 	def testNotExits(self):
 		oldpath = os.environ['PATH']
 		del os.environ['PATH']
@@ -52,6 +65,7 @@ class TracTests(unittest.TestCase):
 		os.environ['PATH'] = oldpath
 		self.assertEquals(exists, True)
 
+	@unittest.skip("Not sure if this is a good test")
 	def testTracCreate(self):
 		mock_admin = Mock()
 		mock_admin.is_admin = True
