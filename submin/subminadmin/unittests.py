@@ -1,33 +1,56 @@
 import sys
 import unittest
-import c_apacheconf
 import c_quit
 import c_help
+import os
+import tempfile
 from mock import Mock, MagicMock
 from StringIO import StringIO
 
 class SubminAdminApacheConfTests(unittest.TestCase):
+	@classmethod
+	def setUpClass(cls):
+		cls.tmpdir = tempfile.mkdtemp(prefix='submin-unittest')
+		conf_dir = os.path.join(cls.tmpdir, 'conf')
+		os.mkdir(conf_dir)
+		file(os.path.join(conf_dir, 'settings.py'), 'w').writelines(
+		"""import os
+storage = "sql"
+sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
+"""
+		)
+		os.environ['SUBMIN_ENV'] = cls.tmpdir
+
+	@classmethod
+	def tearDownClass(cls):
+		os.system("rm -rf '%s'" % cls.tmpdir)
+
 	def testUrlPathEmpty(self):
+		import c_apacheconf
 		ac = c_apacheconf.c_apacheconf(None, [])
 		result = ac.urlpath('')
 		self.assertEquals(result, '/')
 
 	def testUrlPathSlash(self):
+		import c_apacheconf
 		ac = c_apacheconf.c_apacheconf(None, [])
 		result = ac.urlpath('/')
 		self.assertEquals(result, '/')
 
 	def testUrlPathFullURL(self):
+		import c_apacheconf
 		ac = c_apacheconf.c_apacheconf(None, [])
 		result = ac.urlpath('http://www.example.com/')
 		self.assertEquals(result, '/')
 
 	def testUrlPathFullURLSubDir(self):
+		import c_apacheconf
 		ac = c_apacheconf.c_apacheconf(None, [])
 		result = ac.urlpath('http://www.example.com/submin/help')
 		self.assertEquals(result, '/submin/help')
 
 	def testUrlPathURLpath(self):
+		import c_apacheconf
 		ac = c_apacheconf.c_apacheconf(None, [])
 		result = ac.urlpath('/submin/')
 		self.assertEquals(result, '/submin')
@@ -86,7 +109,7 @@ class SubminAdminHelp(unittest.TestCase):
 		self.assertTrue('No help available' in sys.stdout.getvalue())
 
 	def testHelpSubminAdmin(self):
-		"""WARNING: This test will fail is options is imported prematurely.
+		"""WARNING: This test will fail if options is imported prematurely.
 		If this test fails, this is problably because options is imported prematurely
 		This is a restriction in subminadmin, because you need to be able to run 'help'
 		without having an environment (like we do in this test) and the 'options' module
