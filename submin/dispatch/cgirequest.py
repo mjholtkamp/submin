@@ -19,8 +19,6 @@ class CGIRequest(Request):
 			self._incookies.load(self.__environ.get('HTTP_COOKIE', '')) 
 		self.path_info = unicode(self.__environ.get('PATH_INFO', ''), 'utf-8')
 		self.remote_address = self.__environ.get('REMOTE_ADDR')
-		self.https = os.environ.get('HTTPS', 'off') == 'on'
-		self.http_host = os.environ.get('HTTP_HOST')
 	
 	def write(self, content):
 		self.__output.write(content.encode('utf-8'))

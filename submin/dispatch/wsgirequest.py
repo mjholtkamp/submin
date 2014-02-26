@@ -37,5 +37,3 @@ class WSGIRequest(Request):
 				self.path_info = self.path_info[len(alias):]
 
 		self.remote_address = self.__environ.get('REMOTE_ADDR')
-		self.https = self.__environ.get('HTTPS', 'off') == 'on'
-		self.http_host = self.__environ.get('HTTP_HOST')

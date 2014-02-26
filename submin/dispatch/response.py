@@ -1,4 +1,5 @@
 import urlparse
+from submin.models import options
 
 class Response(object):
 	def __init__(self, content='', status_message='Ok'):
@@ -34,10 +35,14 @@ class Redirect(Response):
 		url = unicode(url)
 		self.status_code = 302
 		if not '://' in url:
-			schema = 'https://' if request.https else 'http://'
+			vhost = options.value("http_vhost")
+			if not '://' in vhost:
+				vhost = 'http://' + vhost
+
 			# to prevent accidental double slashes to be interpreted as netloc,
 			# we strip all leading slashes from the url
-			url = urlparse.urljoin(schema + request.http_host, url.lstrip('/'))
+			url = urlparse.urljoin(vhost, url.lstrip('/'))
+
 		self.headers.update({'Location': url.encode('utf-8')})
 
 class HTTP404(Response):
