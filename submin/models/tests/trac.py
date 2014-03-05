@@ -51,19 +51,17 @@ class TracTests(unittest.TestCase):
 		os.system("rm -rf '%s'" % self.submin_env)
 
 	@unittest.skipUnless(has_trac, "No Trac found, can't run tests")
-	def testExits(self):
+	def testExists(self):
 		# Assumes trac-admin is actually installed, but since the rest of
 		# the tests need trac-admin, this is not a big problem IMHO.
 		# -- Michiel
 		self.assertEquals(trac.tracAdminExists(), True)
 
 	@unittest.skipUnless(has_trac, "No Trac found, can't run tests")
-	def testNotExits(self):
-		oldpath = os.environ['PATH']
-		del os.environ['PATH']
+	def testNotExists(self):
+		options.set_value('env_path', '')
 		exists = trac.tracAdminExists()
-		os.environ['PATH'] = oldpath
-		self.assertEquals(exists, True)
+		self.assertEquals(exists, False)
 
 	@unittest.skip("Not sure if this is a good test")
 	def testTracCreate(self):

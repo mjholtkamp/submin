@@ -3,6 +3,10 @@ import commands
 import sys
 import unittest
 
+submin_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+path = os.path.realpath(submin_root)
+sys.path.insert(0, path)
+
 if "--help" in sys.argv or "-h" in sys.argv:
 	print "Usage: %s [--no-coverage] [--help|-h]" % sys.argv[0]
 	print
@@ -24,7 +28,7 @@ if "--no-coverage" not in sys.argv:
 	try:
 		import coverage
 		use_coverage = True
-		cov = coverage.coverage(cover_pylib=False, omit="/", include=["submin/*"])
+		cov = coverage.coverage(cover_pylib=False, source=['submin'], include=['*.py'], omit=['unittests.py'])
 		# ignore never executed statements
 		cov.exclude("if False:")
 		cov.exclude('if __name__ == .__main__.:')
@@ -38,33 +42,36 @@ else:
 	idx = sys.argv.index("--no-coverage")
 	del sys.argv[idx]
 
-def testfiles():
+def _testfiles():
 	for root, dirs, files in os.walk('submin'):
 		if 'unittests.py' in files:
 			yield os.path.join(root, 'unittests.py')
 
 		if 'tests' in dirs:
-			dirs = []
 			for f in os.listdir(os.path.join(root, 'tests')):
 				if f.endswith('.py') and f != '__init__.py':
 					yield os.path.join(root, 'tests', f)
 
+def testfiles(paths):
+	for f in _testfiles():
+		for p in paths:
+			if f.startswith(p):
+				yield f
+				continue
+
 def main():
 	libprefix = "submin"
-	paths = libprefix
+	paths = [libprefix]
 	if len(sys.argv) > 1:
-		paths = ''
-		for path in sys.argv[1:]:
-			paths += "%s " % (path.startswith(libprefix) and path or os.path.join(libprefix, path))
+		paths = sys.argv[1:]
 
-	# Most modules assume they have lib in the import-path.
 	sys.path.insert(0, libprefix)
 
 	if use_coverage:
 		cov.start() # Starting here to avoid bin/runtest to show up in coverage-report
 
 	suite = unittest.TestSuite()
-	for file in testfiles():
+	for file in testfiles(paths):
 		file = os.path.normpath(file)
 		print "Adding %s to the test-suite" % file
 
