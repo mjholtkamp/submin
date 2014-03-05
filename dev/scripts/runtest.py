@@ -38,6 +38,17 @@ else:
 	idx = sys.argv.index("--no-coverage")
 	del sys.argv[idx]
 
+def testfiles():
+	for root, dirs, files in os.walk('submin'):
+		if 'unittests.py' in files:
+			yield os.path.join(root, 'unittests.py')
+
+		if 'tests' in dirs:
+			dirs = []
+			for f in os.listdir(os.path.join(root, 'tests')):
+				if f.endswith('.py') and f != '__init__.py':
+					yield os.path.join(root, 'tests', f)
+
 def main():
 	libprefix = "submin"
 	paths = libprefix
@@ -46,9 +57,6 @@ def main():
 		for path in sys.argv[1:]:
 			paths += "%s " % (path.startswith(libprefix) and path or os.path.join(libprefix, path))
 
-	cmd = "find %s -name unittests.py" % paths
-	(exitstatus, outtext) = commands.getstatusoutput(cmd)
-
 	# Most modules assume they have lib in the import-path.
 	sys.path.insert(0, libprefix)
 
@@ -56,7 +64,7 @@ def main():
 		cov.start() # Starting here to avoid bin/runtest to show up in coverage-report
 
 	suite = unittest.TestSuite()
-	for file in outtext.split('\n'):
+	for file in testfiles():
 		file = os.path.normpath(file)
 		print "Adding %s to the test-suite" % file
 
