@@ -31,13 +31,13 @@ def options():
 def url_path(key):
 	return Path(value(key), append_slash=True)
 
-def env_path(key=None):
+def env_path(key=None, default=None):
 	from submin.bootstrap import settings # for base_dir
 	base = Path(os.path.normpath(settings.base_dir))
 	if key == None:
 		return base
 
-	path = Path(value(key))
+	path = Path(value(key, default=default))
 	if path.absolute:
 		return path
 
