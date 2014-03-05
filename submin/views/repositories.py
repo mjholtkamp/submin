@@ -76,6 +76,7 @@ class Repositories(View):
 		vcs_url_error_msgs = {
 				"git": "Please make sure both git_user and git_ssh_host settings are set",
 				"svn": "base_url_svn not set in config",
+				"mock": "Please make sure both mock_dir and base_url_mock are set",
 		}
 
 		try:
