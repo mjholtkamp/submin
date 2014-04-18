@@ -80,6 +80,13 @@ Usage:
 			file(fname, 'w').write(evaluate(template % name, self.init_vars))
 			generated.append(fname)
 
+		basename = str(self.env + 'conf' + 'apache-2.4-%s.conf')
+		self.init_vars['apache_2_4'] = True
+		for name in generate_configs:
+			fname = basename % name
+			file(fname, 'w').write(evaluate(template % name, self.init_vars))
+			generated.append(fname)
+
 		print 'Apache files created:\n', '\n'.join(generated)
 
 		print '''
