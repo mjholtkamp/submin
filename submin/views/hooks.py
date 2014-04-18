@@ -48,6 +48,13 @@ class Hooks(View):
 		self.vcs_type, self.repo = path
 
 		errormsgs = []
+
+		# migration from inconsistent usage of extension
+		if self.repo.endswith('.git'):
+			self.repo = self.repo[:-4]
+			errormsgs.append(
+				'Please let the submin administrator know to run diagnostics')
+
 		self.env_copy = os.environ.copy()
 		self.env_copy['PATH'] = options.value('env_path', '/bin:/usr/bin')
 		trac_dir = options.env_path('trac_dir')
@@ -55,7 +62,12 @@ class Hooks(View):
 		self.trac_env = trac_dir + self.repo
 
 		oldwd = os.getcwd()
-		os.chdir(repo_dir)
+		try:
+			os.chdir(repo_dir)
+		except OSError, e:
+			return {'errormsgs': ['Directory does not exist', str(e),
+					'Please check Submin diagnostics'], 'success': False}
+
 		for jobid, lines in jobs(self.vcs_type, self.repo, 'trac-sync'):
 			job_succeeded = True
 

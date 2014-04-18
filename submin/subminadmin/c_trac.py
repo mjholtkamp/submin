@@ -2,6 +2,7 @@ import os
 import sys
 import commands
 import shutil
+import re
 
 SYSTEM_ENV_LINES = """
 # Added by submin2-admin trac init
@@ -99,6 +100,12 @@ Usage:
 			xml = response.read()
 			if not 'success="True"' in xml:
 				print('Failed to sync:\n%s' % xml)
+			# TODO: don't process XML with regexps...
+			messages = re.sub('.*<errormsgs>(.*)</errormsgs>.*', '\\1', xml, flags=re.DOTALL)
+			messages = re.sub('<msg>(.*)</msg>', '\\1\n', messages)
+			if "" != messages:
+				print('WARNING: Synced, but got some messages:\n%s' % messages)
+
 
 	def generate_Xgi_script(self, src, dst):
 		"""Copy CGI/FCGI/WSGI script with small adjustments
