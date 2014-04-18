@@ -6,7 +6,7 @@ You are receiving this email because someone requested a password reset for
 your account. If you don't know what this is about, you can safely ignore it,
 the reset request will expire automatically.
 
-If you requested this passwod reset, you can reset your password by going to
+If you requested this password reset, you can reset your password by going to
 the following URL:
 
 [val http_vhost][val base_url]password/[val username]/[val key]
