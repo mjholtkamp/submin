@@ -58,7 +58,11 @@ def url(reposname):
 	git_user = options.value("git_user")
 	git_host = options.value("git_ssh_host")
 	git_port = options.value("git_ssh_port")
-	return 'ssh://%s@%s:%s/%s.git' % (git_user, git_host, git_port, reposname)
+	if git_port == "22":
+		git_port = ""
+	else:
+		git_port = ":%s" % git_port
+	return 'ssh://%s@%s%s/%s.git' % (git_user, git_host, git_port, reposname)
 
 def directory(reposname):
 	# FIXME: encoding?
