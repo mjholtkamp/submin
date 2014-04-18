@@ -25,7 +25,7 @@ def list():
 		except PermissionError:
 			status = "permission denied"
 
-		repositories.append({"name": r.display_name(), "status": status})
+		repositories.append({"name": r.name, "status": status})
 
 	return repositories
 
@@ -36,16 +36,14 @@ def _repositoriesOnDisk():
 	for rep in reps:
 		if os.path.isdir(rep):
 			name = rep[rep.rfind('/') + 1:]
+			name = name[:-4] # chop off '.git'
 			repositories.append(unicode(name, 'utf-8'))
 
 	return repositories
 
 def add(name):
 	"""Create a new repository with name *name*"""
-	if not name.endswith(".git"):
-		name += ".git"
-	reposdir = options.env_path('git_dir') + name
-	# FIXME: reposdir encoding?
+	reposdir = directory(name)
 	if os.path.exists(str(reposdir)):
 		raise PermissionError("Could not create %s, already exists." % name)
 
@@ -56,29 +54,38 @@ def add(name):
 			"External command 'GIT_DIR=\"%s\" git --bare init' failed: %s" % \
 					(name, e))
 
+def url(reposname):
+	git_user = options.value("git_user")
+	git_host = options.value("git_ssh_host")
+	git_port = options.value("git_ssh_port")
+	return 'ssh://%s@%s:%s/%s.git' % (git_user, git_host, git_port, reposname)
+
+def directory(reposname):
+	# FIXME: encoding?
+	base_dir = options.env_path('git_dir')
+	reposdir = base_dir + (reposname + '.git')
+	# We could use realpath to check, but we don't want to prevent usage of
+	# symlinks in their git directory
+	if not os.path.normpath(reposdir).startswith(os.path.normpath(base_dir)):
+		raise Exception('Git directory outside base path');
+
+	return reposdir
+
+
 class Repository(object):
 	"""Internally, this class uses unicode to represent files and directories.
 It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 
 	def __init__(self, name):
 		self.name = name
-		if not self.name.endswith(".git"):
-			self.name += ".git"
+		self.dir = directory(name)
 
-		reposdir = options.env_path('git_dir')
-		# FIXME: reposdir encoding?
-		self.dir = reposdir + self.name
-		self.url = str(reposdir + self.name)
-
-		if not os.path.exists(str(self.dir)):
+		if not self.dir.exists():
 			raise DoesNotExistError(str(self.dir))
 
 		self.initialized = False
 		self.dirs = self.branches()
 		self.initialized = True
-
-	def display_name(self):
-		return self.name[:-4]
 
 	def branches(self):
 		dirname = str(self.dir + "refs" + "heads" + "*")
@@ -124,7 +131,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 
 	def commitEmailsEnabled(self):
 		"""Returns True if sending of commit messages is enabled."""
-		hookdir = options.env_path('git_dir') + self.name + 'hooks'
+		hookdir = directory(self.name) + 'hooks'
 		hook = hookdir + 'post-receive.d' + '001-commit-email.hook'
 		old_hook = hookdir + 'post-receive'
 		return os.path.exists(hook) or (
@@ -141,9 +148,9 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 
 	def tracCommitHookEnabled(self):
 		"""Returns True if trac sync is enabled."""
-		hookdir = options.env_path('git_dir') + self.name + 'hooks'
+		hookdir = directory(self.name) + 'hooks'
 		hook = hookdir + 'post-receive.d' + '002-trac-sync.hook'
 		return os.path.exists(hook)
 
 	def __str__(self):
-		return self.display_name()
+		return self.name

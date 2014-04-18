@@ -55,6 +55,20 @@ def add(name):
 	repos = Repository(name)
 #	repos.changeNotifications(True)
 
+def url(reposname):
+	return str(options.url_path('base_url_svn') + reposname)
+
+def directory(reposname):
+	# FIXME: encoding?
+	base_dir = options.env_path('svn_dir')
+	reposdir = base_dir + reposname
+	# We could use realpath to check, but we don't want to prevent usage of
+	# symlinks in their svn directory
+	if not os.path.normpath(reposdir).startswith(os.path.normpath(base_dir)):
+		raise Exception('Subversion directory outside base path');
+
+	return reposdir
+
 
 class Repository(object):
 	"""Internally, this class uses unicode to represent files and directories.
@@ -73,14 +87,10 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		self.trac_signature = "### SUBMIN TRAC AUTOCONFIG, DO NOT ALTER FOLLOWING LINE ###\n"
 
 		reposdir = options.env_path('svn_dir')
-		self.url = str(reposdir + self.name)
 
 		self.initialized = False
 		self.dirs = self.subdirs("")
 		self.initialized = True
-
-	def display_name(self):
-		return self.name
 
 	def subdirs(self, path):
 		'''Return subdirs (not recursive) of 'path' relative to our reposdir
@@ -102,10 +112,10 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 
 	def get_entries(self, path):
 		# lots of conversions from and to utf-8
-		self.url = os.path.normpath(self.url)
-		root_path_utf8 = repos.svn_repos_find_root_path(self.url)
+		disk_url = directory(self.name)
+		root_path_utf8 = repos.svn_repos_find_root_path(disk_url)
 		if root_path_utf8 is None or not os.path.exists(root_path_utf8):
-			raise DoesNotExistError
+			raise DoesNotExistError(disk_url)
 
 		try:
 			repository = repos.svn_repos_open(root_path_utf8)

@@ -43,11 +43,11 @@ class RepositoryTests(unittest.TestCase):
 
 		# now make some repositories
 		self.repositories = [
-			{'name': 'foo', 'display_name': 'foo', 'status': 'ok', 'vcs': 'svn'},
-			{'name': 'invalidperm', 'display_name': 'invalidperm', 'status': 'permission denied', 'vcs': 'svn'},
-			{'name': 'invalidperm2', 'display_name': 'invalidperm2', 'status': 'permission denied', 'vcs': 'svn'},
-			{'name': 'example', 'display_name': 'example', 'status': 'ok', 'vcs': 'svn'},
-			{'name': 'subdirs', 'display_name': 'subdirs', 'status': 'ok', 'vcs': 'svn'},
+			{'name': 'foo', 'status': 'ok', 'vcs': 'svn'},
+			{'name': 'invalidperm', 'status': 'permission denied', 'vcs': 'svn'},
+			{'name': 'invalidperm2', 'status': 'permission denied', 'vcs': 'svn'},
+			{'name': 'example', 'status': 'ok', 'vcs': 'svn'},
+			{'name': 'subdirs', 'status': 'ok', 'vcs': 'svn'},
 		]
 		self.has_invalidperm = False
 		self.has_invalidperm2 = False

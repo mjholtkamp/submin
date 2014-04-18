@@ -120,7 +120,7 @@ class SubminAdminConfig(unittest.TestCase):
 		self.assertTrue('42' in output)
 
 	def testDefaults(self):
-		expected = [(u'database_version', u'9'), (u'auth_type', u'sql'),
+		expected = [(u'database_version', u'10'), (u'auth_type', u'sql'),
 				(u'svn_dir', u'svn'), (u'git_dir', u'git'),
 				(u'env_path', u'/bin:/usr/bin:/usr/local/bin:/opt/local/bin'),
 				(u'dir_bin', u'static/bin'),(u'base_url_trac', u'/trac'),

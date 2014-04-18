@@ -7,7 +7,7 @@ from submin.auth.decorators import acl_required, Unauthorized
 from submin.common.execute import check_output
 from submin.models.hookjobs import jobs, done as job_done
 from submin.models.trac import trac_admin_command
-from submin.models import options
+from submin.models import options, repository
 
 class Hooks(View):
 	def handler(self, req, path):
@@ -46,13 +46,12 @@ class Hooks(View):
 			return {'errormsgs': ['wrong path']}
 
 		self.vcs_type, self.repo = path
-		repo_git = self.repo + '.git'
 
 		errormsgs = []
 		self.env_copy = os.environ.copy()
 		self.env_copy['PATH'] = options.value('env_path', '/bin:/usr/bin')
 		trac_dir = options.env_path('trac_dir')
-		repo_dir = options.env_path('git_dir') + repo_git
+		repo_dir = repository.directory(self.vcs_type, self.repo)
 		self.trac_env = trac_dir + self.repo
 
 		oldwd = os.getcwd()

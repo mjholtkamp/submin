@@ -50,9 +50,6 @@ def run(reposname):
 		raise UpdateFailed(msg)
 
 def update_notification(reposname, user_notifications):
-	if not reposname.endswith('.git'):
-		reposname += '.git'
-
 	emails = []
 	for u_n in user_notifications:
 		u, u_notif = u_n
@@ -65,7 +62,7 @@ def update_notification(reposname, user_notifications):
 	emails = set(emails)
 
 	# set git config
-	cfg = options.env_path('git_dir') + reposname + 'config'
+	cfg = repository.directory('git', reposname) + 'config'
 
 	if len(emails) > 0:
 		val = ','.join(emails)

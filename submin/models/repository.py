@@ -27,13 +27,17 @@ def userHasReadPermissions(username, reposname, vcs):
 def _userHasReadPermissions(perms, reposname, vcs):
 	for perm in perms:
 		name = reposname
-		if vcs == 'git' and not name.endswith('.git'):
-			name += '.git'
 		if perm['repository'] != name or perm['vcs'] != vcs:
 			continue
 		if perm['permission'] in ('r', 'rw'):
 			return True
 	return False
+
+def url(vcs_type, reposname):
+	return models.vcs.get(vcs_type, "repository").url(reposname)
+
+def directory(vcs_type, reposname):
+	return models.vcs.get(vcs_type, "repository").directory(reposname)
 
 
 class Repository(object):
@@ -84,16 +88,13 @@ class Repository(object):
 		self.repository = vcs.Repository(repositoryname)
 
 		if hasattr(self.repository, "name"):
-			# for example, we may want to add .git to repo.name, and leave the
-			# .git part off the display_name
 			self.name = self.repository.name
 
 	def vcs_display_name(self):
 		return _vcs_display_name(self.vcs_type)
 
-	def display_name(self):
-		"""Returns the human-readable name of the repository *repo*"""
-		return self.repository.display_name()
+	def url(self):
+		return url(self.vcs_type, self.name)
 
 	def remove(self):
 		"""Removes a Repository from disk (NO UNDO)"""
@@ -118,16 +119,14 @@ class Repository(object):
 			enable = False
 
 		if enable:
-			# another inconsistent usage of .git/not .git.. (ticket #296)
-			trac_name = self.name.replace('.git', '')
 			try:
-				trac = Trac(trac_name)
+				trac = Trac(self.name)
 			except UnknownTrac:
 				enable = False
 
 		self.repository.enableTracCommitHook(enable)
 
-		trigger_hook('repository-notifications-update', 
+		trigger_hook('repository-notifications-update',
 				repositoryname=self.name, vcs_type=self.vcs_type)
 
 	def commitEmailsEnabled(self):
@@ -152,8 +151,12 @@ as some secondary tasks.
 * add(name)
 	Create a new repository with name *name*
 
-* repo.display_name()
-	Returns the human-readable name of the repository *repo*
+* url(repo)
+	Returns the URL where repository *repo* can be reached (using their own
+	method).
+
+* directory(repo)
+	Returns the directory where repository *repo* can be found on disk.
 
 * repo.remove(name)
 	Removes repository *repo*

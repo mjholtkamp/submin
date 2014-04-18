@@ -3,12 +3,10 @@ import sys
 import commands
 
 from submin.models import options
+from submin.models import repository
 
-def run(reponame):
-	if not reponame.endswith(".git"):
-		reponame += ".git"
-
-	reposdir = options.env_path('git_dir') + reponame
+def run(reposname):
+	reposdir = repository.directory('git', reposname)
 
 	old_path = os.environ["PATH"]
 	os.environ["PATH"] = options.value("env_path")

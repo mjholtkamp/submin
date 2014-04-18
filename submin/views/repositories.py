@@ -66,11 +66,8 @@ class Repositories(View):
 				templatevars['trac_msg'] = \
 					'There is something missing in your config: %s' % str(e)
 
-			# this chops off the .git for git repositories, not for svn
-			repos_name = repos.name.replace(".git", "")
-
 			trac_base_url = options.url_path('base_url_trac')
-			trac_http_url = str(trac_base_url + repos_name)
+			trac_http_url = str(trac_base_url + repos.name)
 			templatevars['trac_http_url'] = trac_http_url
 
 		vcs_url_error_msgs = {
@@ -80,7 +77,7 @@ class Repositories(View):
 		}
 
 		try:
-			vcs_url = self.get_url(repos)
+			vcs_url = repos.url()
 		except UnknownKeyError:
 			vcs_url = ""
 			templatevars['vcs_url_error'] = vcs_url_error_msgs[repos.vcs_type]
@@ -90,16 +87,6 @@ class Repositories(View):
 		templatevars['vcs_type'] = vcs_type
 		formatted = evaluate_main('repositories.html', templatevars, request=req)
 		return Response(formatted)
-
-	def get_url(self, repos):
-		if repos.vcs_type == 'git':
-			git_user = options.value("git_user")
-			git_host = options.value("git_ssh_host")
-			git_port = options.value("git_ssh_port")
-			return  'ssh://%s@%s:%s/%s' % (git_user, git_host, git_port, repos.name)
-
-		vcs_base_url = options.url_path('base_url_%s' % repos.vcs_type)
-		return str(vcs_base_url + repos.name)
 
 	def showAddForm(self, req, reposname, errormsg=''):
 		templatevars = {}
@@ -283,14 +270,15 @@ class Repositories(View):
 	@admin_required
 	def removeRepository(self, req, repos):
 		repos.remove()
-		return XMLStatusResponse('removeRepository', True, 'Repository %s deleted' % repos.name)
+		return XMLStatusResponse('removeRepository', True,
+				'Repository %s deleted' % repos.name)
 
 	@admin_required
 	def tracEnvCreate(self, req, repos):
-		repos_name = repos.name.replace(".git", "")
 		asking_user = user.User(req.session['user']['name'])
-		createTracEnv(repos_name, asking_user)
-		return XMLStatusResponse('tracEnvCreate', True, 'Trac environment "%s" created.' % repos_name)
+		createTracEnv(repos.name, asking_user)
+		return XMLStatusResponse('tracEnvCreate', True,
+				'Trac environment "%s" created.' % repos.name)
 
 	def ajaxhandler(self, req, path):
 		reposname = ''

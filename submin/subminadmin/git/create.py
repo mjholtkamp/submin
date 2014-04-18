@@ -7,11 +7,11 @@ import shutil
 from submin.common import shellscript
 from submin.models import options, repository
 
-from common import git_dirname, rewrite_hook
+from common import rewrite_hook
 import post_receive_hook
 
 def run(reponame):
-	reposdir = git_dirname(reponame)
+	reposdir = repository.directory('git', reponame)
 
 	old_path = os.environ["PATH"]
 	os.environ["PATH"] = options.value("env_path")

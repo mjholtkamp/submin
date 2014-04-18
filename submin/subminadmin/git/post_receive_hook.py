@@ -6,13 +6,13 @@ import errno
 from submin.models import options, repository
 from submin.template.shortcuts import evaluate
 from submin.common.osutils import mkdirs
-from common import git_dirname, set_git_config, SetGitConfigError
+from common import set_git_config, SetGitConfigError
 from common import rewrite_hook, signature
 from submin.common import shellscript
 
 HOOK_VERSIONS = {
 	'commit-email': 5,
-	'trac-sync': 4,
+	'trac-sync': 5,
 }
 
 def prepare(reponame):
@@ -22,10 +22,7 @@ def prepare(reponame):
 
 	This makes it possible to have multiple (post-receive) hooks.
 	"""
-	if not reponame.endswith(".git"):
-		reponame += ".git"
-
-	hook_dir = options.env_path('git_dir') + reponame + 'hooks'
+	hook_dir = repository.directory('git', reponame) + 'hooks'
 
 	# Make sure multiplexer script is in place. It should be a shell script
 	# that calls the actual real script. The old situation is that the
@@ -43,12 +40,9 @@ def prepare(reponame):
 	mkdirs(hook_dir + 'post-receive.d', mode=0755)
 
 def setCommitEmailHook(reponame, enable):
-	if not reponame.endswith(".git"):
-		reponame += ".git"
-
 	prepare(reponame)
 
-	reposdir = options.env_path('git_dir') + reponame
+	reposdir = repository.directory('git', reponame)
 	hook_dir = reposdir + 'hooks' + 'post-receive.d'
 	mkdirs(hook_dir)
 	hook_dest = hook_dir + '001-commit-email.hook'
@@ -76,10 +70,12 @@ def setCommitEmailHook(reponame, enable):
 			raise repository.PermissionError(
 				"Enabling hook failed: %s" % (str(e),))
 		try:
-			cfg = options.env_path('git_dir') + reponame + 'config'
-			email = options.value('commit_email_from', 'Please configure commit_email_from <noreply@example.net>')
+			cfg = repository.directory('git', reponame) + 'config'
+			email = options.value('commit_email_from',
+				'Please configure commit_email_from <noreply@example.net>')
+
 			set_git_config(cfg, 'multimailhook.emailmaxlines', '2000')
-			prefix = '[%s]' % reponame.replace('.git', '')
+			prefix = '[%s]' % reponame
 			set_git_config(cfg, 'multimailhook.emailprefix', prefix)
 			set_git_config(cfg, 'multimailhook.envelopesender', email)
 		except SetGitConfigError, e:
@@ -97,7 +93,7 @@ def setCommitEmailHook(reponame, enable):
 def setTracSyncHook(reponame, enable):
 	prepare(reponame)
 
-	hook_dir = git_dirname(reponame) + 'hooks'
+	hook_dir = repository.directory('git', reponame) + 'hooks'
 	hook = hook_dir + 'post-receive.d' + '002-trac-sync.hook'
 
 	try:

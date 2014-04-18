@@ -29,7 +29,7 @@ def rewrite_hook(reponame, hookname, targetname,
 	else:
 		repositories = [x['name'] for x in repository.Repository.list_all() if x['vcs'] == 'git']
 	for reponame in repositories:
-		reposdir = git_dirname(reponame)
+		reposdir = repository.directory('git', reponame)
 		backup_old_hook(reposdir, hookname)
 		enable_hook(reposdir, hookname, targetname, interpreter, args)
 
@@ -53,9 +53,4 @@ def enable_hook(reposdir, hookname, targetname,
 		return
 
 	shellscript.rewriteWithSignature(hook, signature, new_hook, True, mode=0755)
-
-def git_dirname(reponame):
-	if not reponame.endswith('.git'):
-		reponame += '.git'
-	return options.env_path('git_dir') + reponame
 

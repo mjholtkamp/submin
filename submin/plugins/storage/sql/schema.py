@@ -5,6 +5,36 @@ schema are first in the list. The first entry in this list is always the
 current schema version.
 """
 sql_scripts = [
+	(10, """-- first fix the unique contraint on permissions
+		DROP TABLE IF EXISTS permissions_tmp;
+
+		CREATE TABLE permissions_tmp (
+			repository     text,
+			repositorytype text,
+			path           text not null,
+			subjecttype    text not null,   -- user, group or all
+			subjectid      integer,         -- only null if subjecttype is all
+			type           text default '', -- '', 'r' or 'rw'
+			UNIQUE(repository, repositorytype, path, subjecttype, subjectid)
+		);
+
+		INSERT INTO permissions_tmp (repository, repositorytype, path, subjecttype, subjectid, type)
+			SELECT repository, repositorytype, path, subjecttype, subjectid, type FROM permissions;
+
+		ALTER TABLE permissions RENAME TO permissions_old;
+		ALTER TABLE permissions_tmp RENAME TO permissions;
+		DROP TABLE permissions_old;
+
+		-- now that the contraint is fixed, get rid of .git extensions
+		UPDATE permissions
+		SET repository = substr(repository, 1, length(repository) - 4)
+		WHERE repositorytype = 'git' AND repository LIKE '%.git';
+
+		-- do notifications as well
+		UPDATE notifications
+		SET repository = substr(repository, 1, length(repository) - 4)
+		WHERE repositorytype = 'git' AND repository LIKE '%.git';
+	"""),
 	(9, """CREATE TABLE hook_jobs (
 			jobid            integer primary key autoincrement,
 			repository       text not null,

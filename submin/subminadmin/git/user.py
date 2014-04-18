@@ -3,6 +3,7 @@ import sys
 import pprint
 
 from submin.models import permissions
+from submin.models import repository
 from submin.models import options
 from submin.models import user
 
@@ -35,6 +36,7 @@ def run(username):
 	# git 1.5 adds a slash?
 	if repo[0] == '/':
 		repo = repo[1:]
+	repo = repo[:-4] # remove '.git'
 	sub_cmd = cmd[4:]
 
 	u = user.User(username)
@@ -60,7 +62,7 @@ def run(username):
 	os.environ["SUBMIN_USERNAME"] = username
 	os.environ["SUBMIN_REPO"] = repo
 
-	repo_path = options.env_path('git_dir') + repo
+	repo_path = repository.directory('git', repo)
 	print >>sys.stderr, "Original command: %s" % orig_cmd
 	print >>sys.stderr, "executing git-%s '%s'" % (sub_cmd, repo_path)
 	# XXX: retreive git-path from options.
