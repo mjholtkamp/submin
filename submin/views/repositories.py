@@ -8,9 +8,9 @@ from submin.models import group
 from submin.models import permissions
 from submin.models import repository
 from submin.models.repository import Repository, DoesNotExistError, PermissionError
-from submin.models.trac import Trac, UnknownTrac, createTracEnv, MissingConfig
+from submin.models import trac
 from submin.models import options
-from submin.models.exceptions import UnknownKeyError
+from submin.models.exceptions import MissingConfig
 from submin.models.repository import vcs_list
 from submin.auth.decorators import login_required, admin_required
 from submin.path.path import Path
@@ -57,10 +57,8 @@ class Repositories(View):
 			templatevars['trac_config_ok'] = True
 			templatevars['trac_exists'] = False
 			try:
-				trac = Trac(path[0])
-				templatevars['trac_exists'] = True
-			except UnknownTrac, e:
-				pass
+				if trac.exists(path[0]):
+					templatevars['trac_exists'] = True
 			except MissingConfig, e:
 				templatevars['trac_config_ok'] = False
 				templatevars['trac_msg'] = \
@@ -70,17 +68,11 @@ class Repositories(View):
 			trac_http_url = str(trac_base_url + repos.name)
 			templatevars['trac_http_url'] = trac_http_url
 
-		vcs_url_error_msgs = {
-				"git": "Please make sure both git_user and git_ssh_host settings are set",
-				"svn": "base_url_svn not set in config",
-				"mock": "Please make sure both mock_dir and base_url_mock are set",
-		}
-
 		try:
 			vcs_url = repos.url()
-		except UnknownKeyError:
+		except MissingConfig, e:
 			vcs_url = ""
-			templatevars['vcs_url_error'] = vcs_url_error_msgs[repos.vcs_type]
+			templatevars['vcs_url_error'] = str(e)
 
 		templatevars['vcs_url'] = vcs_url
 		templatevars['repository'] = repos
@@ -276,7 +268,7 @@ class Repositories(View):
 	@admin_required
 	def tracEnvCreate(self, req, repos):
 		asking_user = user.User(req.session['user']['name'])
-		createTracEnv(repos.vcs_type, repos.name, asking_user)
+		trac.create(repos.vcs_type, repos.name, asking_user)
 		return XMLStatusResponse('tracEnvCreate', True,
 				'Trac environment "%s" (%s) created.' %
 					(repos.name, repos.vcs_type))

@@ -20,7 +20,7 @@ def diagnostics():
 		results['trac_all'] = False
 		return results
 
-	results['installed_trac'] = trac.tracAdminExists()
+	results['installed_trac'] = trac.has_trac_admin()
 
 	results['trac_acl_hook'] = options.value('acl_hook', '') != ''
 	results['trac_acl_hook_recommendation'] = ', '.join(generate_acl_list())

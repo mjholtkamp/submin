@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
-from submin.path.path import Path
 import os
-from submin.unicode import uc_str, uc_to_svn, uc_from_svn
 import commands
 import exceptions
+
+from submin.path.path import Path
+from submin.unicode import uc_str, uc_to_svn, uc_from_svn
 from submin.common import shellscript
 from submin.models import options
+from submin.models.exceptions import UnknownKeyError, MissingConfig
 from submin.models.repository import DoesNotExistError, PermissionError, VersionError, VCSImportError
+
 from export import export_notifications
 
 display_name = "Subversion"
@@ -56,7 +59,10 @@ def add(name):
 #	repos.changeNotifications(True)
 
 def url(reposname):
-	return str(options.url_path('base_url_svn') + reposname)
+	try:
+		return str(options.url_path('base_url_svn') + reposname)
+	except UnknownKeyError, e:
+		raise MissingConfig('Please make sure base_url_svn is set in config')
 
 def directory(reposname):
 	# FIXME: encoding?

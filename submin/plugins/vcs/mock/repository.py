@@ -48,6 +48,12 @@ def add(name):
 
 	mkdirs(reposdir)
 
+def directory(name):
+	return name
+
+def url(name):
+	return name
+
 class Repository(object):
 	"""Internally, this class uses unicode to represent files and directories.
 It is converted to UTF-8 (or other?) somewhere in the dispatcher."""

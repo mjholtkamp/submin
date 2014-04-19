@@ -2,6 +2,7 @@ import os
 import glob
 import commands
 from submin.models import options
+from submin.models.exceptions import UnknownKeyError, MissingConfig
 from submin.models.repository import DoesNotExistError, PermissionError
 from submin.plugins.vcs.git import remote
 from submin.subminadmin.git.common import signature as hook_signature
@@ -55,9 +56,14 @@ def add(name):
 					(name, e))
 
 def url(reposname):
-	git_user = options.value("git_user")
-	git_host = options.value("git_ssh_host")
-	git_port = options.value("git_ssh_port")
+	try:
+		git_user = options.value("git_user")
+		git_host = options.value("git_ssh_host")
+	except UnknownKeyError, e:
+		raise MissingConfig(
+			'Please make sure both git_user and git_ssh_host settings are set')
+
+	git_port = options.value("git_ssh_port", "22")
 	if git_port == "22":
 		git_port = ""
 	else:

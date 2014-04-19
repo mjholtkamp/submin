@@ -6,7 +6,7 @@ from submin.dispatch.response import XMLTemplateResponse
 from submin.auth.decorators import acl_required, Unauthorized
 from submin.common.execute import check_output
 from submin.models.hookjobs import jobs, done as job_done
-from submin.models.trac import trac_admin_command
+from submin.models import trac
 from submin.models import options, repository
 
 class Hooks(View):
@@ -98,7 +98,7 @@ class Hooks(View):
 
 			for rev in revs.strip().split('\n'):
 				args = ['changeset', 'added', '(default)', rev]
-				output = trac_admin_command(self.trac_env, args)
+				output = trac.admin_command(self.trac_env, args)
 				if output:
 					return 'trac-admin %s: %s' % (' '.join(args), output)
 

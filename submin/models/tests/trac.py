@@ -17,7 +17,7 @@ from submin.models import options
 from submin.models import trac
 
 def trac_installed():
-	"""Simpeler test than trac.tracAdminExists"""
+	"""Simpeler test than trac.has_trac_admin"""
 	try:
 		subprocess.check_output(['which', 'trac-admin'])
 	except subprocess.CalledProcessError:
@@ -55,20 +55,20 @@ class TracTests(unittest.TestCase):
 		# Assumes trac-admin is actually installed, but since the rest of
 		# the tests need trac-admin, this is not a big problem IMHO.
 		# -- Michiel
-		self.assertEquals(trac.tracAdminExists(), True)
+		self.assertEquals(trac.has_trac_admin(), True)
 
 	@unittest.skipUnless(has_trac, "No Trac found, can't run tests")
 	def testNotExists(self):
 		options.set_value('env_path', '')
-		exists = trac.tracAdminExists()
+		exists = trac.has_trac_admin()
 		self.assertEquals(exists, False)
 
 	@unittest.skip("Not sure if this is a good test")
 	def testTracCreate(self):
 		mock_admin = Mock()
 		mock_admin.is_admin = True
-		mock_admin.name = "admin"
-		trac.createTracEnv("test", mock_admin)
+		mock_admin.name = 'admin'
+		trac.create('test', 'svn', mock_admin)
 
 if __name__ == "__main__":
 	unittest.main()

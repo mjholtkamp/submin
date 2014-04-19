@@ -7,6 +7,9 @@ class UnknownKeyError(Exception):
 	"""Used in Options whenever a value is requested of a key that does not exist"""
 	pass
 
+class MissingConfig(Exception):
+	pass
+
 
 ####### Storage exceptions ###################################################
 
@@ -60,3 +63,4 @@ class SendEmailError(Exception):
 class InvalidPermissionError(Exception):
 	"""Permission is not valid for this vcs"""
 	pass
+

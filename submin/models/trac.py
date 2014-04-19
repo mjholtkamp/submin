@@ -1,18 +1,11 @@
-import exceptions
-import subprocess
 import os
 import errno
+import subprocess
+
 from submin.models import options
-from submin.models.exceptions import UnknownKeyError
+from submin.models.exceptions import MissingConfig
 from submin.common.execute import check_output
 from submin.common.osutils import mkdirs
-
-class UnknownTrac(Exception):
-	def __init__(self, name):
-		Exception.__init__(self, "Could not find trac env '%s'" % name)
-
-class MissingConfig(Exception):
-	pass
 
 class TracAdminError(Exception):
 	def __init__(self, cmd, exitstatus, outtext):
@@ -24,7 +17,7 @@ class TracAdminError(Exception):
 				(cmd, exitstatus, outtext))
 
 # trac components to enable for each vcs type
-trac_vcs_components = {
+_trac_vcs_components = {
 	'git': [
 		'tracopt.versioncontrol.git.git_fs.csetpropertyrenderer',
 		'tracopt.versioncontrol.git.git_fs.gitconnector',
@@ -38,40 +31,32 @@ trac_vcs_components = {
 	]
 }
 
-def tracBaseDir():
-	try:
-		basedir = options.env_path('trac_dir')
-	except UnknownKeyError:
-		raise MissingConfig('No Trac directory specified in options')
 
-	return basedir
-
-def createTracEnv(vcs_type, reposname, adminUser):
+def create(vcs_type, reposname, adminUser):
 	from submin.models.repository import directory as repodir
-	basedir = tracBaseDir()
+	basedir = options.env_path('trac_dir')
 	mkdirs(str(basedir))
 
 	tracenv = basedir + reposname
 	projectname = reposname
 	vcsdir = repodir(vcs_type, reposname)
 
-	trac_admin_command(tracenv,
+	admin_command(tracenv,
 			['initenv', projectname, 'sqlite:db/trac.db', vcs_type, vcsdir])
-	trac_admin_command(tracenv,
-			['permission', 'add', adminUser.name, "TRAC_ADMIN"])
+	admin_command(tracenv, ['permission', 'add', adminUser.name, "TRAC_ADMIN"])
 
 	components = [
 		'tracopt.ticket.commit_updater.committicketreferencemacro',
 		'tracopt.ticket.commit_updater.committicketupdater',
 	]
 
-	components.extend(trac_vcs_components[vcs_type])
+	components.extend(_trac_vcs_components[vcs_type])
 
 	for component in components:
-		trac_admin_command(tracenv,
+		admin_command(tracenv,
 			['config', 'set', 'components', component, 'enabled'])
 
-def trac_admin_command(trac_dir, args):
+def admin_command(trac_dir, args):
 	"""trac_dir is the trac env dir, args is a list of arguments to trac-admin"""
 	cmd = ['trac-admin', trac_dir]
 	cmd.extend(args)
@@ -84,9 +69,9 @@ def trac_admin_command(trac_dir, args):
 	except subprocess.CalledProcessError, e:
 		raise TracAdminError(' '.join(cmd), e.returncode, e.output)
 
-def tracAdminExists():
+def has_trac_admin():
 	try:
-		trac_admin_command('/tmp', ['help'])
+		admin_command('/tmp', ['help'])
 	except OSError, e:
 		if e.errno == errno.ENOENT: # could not find executable
 			return False
@@ -94,11 +79,8 @@ def tracAdminExists():
 
 	return True
 
-class Trac(object):
-	def __init__(self, name):
-		self.name = name
-		self.basedir = tracBaseDir()
-
-		tracenv = str(self.basedir + self.name)
-		if not os.path.isdir(tracenv):
-			raise UnknownTrac(tracenv)
+def exists(name):
+	try:
+		return os.path.isdir(str(options.env_path('trac_dir') + name))
+	except UnknownKeyError, e:
+		raise MissingConfig('Please make sure "trac_dir" is set in the config')

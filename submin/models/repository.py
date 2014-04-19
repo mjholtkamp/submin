@@ -1,9 +1,10 @@
 import os
+
 from submin import models
 from submin.models import options
 from submin.models import permissions
+from submin.models import trac
 from submin.hooks.common import trigger_hook
-from submin.models.trac import Trac, UnknownTrac
 
 class DoesNotExistError(Exception):
 	pass
@@ -119,9 +120,7 @@ class Repository(object):
 			enable = False
 
 		if enable:
-			try:
-				trac = Trac(self.name)
-			except UnknownTrac:
+			if not trac.exists(self.name):
 				enable = False
 
 		self.repository.enableTracCommitHook(enable)
