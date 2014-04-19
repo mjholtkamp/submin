@@ -23,6 +23,21 @@ class TracAdminError(Exception):
 				"trac-admin '%s' exited with exit status %d. Output from the command: %s" % \
 				(cmd, exitstatus, outtext))
 
+# trac components to enable for each vcs type
+trac_vcs_components = {
+	'git': [
+		'tracopt.versioncontrol.git.git_fs.csetpropertyrenderer',
+		'tracopt.versioncontrol.git.git_fs.gitconnector',
+		'tracopt.versioncontrol.git.git_fs.gitwebprojectsrepositoryprovider'
+	],
+	'svn': [
+		'tracopt.versioncontrol.svn.svn_fs.subversionconnector',
+		'tracopt.versioncontrol.svn.svn_prop.subversionmergepropertydiffrenderer',
+		'tracopt.versioncontrol.svn.svn_prop.subversionmergepropertyrenderer',
+		'tracopt.versioncontrol.svn.svn_prop.subversionpropertyrenderer'
+	]
+}
+
 def tracBaseDir():
 	try:
 		basedir = options.env_path('trac_dir')
@@ -31,17 +46,30 @@ def tracBaseDir():
 
 	return basedir
 
-def createTracEnv(repository, adminUser):
+def createTracEnv(vcs_type, reposname, adminUser):
+	from submin.models.repository import directory as repodir
 	basedir = tracBaseDir()
 	mkdirs(str(basedir))
 
-	tracenv = basedir + repository
-	projectname = repository
-	svnbasedir = options.env_path('svn_dir')
-	svndir = svnbasedir + repository
+	tracenv = basedir + reposname
+	projectname = reposname
+	vcsdir = repodir(vcs_type, reposname)
 
-	trac_admin_command(tracenv, ['initenv', projectname, 'sqlite:db/trac.db', 'svn', svndir])
-	trac_admin_command(tracenv, ['permission', 'add', adminUser.name, "TRAC_ADMIN"])
+	trac_admin_command(tracenv,
+			['initenv', projectname, 'sqlite:db/trac.db', vcs_type, vcsdir])
+	trac_admin_command(tracenv,
+			['permission', 'add', adminUser.name, "TRAC_ADMIN"])
+
+	components = [
+		'tracopt.ticket.commit_updater.committicketreferencemacro',
+		'tracopt.ticket.commit_updater.committicketupdater',
+	]
+
+	components.extend(trac_vcs_components[vcs_type])
+
+	for component in components:
+		trac_admin_command(tracenv,
+			['config', 'set', 'components', component, 'enabled'])
 
 def trac_admin_command(trac_dir, args):
 	"""trac_dir is the trac env dir, args is a list of arguments to trac-admin"""

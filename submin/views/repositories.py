@@ -8,7 +8,7 @@ from submin.models import group
 from submin.models import permissions
 from submin.models import repository
 from submin.models.repository import Repository, DoesNotExistError, PermissionError
-from submin.models.trac import Trac, UnknownTrac, createTracEnv
+from submin.models.trac import Trac, UnknownTrac, createTracEnv, MissingConfig
 from submin.models import options
 from submin.models.exceptions import UnknownKeyError
 from submin.models.repository import vcs_list
@@ -276,9 +276,10 @@ class Repositories(View):
 	@admin_required
 	def tracEnvCreate(self, req, repos):
 		asking_user = user.User(req.session['user']['name'])
-		createTracEnv(repos.name, asking_user)
+		createTracEnv(repos.vcs_type, repos.name, asking_user)
 		return XMLStatusResponse('tracEnvCreate', True,
-				'Trac environment "%s" created.' % repos.name)
+				'Trac environment "%s" (%s) created.' %
+					(repos.name, repos.vcs_type))
 
 	def ajaxhandler(self, req, path):
 		reposname = ''
