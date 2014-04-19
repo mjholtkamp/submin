@@ -5,7 +5,7 @@
 				<li><label for="id_repository">Repository:</label> <input id="repository" class="rounded" type="text" name="repository" value="[val repository]" /></li>
 				<li><label>Repository type:</label>
 				<ul id="systems">[iter:systems
-					<li><input class="radio" type="radio" name="vcs" value="[ival]" id="vcs_[ival]" />
+					<li><input class="radio" type="radio" name="vcs" value="[ival]" id="vcs_[ival]" [test:!iindex checked]/>
 						<label for="vcs_[ival]">[ival]</label></li>]
 				</ul></li>
 				<li><input type="submit" name="submit" value="Create" /></li>
