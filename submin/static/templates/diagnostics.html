@@ -212,7 +212,8 @@
 						<div class="diag_note">
 							[test:diag.trac_acl_hook]
 							[else <p>The variable 'acl_hook' has not been set. It probably works on the defaults, but leaving it unconfigured can cause slow down during commits because of DNS resolving if trac sync is enabled.
-							We recommend setting the ACL like this: <span class="diag_cmd">submin2-admin [val subminenv] config set acl_hook <em>[val diag.trac_acl_hook_recommendation]</em></span>.</p>]
+							We recommend setting the ACL like this:</p>
+							<p><span class="diag_cmd">submin2-admin [val subminenv] config set acl_hook <em>[val diag.trac_acl_hook_recommendation]</em></span></p>]
 						</div>
 					</div>
 				</li>
@@ -223,7 +224,8 @@
 						<div class="diag_note">
 							[test:diag.trac_sync_access]
 							[else <p>Git hook does not have access to submin to sync trac.
-							Please make sure that the IP-address is in the ACL. Set it with: <span class="diag_cmd">submin2-admin [val subminenv] config set acl_hooks 127.0.0.1, ::1, <em>your_ip</em></span>.</p>
+							Please make sure that the IP-address is in the ACL. Set it with:</p>
+							<p><span class="diag_cmd">submin2-admin [val subminenv] config set acl_hooks <em>[val diag.trac_acl_hook_recommendation]</em></span></p>
 
 							<p>Error message: [val diag.trac_sync_access_msg].</p>]
 						</div>
