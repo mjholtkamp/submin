@@ -102,7 +102,14 @@
 							[else Could not issue admin commands, error message:
 <p>"[val diag.git_admin_test_errmsg]".</p>
 
-<p>Please check that git_ssh_host_internal, git_ssh_port and git_user are setup correctly. You can check this with: <span class="diag_cmd">submin2-admin [val subminenv] config get <em>value</em></span>. Next check that you can actually connect to SSH: <span class="diag_cmd">ssh <em>git_user</em>@<em>git_ssh_host_internal</em> -p <em>git_ssh_port</em> -i [val subminenv]/conf/id_dsa</span> (it should give a message like: <span class="diag_cmd">submin2-admin git admin is not supposed to be called by users.</span>)
+<h4>1) Check config</h4>
+<p>Please check that git_ssh_host_internal, git_ssh_port and git_user are setup correctly. You can check this with:</p>
+<p><span class="diag_cmd">submin2-admin [val subminenv] config get <em>value</em></span></p>
+
+<h4>2) Check if SSH can connect</h4>
+<p>Next check that you can actually connect to SSH:</p>
+<p><span class="diag_cmd">ssh <em>[val diag.git_user]</em>@<em>[val diag.git_ssh_host_internal]</em> -p <em>[val diag.git_ssh_port]</em> -i [val subminenv]/conf/id_dsa</span></p>
+<p>(it should give a message like: <span class="diag_cmd">submin2-admin git admin is not supposed to be called by users.</span>)
 </p>]
 						</div>
 					</div>

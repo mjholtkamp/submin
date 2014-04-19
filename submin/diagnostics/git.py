@@ -43,6 +43,10 @@ def diagnostics():
 	except (remote.NonZeroExitStatus, UnknownKeyError), e:
 		results['git_admin_test'] = False
 		results['git_admin_test_errmsg'] = str(e)
+		results['git_ssh_host_internal'] = options.value(
+			'git_ssh_host_internal', 'git_ssh_host_internal')
+		results['git_user'] = options.value('git_user', 'git_user')
+		results['git_ssh_port'] = options.value('git_ssh_port', 'git_ssh_port')
 	else:
 		results['git_admin_test'] = True
 
