@@ -36,38 +36,34 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 		)
 		os.environ['SUBMIN_ENV'] = cls.tmpdir
 
+	def setUp(self):
+		import c_apacheconf
+		sa = MagicMock()
+		sa.env = self.tmpdir
+		self.ac = c_apacheconf.c_apacheconf(sa, [])
+
 	@classmethod
 	def tearDownClass(cls):
 		os.system("rm -rf '%s'" % cls.tmpdir)
 
 	def testUrlPathEmpty(self):
-		import c_apacheconf
-		ac = c_apacheconf.c_apacheconf(None, [])
-		result = ac.urlpath('')
+		result = self.ac.urlpath('')
 		self.assertEquals(result, '/')
 
 	def testUrlPathSlash(self):
-		import c_apacheconf
-		ac = c_apacheconf.c_apacheconf(None, [])
-		result = ac.urlpath('/')
+		result = self.ac.urlpath('/')
 		self.assertEquals(result, '/')
 
 	def testUrlPathFullURL(self):
-		import c_apacheconf
-		ac = c_apacheconf.c_apacheconf(None, [])
-		result = ac.urlpath('http://www.example.com/')
+		result = self.ac.urlpath('http://www.example.com/')
 		self.assertEquals(result, '/')
 
 	def testUrlPathFullURLSubDir(self):
-		import c_apacheconf
-		ac = c_apacheconf.c_apacheconf(None, [])
-		result = ac.urlpath('http://www.example.com/submin/help')
+		result = self.ac.urlpath('http://www.example.com/submin/help')
 		self.assertEquals(result, '/submin/help')
 
 	def testUrlPathURLpath(self):
-		import c_apacheconf
-		ac = c_apacheconf.c_apacheconf(None, [])
-		result = ac.urlpath('/submin/')
+		result = self.ac.urlpath('/submin/')
 		self.assertEquals(result, '/submin')
 
 class SubminAdminQuit(unittest.TestCase):
