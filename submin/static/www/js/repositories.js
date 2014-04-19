@@ -517,7 +517,9 @@ function toggle_trac_commit_hookCB(response) {
 	id.checked = (enabled.toLowerCase() == "true");
 }
 
-function trac_env_create() {
+function trac_env_create(el) {
+	el.disabled = true;
+	el.value = 'Please wait...';
 	AjaxAsyncPostRequest(document.location, 'tracEnvCreate', trac_env_createCB);
 	return false;
 }

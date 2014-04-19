@@ -9,7 +9,7 @@
 				[test:trac_http_url <a class="external" href="[val trac_http_url]">[val trac_http_url]</a>]
 				[else <div class="comment">trac_base_url not set in config</div>]</span></li>]
 			[else
-				[test:trac_config_ok [test:session_user.is_admin <li><label>Trac Environment</label><span><input type="submit" value="Create" onclick="javascript:trac_env_create()"></span></li>]]]
+				[test:trac_config_ok [test:session_user.is_admin <li><label>Trac Environment</label><span><input type="submit" value="Create" onclick="trac_env_create(this)"></span></li>]]]
 			[test:trac_exists [test:trac_http_url
 				<li><label>Trac Permissions</label><span>
 						<a class="external" href="[val trac_http_url]admin/general/perm">[val trac_http_url]admin/general/perm</a>
