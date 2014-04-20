@@ -58,7 +58,7 @@ def have_trac_sync_access():
 	joburl = str(baseurl + 'hooks' + 'trac-sync')
 
 	try:
-		response = urllib2.urlopen(joburl, timeout=5)
+		response = urllib2.urlopen(joburl, timeout=2)
 	except urllib2.HTTPError, e:
 		raise SyncError('HTTP error: %s' % str(e))
 	except urllib2.URLError, e:
