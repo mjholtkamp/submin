@@ -253,6 +253,43 @@
 						</div>]
 					</div>
 				</li>
+				<li>
+					<label class="diag">Trac environments connected</label>
+					<div class="diag_result">
+						<span class="diag_[test:diag.trac_envs_all_connected yes][else warn]"></span>
+						[test:!diag.trac_envs_all_connected
+						<div class="diag_note">
+						<p>The following Trac environments are orphaned:</p>
+						<ul>[iter:diag.trac_envs_orphaned
+							<li>[ival]</li>]
+						</ul>
+						<p>No repository is found that connects to them (should be the same name as the trac name). Maybe it is the result of a deleted repository?</p>
+						</div>]
+					</div>
+				</li>
+				<li>
+					<label class="diag">Trac environments config</label>
+					<div class="diag_result">
+						<span class="diag_[test:diag.trac_envs_complete yes][else no]"></span>
+						[test:!diag.trac_envs_complete
+						<div class="diag_note">
+						<p>The following Trac environments have missing/incorrect configuration. Please correct the values to the one below:</p>
+						<ul>[iter:diag.trac_envs_missing_config
+							<li>
+								[ival.0]
+								<ul>
+									<li>
+										<div class="diag_pre">[iter:ival.1 \[[ikey]\]
+[iter:ival [ival] = enabled
+]]</div>
+										<p>Please enable the components in its <a href="[val diag.trac_base_url][val ival.0]/admin/general/plugin#no1" class="external" target="_blank">Trac admin panel</a> (Trac may ask you to login first)</p>
+									</li>
+								</ul>
+							</li>]
+						</ul>
+						</div>]
+					</div>
+				</li>
 				]
 			</ul>
 		</div>
