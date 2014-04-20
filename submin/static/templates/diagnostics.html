@@ -299,18 +299,19 @@
 						<p>The following Trac environments have missing/incorrect configuration. Please correct the values to the one below:</p>
 						<ul>[iter:diag.trac_envs_missing_config
 							<li>
-								[ival.0]
+								[ival.0] (<a href="[val diag.trac_base_url][val ival.0]/admin/general/plugin#no1" class="external" target="_blank">Trac admin panel</a>)
 								<ul>
 									<li>
 										<div class="diag_pre">[iter:ival.1 \[[ikey]\]
 [iter:ival [ival.0] = [ival.1] <span class="diag_[test:ival.2 no][else warn] right"></span>
 ][test:!ilast
 ]]</div>
-										<p>Please enable the components in its <a href="[val diag.trac_base_url][val ival.0]/admin/general/plugin#no1" class="external" target="_blank">Trac admin panel</a> (Trac may ask you to login first)</p>
+										<div>The trac.ini file is: <span class="diag_pre">[val diag.trac_dir]/[ival.0]/conf/trac.ini</span></div>
 									</li>
 								</ul>
 							</li>]
 						</ul>
+						<p>Options from the 'components' section can be enabled in its Trac admin panel (Trac may ask you to login first). Other options have to be configured in the trac.ini of the corresponding trac environment.</p>
 						</div>]
 					</div>
 				</li>

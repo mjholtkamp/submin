@@ -218,6 +218,15 @@ div.c_icon.minus {
 	white-space: pre;
 	font-family: monospace;
 	display: inline-block;
+	margin: 0.25em 0;
+	background-color: #fcfcfc;
+	border: 1px solid #f3f3f3;
+}
+div.diag_pre {
+	margin: 0.5em 0;
+	padding: 0.5em;
+}
+span.diag_pre {
 }
 .diag_cmd {
 	font-family: monospace;

@@ -40,6 +40,7 @@ def diagnostics():
 		results['trac_dir_set'] = False
 	else:
 		results['trac_dir_set'] = True
+		results['trac_dir'] = trac_dir
 
 		envs = list(missing_config_envs(trac_dir))
 
