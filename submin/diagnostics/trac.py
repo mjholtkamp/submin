@@ -88,7 +88,7 @@ def have_trac_sync_access():
 		msgnodes = root.findall('./command/errormsgs/msg')
 		raise SyncError('\n'.join([x.text for x in msgnodes]))
 
-def has_option(config, section, option):
+def has_option(config, section, option, value):
 	"""Check if ConfigParser object *config* has option
 	This will resolve wildcards if necessary. For example, if the option
 	tracopt.versioncontrol.git.git_fs.gitconnector is not found, also try:
@@ -99,10 +99,9 @@ def has_option(config, section, option):
 	Because they will match as well. WARNING: we assume Trac will pick the
 	most specific option.
 	"""
-	enabled = False
-	while not enabled:
+	while True:
 		try:
-			enabled = config.get(section, option) == 'enabled'
+			return config.get(section, option) == value
 		except (ConfigParser.NoOptionError, ConfigParser.NoSectionError):
 			if option.endswith('.*'):
 				option = option[:-2]
@@ -112,8 +111,6 @@ def has_option(config, section, option):
 
 			option = option[:option.rindex('.')] + '.*'
 			continue
-
-	return enabled
 
 def missing_config_envs(trac_dir):
 	"""Yields trac_envs that are 1) orphaned or 2) have missing configs
@@ -145,6 +142,14 @@ def missing_config_envs(trac_dir):
 			'tracopt.versioncontrol.svn.svn_prop.subversionmergepropertyrenderer',
 			'tracopt.versioncontrol.svn.svn_prop.subversionpropertyrenderer'
 		]
+	}
+
+	# per vcs, for each section, list of:
+	# (option, expected_value, fatal_if_different)
+	other_options = {
+		'git': {
+			'ticket': [('commit_ticket_update_check_perms', 'false', False)]
+		}
 	}
 
 	for root, dirs, files in os.walk(trac_dir):
@@ -183,12 +188,17 @@ def missing_config_envs(trac_dir):
 
 		components.extend(trac_vcs_components[repostype])
 
-		for option in components:
-			section = 'components'
-			if not has_option(config, section, option):
-				if not section in missing_options:
-					missing_options[section] = []
-				missing_options[section].append(option)
+		all_options = {}
+		if repostype in other_options:
+			all_options.update(other_options[repostype])
+		all_options['components'] = [(x, 'enabled', True) for x in components]
+
+		for section, option_values in all_options.iteritems():
+			for option, value, fatal in option_values:
+				if not has_option(config, section, option, value):
+					if not section in missing_options:
+						missing_options[section] = []
+					missing_options[section].append((option, value, fatal))
 
 		if len(missing_options) > 0 or not connected:
 			yield (trac_env, connected, missing_options)

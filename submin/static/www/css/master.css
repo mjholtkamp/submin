@@ -176,21 +176,21 @@ div.c_icon.minus {
 	padding: 0 0.2em;
 }
 .diag_yes:before {
-	content: 'Yes';
+	content: 'OK';
 }
 .diag_no {
 	background: #f66;
 	padding: 0 0.2em;
 }
 .diag_no:before {
-	content: 'No';
+	content: 'Fail';
 }
 .diag_warn {
 	background: #fa6;
 	padding: 0 0.2em;
 }
 .diag_warn:before {
-	content: 'No';
+	content: 'Warn';
 }
 
 .diag_result .diag_note {
