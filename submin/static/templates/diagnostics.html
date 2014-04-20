@@ -2,59 +2,70 @@
 	<div id="diagnostics">
 		<h1>Diagnostics</h1>
 		<p>This page shows some tests which make it easier to hunt down why things are not working as they should</p>
+		<h2>Table of contents</h2>
+		<table class="toc">
+			<tr><td><a href="#email">Email settings</a></td><td><span class="diag_[test:diag.email_all yes][else no]"></span></td></tr>
+			<tr><td><a href="#git">Git</a></td><td><span class="diag_[test:diag.git_all yes][else no]"></span></td></tr>
+			<tr><td><a href="#svn">Subversion</a></td><td><span class="diag_[test:diag.svn_all yes][else no]"></span></td></tr>
+			<tr><td><a href="#trac">Trac</a></td><td><span class="diag_[test:diag.trac_all yes][else no]"></span></td></tr>
+		</table>
 		<div>
-			<h2 class="diag">Email support correctly configured: <span class="diag_[test:diag.email_all yes][else no]"></span></h2>
+			<a name="email"><h3 class="diag">Email support correctly configured: <span class="diag_[test:diag.email_all yes][else no]"></span></h3></a>
 			<ul>
 				<li>
-					<label class="diag">Commit email set in config</label>
 					<div class="diag_result">
+						<label class="diag">Commit email set in config</label>
 						<span class="diag_[test:diag.email_commit_set yes][else no]"></span>
+						[test:!diag.email_commit_set
 						<div class="diag_note">
-							The 'commit_email_from' option is used when sending commit emails. This will be set as the 'From:' field and the envelope.
-							[test:diag.email_commit_set]
-							[else If no 'commit_email_from' is set, the mail is sent from a warning email address. This does not always work. To ensure delivery to everyone (and because it looks nicer), please consider setting it to a sane value. To set the commit_email_from, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set commit_email_from Submin '&lt;submin@example.tld&gt;'</span>]
-						</div>
+							<p>The 'commit_email_from' option is used when sending commit emails. This will be set as the 'From:' field and the envelope.</p>
+							<p>If no 'commit_email_from' is set, the mail is sent from a warning email address. This does not always work. To ensure delivery to everyone (and because it looks nicer), please consider setting it to a sane value. To set the commit_email_from, run the following command:</p>
+							<span class="diag_cmd">submin2-admin [val subminenv] config set commit_email_from Submin '&lt;submin@example.tld&gt;'</span>
+						</div>]
 					</div>
 				</li>
 				<li>
-					<label class="diag">Commit email sane</label>
 					<div class="diag_result">
+						<label class="diag">Commit email sane</label>
 						<span class="diag_[test:diag.email_commit_sane yes][else no]"></span>
+						[test:!diag.email_commit_sane
 						<div class="diag_note">
-							[test:diag.email_commit_sane]
-							[else The 'commit_email_from' should contain a name and a valid email address between angle brackets, e.g. "Submin &lt;submin@example.tld&gt;"
-							To set the commit_email_from option, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set commit_email_from Submin '&lt;submin@example.tld&gt;'</span>]
-						</div>
+							<p>The 'commit_email_from' should contain a name and a valid email address between angle brackets, e.g. "Submin &lt;submin@example.tld&gt;"</p>
+							<p>To set the commit_email_from option, run the following command:</p>
+							<span class="diag_cmd">submin2-admin [val subminenv] config set commit_email_from Submin '&lt;submin@example.tld&gt;'</span>
+						</div>]
 					</div>
 				</li>
 				<li>
-					<label class="diag">SMTP From email set in config</label>
 					<div class="diag_result">
+						<label class="diag">SMTP From email set in config</label>
 						<span class="diag_[test:diag.email_from_set yes][else no]"></span>
+						[test:!diag.email_from_set
 						<div class="diag_note">
-							The 'smtp_from' option is the From: email address used when sending account (re)set emails.
-							[test:diag.email_from_set]
-							[else If no 'smtp_from' is set, the mail is sent from 'root@localhost'. This does not always work. To ensure delivery to everyone (and because it looks nicer), please consider setting it to a sane value. To set the smtp_from, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set smtp_from Submin '&lt;submin@example.tld&gt;'</span>]
-						</div>
+							<p>The 'smtp_from' option is the From: email address used when sending account (re)set emails.</p>
+							<p>If no 'smtp_from' is set, the mail is sent from 'root@localhost'. This does not always work. To ensure delivery to everyone (and because it looks nicer), please consider setting it to a sane value. To set the smtp_from, run the following command:</p>
+							<span class="diag_cmd">submin2-admin [val subminenv] config set smtp_from Submin '&lt;submin@example.tld&gt;'</span>
+						</div>]
 					</div>
 				</li>
 				<li>
-					<label class="diag">SMTP From email sane</label>
 					<div class="diag_result">
+						<label class="diag">SMTP From email sane</label>
 						<span class="diag_[test:diag.email_from_sane yes][else no]"></span>
+						[test:!diag.email_from_sane
 						<div class="diag_note">
-							[test:diag.email_from_sane]
-							[else The 'smtp_from' should contain a name and a valid email address between angle brackets, e.g. "Submin &lt;submin@example.tld&gt;"
-							To set the commit_email_from option, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set smtp_from Submin '&lt;submin@example.tld&gt;'</span>]
-						</div>
+							<p>The 'smtp_from' should contain a name and a valid email address between angle brackets, e.g. "Submin &lt;submin@example.tld&gt;"</p>
+							<p>To set the commit_email_from option, run the following command:</p>
+							<span class="diag_cmd">submin2-admin [val subminenv] config set smtp_from Submin '&lt;submin@example.tld&gt;'</span>
+						</div>]
 					</div>
 				</li>
 			</ul>
-			<h2 class="diag">Git support working correctly: <span class="diag_[test:diag.git_all yes][else no]"></span></h2>
+			<a name="git"><h3 class="diag">Git support working correctly: <span class="diag_[test:diag.git_all yes][else no]"></span></h3></a>
 			<ul>
 				<li>
-					<label class="diag">Git enabled</label>
 					<div class="diag_result">
+						<label class="diag">Git enabled</label>
 						<span class="diag_[test:diag.enabled_git yes][else warn]"></span>
 						<div class="diag_note">
 							[test:diag.enabled_git To disable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set vcs_plugins svn</span>]
@@ -64,43 +75,50 @@
 				</li>
 				[test:diag.enabled_git
 				<li>
-					<label class="diag">Git dir set in config</label>
 					<div class="diag_result">
+						<label class="diag">Git dir set in config</label>
 						<span class="diag_[test:diag.git_dir_set yes][else no]"></span>
+						[test:!diag.git_dir_set
 						<div class="diag_note">
-							[test:diag.git_dir_set]
-							[else To set the git_dir, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set git_dir git</span>]
-						</div>
+							<p>To set the git_dir, run the following command:</p>
+							<span class="diag_cmd">submin2-admin [val subminenv] config set git_dir git</span>
+						</div>]
 					</div>
 				</li>
 				<li>
-					<label class="diag">Up-to-date hooks</label>
 					<div class="diag_result">
+						<label class="diag">Up-to-date hooks</label>
 						<span class="diag_[test:diag.git_hooks_all_new yes][else no]"></span>
+						[test:!diag.git_hooks_all_new
 						<div class="diag_note">
-							[test:diag.git_hooks_all_new][else The following repositories have outdated hooks: <ul>[iter:diag.git_old_hook_repos <li>[ival.0] ([ival.1])</li>]</ul>They can be upgraded with: <span class="diag_cmd">submin2-admin [val subminenv] git hook update <em>reponame</em></span>
-<p>If you want to upgrade all repositories at once, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] git hook update</span> (note: without any repository name)]
-						</div>
+							<p>The following repositories have outdated hooks:</p>
+							<ul>[iter:diag.git_old_hook_repos <li>[ival.0] ([ival.1])</li>]</ul>
+							<p>They can be upgraded with:</p>
+							<span class="diag_cmd">submin2-admin [val subminenv] git hook update <em>reponame</em></span>
+							<p>If you want to upgrade all repositories at once, run the following command:</p>
+							<span class="diag_cmd">submin2-admin [val subminenv] git hook update</span> (note: without any repository name)
+						</div>]
 					</div>
 				</li>
 				<li>
-					<label class="diag">Git hostname correct</label>
 					<div class="diag_result">
+						<label class="diag">Git hostname correct</label>
 						<span class="diag_[test:diag.git_hostname_ok yes][else no]"></span>
+						[test:!diag.git_hostname_ok
 						<div class="diag_note">
-							[test:diag.git_hostname_ok ]
-							[else The 'git_ssh_host' config is not set, or it is set to a local address. Please set a good hostname reachable by everyone with the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set git_ssh_host <em>public_hostname</em></span>]
-						</div>
+							<p>The 'git_ssh_host' config is not set, or it is set to a local address. Please set a hostname reachable by everyone with the following command:</p>
+							<span class="diag_cmd">submin2-admin [val subminenv] config set git_ssh_host <em>public_hostname</em></span>
+						</div>]
 					</div>
 				</li>
 				<li>
-					<label class="diag">Git local ssh</label>
 					<div class="diag_result">
+						<label class="diag">Git local ssh</label>
 						<span class="diag_[test:diag.git_admin_test yes][else no]"></span>
+						[test:!diag.git_admin_test
 						<div class="diag_note">
-							[test:diag.git_admin_test Could succesfully issue admin commands through SSH]
-							[else Could not issue admin commands, error message:
-<p>"[val diag.git_admin_test_errmsg]".</p>
+							<p>Could not issue admin commands through SSH. Error message:</p>
+<div class="diag_pre">[val diag.git_admin_test_errmsg]</div>
 
 <h4>1) Check config</h4>
 <p>Please check that git_ssh_host_internal, git_ssh_port and git_user are setup correctly. You can check this with:</p>
@@ -110,17 +128,17 @@
 <p>Next check that you can actually connect to SSH:</p>
 <p><span class="diag_cmd">ssh <em>[val diag.git_user]</em>@<em>[val diag.git_ssh_host_internal]</em> -p <em>[val diag.git_ssh_port]</em> -i [val subminenv]/conf/id_dsa</span></p>
 <p>(it should give a message like: <span class="diag_cmd">submin2-admin git admin is not supposed to be called by users.</span>)
-</p>]
-						</div>
+</p>
+						</div>]
 					</div>
 				</li>
 				]
 			</ul>
-			<h2 class="diag">Svn support working correctly: <span class="diag_[test:diag.svn_all yes][else no]"></span></h2>
+			<a name="svn"><h3 class="diag">Svn support working correctly: <span class="diag_[test:diag.svn_all yes][else no]"></span></h3></a>
 			<ul>
 				<li>
-					<label class="diag">SVN enabled</label>
 					<div class="diag_result">
+						<label class="diag">SVN enabled</label>
 						<span class="diag_[test:diag.enabled_svn yes][else warn]"></span>
 						<div class="diag_note">
 							[test:diag.enabled_svn To disable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set vcs_plugins git</span>]
@@ -130,19 +148,20 @@
 				</li>
 				[test:diag.enabled_svn
 				<li>
-					<label class="diag">SVN dir set in config</label>
 					<div class="diag_result">
+						<label class="diag">SVN dir set in config</label>
 						<span class="diag_[test:diag.svn_dir_set yes][else no]"></span>
+						[test:!diag.svn_dir_set
 						<div class="diag_note">
-							[test:diag.svn_dir_set]
-							[else To set the svn_dir, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set svn_dir svn</span>]
-						</div>
+							<p>To set the svn_dir, run the following command:</p>
+							<span class="diag_cmd">submin2-admin [val subminenv] config set svn_dir svn</span>
+						</div>]
 					</div>
 				</li>
 				[test:diag.svn_apache_modules_err
 				<li>
-					<label class="diag">Apache modules</label>
 					<div class="diag_result">
+						<label class="diag">Apache modules</label>
 						<span class="diag_no"></span>
 						<div class="diag_note">
 							Could not execute apachectl to test if modules are loaded. Error message was:
@@ -160,23 +179,23 @@
 				][else
 				[iter:diag.svn_apache_modules
 				<li>
-					<label class="diag">Apache '[ikey]'</label>
 					<div class="diag_result">
+						<label class="diag">Apache '[ikey]'</label>
 						<span class="diag_[test:ival yes][else no]"></span>
+						[test:!ival
 						<div class="diag_note">
-							[test:ival]
-							[else The module '[ikey]' was not loaded. Please make sure it is.]
-						</div>
+							The module '[ikey]' was not loaded. Please make sure it is.
+						</div>]
 					</div>
 				</li>]
 				]
 				]
 			</ul>
-			<h2 class="diag">Trac support working correctly: <span class="diag_[test:diag.trac_all yes][else no]"></span></h2>
+			<a name="trac"><h3 class="diag">Trac support working correctly: <span class="diag_[test:diag.trac_all yes][else no]"></span></h3></a>
 			<ul>
 				<li>
-					<label class="diag">Trac enabled</label>
 					<div class="diag_result">
+						<label class="diag">Trac enabled</label>
 						<span class="diag_[test:diag.enabled_trac yes][else warn]"></span>
 						<div class="diag_note">
 							[test:diag.enabled_trac To disable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set enabled_trac no</span>]
@@ -186,61 +205,65 @@
 				</li>
 				[test:diag.enabled_trac
 				<li>
-					<label class="diag">Trac installed</label>
 					<div class="diag_result">
+						<label class="diag">Trac installed</label>
 						<span class="diag_[test:diag.installed_trac yes][else no]"></span>
+						[test:!diag.installed_trac
 						<div class="diag_note">
-							[test:diag.installed_trac]
-							[else trac-admin was not found, please install Trac. If you have installed Trac, but it cannot be found, check if the env_path config value is set correctly: <span class="diag_cmd">submin2-admin [val subminenv] config get env_path</span>. Set it with <span class="diag_cmd">submin2-admin [val subminenv] config set env_path <em>yourpath</em></span>]
-						</div>
+							<p> The 'trac-admin' command was not found, please install Trac. If you have installed Trac, but it cannot be found, check if the env_path config value is set correctly:</p>
+							<span class="diag_cmd">submin2-admin [val subminenv] config get env_path</span>.
+							<p>Set it with:</p>
+							<span class="diag_cmd">submin2-admin [val subminenv] config set env_path <em>yourpath</em></span>
+						</div>]
 					</div>
 				</li>
 				<li>
-					<label class="diag">Trac dir set in config</label>
 					<div class="diag_result">
+						<label class="diag">Trac dir set in config</label>
 						<span class="diag_[test:diag.trac_dir_set yes][else no]"></span>
+						[test:!diag.trac_dir_set
 						<div class="diag_note">
-							[test:diag.trac_dir_set]
-							[else To set the trac_dir, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set trac_dir trac</span>]
-						</div>
+							<p>To set the trac_dir, run the following command:</p>
+							<span class="diag_cmd">submin2-admin [val subminenv] config set trac_dir trac</span>
+						</div>]
 					</div>
 				</li>
 				<li>
-					<label class="diag">Trac sync configured</label>
 					<div class="diag_result">
+						<label class="diag">Trac sync configured</label>
 						<span class="diag_[test:diag.trac_acl_hook yes][else warn]"></span>
+						[test:!diag.trac_acl_hook
 						<div class="diag_note">
-							[test:diag.trac_acl_hook]
-							[else <p>The variable 'acl_hook' has not been set. It probably works on the defaults, but leaving it unconfigured can cause slow down during commits because of DNS resolving if trac sync is enabled.
-							We recommend setting the ACL like this:</p>
-							<p><span class="diag_cmd">submin2-admin [val subminenv] config set acl_hook <em>[val diag.trac_acl_hook_recommendation]</em></span></p>]
-						</div>
+							<p>The variable 'acl_hook' has not been set. It probably works on the defaults, but leaving it unconfigured can cause slow down during commits because of DNS resolving if trac sync is enabled. We recommend setting the ACL like this:</p>
+							<p><span class="diag_cmd">submin2-admin [val subminenv] config set acl_hook <em>[val diag.trac_acl_hook_recommendation]</em></span></p>
+						</div>]
 					</div>
 				</li>
 				<li>
-					<label class="diag">Trac sync accessible</label>
 					<div class="diag_result">
+						<label class="diag">Trac sync accessible</label>
 						<span class="diag_[test:diag.trac_sync_access yes][else no]"></span>
+						[test:!diag.trac_sync_access
 						<div class="diag_note">
-							[test:diag.trac_sync_access]
-							[else <p>Git hook does not have access to submin to sync trac.
+							<p>Git hook does not have access to submin to sync trac.
 							Please make sure that the IP-address is in the ACL. Set it with:</p>
 							<p><span class="diag_cmd">submin2-admin [val subminenv] config set acl_hooks <em>[val diag.trac_acl_hook_recommendation]</em></span></p>
 
-							<p>Error message: [val diag.trac_sync_access_msg].</p>]
-						</div>
+							<p>The error message was:</p>
+							<div class="diag_pre">[val diag.trac_sync_access_msg]</div>
+						</div>]
 					</div>
 				</li>
 				<li>
-					<label class="diag">htpasswd export directory exists</label>
 					<div class="diag_result">
+						<label class="diag">htpasswd export directory exists</label>
 						[test:diag.trac_htpasswd_file
 						<span class="diag_[test:diag.trac_htpasswd_dir_exists yes][else no]"></span>
+						[test:!diag.trac_htpasswd_dir_exists
 						<div class="diag_note">
-							[test:diag.trac_htpasswd_dir_exists]
-							[else <p>The setting htpasswd_file is set, but the directory does not exist.
-							To export the htpasswd_file, please make sure that [val diag.trac_htpasswd_dir] exists.</p>]
-						</div>
+							<p>The setting htpasswd_file is set, but the directory does not exist.
+							To export the htpasswd_file, please make sure that [val diag.trac_htpasswd_dir] exists.</p>
+						</div>]
 						][else
 						<span class="diag_warn"></span>
 						<div class="diag_note">
@@ -254,8 +277,8 @@
 					</div>
 				</li>
 				<li>
-					<label class="diag">Trac environments connected</label>
 					<div class="diag_result">
+						<label class="diag">Trac environments connected</label>
 						<span class="diag_[test:diag.trac_envs_all_connected yes][else warn]"></span>
 						[test:!diag.trac_envs_all_connected
 						<div class="diag_note">
@@ -268,8 +291,8 @@
 					</div>
 				</li>
 				<li>
-					<label class="diag">Trac environments config</label>
 					<div class="diag_result">
+						<label class="diag">Trac environments config</label>
 						<span class="diag_[test:diag.trac_envs_complete yes][else no]"></span>
 						[test:!diag.trac_envs_complete
 						<div class="diag_note">
@@ -280,7 +303,7 @@
 								<ul>
 									<li>
 										<div class="diag_pre">[iter:ival.1 \[[ikey]\]
-[iter:ival [ival.0] = [ival.1] <span class="diag_[test:ival.2 no][else warn]"></span>
+[iter:ival [ival.0] = [ival.1] <span class="diag_[test:ival.2 no][else warn] right"></span>
 ][test:!ilast
 ]]</div>
 										<p>Please enable the components in its <a href="[val diag.trac_base_url][val ival.0]/admin/general/plugin#no1" class="external" target="_blank">Trac admin panel</a> (Trac may ask you to login first)</p>
