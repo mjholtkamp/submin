@@ -176,7 +176,12 @@ def missing_config_envs(trac_dir):
 		components = []
 
 		reposdir = config.get('trac', 'repository_dir')
-		repostype = config.get('trac', 'repository_type')
+		try:
+			repostype = config.get('trac', 'repository_type')
+		except ConfigParser.NoOptionError:
+			# Assume svn
+			repostype = 'svn'
+
 		try:
 			repos = Repository(trac_env, repostype)
 		except DoesNotExistError, e:
