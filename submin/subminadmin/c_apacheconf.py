@@ -90,13 +90,15 @@ Usage:
 		print 'Apache files created:\n', '\n'.join(generated)
 
 		print '''
-   Please include the relevent files in your apache config. Do NOT include all
-   files, but only select one version (e.g include svn and webui-cgi but not
-   webui-wsgi).
+   Please include ONE of the -webui- files and optionally -trac- and -svn-
+   files (if you need/want that functionality). The -trac-no-anonymous.conf
+   file can be used together with ONE other trac config file. The -2.4- files
+   are for apache >= 2.4.
 
-   Also make sure that you have the appropriate modules installed and enabled.
-   Depending on your choices, these may include: mod_dav_svn, mod_authz_svn,
-   mod_authn_dbd, mod_dbd, mod_wsgi, mod_cgi, mod_cgid and mod_python'''
+   Hint: cgi is simpler, but performs worse.
+
+   Please read the instructions in the file for caveats and on how to include!
+'''
 
 	def urlpath(self, url):
 		"""Strip scheme and hostname from url, leaving only the path. Also
