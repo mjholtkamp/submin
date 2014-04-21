@@ -40,13 +40,6 @@ class Login(View):
 			if invalid_login:
 				return self.evaluate_form('Not a valid username and password combination')
 
-		url = options.url_path('base_url_submin')
-		if 'redirected_from' in request.session:
-			login_url = options.url_path('base_url_submin') + 'login'
-			url = request.session['redirected_from']
-			if url == login_url:
-				url = options.url_path('base_url_submin')
-
 		if not database_isuptodate():
 			localvalues = {}
 			request.session['upgrade_user'] = True
@@ -55,12 +48,19 @@ class Login(View):
 			localvalues['session_user'] = u
 			return Response(evaluate('database_upgrade.html', localvalues))
 
+		url = options.url_path('base_url_submin')
+		if 'redirected_from' in request.session:
+			login_url = options.url_path('base_url_submin') + 'login'
+			url = request.session['redirected_from']
+			if url.startswith(login_url):
+				url = options.url_path('base_url_submin')
+
 		session_user = u.session_object()
 		session_user['is_authenticated'] = True
 		request.session['user'] = session_user
 		request.session.save()
 
-		return Redirect(url, request)
+		return Redirect(url, request, store_url=False)
 
 
 	def evaluate_form(self, msg='', session=None):

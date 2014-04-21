@@ -27,10 +27,13 @@ class FileResponse(Response):
 		return self.content
 
 class Redirect(Response):
-	def __init__(self, url, request):
+	def __init__(self, url, request, store_url=True):
 		Response.__init__(self, status_message='The princess is in another castle')
-		if not request.is_ajax():
+		if not request.is_ajax() and store_url:
 			request.session['redirected_from'] = request.url
+
+		if not store_url and 'redirected_from' in request.session:
+			del request.session['redirected_from']
 
 		url = unicode(url)
 		self.status_code = 302
