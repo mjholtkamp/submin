@@ -1,3 +1,5 @@
+import time
+
 from submin.dispatch.response import Response, HTTP404, XMLStatusResponse
 
 from submin.views.error import ErrorResponse
@@ -36,6 +38,13 @@ classes = {
 def dispatcher(request):
 	# Add session information to request
 	request.session = Session(request)
+
+	# session expiry time is for cleanup purposes, not for security purposes
+	future_expiry = int(time.time()) + 60 * 60 * 24 * 7
+	future_refresh = request.session.expires - 60 * 60 * 24
+
+	if time.time() >= future_refresh:
+		request.session.expires = future_expiry
 
 	path = request.path_info.strip('/').split('/')
 

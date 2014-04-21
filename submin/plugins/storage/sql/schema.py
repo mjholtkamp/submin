@@ -5,6 +5,13 @@ schema are first in the list. The first entry in this list is always the
 current schema version.
 """
 sql_scripts = [
+	(11, """-- We cannot set a non-constant default, but we only need it
+		-- for the upgrade, so set default to 0 and immediately set it
+		-- to a week from now
+		ALTER TABLE sessions ADD COLUMN expires int not null default 0;
+		UPDATE sessions SET expires = strftime('%s', datetime('now', '+7 days'))
+			WHERE expires = 0;
+	"""),
 	(10, """-- first fix the unique contraint on permissions
 		DROP TABLE IF EXISTS permissions_tmp;
 

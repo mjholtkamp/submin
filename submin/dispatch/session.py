@@ -28,6 +28,7 @@ class PickleDict(object):
 	"""
 
 	def __init__(self, autosave=True):
+		self._expires = 0
 		self.autosave = autosave
 		self.dict = {} # default
 		self.load()
@@ -56,6 +57,16 @@ class PickleDict(object):
 
 	def get(self, *args, **kwargs):
 		return self.dict.get(*args, **kwargs)
+
+	def get_expires(self):
+		return self._expires
+
+	def set_expires(self, expires):
+		self._expires = expires
+		if self.autosave:
+			self.save()
+
+	expires = property(get_expires, set_expires)
 
 class FilePickleDict(PickleDict):
 	def __init__(self, filename, autosave=True):
@@ -92,19 +103,19 @@ class DBPickleDict(PickleDict):
 		from submin.models import sessions
 		from submin.models.exceptions import UnknownKeyError
 		try:
-			val = sessions.value(self.key)
+			val, self._expires = sessions.get(self.key)
 			self.dict = pickler.loads(str(val))
 		except UnknownKeyError:
 			pass
 		except picklerError:
 			# invalid (old) session, invalidate
 			self.dict = {}
-			sessions.unset_value(self.key)
+			sessions.unset(self.key)
 
 	def save(self):
 		from submin.models import sessions
 		val = pickler.dumps(self.dict)
-		sessions.set_value(self.key, val)
+		sessions.set(self.key, val, self._expires)
 
 
 SESS_CLASS = DBPickleDict
