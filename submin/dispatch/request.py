@@ -57,6 +57,10 @@ class Request(object):
 
 	def setCookie(self, key, value, path='/', expires=None):
 		self._outcookies[key] = value
+		# make sure path does not contain trailing slash (#334)
+		if path != '/':
+			path = path.rstrip('/')
+
 		self._outcookies[key]['path'] = path
 		if expires:
 			self._outcookies[key]['expires'] = expires
