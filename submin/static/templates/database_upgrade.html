@@ -15,20 +15,20 @@
 		[test:uptodated
 		<h1>Database is up-to-date</h1>
 			[test:alreadyuptodate Database was already up-to-date.
-			<a href="[val base_url]/">Continue</a>.
+			<a href="[val base_url]">Continue</a>.
 			][else Successfully updated!
-			Please <a href="[val base_url]/login">login</a> again.]
+			Please <a href="[val base_url]login">login</a> again.]
 		][else
 		<h1>Database is not up-to-date</h1>
 			[test:session_user.is_admin
 		<p>
-			Please click <a href="[val base_url]/upgrade">here</a> to upgrade.
+			Please click <a href="[val base_url]upgrade">here</a> to upgrade.
 			This will change the database schema. A backup is made
 			before the change.
 		</p>
 			][else
 		<div class="errormsg">If you are not the administrator of this site, please warn the
-			administrator</div>
+			administrator. Otherwise please log in as an administrator.</div>
 		<p>
 			<h2>Upgrade instructions</h2>
 			To update your configuration, execute the following command:

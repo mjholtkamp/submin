@@ -43,8 +43,8 @@ class Login(View):
 		if not database_isuptodate():
 			localvalues = {}
 			request.session['upgrade_user'] = True
-			base_url = options.value('base_url_submin')
-			localvalues['base_url'] = base_url
+			base_url = options.url_path('base_url_submin')
+			localvalues['base_url'] = str(base_url)
 			localvalues['session_user'] = u
 			return Response(evaluate('database_upgrade.html', localvalues))
 
