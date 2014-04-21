@@ -8,9 +8,10 @@ body {
 
 #content {
 	float: left;
-	position: absolute;
+	position: fixed;
 	left: 162px;
 	top: 0px;
+	bottom: 0px;
 	margin-left: 1em;
 	overflow: auto;
 }
