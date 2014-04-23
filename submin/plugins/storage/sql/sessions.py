@@ -18,3 +18,9 @@ def set(key, value, expires):
 def unset(key):
 	storage.execute(storage.db.cursor(), """DELETE FROM sessions
 		WHERE key=?""", (key, ))
+
+def cleanup(limit):
+	"""Remove stale entries, limiting to *limit*"""
+	storage.execute(storage.db.cursor(), """DELETE FROM sessions
+		WHERE expires <= strftime('%s', 'now') LIMIT ?""",
+		(limit, ))

@@ -36,6 +36,9 @@ class PickleDict(object):
 	def save(self):
 		raise NotImplementedError
 
+	def cleanup(self):
+		pass
+
 	def clear(self):
 		self.dict.clear()
 
@@ -116,6 +119,10 @@ class DBPickleDict(PickleDict):
 		from submin.models import sessions
 		val = pickler.dumps(self.dict)
 		sessions.set(self.key, val, self._expires)
+
+	def cleanup(self):
+		from submin.models import sessions
+		sessions.cleanup()
 
 
 SESS_CLASS = DBPickleDict

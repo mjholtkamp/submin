@@ -58,7 +58,7 @@ class Login(View):
 		session_user = u.session_object()
 		session_user['is_authenticated'] = True
 		request.session['user'] = session_user
-		request.session.save()
+		request.session.cleanup()
 
 		return Redirect(url, request, store_url=False)
 

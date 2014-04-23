@@ -24,6 +24,9 @@ def set(key, value, expires):
 def unset(key):
 	storage.unset(key)
 
+def cleanup(limit=100):
+	storage.cleanup(limit)
+
 __doc__ = """
 Storage contract
 ================
@@ -39,4 +42,8 @@ Options consists of a key and a value pair
 
 * unset(key)
 	removes *key* and data associated with it from storage.
+
+* cleanup(limit)
+	removes stale entries, limiting to *limit* entries (for responsiveness
+	reasons).
 """
