@@ -32,7 +32,7 @@ class Users(View):
 			if path[0] == 'add':
 				return self.add(req, path[1:], localvars)
 		except Unauthorized:
-			return Redirect(options.value('base_url_submin'), req)
+			return Redirect(options.url_path('base_url_submin'), req)
 
 		return ErrorResponse('Unknown path', request=req)
 

@@ -9,7 +9,7 @@ class Upgrade(View):
 	def handler(self, req, path):
 		localvars = {}
 		localvars['uptodated'] = True
-		localvars['base_url'] = options.value('base_url_submin')
+		localvars['base_url'] = options.url_path('base_url_submin')
 		
 		if database_isuptodate():
 			localvars['alreadyuptodate'] = True

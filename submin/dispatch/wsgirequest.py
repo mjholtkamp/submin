@@ -32,7 +32,7 @@ class WSGIRequest(Request):
 		# use e.g. /submin/ in front of the URL.
 		if 'SUBMIN_REMOVE_BASE_URL' in environ:
 			self.remove_base_url = True
-			alias = options.value('base_url_submin')
+			alias = options.url_path('base_url_submin')
 			if self.path_info.startswith(alias):
 				self.path_info = self.path_info[len(alias):]
 

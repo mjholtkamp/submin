@@ -135,6 +135,8 @@ Usage:
 			'submin_env': self.canonicalize(self.sa.env),
 			'www_dir': self.canonicalize(str(self.sa.basedir_www)),
 			'cgi_bin_dir': self.canonicalize(str(cgi_bin_dir)),
+			# Don't use options.url_path here, we need the url without
+			# trailing slash.
 			'submin_base_url': self.urlpath(options.value('base_url_submin')),
 			'svn_base_url': self.urlpath(options.value('base_url_svn')),
 			'trac_base_url': self.urlpath(options.value('base_url_trac')),

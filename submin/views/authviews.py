@@ -66,10 +66,7 @@ class Login(View):
 	def evaluate_form(self, msg='', session=None):
 		localvalues = {}
 		localvalues['msg'] = msg
-		base_url = options.value('base_url_submin')
-		if base_url[-1] != '/':
-			base_url += '/'
-		localvalues['base_url'] = base_url
+		localvalues['base_url'] = options.url_path('base_url_submin')
 		if session and 'user' in session and 'is_authenticated' in session['user']:
 			if session['user']['is_authenticated']:
 				localvalues['is_authenticated'] = True

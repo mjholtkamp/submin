@@ -108,6 +108,8 @@ Usage:
 		self.init_vars = {
 			'submin_env': self.canonicalize(str(self.sa.env)),
 			'www_dir': self.canonicalize(str(self.sa.basedir_www)),
+			# Don't use options.url_path here, we need the url without
+			# trailing slash.
 			'submin_base_url': self.urlpath(options.value('base_url_submin')),
 			'www_uid': user.pw_uid,
 			'www_gid': user.pw_gid,
