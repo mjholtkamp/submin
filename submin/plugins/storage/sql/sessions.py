@@ -1,3 +1,5 @@
+import sqlite3
+
 import submin.plugins.storage.sql.common as storage
 from submin.models.exceptions import UnknownKeyError
 
@@ -21,6 +23,13 @@ def unset(key):
 
 def cleanup(limit):
 	"""Remove stale entries, limiting to *limit*"""
-	storage.execute(storage.db.cursor(), """DELETE FROM sessions
-		WHERE expires <= strftime('%s', 'now') LIMIT ?""",
-		(limit, ))
+	try:
+		storage.execute(storage.db.cursor(), """DELETE FROM sessions
+			WHERE expires <= strftime('%s', 'now') LIMIT UP TO ?""",
+			(limit, ))
+	except sqlite3.OperationalError, e:
+		# Assume there is no SQLITE_ENABLE_UPDATE_DELETE_LIMIT support,
+		# retry without LIMIT
+		storage.execute(storage.db.cursor(), """DELETE FROM sessions
+			WHERE expires <= strftime('%s', 'now')""")
+
