@@ -1,6 +1,7 @@
 from submin.models import options
 from submin.models.exceptions import UnknownKeyError, SendEmailError
-from smtplib import SMTP
+from smtplib import SMTP, SMTPException
+import socket
 
 def send(sender, receiver, message):
 	server = options.value("smtp_hostname", "localhost")
@@ -15,5 +16,5 @@ def send(sender, receiver, message):
 
 		server.sendmail(sender, [receiver], message)
 		server.quit()
-	except:
-		raise SendEmailError
+	except (SMTPException, socket.error), e:
+		raise SendEmailError(str(e))
