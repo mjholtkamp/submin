@@ -87,6 +87,7 @@ class Repository(object):
 
 		vcs = models.vcs.get(vcs_type, "repository")
 		self.repository = vcs.Repository(repositoryname)
+		self.has_path_permissions = vcs.has_path_permissions
 
 		if hasattr(self.repository, "name"):
 			self.name = self.repository.name

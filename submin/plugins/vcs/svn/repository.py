@@ -13,6 +13,7 @@ from submin.models.repository import DoesNotExistError, PermissionError, Version
 from export import export_notifications
 
 display_name = "Subversion"
+has_path_permissions = True
 
 def list():
 	repositories = []

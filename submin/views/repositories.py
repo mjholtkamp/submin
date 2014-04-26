@@ -132,8 +132,8 @@ class Repositories(View):
 
 	@admin_required
 	def getsubdirs(self, req, repos):
-		svn_path = req.post.get('getSubdirs').strip('/')
-		dirs = repos.subdirs(svn_path)
+		vcs_path = req.post.get('getSubdirs').strip('/')
+		dirs = repos.subdirs(vcs_path)
 		templatevars = {'dirs': dirs}
 		return XMLTemplateResponse('ajax/repositorytree.xml', templatevars)
 
@@ -143,6 +143,8 @@ class Repositories(View):
 		asking_user = user.User(session_user['name'])
 		path = req.post.get('getPermissions')
 		branch_or_path = Path(path)
+		if not repos.has_path_permissions:
+			branch_or_path = branch_or_path.lstrip('/')
 
 		perms = permissions.list_by_path(repos.name,
 				repos.vcs_type, path)
@@ -182,6 +184,10 @@ class Repositories(View):
 
 		permissions.add(repos.name, repos.vcs_type, path, name,
 				type, default_perm)
+
+		if not repos.has_path_permissions:
+			path = path.lstrip('/')
+
 		return XMLStatusResponse('addPermission', True, ('User', 'Group')[type == 'group'] + ' %s added to path %s' % (name, path))
 
 	@admin_required
@@ -192,6 +198,10 @@ class Repositories(View):
 
 		permissions.remove(repos.name, repos.vcs_type, path,
 				name, type)
+
+		if not repos.has_path_permissions:
+			path = path.lstrip('/')
+
 		return XMLStatusResponse('removePermission', True, ('User', 'Group')[type == 'group'] + ' %s removed from path %s' % (name, path))
 
 	@admin_required
@@ -203,6 +213,10 @@ class Repositories(View):
 
 		permissions.change(repos.name, repos.vcs_type, path,
 				name, type, permission)
+
+		if not repos.has_path_permissions:
+			path = path.lstrip('/')
+
 		return XMLStatusResponse('setPermission', True, 'Permission for %s %s changed to %s' %
 			(('user', 'group')[type == 'group'], name, permission))
 

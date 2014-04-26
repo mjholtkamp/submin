@@ -9,6 +9,7 @@ from submin.subminadmin.git.common import signature as hook_signature
 from submin.common import shellscript
 
 display_name = "Git"
+has_path_permissions = False
 
 def list():
 	"""Returns a list of repositories"""

@@ -209,6 +209,8 @@ function loadPermissions(path)
 	LogResponse(response);
 
 	repositoryperms = FindResponse(response, "getRepositoryPerms");
+	var permissions = repositoryperms.xml.getElementsByTagName('permissions')[0];
+	h3.innerHTML = permissions.getAttribute('path');
 
 	// process users
 	var addable = new Array();
