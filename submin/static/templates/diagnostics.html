@@ -102,17 +102,6 @@
 				</li>
 				<li>
 					<div class="diag_result">
-						<label class="diag">Git hostname correct</label>
-						<span class="diag_[test:diag.git_hostname_ok yes][else no]"></span>
-						[test:!diag.git_hostname_ok
-						<div class="diag_note">
-							<p>The 'git_ssh_host' config is not set, or it is set to a local address. Please set a hostname reachable by everyone with the following command:</p>
-							<span class="diag_cmd">submin2-admin [val subminenv] config set git_ssh_host <em>public_hostname</em></span>
-						</div>]
-					</div>
-				</li>
-				<li>
-					<div class="diag_result">
 						<label class="diag">Git local ssh</label>
 						<span class="diag_[test:diag.git_admin_test yes][else no]"></span>
 						[test:!diag.git_admin_test
@@ -120,15 +109,35 @@
 							<p>Could not issue admin commands through SSH. Error message:</p>
 <div class="diag_pre">[val diag.git_admin_test_errmsg]</div>
 
-<h4>1) Check config</h4>
+<h4>1) Run 'git init'</h4>
+<p>Have you run 'git init' yet? This command is necessary since it needs root privileges (to add a unix user and to set permissions).<p>
+<span class="diag_cmd">submin2-admin /var/lib/submin/ git init</span>
+
+<h4>2) Re-run diagnostics</h4>
+<p>After running 'git init', please re-run diagnostics to see if this solved the problem. If not, continue</p>
+
+<h4>3) Check config</h4>
 <p>Please check that git_ssh_host_internal, git_ssh_port and git_user are setup correctly. You can check this with:</p>
 <p><span class="diag_cmd">submin2-admin [val subminenv] config get <em>value</em></span></p>
 
-<h4>2) Check if SSH can connect</h4>
+<h4>4) Check if SSH can connect</h4>
 <p>Next check that you can actually connect to SSH:</p>
 <p><span class="diag_cmd">ssh <em>[val diag.git_user]</em>@<em>[val diag.git_ssh_host_internal]</em> -p <em>[val diag.git_ssh_port]</em> -i [val subminenv]/conf/id_dsa</span></p>
 <p>(it should give a message like: <span class="diag_cmd">submin2-admin git admin is not supposed to be called by users.</span>)
 </p>
+						</div>]
+					</div>
+				</li>
+				<li>
+					<div class="diag_result">
+						<label class="diag">Git public hostname correct</label>
+						<span class="diag_[test:diag.git_hostname_ok yes][else no]"></span>
+						[test:!diag.git_hostname_ok
+						<div class="diag_note">
+							<p>The 'git_ssh_host' config is not set, or it is set to a local address. Is 'git init' run? If not, do this first before re-checking:<p>
+							<span class="diag_cmd">submin2-admin [val subminenv] git init</span>
+							<p>If 'git init' has been run and the problem still exists, please set a hostname reachable by everyone with the following command:</p>
+							<span class="diag_cmd">submin2-admin [val subminenv] config set git_ssh_host <em>public_hostname</em></span>
 						</div>]
 					</div>
 				</li>
