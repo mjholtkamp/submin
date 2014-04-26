@@ -24,18 +24,20 @@
 						</div>]
 					</div>
 				</li>
+				[test:diag.email_commit_set
 				<li>
 					<div class="diag_result">
 						<label class="diag">Commit email sane</label>
 						<span class="diag_[test:diag.email_commit_sane yes][else no]"></span>
 						[test:!diag.email_commit_sane
 						<div class="diag_note">
-							<p>The 'commit_email_from' should contain a name and a valid email address between angle brackets, e.g. "Submin &lt;submin@example.tld&gt;"</p>
+							<p>The 'commit_email_from' option is used when sending commit emails. This will be set as the 'From:' field and the envelope.
+							It should contain a name and a valid email address between angle brackets, e.g. "Submin &lt;submin@example.tld&gt;"</p>
 							<p>To set the commit_email_from option, run the following command:</p>
 							<span class="diag_cmd">submin2-admin [val subminenv] config set commit_email_from Submin '&lt;submin@example.tld&gt;'</span>
 						</div>]
 					</div>
-				</li>
+				</li>]
 				<li>
 					<div class="diag_result">
 						<label class="diag">SMTP From email set in config</label>
@@ -48,18 +50,20 @@
 						</div>]
 					</div>
 				</li>
+				[test:diag.email_from_set
 				<li>
 					<div class="diag_result">
 						<label class="diag">SMTP From email sane</label>
 						<span class="diag_[test:diag.email_from_sane yes][else no]"></span>
 						[test:!diag.email_from_sane
 						<div class="diag_note">
-							<p>The 'smtp_from' should contain a name and a valid email address between angle brackets, e.g. "Submin &lt;submin@example.tld&gt;"</p>
+							<p>The 'smtp_from' option is the From: email address used when sending account (re)set emails.
+							It should contain a name and a valid email address between angle brackets, e.g. "Submin &lt;submin@example.tld&gt;"</p>
 							<p>To set the commit_email_from option, run the following command:</p>
 							<span class="diag_cmd">submin2-admin [val subminenv] config set smtp_from Submin '&lt;submin@example.tld&gt;'</span>
 						</div>]
 					</div>
-				</li>
+				</li>]
 			</ul>
 			<a name="git"><h3 class="diag">Git support working correctly: <span class="diag_[test:diag.git_all yes][else no]"></span></h3></a>
 			<ul>
