@@ -34,7 +34,7 @@ Description: submin2 full installation
 Package: submin2-core
 Architecture: all
 Depends: nginx-full | apache2-mpm-prefork | apache2-mpm, ${python:Depends}
-Suggests: uwsgi, python-uwsgidecorators, nginx-full, submin2-trac
+Suggests: uwsgi, uwsgi-plugin-python, python-uwsgidecorators, nginx-full, submin2-trac
 Conflicts: submin2 (<< 2.1.3)
 XB-Python-Version: ${python:Versions}
 Description: A web admin interface for local svn/git repositories
@@ -74,7 +74,7 @@ Package: submin2-trac
 Architecture: all
 Enhances: submin2-core
 Depends: submin2-core, trac, ${python:Depends}
-Suggests: uwsgi, python-uwsgidecorators, nginx-full
+Suggests: uwsgi, uwsgi-plugin-python, python-uwsgidecorators, nginx-full
 XB-Python-Version: ${python:Versions}
 Description: Trac support for submin2
  Submin provides a web-based admin interface to your svn and git repositories.
