@@ -18,10 +18,6 @@ body {
 	overflow: auto;
 }
 
-.right {
-	float: right;
-}
-
 ul { 
 	padding-left: 0em; 
 	margin: 0;
@@ -209,6 +205,11 @@ div.c_icon.minus {
 	content: 'Warn';
 }
 
+.diag_inline {
+	float: right;
+	margin-left: 1em;
+}
+
 .diag_result {
 	margin: 0.5em;
 }
@@ -228,8 +229,6 @@ div.c_icon.minus {
 div.diag_pre {
 	margin: 0.5em 0;
 	padding: 0.5em;
-}
-span.diag_pre {
 }
 .diag_cmd {
 	font-family: monospace;
