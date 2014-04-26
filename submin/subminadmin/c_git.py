@@ -273,6 +273,9 @@ Usage:
 		reponame = None
 		if len(args) > 1:
 			reponame = unicode(args[1], 'utf-8')
+			if reponame.endswith('.git'):
+				reponame = reponame[:-4]
+
 		git.create.rewrite_hooks(reponame)
 		git.update_notifications.run(reponame)
 		git.post_receive_hook.rewrite_hooks(reponame)

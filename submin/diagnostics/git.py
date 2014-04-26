@@ -25,9 +25,9 @@ def diagnostics():
 		results['git_old_hook_repos'] = []
 	else:
 		results['git_dir_set'] = True
-		old_dirs = list(old_hook_dirs(git_dir))
-		results['git_hooks_all_new'] = len(old_dirs) == 0
-		results['git_old_hook_repos'] = old_dirs
+		old_repos = list(old_hook_repos(git_dir))
+		results['git_hooks_all_new'] = len(old_repos) == 0
+		results['git_old_hook_repos'] = old_repos
 
 	try:
 		git_ssh_host = options.value('git_ssh_host')
@@ -73,7 +73,7 @@ def hook_uptodate(filename, version_re, newest_version):
 
 	return True
 
-def old_hook_dirs(git_dir_root):
+def old_hook_repos(git_dir_root):
 	signature = '### SUBMIN GIT AUTOCONFIG, DO NOT ALTER FOLLOWING LINE ###\n'
 	git_dirs = []
 	for root, dirs, files in os.walk(git_dir_root):
@@ -84,20 +84,21 @@ def old_hook_dirs(git_dir_root):
 
 	for git_dir in sorted(git_dirs):
 		# check update hook
+		reponame = git_dir[:-4]
 		filename = os.path.join(git_dir_root, git_dir, 'hooks', 'update')
 		if not shellscript.hasSignature(filename, signature):
-			yield (git_dir, 'update hook out-of-date')
+			yield (reponame, 'update hook out-of-date')
 			continue # no need to check other hooks
 
 		# check multiplexer script
 		filename = os.path.join(git_dir_root, git_dir, 'hooks', 'post-receive')
 		if not os.path.exists(filename):
-			yield (git_dir, 'post-receive does not exist')
+			yield (reponame, 'post-receive does not exist')
 			continue
 
 		# ok, it exists, but does it contain the right stuff?
 		if not shellscript.hasSignature(filename, signature):
-			yield (git_dir, 'post-receive does not call hook-mux')
+			yield (reponame, 'post-receive does not call hook-mux')
 			continue
 
 		# check commit-email hook
@@ -107,7 +108,7 @@ def old_hook_dirs(git_dir_root):
 		if os.path.exists(filename):
 			if not hook_uptodate(filename, 'HOOK_VERSION = (\d+)',
 					HOOK_VERSIONS['commit-email']):
-				yield (git_dir, 'commit email hook version incorrect')
+				yield (reponame, 'commit email hook version incorrect')
 				continue
 
 		# check trac-sync hook
@@ -117,7 +118,7 @@ def old_hook_dirs(git_dir_root):
 		if os.path.exists(filename):
 			if not hook_uptodate(filename, 'HOOK_VERSION=(\d+)',
 					HOOK_VERSIONS['trac-sync']):
-				yield (git_dir, 'trac sync hook version incorrect')
+				yield (reponame, 'trac sync hook version incorrect')
 				continue
 
 	return
