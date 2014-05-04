@@ -90,6 +90,8 @@ class Hooks(View):
 					self.vcs_type, self.repo, jobid, str(e))
 
 			cmd = ['git', 'rev-list', '--reverse', newrev, '^' + oldrev]
+			if oldrev == '0' * 40:
+				cmd.pop()
 
 			try:
 				revs = check_output(cmd, stderr=STDOUT, env=self.env_copy)
