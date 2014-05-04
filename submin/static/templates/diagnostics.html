@@ -73,7 +73,7 @@
 						<span class="diag_[test:diag.enabled_git yes][else warn]"></span>
 						<div class="diag_note">
 							[test:diag.enabled_git To disable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set vcs_plugins svn</span>]
-							[else To enable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] config set vcs_plugins git,svn</span>]
+							[else To enable, run the following command: <span class="diag_cmd">submin2-admin [val subminenv] git init</span>]
 						</div>
 					</div>
 				</li>
@@ -115,7 +115,7 @@
 
 <h4>1) Run 'git init'</h4>
 <p>Have you run 'git init' yet? This command is necessary since it needs root privileges (to add a unix user and to set permissions).<p>
-<span class="diag_cmd">submin2-admin /var/lib/submin/ git init</span>
+<span class="diag_cmd">submin2-admin [val subminenv] git init</span>
 
 <h4>2) Re-run diagnostics</h4>
 <p>After running 'git init', please re-run diagnostics to see if this solved the problem. If not, continue</p>
