@@ -7,6 +7,7 @@ except ImportError:
 	pickler = cPickle
 	picklerError = cPickle.UnpicklingError
 
+import rfc822
 import time
 import os
 import thread
@@ -66,8 +67,12 @@ class PickleDict(object):
 
 	def set_expires(self, expires):
 		self._expires = expires
+		self.updateCookie()
 		if self.autosave:
 			self.save()
+
+	def updateCookie():
+		raise NotImplemented()
 
 	expires = property(get_expires, set_expires)
 
@@ -138,12 +143,13 @@ class Session(SESS_CLASS):
 		self.request = request
 		self.sessionid = self.request.getCookie('SubminSessionID', \
 				self.generateSessionID())
-		if autoupdatecookie:
-			self.updateCookie()
 
 		self.__destroyed = False
 		init_arg = getattr(self, SESS_INIT_ARG)
 		super(Session, self).__init__(init_arg(), autosave)
+
+		if autoupdatecookie:
+			self.updateCookie()
 
 	def _getfilename(self):
 		if self.destroyed():
@@ -182,7 +188,7 @@ class Session(SESS_CLASS):
 	def destroy(self):
 		self.__destroyed = True
 		self.request.setCookie('SubminSessionID', 'xx',
-				expires=time.asctime())
+				expires=rfc822.formatdate(0))
 
 	def destroyed(self):
 		return self.__destroyed or self.sessionid == 'xx'
@@ -199,7 +205,7 @@ class Session(SESS_CLASS):
 				base_url = '/'
 
 		self.request.setCookie('SubminSessionID', self.sessionid, \
-			str(base_url))
+			str(base_url), expires=rfc822.formatdate(self.expires))
 
 	def generateSessionID(self):
 		"""Really an MD5-sum of the current time and a salt"""
