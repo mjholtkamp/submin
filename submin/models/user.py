@@ -203,7 +203,7 @@ class User(object):
 			if reposname in notifications:
 				continue
 
-			if not perms['permission'] in ('r', 'rw'):
+			if perms['permission'] not in ('r', 'rw'):
 				continue
 
 			notification = {

@@ -244,7 +244,7 @@ class Template(object):
 		if variable is None or recursing:
 			if variable is None:
 				variable = self.variables
-			if not variable.has_key(key) and key not in self.node_variables:
+			if key not in variable and key not in self.node_variables:
 				return None
 			if key in self.node_variables:
 				variable = self.node_variables[key][-1]
@@ -265,8 +265,12 @@ class Template(object):
 			if hasattr(attr, '__call__'):
 				return attr()
 			return attr
-		if hasattr(variable, 'has_key') and variable.has_key(attr):
+		try:
 			return variable[attr]
+		except (TypeError, KeyError, IndexError):
+			# not iterable, or does not exist, try next
+			pass
+
 		if attr.isdigit():
 			if len(variable) <= int(attr):
 				return None

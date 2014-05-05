@@ -134,7 +134,7 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 		fp = open(str(fname), "w+")
 
 		suggestion = '/path/to/submin'
-		if os.environ.has_key("PYTHONPATH"):
+		if 'PYTHONPATH' in os.environ:
 			suggestion = os.path.abspath(os.environ["PYTHONPATH"].split(":")[0])
 
 		fp.write("""#!/usr/bin/env python2

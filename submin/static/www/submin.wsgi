@@ -12,7 +12,7 @@ else:
 
 def application(environ, start_response):
 	for key in ['SUBMIN_ENV', 'SUBMIN_REMOVE_BASE_URL']:
-		if key in os.environ and not key in environ:
+		if key in os.environ and key not in environ:
 			environ[key] = os.environ[key]
 		if key in environ:
 			os.environ[key] = environ[key]

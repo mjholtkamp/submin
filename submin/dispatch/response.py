@@ -37,9 +37,9 @@ class Redirect(Response):
 
 		url = unicode(url)
 		self.status_code = 302
-		if not '://' in url:
+		if '://' not in url:
 			vhost = options.value("http_vhost")
-			if not '://' in vhost:
+			if '://' not in vhost:
 				vhost = 'http://' + vhost
 
 			# to prevent accidental double slashes to be interpreted as netloc,

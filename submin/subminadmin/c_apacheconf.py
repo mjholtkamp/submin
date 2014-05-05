@@ -45,7 +45,7 @@ Usage:
 		from time import strftime
 		self.init_vars['datetime_generated'] = strftime("%Y-%m-%d %H:%M:%S")
 
-		if os.environ.has_key('PYTHONPATH'):
+		if 'PYTHONPATH' in os.environ:
 			self.init_vars['setenv_pythonpath'] = 'SetEnv PYTHONPATH %s' % os.environ['PYTHONPATH']
 		else:
 			self.init_vars['setenv_pythonpath'] = ''

@@ -17,7 +17,7 @@ WRITE_CMDS = [
 ]
 
 def run(username):
-	if not "SSH_ORIGINAL_COMMAND" in os.environ:
+	if "SSH_ORIGINAL_COMMAND" not in os.environ:
 		print >>sys.stderr, "No command provided. " \
 				+ "Expected something like git-receive-pack"
 		sys.exit(1)

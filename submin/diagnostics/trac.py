@@ -107,7 +107,7 @@ def has_option(config, section, option, value):
 			if option.endswith('.*'):
 				option = option[:-2]
 
-			if not '.' in option:
+			if '.' not in option:
 				return False
 
 			option = option[:option.rindex('.')] + '.*'
@@ -202,7 +202,7 @@ def missing_config_envs(trac_dir):
 		for section, option_values in all_options.iteritems():
 			for option, value, fatal in option_values:
 				if not has_option(config, section, option, value):
-					if not section in missing_options:
+					if section not in missing_options:
 						missing_options[section] = []
 					missing_options[section].append((option, value, fatal))
 

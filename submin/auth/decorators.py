@@ -13,7 +13,7 @@ def login_required(fun):
 	login_url = options.url_path('base_url_submin') + 'login'
 
 	def _decorator(self, *args, **kwargs):
-		if not 'user' in self.request.session:
+		if 'user' not in self.request.session:
 			return Redirect(login_url, self.request)
 
 		if not self.request.session['user']['is_authenticated']:
@@ -63,7 +63,7 @@ def acl_required(acl_name):
 
 		def _wrapper(self, *args, **kwargs):
 			address = self.request.remote_address
-			if not address in acls:
+			if address not in acls:
 				raise Unauthorized(
 					"Your IP address [%s] does not have access" % address)
 			return fun(self, *args, **kwargs)
@@ -77,7 +77,7 @@ def upgrade_user_required(fun):
 	main_url = options.url_path('base_url_submin')
 
 	def _decorator(self, *args, **kwargs):
-		if not 'upgrade_user' in self.request.session:
+		if 'upgrade_user' not in self.request.session:
 			if 'user' in self.request.session:
 				return Redirect(main_url, self.request)
 

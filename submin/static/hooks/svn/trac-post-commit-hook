@@ -100,7 +100,7 @@ parser.add_option('-s', '--siteurl', dest='url',
 
 (options, args) = parser.parse_args(sys.argv[1:])
 
-if not 'PYTHON_EGG_CACHE' in os.environ:
+if 'PYTHON_EGG_CACHE' not in os.environ:
     os.environ['PYTHON_EGG_CACHE'] = os.path.join(options.project, '.egg-cache')
 
 from trac.env import open_environment

@@ -127,7 +127,7 @@ If you use Trac, it will be accessible from <http base>/trac.
 	def create_env(self):
 		"""This is called when all info is gathered"""
 		for key, value in self.defaults.iteritems():
-			if not self.init_vars.has_key(key):
+			if key not in self.init_vars:
 				self.init_vars[key] = value
 
 		try:
@@ -215,7 +215,7 @@ If you use Trac, it will be accessible from <http base>/trac.
 				return False
 
 			(key, val) = arg.split('=', 1)
-			if not self.defaults.has_key(key):
+			if key not in self.defaults:
 				print "\nSorry, I don't understand `%s':\n" % key
 				self.sa.execute(['help', 'initenv'])
 				return False

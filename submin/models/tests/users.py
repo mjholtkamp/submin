@@ -175,10 +175,10 @@ class UserTests(unittest.TestCase):
 				{'name': 'non-existing', 'vcs': 'svn', 'enabled': True}
 			], mock_admin)
 		notifications = self.u.notifications()
-		self.assertFalse(notifications.has_key("non-existing"))
+		self.assertFalse('non-existing' in notifications)
 		u2 = user.User("test")
 		notifications = u2.notifications()
-		self.assertFalse(notifications.has_key("repos"))
+		self.assertFalse('repos' in notifications)
 
 	def testSaveNotificationsNonAdminNotAllowed(self):
 		"""If not allowed, should raise Exception"""

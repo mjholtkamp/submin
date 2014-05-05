@@ -122,11 +122,11 @@ class CGIFieldStorage(cgi.FieldStorage):
 		return uc_url_decode(value)
 
 	def __setitem__(self, name, value):
-		if self.has_key(name):
+		if name in self:
 			del self[name]
 		self.list.append(cgi.MiniFieldStorage(name, value))
 
 	def __delitem__(self, name):
-		if not self.has_key(name):
+		if name not in self:
 			raise KeyError(name)
 		self.list = filter(lambda x, name=name: x.name != name, self.list)

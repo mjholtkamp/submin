@@ -101,13 +101,13 @@ def iter(node, tpl):
 			"Missing required argument variable at file %s, line %d" % \
 			(tpl.filename, node.line)
 	
-	if not tpl.node_variables.has_key('ival'):
+	if 'ival' not in tpl.node_variables:
 		tpl.node_variables['ival'] = []
-	if not tpl.node_variables.has_key('iindex'):
+	if 'iindex' not in tpl.node_variables:
 		tpl.node_variables['iindex'] = []
-	if not tpl.node_variables.has_key('iseq'):
+	if 'iseq' not in tpl.node_variables:
 		tpl.node_variables['iseq'] = []
-	if not tpl.node_variables.has_key('ikey'):
+	if 'ikey' not in tpl.node_variables:
 		tpl.node_variables['ikey'] = []
 	tpl.node_variables['ival'].append(None)
 	tpl.node_variables['iindex'].append(None)
@@ -165,7 +165,7 @@ def ival(node, tpl):
 	args = node.arguments
 	if not args:
 		args = None
-	if tpl.node_variables.has_key('ival') and len(tpl.node_variables['ival']) >= 1:
+	if 'ival' in tpl.node_variables and len(tpl.node_variables['ival']) >= 1:
 		return tpl.variable_value('', args, tpl.node_variables['ival'][-1])
 	raise IvalOutsideIter,\
 		"Ival without enclosing iter at file %s, line %d" % \
@@ -176,7 +176,7 @@ def ikey(node, tpl):
 	args = node.arguments
 	if not args:
 		args = None
-	if tpl.node_variables.has_key('ikey') and len(tpl.node_variables['ikey']) >= 1:
+	if 'ikey' in tpl.node_variables and len(tpl.node_variables['ikey']) >= 1:
 		return tpl.variable_value('', args, tpl.node_variables['ikey'][-1])
 	raise IkeyOutsideIter,\
 		"Ikey without enclosing iter at file %s, line %d" % \

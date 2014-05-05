@@ -16,7 +16,7 @@ class Settings(object):
 		self.__dict__['settings'] = None
 
 	def load(self):
-		if not os.environ.has_key('SUBMIN_ENV'):
+		if 'SUBMIN_ENV' not in os.environ:
 			raise SettingsException('Settings cannot be imported, please ' +
 				'set the SUBMIN_ENV environment variable to the submin base ' +
 				'directory')
@@ -66,9 +66,9 @@ class SubminInstallationCheck(object):
 		self.ok = self.new_env and not self.old_env
 	
 	def check_env(self):
-		if self.environ.has_key('SUBMIN_ENV'):
+		if 'SUBMIN_ENV' in self.environ:
 			self.new_env = self.environ['SUBMIN_ENV']
-		if self.environ.has_key('SUBMIN_CONF'):
+		if 'SUBMIN_CONF' in self.environ:
 			self.old_env = self.environ['SUBMIN_CONF']
 
 	def error_page(self):

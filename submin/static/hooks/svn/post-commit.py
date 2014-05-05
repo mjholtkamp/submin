@@ -10,7 +10,7 @@ def buildNotifications(users):
 			if not u_notif[repo]["enabled"]:
 				continue
 
-			if not notifications.has_key(repo):
+			if repo not in notifications:
 				notifications[repo] = []
 
 			# check if user has email, if not, ignore
@@ -48,7 +48,7 @@ def main():
 
 	n = buildNotifications(userlist)
 	repos = os.path.basename(repospath)
-	if not n.has_key(repos):
+	if repos not in n:
 		print "no such repository"
 		return
 

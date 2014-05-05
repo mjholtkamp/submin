@@ -98,7 +98,7 @@ Usage:
 				(joburl, str(e)))
 		else:
 			xml = response.read()
-			if not 'success="True"' in xml:
+			if 'success="True"' not in xml:
 				print('Failed to sync:\n%s' % xml)
 			# TODO: don't process XML with regexps...
 			messages = re.sub('.*<errormsgs>(.*)</errormsgs>.*', '\\1', xml, flags=re.DOTALL)
@@ -118,7 +118,7 @@ Usage:
 			with open(dst, "w") as f_out:
 				for line in f_in.readlines():
 					# set env right after the first non-comment
-					if header and not '#' in line:
+					if header and '#' not in line:
 						header = False
 						trac_dir = str(options.env_path('trac_dir'))
 						f_out.write(SYSTEM_ENV_LINES % trac_dir)
