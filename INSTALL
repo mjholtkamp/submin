@@ -86,10 +86,17 @@ to create them again for any reason, run the following command:
 
 Now to activate the submin2 website, the configuration should be included into
 Apache2. To use for example CGI and SVN, execute the following commands as
-root (on Debian systems):
+root (on Debian systems with Apache <2.4):
 
     ln -s /var/lib/submin/conf/apache-webui-cgi.conf /etc/apache2/conf.d/
     ln -s /var/lib/submin/conf/apache-svn.conf /etc/apache2/conf.d/
+
+For Debian systems with Apache 2.4+, link the 2.4 versions:
+
+    ln -s /var/lib/submin/conf/apache-2.4-webui-cgi.conf /etc/apache2/conf-available/
+    ln -s /var/lib/submin/conf/apache-2.4-svn.conf /etc/apache2/conf-available/
+    a2enconf apache-2.4-webui-cgi.conf
+    a2enconf apache-2.4-svn.conf
 
 Now restart your webserver to activate the new settings.
 
