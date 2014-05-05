@@ -1,8 +1,9 @@
 import os
 import sys
+
 from submin.models import options
 
-from request import Request, CGIGet, CGIFieldStorage
+from .request import Request, CGIGet, CGIFieldStorage
 
 class WSGIRequest(Request):
 	def __init__(self, environ):

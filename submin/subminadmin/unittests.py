@@ -1,8 +1,5 @@
 import sys
 import unittest
-import c_quit
-import c_config
-import c_help
 import os
 import tempfile
 import shutil # to remove temp dir
@@ -22,6 +19,10 @@ from submin.models import storage
 from submin.models import options
 from submin.models.exceptions import UnknownKeyError
 
+from . import c_quit
+from . import c_config
+from . import c_help
+
 class SubminAdminApacheConfTests(unittest.TestCase):
 	@classmethod
 	def setUpClass(cls):
@@ -37,7 +38,7 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 		os.environ['SUBMIN_ENV'] = cls.tmpdir
 
 	def setUp(self):
-		import c_apacheconf
+		from . import c_apacheconf
 		sa = MagicMock()
 		sa.env = self.tmpdir
 		self.ac = c_apacheconf.c_apacheconf(sa, [])
@@ -195,7 +196,7 @@ class SubminAdminHelp(unittest.TestCase):
 		without having an environment (like we do in this test) and the 'options' module
 		needs a working environment. In the case that options is imported prematurely,
 		import it later (inside a function, but not in __init__)"""
-		from subminadmin import SubminAdmin
+		from .subminadmin import SubminAdmin
 		sa = SubminAdmin(['submin2-admin', '/tmp/nothing', '?'])
 		sa.run()
 		self.assertTrue('to get more information on that command' in sys.stdout.getvalue())

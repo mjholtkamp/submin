@@ -2,9 +2,9 @@ import unittest
 from tempfile import mkstemp
 import os
 
-from template import Template, UnknownCommandError
+from .template import Template, UnknownCommandError
 # import template
-import template_commands
+from . import template_commands
 template_commands.DEBUG = False
 
 def evaluate(tpl_string, variables={}):

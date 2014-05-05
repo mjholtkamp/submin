@@ -7,8 +7,8 @@ import shutil
 from submin.common import shellscript
 from submin.models import options, repository
 
-from common import rewrite_hook
-import post_receive_hook
+from .common import rewrite_hook
+from . import post_receive_hook
 
 def run(reponame):
 	reposdir = repository.directory('git', reponame)

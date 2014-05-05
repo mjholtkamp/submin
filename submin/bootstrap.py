@@ -72,8 +72,7 @@ class SubminInstallationCheck(object):
 			self.old_env = self.environ['SUBMIN_CONF']
 
 	def error_page(self):
-		from template.template import Template
-		import template.template_commands
+		from .template.template import Template
 		fname = os.path.join(self.submin_dir, 'static', 'templates', 'error_config.html')
 		fp = file(fname, 'r')
 		variables = {

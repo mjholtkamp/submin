@@ -1,11 +1,12 @@
-from submin.path.path import Path
-from submin.template.shortcuts import evaluate
-from submin.common.osutils import mkdirs
 import os
 import re
 import errno
 
-from common import www_user
+from submin.path.path import Path
+from submin.template.shortcuts import evaluate
+from submin.common.osutils import mkdirs
+
+from .common import www_user
 
 class c_nginxconf():
 	'''Commands to change NGINX config

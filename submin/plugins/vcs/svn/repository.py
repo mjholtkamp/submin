@@ -10,7 +10,7 @@ from submin.models import options
 from submin.models.exceptions import UnknownKeyError, MissingConfig
 from submin.models.repository import DoesNotExistError, PermissionError, VersionError, VCSImportError
 
-from export import export_notifications
+from .export import export_notifications
 
 display_name = "Subversion"
 has_path_permissions = True

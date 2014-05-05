@@ -2,7 +2,7 @@ from submin.models.exceptions import UnknownUserError
 from submin.models import options
 from submin.models.user import User
 from submin.template.template import Template
-import template_commands
+from . import template_commands
 
 def evaluate(templatename, localvars={}):
 	import os

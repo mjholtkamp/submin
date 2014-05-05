@@ -1,7 +1,7 @@
 import os
 import sys
 
-from request import Request, CGIGet, CGIFieldStorage
+from .request import Request, CGIGet, CGIFieldStorage
 
 class CGIRequest(Request):
 	def __init__(self):

@@ -1,2 +1,2 @@
-import storage
-import vcs
+from . import storage
+from . import vcs

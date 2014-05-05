@@ -1,6 +1,7 @@
-import local
-import smtp
 from submin.models.exceptions import SendEmailError
+
+from . import local
+from . import smtp
 
 def sendmail(sender, receiver, message):
 	msg_e = message.encode('utf-8')

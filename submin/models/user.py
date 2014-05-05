@@ -2,7 +2,9 @@ from submin import models
 from submin.hooks.common import trigger_hook
 from submin.models import options
 from submin.models import repository
-import validators
+
+from . import validators
+
 storage = models.storage.get("user")
 
 from submin.models.exceptions import UnknownUserError, UserPermissionError

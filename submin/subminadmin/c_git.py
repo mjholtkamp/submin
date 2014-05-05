@@ -2,8 +2,10 @@ import os
 import sys
 import stat
 import socket
-from common import executeCmd, which, CmdException, SubminAdminCmdException, www_user
+
 from submin.common.osutils import mkdirs
+
+from .common import executeCmd, which, CmdException, SubminAdminCmdException, www_user
 
 ERROR_STR = "submin2-admin git %s is not supposed to be called by users."
 

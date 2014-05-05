@@ -8,7 +8,7 @@ from submin.models.user import FakeAdminUser
 def export_authz(**args):
 	"""Export authorization/authentication info"""
 	# XXX the import here is to prevent a circular import :( design problem!
-	from repository import list as list_repos
+	from .repository import list as list_repos
 
 	authz_filename = options.env_path("svn_authz_file")
 	authz = codecs.open(str(authz_filename), "w+", "utf-8")

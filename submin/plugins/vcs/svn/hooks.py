@@ -1,4 +1,4 @@
-from export import export_authz, export_notifications
+from .export import export_authz, export_notifications
 
 hooks = {
 	'user-create': [export_authz],

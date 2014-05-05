@@ -1,1 +1,1 @@
-from common import trigger_hook
+from .common import trigger_hook

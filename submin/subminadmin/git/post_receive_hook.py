@@ -6,9 +6,10 @@ import errno
 from submin.models import options, repository
 from submin.template.shortcuts import evaluate
 from submin.common.osutils import mkdirs
-from common import set_git_config, SetGitConfigError
-from common import rewrite_hook, signature
 from submin.common import shellscript
+
+from .common import set_git_config, SetGitConfigError
+from .common import rewrite_hook, signature
 
 HOOK_VERSIONS = {
 	'commit-email': 5,

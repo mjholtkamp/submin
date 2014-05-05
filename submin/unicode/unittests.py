@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from unicode import uc_str, uc_url_decode, uc_from_svn, uc_to_svn
+from .unicode import uc_str, uc_url_decode, uc_from_svn, uc_to_svn
 
 class UnicodeTests(unittest.TestCase):
 	uc_encoded = u"元気"

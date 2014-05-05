@@ -1,5 +1,5 @@
 import unittest
-from path import Path
+from .path import Path
 
 class PathTests(unittest.TestCase):
 	def testConcatPaths(self):

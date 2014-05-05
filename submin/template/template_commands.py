@@ -6,10 +6,10 @@ can be converted to the right locale (but currently it is just converted
 to utf-8)"""
 
 import os
-
-from library import Library
-from template import Template
 from types import * # for ikey/ival
+
+from .library import Library
+from .template import Template
 commands = Library()
 
 class ElseError(Exception):

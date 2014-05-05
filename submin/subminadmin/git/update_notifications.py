@@ -1,7 +1,8 @@
 from submin.models import repository
 from submin.models import user
 from submin.models import options
-from common import set_git_config, SetGitConfigError
+
+from .common import set_git_config, SetGitConfigError
 
 class UpdateFailed(Exception):
 	pass

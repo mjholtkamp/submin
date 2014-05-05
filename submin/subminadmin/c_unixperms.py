@@ -1,7 +1,8 @@
-from submin.path.path import Path
 import os
 
-from common import www_user
+from submin.path.path import Path
+
+from .common import www_user
 
 class c_unixperms():
 	'''Commands regarding unix permissions

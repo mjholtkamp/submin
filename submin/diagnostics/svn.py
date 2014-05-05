@@ -1,7 +1,7 @@
 from submin.models import options
 from submin.models.exceptions import UnknownKeyError
 
-from common import apache_modules, ApacheCtlError
+from .common import apache_modules, ApacheCtlError
 
 def diagnostics():
 	results = {}

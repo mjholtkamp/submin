@@ -4,7 +4,7 @@ import sys
 import string
 
 from submin.unicode import uc_str
-from library import Library
+from .library import Library
 
 class UnknownCommandError(Exception):
 	pass
