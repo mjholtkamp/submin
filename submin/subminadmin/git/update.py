@@ -19,7 +19,7 @@ def run():
 		gituser = options.value("git_user")
 		owner = getpwnam(gituser)
 		os.chown(os.path.dirname(filename), owner.pw_uid, owner.pw_gid)
-		os.chmod(filename, 0600)
+		os.chmod(filename, 0o600)
 
 	www_key_file = env_path + "conf" + "id_dsa.pub"
 	if not www_key_file.exists():

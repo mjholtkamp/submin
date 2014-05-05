@@ -37,7 +37,7 @@ def prepare(reponame):
 	# because www user can check if files in this directory exists, but
 	# we can't chgrp() the dir, we set the mode explicitly to 0755. The
 	# parent dir is only open to git user and www group, with mode 0750.
-	mkdirs(hook_dir + 'post-receive.d', mode=0755)
+	mkdirs(hook_dir + 'post-receive.d', mode=0o755)
 
 def setCommitEmailHook(reponame, enable):
 	prepare(reponame)
@@ -65,7 +65,7 @@ def setCommitEmailHook(reponame, enable):
 			with file(hook_dest, 'w') as f:
 				f.write(hook)
 
-			os.chmod(hook_dest, 0755)
+			os.chmod(hook_dest, 0o755)
 		except OSError as e:
 			raise repository.PermissionError(
 				"Enabling hook failed: %s" % (str(e),))
@@ -115,7 +115,7 @@ def setTracSyncHook(reponame, enable):
 	with file(hook, 'w') as f:
 		f.writelines(contents)
 
-	os.chmod(hook, 0755)
+	os.chmod(hook, 0o755)
 
 def rewrite_hooks(reponame):
 	if reponame:

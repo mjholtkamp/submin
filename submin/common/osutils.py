@@ -2,7 +2,7 @@
 import os
 import errno
 
-def mkdirs(name, mode=0777):
+def mkdirs(name, mode=0o777):
 	"""Wrapper around os.makedirs().
 	This elimiates the need to catch exception if the dir already exists"""
 	try:

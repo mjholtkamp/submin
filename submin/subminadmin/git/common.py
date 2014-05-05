@@ -52,5 +52,5 @@ def enable_hook(reposdir, hookname, targetname,
 	if shellscript.hasSignature(hook, signature):
 		return
 
-	shellscript.rewriteWithSignature(hook, signature, new_hook, True, mode=0755)
+	shellscript.rewriteWithSignature(hook, signature, new_hook, True, mode=0o755)
 

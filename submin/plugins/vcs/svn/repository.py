@@ -217,7 +217,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		reposdir = options.env_path('svn_dir')
 		hook = reposdir + self.name + 'hooks' + 'post-commit'
 
-		shellscript.rewriteWithSignature(hook, signature, new_hook, enable, mode=0755)
+		shellscript.rewriteWithSignature(hook, signature, new_hook, enable, mode=0o755)
 
 	def remove(self):
 		reposdir = options.env_path('svn_dir')

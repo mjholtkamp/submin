@@ -248,9 +248,9 @@ Usage:
 
 		# Fix permissions for the ssh-key
 		os.chown(str(ssh_key_file), owner.pw_uid, owner.pw_gid)
-		os.chmod(str(ssh_key_file), 0600)
+		os.chmod(str(ssh_key_file), 0o600)
 		os.chown(ssh_pub_key, owner.pw_uid, owner.pw_gid)
-		os.chmod(ssh_pub_key, 0644)
+		os.chmod(ssh_pub_key, 0o644)
 		print "ssh-key is now owned by %s" % owner.pw_name
 
 	def add_user_to_group(self, username, group_id):
@@ -289,7 +289,7 @@ Usage:
 		# Fix permissions for paths, which the git-user needs to be able to
 		# access, in order to also access files within
 		os.chown(str(options.env_path()), -1, int(git_gid))
-		os.chmod(str(options.env_path()), 0750)
+		os.chmod(str(options.env_path()), 0o750)
 		conf_dir = options.env_path() + "conf"
 		os.chown(str(conf_dir), -1, int(git_gid))
 
@@ -307,24 +307,24 @@ Usage:
 				path = os.path.join(root, f)
 				if root == ssh_dir:
 					os.chown(path, int(git_uid), int(git_gid))
-					os.chmod(path, 0700)
+					os.chmod(path, 0o700)
 				else:
 					# don't chown anything that is symlinked
 					if not os.path.islink(path):
 						os.chown(path, int(git_uid), int(apache.pw_gid))
-						os.chmod(path, 0750)
+						os.chmod(path, 0o750)
 			for d in dirs:
 				path = os.path.join(root, d)
 				os.chown(path, int(git_uid), int(apache.pw_gid))
-				os.chmod(path, 0750)
+				os.chmod(path, 0o750)
 
 		# The git-directory itself should also be available to the apache-user,
 		# So it can list the repositories
-		os.chmod(git_dir, 0750)
+		os.chmod(git_dir, 0o750)
 		os.chown(git_dir, int(git_uid), int(apache.pw_gid))
 
 		# The ssh-directory can be really strict, only allow git
-		os.chmod(ssh_dir, 0700)
+		os.chmod(ssh_dir, 0o700)
 		os.chown(ssh_dir, int(git_uid), int(git_gid))
 
 		# Now, fix the permissions for the actual files
@@ -337,11 +337,11 @@ Usage:
 		# and id_dsa.pub needs to be readable by the git user, so it
 		# can add the public key to the authorized_keys file.
 		os.chown(str(conf_dir + "id_dsa.pub"), -1, int(git_gid))
-		os.chmod(str(conf_dir + "id_dsa"), 0600)
+		os.chmod(str(conf_dir + "id_dsa"), 0o600)
 
 		# now check if trac is enabled, because we need access to it
 		# if the trac-sync script is enabled
 		if options.value('enabled_trac', 'no') != 'no':
 			trac_dir = options.env_path('trac_dir')
 			os.chown(trac_dir, int(apache.pw_uid), int(git_gid))
-			os.chmod(trac_dir, 02770) # set-gid
+			os.chmod(trac_dir, 0o2770) # set-gid

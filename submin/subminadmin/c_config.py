@@ -148,7 +148,7 @@ from submin.dispatch.cgirunner import run
 run()
 """ % suggestion)
 		fp.close()
-		os.chmod(str(fname), 0755)
+		os.chmod(str(fname), 0o755)
 
 	def run(self):
 		if len(self.argv) < 1:

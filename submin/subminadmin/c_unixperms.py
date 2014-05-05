@@ -79,20 +79,20 @@ This should also remove possible following warnings.
 
 		if do_chmod:
 			try:
-				permission = 0640
+				permission = 0o640
 				if os.path.isdir(item):
-					permission = 0750
+					permission = 0o750
 					# XXX relax permissions on conf to let git user
 					# write to database... we should actually move
 					# the database to a separate directory, so we can
 					# restrict the loose permissions on the db only.
 					if os.path.basename(item) == 'conf':
-						permission = 0770
+						permission = 0o770
 				(root, ext) = os.path.splitext(item)
 				if ext in ('.cgi', '.wsgi', '.fcgi'):
-					permission = 0750
+					permission = 0o750
 				if os.path.basename(item) == 'submin.db':
-					permission = 0660
+					permission = 0o660
 
 				os.chmod(item, permission)
 			except OSError:
