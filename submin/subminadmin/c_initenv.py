@@ -1,6 +1,7 @@
 import os
 from submin.path.path import Path
 from submin.subminadmin import common
+from submin.models.exceptions import SendEmailError
 
 class c_initenv():
 	'''Initialize a new enviroment
@@ -169,8 +170,13 @@ If you use Trac, it will be accessible from <http base>/trac.
 		
 		if self.init_vars['create_user'] == "yes":
 			# add an admin user
-			u = user.add('admin', self.email, origin='submin2-admin')
+			u = user.add('admin', self.email, send_mail=False)
 			u.is_admin = True
+			try:
+				u.prepare_password_reset('submin2-admin')
+			except SendEmailError, e:
+				print 'WARNING: Could not send an e-mail, please install a mail server'
+				print 'WARNING: You can request a password reset for "admin" on the login page'
 
 		self.sa.execute(['upgrade', 'hooks', 'no-fix-unixperms'])
 		self.sa.execute(['unixperms', 'fix'])
