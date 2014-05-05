@@ -8,7 +8,7 @@ def get(model):
 	try:
 		storage = fimport("submin.plugins.storage.%s.%s" % (settings.storage, model),
 			       "submin.plugins.storage.%s" % settings.storage)
-	except SettingsException, e:
+	except SettingsException as e:
 		raise StorageError(str(e))
 
 	return storage
@@ -24,14 +24,14 @@ def database_evolve(*args, **kwargs):
 				"submin.plugins.storage")
 		storage_module.database_backup(settings)
 		storage_module.database_evolve(*args, **kwargs)
-	except SettingsException, e:
+	except SettingsException as e:
 		raise StorageError(str(e))
 
 def database_isuptodate():
 	try:
 		return fimport("submin.plugins.storage.%s" % settings.storage,
 				"submin.plugins.storage").database_isuptodate()
-	except SettingsException, e:
+	except SettingsException as e:
 		raise StorageError(str(e))
 
 def open(pass_settings=None):
@@ -45,7 +45,7 @@ def open(pass_settings=None):
 		opened_module = fimport("submin.plugins.storage.%s" % settings.storage,
 				"submin.plugins.storage")
 		opened_module.open(settings)
-	except SettingsException, e:
+	except SettingsException as e:
 		raise StorageError(str(e))
 
 def close():
@@ -54,5 +54,5 @@ def close():
 	try:
 		if opened_module:
 			opened_module.close()
-	except SettingsException, e:
+	except SettingsException as e:
 		raise StorageError(str(e))

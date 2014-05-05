@@ -40,7 +40,7 @@ def add(username, password):
 	try:
 		storage.execute(cur, "INSERT INTO users (name, password) VALUES (?, ?)",
 				(username, password))
-	except storage.SQLIntegrityError, e:
+	except storage.SQLIntegrityError as e:
 		raise UserExistsError("User `%s' already exists" % username)
 
 def check_password(userid, password):

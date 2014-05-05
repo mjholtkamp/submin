@@ -59,7 +59,7 @@ Usage:
 			subcmd(self.argv[1:])
 		except SubminAdminCmdException:
 			pass
-		except CmdException, e:
+		except CmdException as e:
 			print >>sys.stderr, e.usermsg
 			print >>sys.stderr, "Command:", e.cmd
 			print >>sys.stderr, "Error message of the command was:", e.errormsg
@@ -129,7 +129,7 @@ Usage:
 		try:
 			sudo_bin = which("sudo")
 			git_bin  = which("git")
-		except ProgramNotFoundError, e:
+		except ProgramNotFoundError as e:
 			raise SubminAdminCmdException('Could not find %s, which is required for git init.' % e.prog)
 
 		from submin.subminadmin import c_unixperms
@@ -144,7 +144,7 @@ Usage:
 		# Create git user if it doesn't exist yet.
 		try:
 			pwd = getpwnam(git_user)
-		except KeyError, e:
+		except KeyError as e:
 			self.create_user(git_user, options.env_path("git_dir"))
 		else:
 			use_it = self.prompt_user("User %s already exists. Use it?" % \
@@ -230,7 +230,7 @@ Usage:
 	def create_user(self, username, homedir):
 		try:
 			self.create_user_adduser(username, homedir)
-		except CmdException, e:
+		except CmdException as e:
 			self.create_user_useradd(username, homedir)
 			# if this fails, it will raise another CmdException,
 			# which is not caught.

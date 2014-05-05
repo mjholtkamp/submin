@@ -32,7 +32,7 @@ class Hooks(View):
 
 		try:
 			extra_vars = subcmd(path[1:])
-		except Unauthorized, e:
+		except Unauthorized as e:
 			tvars['errormsgs'] = [str(e)]
 			tvars['inacl'] = False
 			return XMLTemplateResponse(template, tvars)
@@ -64,7 +64,7 @@ class Hooks(View):
 		oldwd = os.getcwd()
 		try:
 			os.chdir(repo_dir)
-		except OSError, e:
+		except OSError as e:
 			return {'errormsgs': ['Directory does not exist', str(e),
 					'Please check Submin diagnostics'], 'success': False}
 
@@ -85,7 +85,7 @@ class Hooks(View):
 		for line in lines.strip().split('\n'):
 			try:
 				oldrev, newrev, refname = line.split()
-			except ValueError, e:
+			except ValueError as e:
 				return 'trac-sync/%s/%s/%s: %s' % (
 					self.vcs_type, self.repo, jobid, str(e))
 
@@ -95,7 +95,7 @@ class Hooks(View):
 
 			try:
 				revs = check_output(cmd, stderr=STDOUT, env=self.env_copy)
-			except CalledProcessError, e:
+			except CalledProcessError as e:
 				return 'cmd [%s] failed: %s', (cmd, e.output)
 
 			for rev in revs.strip().split('\n'):

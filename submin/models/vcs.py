@@ -8,7 +8,7 @@ def get(vcstype, model):
 	try:
 		vcs_plugin = fimport("submin.plugins.vcs.%s.%s" % (vcstype, model),
 			       "submin.plugins.vcs.%s" % vcstype)
-	except ImportError, e:
+	except ImportError as e:
 		raise VCSException(e)
 
 	return vcs_plugin
@@ -34,7 +34,7 @@ def export_auth(vcstype, authtype):
 	#try:
 	vcs_plugin = fimport("submin.plugins.vcs.%s.%s" % (vcstype, "export"),
 			   "submin.plugins.vcs.%s" % vcstype)
-	#except ImportError, e:
+	#except ImportError as e:
 	#	raise VCSException(e)
 
 	vcs_plugin.export_auth(authtype)

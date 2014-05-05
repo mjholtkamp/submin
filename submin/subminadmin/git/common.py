@@ -18,7 +18,7 @@ def set_git_config(configfile, key, val):
 		
 	try:
 		subprocess.check_call(cmd)
-	except subprocess.CalledProcessError, e:
+	except subprocess.CalledProcessError as e:
 		if e.returncode != 5: # unset an option that doesn't exist
 			raise SetGitConfigError(str(e))
 
@@ -37,7 +37,7 @@ def backup_old_hook(reposdir, hookname):
 	hook = reposdir + 'hooks' + hookname
 	try:
 		os.rename(hook, str(hook) + '.submin2.backup')
-	except OSError, e:
+	except OSError as e:
 		if e.errno != errno.ENOENT:
 			raise
 

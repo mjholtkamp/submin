@@ -57,7 +57,7 @@ def setCommitEmailHook(reponame, enable):
 		hook = evaluate('plugins/vcs/git/post-receive', variables)
 		try:
 			os.unlink(hook_dest)
-		except OSError, e:
+		except OSError as e:
 			if e.errno != errno.ENOENT:
 				raise
 
@@ -66,7 +66,7 @@ def setCommitEmailHook(reponame, enable):
 				f.write(hook)
 
 			os.chmod(hook_dest, 0755)
-		except OSError, e:
+		except OSError as e:
 			raise repository.PermissionError(
 				"Enabling hook failed: %s" % (str(e),))
 		try:
@@ -78,14 +78,14 @@ def setCommitEmailHook(reponame, enable):
 			prefix = '[%s]' % reponame
 			set_git_config(cfg, 'multimailhook.emailprefix', prefix)
 			set_git_config(cfg, 'multimailhook.envelopesender', email)
-		except SetGitConfigError, e:
+		except SetGitConfigError as e:
 			raise repository.PermissionError(
 				"Enabling hook succeeded, but configuring it failed: %s" %
 				(str(e)))
 	else:
 		try:
 			os.unlink(hook_dest)
-		except OSError, e:
+		except OSError as e:
 			if e.errno != errno.ENOENT:
 				raise repository.PermissionError(
 					"Removing hook failed: %s" % (str(e),))
@@ -98,7 +98,7 @@ def setTracSyncHook(reponame, enable):
 
 	try:
 		os.unlink(hook)
-	except OSError, e:
+	except OSError as e:
 		if e.errno != errno.ENOENT:
 			raise repository.PermissionError(
 				"Removing trac-sync hook failed: %s" % (str(e),))

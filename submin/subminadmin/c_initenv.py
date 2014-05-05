@@ -174,7 +174,7 @@ If you use Trac, it will be accessible from <http base>/trac.
 			u.is_admin = True
 			try:
 				u.prepare_password_reset('submin2-admin')
-			except SendEmailError, e:
+			except SendEmailError as e:
 				print 'WARNING: Could not send an e-mail, please install a mail server'
 				print 'WARNING: You can request a password reset for "admin" on the login page'
 

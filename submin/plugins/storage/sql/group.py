@@ -25,7 +25,7 @@ def add(groupname):
 	try:
 		storage.execute(storage.db.cursor(), \
 			"INSERT INTO groups (name) VALUES (?)", (groupname,))
-	except storage.SQLIntegrityError, e:
+	except storage.SQLIntegrityError as e:
 		raise GroupExistsError("Group `%s' already exists" % groupname)
 
 def group_data(groupname):

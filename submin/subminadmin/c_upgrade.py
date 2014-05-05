@@ -35,7 +35,7 @@ Usage:
 		if not os.path.exists(str(directory)):
 			try:
 				mkdirs(str(directory), mode=0700)
-			except OSError, e:
+			except OSError as e:
 				print 'making dir %s failed, do you have permissions?' % \
 						str(directory)
 				raise e
@@ -47,7 +47,7 @@ Usage:
 		for script in glob.glob(str(env_event_dir + "*/[3-6]*")):
 			try:
 				os.unlink(script)
-			except OSError, e:
+			except OSError as e:
 				print 'updating hook %s failed, do you have permissions?' % \
 						script
 				raise e
@@ -60,7 +60,7 @@ Usage:
 		for script in glob.glob(str(sys_event_dir + "[3-6]*")):
 			try:
 				shutil.copy(script, str(env_event_dir))
-			except IOError, e:
+			except IOError as e:
 				print 'updating hook %s failed, do you have permissions?' % \
 						script
 

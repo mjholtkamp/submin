@@ -62,7 +62,7 @@ def dispatcher(request):
 
 			if not issubclass(response.__class__, Response):
 				raise Exception, "Handler %r should return a Response instance" % handler
-		except UnknownKeyError, e:
+		except UnknownKeyError as e:
 			env = options.env_path() # this should never trigger another UnknownKeyError
 			summary = "It seems your installation is missing a configuration option (%s)" % str(e)
 			details = """
@@ -80,7 +80,7 @@ the name of the missing option should give you a hint to its value :)""" % \
 			else:
 				details = summary + '\n\n' + details
 				response = XMLStatusResponse('', False, details)
-		except Exception, e:
+		except Exception as e:
 			import traceback
 			details = traceback.format_exc()
 

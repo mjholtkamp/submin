@@ -90,10 +90,10 @@ Usage:
 
 		try:
 			response = urllib2.urlopen(joburl)
-		except urllib2.HTTPError, e:
+		except urllib2.HTTPError as e:
 			print('Job queued, but could not sync to "%s", HTTP error %u' %
 				(joburl, e.code, ))
-		except urllib2.URLError, e:
+		except urllib2.URLError as e:
 			print('Job queued, but URL invalid %s: %s' %
 				(joburl, str(e)))
 		else:

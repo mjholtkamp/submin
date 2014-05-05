@@ -45,7 +45,7 @@ def generate_acl_list():
 	try:
 		submin_addresses = set(
 			[x[4][0] for x in socket.getaddrinfo(hostname, 0)])
-	except socket.gaierror, e:
+	except socket.gaierror as e:
 		# ok, that failed, just return the local addresses then
 		return acls
 
@@ -56,7 +56,7 @@ def acl_required(acl_name):
 	def _decorator(fun):
 		try:
 			acls = options.value(acl_name)
-		except UnknownKeyError, e:
+		except UnknownKeyError as e:
 			acls = generate_acl_list()
 		else:
 			acls = [x.strip() for x in acls.split(',')]

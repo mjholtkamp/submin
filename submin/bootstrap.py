@@ -26,7 +26,7 @@ class Settings(object):
 
 		try:
 			self.setSettings(fimport('settings'))
-		except ImportError, e:
+		except ImportError as e:
 			raise SettingsException('Could not load settings: file does not ' +
 				'exist or insufficient permissions')
 

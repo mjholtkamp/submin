@@ -5,7 +5,7 @@ import os
 try:
 	import uwsgi
 	from uwsgidecorators import filemon
-except ImportError, e:
+except ImportError as e:
 	pass
 else:
 	filemon(__file__)(uwsgi.reload)
@@ -40,7 +40,7 @@ def application(environ, start_response):
 		response = dispatcher(req)
 		start_response(response.status(), response.headers.items())
 		content = response.encode_content()
-	except Exception, e:
+	except Exception as e:
 		import traceback
 		trace = traceback.extract_tb(sys.exc_info()[2])
 		list = traceback.format_list(trace)

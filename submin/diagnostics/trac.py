@@ -29,7 +29,7 @@ def diagnostics():
 	results['trac_sync_access'] = True
 	try:
 		have_trac_sync_access()
-	except SyncError, e:
+	except SyncError as e:
 		results['trac_sync_access'] = False
 		results['trac_sync_access_msg' ] = str(e)
 
@@ -73,11 +73,11 @@ def have_trac_sync_access():
 
 	try:
 		response = urllib2.urlopen(joburl, timeout=2)
-	except urllib2.HTTPError, e:
+	except urllib2.HTTPError as e:
 		raise SyncError('HTTP error: %s' % str(e))
-	except urllib2.URLError, e:
+	except urllib2.URLError as e:
 		raise SyncError('URL invalid %u: %s' % (e.reason[0], e.reason[1]))
-	except socket.timeout, e:
+	except socket.timeout as e:
 		raise SyncError('Timeout: are we running a single-threaded server?')
 
 	root = ET.fromstring(response.read())
@@ -184,7 +184,7 @@ def missing_config_envs(trac_dir):
 
 		try:
 			repos = Repository(trac_env, repostype)
-		except DoesNotExistError, e:
+		except DoesNotExistError as e:
 			pass
 		else:
 			connected = True

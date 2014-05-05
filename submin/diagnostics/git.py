@@ -40,7 +40,7 @@ def diagnostics():
 
 	try:
 		remote.execute("update-auth")
-	except (remote.NonZeroExitStatus, UnknownKeyError), e:
+	except (remote.NonZeroExitStatus, UnknownKeyError) as e:
 		results['git_admin_test'] = False
 		results['git_admin_test_errmsg'] = str(e)
 		results['git_ssh_host_internal'] = options.value(
@@ -60,7 +60,7 @@ def hook_uptodate(filename, version_re, newest_version):
 	is a regular expression with one capture group (the version as a number)"""
 	try:
 		hook = file(filename, 'r').readlines()
-	except IOError, e:
+	except IOError as e:
 		if e.errno == errno.ENOENT:
 			return False
 

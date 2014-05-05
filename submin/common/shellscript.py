@@ -43,7 +43,7 @@ def rewriteWithSignature(filename, signature, new_hook, enable, mode=None):
 def hasSignature(filename, signature):
 	try:
 		f = open(filename, 'r')
-	except IOError, e:
+	except IOError as e:
 		if e.errno == errno.ENOENT:
 			return False
 		raise

@@ -48,13 +48,13 @@ def admin_command(trac_dir, args):
 
 	try:
 		return check_output(cmd, stderr=subprocess.STDOUT, env=env_copy)
-	except subprocess.CalledProcessError, e:
+	except subprocess.CalledProcessError as e:
 		raise TracAdminError(' '.join(cmd), e.returncode, e.output)
 
 def has_trac_admin():
 	try:
 		admin_command('/tmp', ['help'])
-	except OSError, e:
+	except OSError as e:
 		if e.errno == errno.ENOENT: # could not find executable
 			return False
 		raise
@@ -64,5 +64,5 @@ def has_trac_admin():
 def exists(name):
 	try:
 		return os.path.isdir(str(options.env_path('trac_dir') + name))
-	except UnknownKeyError, e:
+	except UnknownKeyError as e:
 		raise MissingConfig('Please make sure "trac_dir" is set in the config')

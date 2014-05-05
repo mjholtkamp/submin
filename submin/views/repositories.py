@@ -59,7 +59,7 @@ class Repositories(View):
 			try:
 				if trac.exists(path[0]):
 					templatevars['trac_exists'] = True
-			except MissingConfig, e:
+			except MissingConfig as e:
 				templatevars['trac_config_ok'] = False
 				templatevars['trac_msg'] = \
 					'There is something missing in your config: %s' % str(e)
@@ -70,7 +70,7 @@ class Repositories(View):
 
 		try:
 			vcs_url = repos.url()
-		except MissingConfig, e:
+		except MissingConfig as e:
 			vcs_url = ""
 			templatevars['vcs_url_error'] = str(e)
 
@@ -120,7 +120,7 @@ class Repositories(View):
 			try:
 				asking_user = user.User(req.session['user']['name'])
 				Repository.add(vcs_type, reposname, asking_user)
-			except PermissionError, e:
+			except PermissionError as e:
 				return ErrorResponse('could not create repository',
 					request=req, details=str(e))
 

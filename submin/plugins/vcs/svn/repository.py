@@ -62,7 +62,7 @@ def add(name):
 def url(reposname):
 	try:
 		return str(options.url_path('base_url_svn') + reposname)
-	except UnknownKeyError, e:
+	except UnknownKeyError as e:
 		raise MissingConfig('Please make sure base_url_svn is set in config')
 
 def directory(reposname):
@@ -126,7 +126,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 
 		try:
 			repository = repos.svn_repos_open(root_path_utf8)
-		except SubversionException, e:
+		except SubversionException as e:
 			# check for messages like the following:
 			# "Expected FS Format 'x'; found format 'y'"
 			# there are different errorcodes for each version, so do a string
@@ -143,7 +143,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 		youngest_revision_number = fs.youngest_rev(fs_ptr)
 		try:
 			root = fs.revision_root(fs_ptr, youngest_revision_number)
-		except SubversionException, e:
+		except SubversionException as e:
 			raise PermissionError
 
 		entries = fs.dir_entries(root, path_utf8)

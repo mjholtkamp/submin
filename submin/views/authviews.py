@@ -24,7 +24,7 @@ class Login(View):
 		try:
 			u = user.User(username)
 			invalid_login = False
-		except UnknownUserError, e:
+		except UnknownUserError as e:
 			pass
 
 		if 'auto_authenticate' in request.session:
@@ -34,7 +34,7 @@ class Login(View):
 			try:
 				if not u or not u.check_password(password):
 					return self.evaluate_form('Not a valid username and password combination')
-			except NoMD5PasswordError, e:
+			except NoMD5PasswordError as e:
 				return self.evaluate_form(str(e))
 
 			if invalid_login:

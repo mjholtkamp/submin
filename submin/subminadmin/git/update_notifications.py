@@ -37,7 +37,7 @@ def run(reposname):
 	for reposname in repositories:
 		try:
 			update_notification(reposname, user_notifications)
-		except SetGitConfigError, e:
+		except SetGitConfigError as e:
 			errors.append(str(e))
 			failed.append(reposname)
 		else:

@@ -52,7 +52,7 @@ def live_database_version():
 			"SELECT value from options where key=?", ("database_version",))
 		row = cursor.fetchone()
 		return int(row[0])
-	except sqlite3.OperationalError, e:
+	except sqlite3.OperationalError as e:
 		return 0
 
 def database_isuptodate():
@@ -85,7 +85,8 @@ def database_evolve(verbose=False):
 			print "Evolving database from version", (version - 1), "to", version
 		try:
 			cursor.executescript(script)
-		except Exception, e:
+		except Exception as e:
+			# XXX catch all exceptions? should be more specific
 			db.con.rollback()
 			raise DatabaseEvolveException(version, start, e)
 	if start > 0:

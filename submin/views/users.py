@@ -182,7 +182,7 @@ class Users(View):
 		except validators.InvalidEmail:
 			return XMLStatusResponse('email', False,
 				'Invalid characters in email-address. If you think this is an error, please report a bug')
-		except Exception, e:
+		except Exception as e:
 			return XMLStatusResponse('email', False,
 				'Could not change email of user %s: %s' % (u.name, str(e)))
   
@@ -192,16 +192,16 @@ class Users(View):
 			return XMLStatusResponse('setFullName', True,
 				'Changed name for user %s to %s' %
 				(u.name, u.fullname))
-		except validators.InvalidFullname, e:
+		except validators.InvalidFullname as e:
 			return XMLStatusResponse('setFullName', False, str(e))
-		except Exception, e:
+		except Exception as e:
 			return XMLStatusResponse('setFullName', False,
 				'Could not change name of user %s: %s' % (u.name, str(e)))
 
 	def setPassword(self, req, u):
 		try:
 			u.set_password(req.post.get('password'))
-		except Exception, e:
+		except Exception as e:
 			return XMLStatusResponse('setPassword', False,
 				'Could not change password of user %s: %s' % (u.name, e))
 		else:
@@ -217,7 +217,7 @@ class Users(View):
 			u.prepare_password_reset(req.remote_address)
 			return XMLStatusResponse('sendPasswordMail', True,
 				'Send password reset email to user %s' % u.name)
-		except Exception, e:
+		except Exception as e:
 			return XMLStatusResponse('sendPasswordMail', False,
 				"Could not send Reset password email of user %s: %s" % \
 						(u.name, e))
@@ -334,7 +334,7 @@ class Users(View):
 		try:
 			asking_user = user.User(session_user['name'])
 			u.set_notifications(notifications, asking_user)
-		except UserPermissionError, e:
+		except UserPermissionError as e:
 			return XMLStatusResponse('saveNotifications', False, str(e))
 
 		return XMLStatusResponse("saveNotifications", True, "Saved notifications for user " + u.name)
@@ -365,7 +365,7 @@ class Users(View):
 				"Could not find user '%s'" % username)
 		try:
 			u.remove()
-		except Exception, e:
+		except Exception as e:
 			return XMLStatusResponse('removeUser', False,
 				'User %s not deleted: %s' % (username, str(e)))
 
@@ -380,7 +380,7 @@ class Users(View):
 
 		try:
 			u.is_admin = is_admin
-		except Exception, e:
+		except Exception as e:
 			return XMLStatusResponse('setIsAdmin', False,
 				'Could not change admin status for user %s: %s' % (u.name, str(e)))
 

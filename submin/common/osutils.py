@@ -7,7 +7,7 @@ def mkdirs(name, mode=0777):
 	This elimiates the need to catch exception if the dir already exists"""
 	try:
 		os.makedirs(name, mode)
-	except OSError, e:
+	except OSError as e:
 		if e.errno == errno.EEXIST:
 			return
 

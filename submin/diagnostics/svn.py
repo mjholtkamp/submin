@@ -23,7 +23,7 @@ def diagnostics():
 	required_mods = ['dav', 'dav_svn', 'authz_svn', 'authn_dbd', 'dbd']
 	try:
 		amods = apache_modules()
-	except ApacheCtlError, e:
+	except ApacheCtlError as e:
 		results['svn_apache_modules_err'] = True
 		results['svn_apache_modules_errmsg'] = str(e)
 

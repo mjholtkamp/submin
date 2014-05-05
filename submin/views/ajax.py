@@ -30,14 +30,14 @@ class Ajax(View):
 		try:
 			usernames = user.list(session_user)
 			return XMLTemplateResponse("ajax/listusers.xml", {'usernames': usernames})
-		except Exception, e:
+		except Exception as e:
 			return XMLStatusResponse('listUsers', False, 'Failed to get a list: %s' % e)
 
 	def listGroups(self, req):
 		try:
 			groupnames = group.list(user.User(req.session['user']['name']))
 			return XMLTemplateResponse("ajax/listgroups.xml", {'groupnames': groupnames})
-		except Exception, e:
+		except Exception as e:
 			raise
 			return XMLStatusResponse('listGroups', False, 'Failed to get a list: %s' % e)
 
@@ -46,7 +46,7 @@ class Ajax(View):
 			repos = Repository.list(user.User(req.session['user']['name']))
 			variables = {'repositories': repos}
 			return XMLTemplateResponse("ajax/listrepositories.xml", variables)
-		except Exception, e:
+		except Exception as e:
 			raise
 			return XMLStatusResponse('listRepositories', False, 'Failed to get a list: %s' % e)
 

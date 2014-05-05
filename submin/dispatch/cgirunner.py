@@ -23,7 +23,7 @@ def run():
 		req = CGIRequest()
 		response = dispatcher(req)
 		req.writeResponse(response)
-	except Exception, e:
+	except Exception as e:
 		import traceback
 		trace = traceback.extract_tb(sys.exc_info()[2])
 		list = traceback.format_list(trace)

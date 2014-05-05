@@ -39,7 +39,7 @@ class Application:
 			response = self.dispatcher(req)
 			self.start_response(response.status(), response.headers.items())
 			content = response.encode_content()
-		except Exception, e:
+		except Exception as e:
 			import traceback
 			trace = traceback.extract_tb(sys.exc_info()[2])
 			list = traceback.format_list(trace)

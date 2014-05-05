@@ -185,7 +185,7 @@ class CommitHook:
                 
                 tn = TicketNotifyEmail(self.env)
                 tn.notify(ticket, newticket=0, modtime=self.now)
-            except Exception, e:
+            except Exception as e:
                 # import traceback
                 # traceback.print_exc(file=sys.stderr)
                 print>>sys.stderr, 'Unexpected error while processing ticket ' \

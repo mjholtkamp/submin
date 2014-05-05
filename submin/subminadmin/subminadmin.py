@@ -97,7 +97,7 @@ Use '?' or 'help' for help on commands.
 
 			try:
 				self.execute(argv)
-			except SubminAdminCmdException, e:
+			except SubminAdminCmdException as e:
 				# print the error and continue (interactive mode)
 				print >>sys.stderr, str(e)
 
@@ -109,7 +109,7 @@ Use '?' or 'help' for help on commands.
 			X = __import__(objname, globals())
 			instance = getattr(X, objname)(self, argv)
 			return instance
-		except (ImportError, AttributeError), e:
+		except (ImportError, AttributeError) as e:
 			if print_error:
 				print "Error while executing command %s:" % cmd, str(e)
 			return None

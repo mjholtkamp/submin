@@ -11,7 +11,7 @@ def create_dir(env, directory):
 
 	try:
 		mkdirs(str(directory), mode=0700)
-	except OSError, e:
+	except OSError as e:
 		print 'making dir %s failed, do you have permissions?' % \
 				str(directory)
 		raise e
@@ -55,7 +55,7 @@ def www_user(preferred=''):
 		pwd = ()
 		try:
 			pwd = getpwnam(user)
-		except KeyError, e:
+		except KeyError as e:
 			pass
 		else:
 			return pwd

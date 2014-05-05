@@ -36,7 +36,7 @@ Usage:
 		if len(argv) == 1:
 			try:
 				value = options.value(argv[0])
-			except UnknownKeyError, e:
+			except UnknownKeyError as e:
 				print 'ERROR: %s does not exist' % argv[0]
 			else:
 				self._printkeyvalue(argv[0], value, len(argv[0]))

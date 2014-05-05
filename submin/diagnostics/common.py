@@ -31,10 +31,10 @@ def apache_modules():
 	for cmd in cmds:
 		try:
 			output = check_output(cmd, stderr=STDOUT, env=env_copy)
-		except OSError, e:
+		except OSError as e:
 			errormsgs.append(str(e))
 			continue # try the next command, if any
-		except CalledProcessError, e:
+		except CalledProcessError as e:
 			errormsgs.append(e.output)
 			continue # try the next command, if any
 		else:
@@ -54,9 +54,9 @@ def apache_modules():
 	cmds.append(['[internal URL get]', server_info_url])
 	try:
 		response = urllib2.urlopen(server_info_url)
-	except urllib2.HTTPError, e:
+	except urllib2.HTTPError as e:
 		errormsgs.append('HTTP error %u' % (e.code, ))
-	except urllib2.URLError, e:
+	except urllib2.URLError as e:
 		errormsgs.append('URL error %u: %s' % (e.reason[0], e.reason[1]))
 	else:
 		html = response.read()

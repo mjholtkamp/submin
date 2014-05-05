@@ -50,7 +50,7 @@ def trigger_user_hook(event, **args):
 			# (since they are located in the site-packages directory)
 			p = Popen([hook], env=env)
 			p.wait() # wait for the hook to terminate
-		except OSError, e:
+		except OSError as e:
 			# XXX: log the error
 			# log("An OS error occured while processing hook "
 			# 	"%s. The error was: %s" % (hook, e))

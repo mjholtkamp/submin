@@ -16,5 +16,5 @@ def send(sender, receiver, message):
 
 		server.sendmail(sender, [receiver], message)
 		server.quit()
-	except (SMTPException, socket.error), e:
+	except (SMTPException, socket.error) as e:
 		raise SendEmailError(str(e))

@@ -51,7 +51,7 @@ def add(name):
 
 	try:
 		remote.execute("create %s" % name)
-	except remote.NonZeroExitStatus, e:
+	except remote.NonZeroExitStatus as e:
 		raise PermissionError(
 			"External command 'GIT_DIR=\"%s\" git --bare init' failed: %s" % \
 					(name, e))
@@ -60,7 +60,7 @@ def url(reposname):
 	try:
 		git_user = options.value("git_user")
 		git_host = options.value("git_ssh_host")
-	except UnknownKeyError, e:
+	except UnknownKeyError as e:
 		raise MissingConfig(
 			'Please make sure both git_user and git_ssh_host settings are set')
 
@@ -126,7 +126,7 @@ It is converted to UTF-8 (or other?) somewhere in the dispatcher."""
 
 		try:
 			remote.execute("remove %s" % self.name)
-		except remote.NonZeroExitStatus, e:
+		except remote.NonZeroExitStatus as e:
 			raise PermissionError(
 				"External command 'remove %s' failed: %s" % \
 						(self.name, e))
