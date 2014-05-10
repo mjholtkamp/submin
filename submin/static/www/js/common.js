@@ -231,7 +231,7 @@ function WindowHeight() {
 /* ==== LOG Functions ==== */
 var Log_timeout;
 
-function Log(message, success) {
+function Log(message, message_type) {
 	if (message == "")
 		return;
 
@@ -241,9 +241,7 @@ function Log(message, success) {
 	// first remove previous logs
 	RemoveLog()
 
-	var classname = 'log_message';
-	if (!success)
-		classname = 'log_error';
+	var classname = 'log_' + message_type;
 
 	message = message.replace(/ /g, '&nbsp;');
 	message = message.replace(/\n/g, '<br />\n');
@@ -263,10 +261,11 @@ function Log(message, success) {
 	// remove on click
 	log.onclick = RemoveLog
 
-	if (success)
+	if (message_type == 'message') {
 		Log_timeout = setTimeout("FadeLog(" + value + ")", 2000)
-	else
+	} else {
 		log.innerHTML += "<br /><small>Click to close</small>";
+	}
 }
 
 function RemoveLog() {
@@ -395,7 +394,7 @@ function LogResponse(response) {
 			text_accum += text;
 		}
 	}
-	Log(text_accum, success);
+	Log(text_accum, success ? 'message' : 'error');
 }
 
 function XMLtoResponse(doc) {
@@ -410,7 +409,7 @@ function XMLtoResponse(doc) {
 function Response(transport) {
 	var doc = transport.responseXML;
 	if (doc == null) {
-		Log("Something really bad happened: Didn't get any XML. RAW text: " + transport.responseText, false);
+		Log("Something really bad happened: Didn't get any XML. RAW text: " + transport.responseText, 'error');
 		return [];
 	}
 
@@ -441,7 +440,7 @@ function AjaxSyncPostRequest(url, params) {
 
 function AjaxSyncPostLog(url, params) {
 	var response = AjaxSyncPostRequest(url, params)
-	Log(response.text, response.success)
+	Log(response.text, response.success ? 'message' : 'error')
 	return response.success
 }
 

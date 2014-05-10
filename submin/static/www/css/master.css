@@ -113,6 +113,10 @@ div.hint {
 	background: #FF6;
 }
 
+.hint_bg {
+	background: #FF6;
+}
+
 .required {
 	color: red;
 	margin: 0 0.6em;
@@ -161,6 +165,13 @@ div.c_icon.minus {
 	padding: 1.5em;
 }
 
+.log_hint {
+	text-align: center;
+	width: 400px;
+	background: #ff6;
+	padding: 1.5em 0 1.5em 0;
+}
+
 .log_message {
 	text-align: center;
 	width: 400px;
@@ -168,7 +179,7 @@ div.c_icon.minus {
 	padding: 1.5em 0 1.5em 0;
 }
 
-.log_error small {
+#log small {
 	color: #822;
 	float: right;
 	padding-right: 10px;

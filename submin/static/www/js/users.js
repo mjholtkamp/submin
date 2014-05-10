@@ -53,7 +53,7 @@ function verifyPassword() {
 	var input = $('password');
 	enteredPassword = input.value;
 	if (!enteredPassword) {
-		Log('Please enter a password before pressing "save password"', false);
+		Log('Please enter a password before pressing "save password"', 'error');
 		return false;
 	}
 
@@ -62,9 +62,9 @@ function verifyPassword() {
 	this.firstChild.innerHTML = 'Verify';
 	// change te onclick handler
 	input.focus();
-	input.style.background = "lightgreen";
+	addClassName(input, 'hint_bg');
 	$('password_button').parentNode.onsubmit = checkPasswords;
-	Log('Please verify your password', true);
+	Log('Please verify your password', 'hint');
 	return false;
 }
 
@@ -94,13 +94,13 @@ function checkPasswords() {
 	var input = $('password');
 	// Do the check after cleaning up.
 	if (input.value != enteredPassword) {
-		Log('Verification of password failed', false);
+		Log('Verification of password failed', 'error');
 		enteredPassword = '';
 		input.value = '';
 		return false;
 	}
 
-	input.style.background = '';
+	removeClassName(input, 'hint_bg');
 	input.value = '';
 
 	// Send the entered password to the server.

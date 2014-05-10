@@ -217,7 +217,7 @@ Selector.prototype.selectOnChange = function() {
 	var displayname = select.options[select.selectedIndex].innerHTML;
 
 	if (groupname == "---") {
-		Log('Please select an item first', false)
+		Log('Please select an item first', 'error')
 		return false;
 	}
 
