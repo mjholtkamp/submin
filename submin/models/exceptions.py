@@ -29,7 +29,8 @@ class UserExistsError(Exception):
 
 class NoMD5PasswordError(Exception):
 	def __init__(self):
-		Exception.__init__(self, "Password is not encrypted with MD5")
+		Exception.__init__(self, "Password is not encrypted with MD5, maybe " +
+			"password is not set. Please click 'Forgot your password?'.")
 
 class MD5NotSupportedError(Exception):
 	pass
