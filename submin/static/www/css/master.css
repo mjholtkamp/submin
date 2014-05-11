@@ -185,24 +185,24 @@ div.c_icon.minus {
 	padding-right: 10px;
 }
 
-.diag_yes {
+.diag_ok {
 	background: #afa;
 	padding: 0 0.2em;
 	border-radius: 4px;
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 }
-.diag_yes:before {
+.diag_ok:before {
 	content: 'OK';
 }
-.diag_no {
+.diag_fail {
 	background: #f66;
 	padding: 0 0.2em;
 	border-radius: 4px;
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 }
-.diag_no:before {
+.diag_fail:before {
 	content: 'Fail';
 }
 .diag_warn {

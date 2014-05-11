@@ -3,6 +3,10 @@ import re
 from submin.models import options
 from submin.email import fallback
 from submin.models.exceptions import UnknownKeyError
+from .common import add_labels
+
+fails = ['email_commit_sane', 'email_from_sane']
+warnings = ['email_commit_set', 'email_from_set']
 
 def diagnostics():
 	results = {}
@@ -15,6 +19,4 @@ def diagnostics():
 	match = re.match('(.+) (<[^@>]+@[^@>]+\.[^@>]+>)', commit_email_from)
 	results['email_from_sane'] = match != None
 
-	results['email_all'] = False not in results.values()
-	
-	return results
+	return add_labels(results, 'email_all', warnings, fails)

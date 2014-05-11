@@ -74,3 +74,38 @@ def apache_modules():
 
 	errormsg = errormsg.replace('<', '&lt;').replace('>', '&gt;')
 	raise ApacheCtlError(errormsg)
+
+def add_labels(results, all_key, warnings, fails):
+	"""Will add labels to the results dict and return it.
+	These labels can be used in the template to mark them as warning or
+	failures.
+
+	For each key in warnings and fails will check if the key exists in
+	results. If the value is False, will add a label key + '_label' with
+	the value 'warn' label for warnings and 'fail' for fails.
+
+	The all_key will be set to 'warn' if there was at least one warning,
+	or if there was at least one failure, it will be set to 'fail'."""
+
+	all_label = 'ok'
+	for key in warnings:
+		if key in results:
+			if results[key]:
+				results[key + '_label'] = 'ok'
+			else:
+				results[key + '_label'] = 'warn'
+				all_label = 'warn'
+
+	for key in fails:
+		if key in results:
+			if results[key]:
+				results[key + '_label'] = 'ok'
+			else:
+				results[key + '_label'] = 'fail'
+				all_label = 'fail'
+
+	results[all_key] = all_label == 'ok'
+	results[all_key + '_label'] = all_label
+
+	return results
+

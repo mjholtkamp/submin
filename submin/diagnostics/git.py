@@ -8,14 +8,18 @@ from submin.plugins.vcs.git import remote
 from submin.subminadmin.git.post_receive_hook import HOOK_VERSIONS
 from submin.subminadmin.git.common import signature
 from submin.common import shellscript
+from .common import add_labels
+
+fails = ['git_dir_set', 'git_hooks_all_new', 'git_admin_test',
+		'git_hostname_ok']
+warnings = ['enabled_git']
 
 def diagnostics():
 	results = {}
 	results['enabled_git'] = 'git' in options.value('vcs_plugins', '')
 
 	if not results['enabled_git']:
-		results['git_all'] = False
-		return results
+		return add_labels(results, 'git_all', warnings, fails)
 
 	try:
 		git_dir = options.env_path('git_dir')
@@ -50,9 +54,7 @@ def diagnostics():
 	else:
 		results['git_admin_test'] = True
 
-	results['git_all'] = False not in results.values()
-	
-	return results
+	return add_labels(results, 'git_all', warnings, fails)
 
 def hook_uptodate(filename, version_re, newest_version):
 	"""For hooks that are generated from a template, they may be out of

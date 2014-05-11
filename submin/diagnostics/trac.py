@@ -10,17 +10,22 @@ from submin.models import options
 from submin.models import trac
 from submin.models.repository import Repository, DoesNotExistError
 from submin.models.exceptions import UnknownKeyError
+from .common import add_labels
 
 class SyncError(Exception):
 	pass
+
+warnings = ['enabled_trac', 'trac_acl_hook', 'trac_htpasswd_dir_exists',
+		'trac_envs_all_connected']
+fails = ['installed_trac', 'trac_dir_set', 'trac_sync_access',
+		'trac_sync_access', 'trac_envs_complete']
 
 def diagnostics():
 	results = {}
 	results['enabled_trac'] = options.value('enabled_trac', 'no') != 'no'
 
 	if not results['enabled_trac']:
-		results['trac_all'] = False
-		return results
+		return add_labels(results, 'trac_all', warnings, fails)
 
 	results['installed_trac'] = trac.has_trac_admin()
 
@@ -61,9 +66,8 @@ def diagnostics():
 		results['trac_htpasswd_file'] = ""
 
 	results['trac_base_url'] = options.url_path('base_url_trac')
-	results['trac_all'] = False not in results.values()
 	
-	return results
+	return add_labels(results, 'trac_all', warnings, fails)
 
 def have_trac_sync_access():
 	baseurl = Path(options.http_vhost() + options.url_path('base_url_submin'))
