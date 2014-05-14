@@ -75,7 +75,6 @@ the name of the missing option should give you a hint to its value :)""" % \
 	(env, str(e))
 
 			if not request.is_ajax():
-				details = '<pre>' + details + '</pre>'
 				response = ErrorResponse(summary, request=request, details=details)
 			else:
 				details = summary + '\n\n' + details
@@ -85,7 +84,6 @@ the name of the missing option should give you a hint to its value :)""" % \
 			details = traceback.format_exc()
 
 			if not request.is_ajax():
-				details = '<pre>' + details + '</pre>'
 				response = ErrorResponse(str(e), request=request, details=details)
 			else:
 				details = 'Whoops, an internal error occured:\n\n' + str(e) + '\n\n' + details

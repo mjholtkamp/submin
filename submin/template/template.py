@@ -9,6 +9,12 @@ from .library import Library
 class UnknownCommandError(Exception):
 	pass
 
+class TemplateKeyError(Exception):
+	pass
+
+class InvalidKeyError(Exception):
+	pass
+
 class Node(object):
 	"""Represents a piece of template-text.
 	This is the most basic node and basically does not convey meaning."""
@@ -28,7 +34,7 @@ class Node(object):
 		return ''
 		
 	def __str__(self):
-		return '<%s :- %s>' % (self.type, ''.join([str(x) for x in self.nodes]))
+		return '<%s>' % (self.type)
 	
 	def __repr__(self):
 		return str(self)
@@ -60,7 +66,12 @@ class CommandNode(Node):
 	def evaluate(self, template):
 		library = Library()
 		if library.has_command(self.command):
-			value = library.execute(self, template)
+			try:
+				value = library.execute(self, template)
+			except TemplateKeyError:
+				raise InvalidKeyError('Invalid key at %s:%s node %s' %
+							(template.filename, self.line, str(self)))
+
 			# int/bool/float values can't be joined with unicode strings, so coerce
 			# to str (faster than unicode and gives no problems with encoding)
 			if hasattr(value, '__int__'):
@@ -71,9 +82,8 @@ class CommandNode(Node):
 	
 	def __str__(self):
 		if self.arguments:
-			return '<cmd %s(%s) :- %s>' % (self.command, self.arguments, 
-				'\n\t'.join([str(x) for x in self.nodes]))
-		return '<cmd %s :- %s>' % (self.command, '\n\t'.join([str(x) for x in self.nodes]))
+			return '<cmd %s(%s)>' % (self.command, self.arguments)
+		return '<cmd %s>' % (self.command)
 
 ESCAPE, COMMAND, ARGUMENTS = range(3)
 class Parser(object):
@@ -221,7 +231,7 @@ class Template(object):
 	def parse_tree(self):
 		"""Returns the parse tree as a string"""
 		return '\n'.join([str(x) for x in self.nodes])
-		
+
 	def evaluate(self):
 		"""Returns the evaluated template as a string"""
 		return ''.join([node.evaluate(self) for node in self.nodes])
@@ -274,6 +284,9 @@ class Template(object):
 		if attr.isdigit():
 			if len(variable) <= int(attr):
 				return None
-			return variable[int(attr)]
+			try:
+				return variable[int(attr)]
+			except KeyError as e:
+				raise TemplateKeyError(e)
 		
 		return None
