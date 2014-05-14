@@ -89,20 +89,30 @@ def add_labels(results, all_key, warnings, fails):
 
 	all_label = 'ok'
 	for key in warnings:
-		if key in results:
+		if key in results and key + '_label' not in results:
 			if results[key]:
 				results[key + '_label'] = 'ok'
 			else:
 				results[key + '_label'] = 'warn'
-				all_label = 'warn'
 
 	for key in fails:
-		if key in results:
+		if key in results and key + '_label' not in results:
 			if results[key]:
 				results[key + '_label'] = 'ok'
 			else:
 				results[key + '_label'] = 'fail'
-				all_label = 'fail'
+
+	# prepare all_key and its label
+	for key in warnings + fails:
+		if key not in results:
+			continue
+
+		label = results[key + '_label']
+		if label == 'fail':
+			all_label = 'fail'
+			break
+		if label == 'warn':
+			all_label = 'warn'
 
 	results[all_key] = all_label == 'ok'
 	results[all_key + '_label'] = all_label
