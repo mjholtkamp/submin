@@ -49,9 +49,20 @@ def diagnostics():
 
 		envs = list(missing_config_envs(trac_dir))
 
-		missing_config = [(x[0], x[2]) for x in envs if x[1]]
+		missing_config = [
+			{'trac_env': x[0], 'missing_configs': x[2]} for x in envs if x[1]
+		]
 		results['trac_envs_missing_config'] = missing_config
 		results['trac_envs_complete'] = 0 == len(missing_config)
+
+		# pre-fill label because add_labels cannot deal with this granularity
+		for env in missing_config:
+			for section in env['missing_configs']:
+				for option in env['missing_configs'][section]:
+					if option['fatal']:
+						results['trac_envs_complete_label'] = 'fail'
+						break
+					results['trac_envs_complete_label'] = 'warn'
 
 		orphaned = [x[0] for x in envs if not x[1]]
 		results['trac_envs_orphaned'] = orphaned
@@ -208,7 +219,8 @@ def missing_config_envs(trac_dir):
 				if not has_option(config, section, option, value):
 					if section not in missing_options:
 						missing_options[section] = []
-					missing_options[section].append((option, value, fatal))
+					missing = {'option': option, 'value': value, 'fatal': fatal}
+					missing_options[section].append(missing)
 
 		if len(missing_options) > 0 or not connected:
 			yield (trac_env, connected, missing_options)
