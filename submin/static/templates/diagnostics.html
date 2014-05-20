@@ -271,14 +271,14 @@
 					<div class="diag_result">
 						<label class="diag">htpasswd export directory exists</label>
 						[test:diag.trac_htpasswd_file
-						<span class="diag_[test:diag.trac_htpasswd_dir_exists ok][else fail]"></span>
+						<span class="diag_[val diag.trac_htpasswd_dir_exists_label]"></span>
 						[test:!diag.trac_htpasswd_dir_exists
 						<div class="diag_note">
 							<p>The setting htpasswd_file is set, but the directory does not exist.
 							To export the htpasswd_file, please make sure that [val diag.trac_htpasswd_dir] exists.</p>
 						</div>]
 						][else
-						<span class="diag_warn"></span>
+						<span class="diag_[val diag.trac_htpasswd_file_label]"></span>
 						<div class="diag_note">
 							<p>The setting htpasswd_file is not set. We will
 							not export an htpasswd file for trac. If you don't

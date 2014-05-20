@@ -15,10 +15,10 @@ from .common import add_labels
 class SyncError(Exception):
 	pass
 
-warnings = ['enabled_trac', 'trac_acl_hook', 'trac_htpasswd_dir_exists',
-		'trac_envs_all_connected']
+warnings = ['enabled_trac', 'trac_acl_hook', 'trac_envs_all_connected',
+		'trac_htpasswd_file']
 fails = ['installed_trac', 'trac_dir_set', 'trac_sync_access',
-		'trac_sync_access', 'trac_envs_complete']
+		'trac_sync_access', 'trac_envs_complete', 'trac_htpasswd_dir_exists']
 
 def diagnostics():
 	results = {}
