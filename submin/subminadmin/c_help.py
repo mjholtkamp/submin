@@ -1,3 +1,5 @@
+from submin.models.exceptions import StorageError
+
 class c_help():
 	'''Get a list of commands, or specific information on a command
 Usage:
@@ -13,7 +15,12 @@ Usage:
 	def run(self):
 		if len(self.argv) > 0:
 			cmd = self.sa.cmd_alias(self.argv[0])
-			instance = self.sa.cmd_instance(cmd, [])
+			try:
+				instance = self.sa.cmd_instance(cmd, [])
+			except StorageError:
+				print "This module needs a submin environment to show help"
+				return
+
 			if instance:
 				docs = instance.__doc__.split('\n', 1)
 				print docs[1]
@@ -24,13 +31,17 @@ Usage:
 			print "Commands:"
 			cmds = self.sa.commands()
 			for cmd in cmds:
-				instance = self.sa.cmd_instance(cmd, [], print_error=False)
-				if instance is None:
-					docs = "  !!! ERROR: module import failed !!!"
-				elif instance.__doc__ is None:
-					docs = "No help available"
+				try:
+					instance = self.sa.cmd_instance(cmd, [], print_error=False)
+				except StorageError:
+					docs = " !!! ERROR: This module needs a submin environment"
 				else:
-					docs = instance.__doc__.split('\n', 1)[0]
+					if instance is None:
+						docs = "  !!! ERROR: module import failed !!!"
+					elif instance.__doc__ is None:
+						docs = "No help available"
+					else:
+						docs = instance.__doc__.split('\n', 1)[0]
 
 				print "  %-10s - %s" % (cmd, docs)
 			print """
