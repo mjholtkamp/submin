@@ -53,6 +53,8 @@ class Users(View):
 		if 'change_password_hint' in req.session:
 			localvars['change_password_hint'] = True
 
+		localvars['enabled_git'] = 'git' in options.value('vcs_plugins', '')
+
 		formatted = evaluate_main('users.html', localvars, request=req)
 		return Response(formatted)
 

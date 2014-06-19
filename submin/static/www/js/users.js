@@ -10,7 +10,10 @@ window.onload = function() {
 	$('password_button').parentNode.onsubmit = verifyPassword;
 	$('email').focus();
 	$('is_admin').onclick = setIsAdmin;
-	$('ssh_key_add_link').onclick = toggleSSHKeyAddForm;
+	var ssh_key_add_link = $('ssh_key_add_link');
+	if (ssh_key_add_link) {
+		ssh_key_add_link.onclick = toggleSSHKeyAddForm;
+	}
 
 	var content = document.getElementById('content');
 	setupCollapsables(content, "usershowhide", users_collapse, users_expand);
@@ -18,7 +21,9 @@ window.onload = function() {
 	// Initialize the select-dropdowns
 	groupSelectorInit();
 	reloadNotifications();
-	reloadSSHKeys();
+	if (ssh_key_add_link) {
+		reloadSSHKeys();
+	}
 	$('savenotifications').parentNode.onsubmit = saveNotifications;
 }
 
