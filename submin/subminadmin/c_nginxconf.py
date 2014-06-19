@@ -3,7 +3,6 @@ import re
 import errno
 
 from submin.path.path import Path
-from submin.template.shortcuts import evaluate
 from submin.common.osutils import mkdirs
 
 from .common import www_user
@@ -52,6 +51,7 @@ Usage:
 
 	def _nginx_conf_create(self):
 		from time import strftime
+		from submin.template.shortcuts import evaluate
 
 		template = str(self.init_vars['output'])
 		if template.endswith('.conf'):

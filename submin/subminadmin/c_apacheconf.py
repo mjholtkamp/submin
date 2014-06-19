@@ -2,7 +2,6 @@ import os
 import re
 
 from submin.path.path import Path
-from submin.template.shortcuts import evaluate
 from submin.common.osutils import mkdirs
 
 class c_apacheconf():
@@ -43,6 +42,8 @@ Usage:
 
 	def _apache_conf_create(self):
 		from time import strftime
+		from submin.template.shortcuts import evaluate
+
 		self.init_vars['datetime_generated'] = strftime("%Y-%m-%d %H:%M:%S")
 
 		if 'PYTHONPATH' in os.environ:
