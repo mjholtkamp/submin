@@ -15,6 +15,7 @@ except ImportError:
 	_has_readline = False
 import atexit
 import os
+import time
 
 class HistoryConsole(code.InteractiveConsole):
     global _has_readline
@@ -68,6 +69,16 @@ class SubminAdmin:
 		if len(self.argv) < 2:
 			self.usage()
 			return False
+
+		if self.argv[1] == 'help' and len(self.argv) == 2:
+			self.argv.insert(1, '/')
+			print("""
+WARNING: assuming that 'help' is not the path to a submin environment. If
+this is incorrect, please supply the full path name and retry. Continueing
+with the help command for now.
+""")
+			self.usage()
+			time.sleep(2)
 
 		self.env = os.path.realpath(self.argv[1])
 		if self.env[0] != os.path.sep:
