@@ -1,9 +1,36 @@
-Changes since 2.1.2:
+For tickets, see https://ssl.supermind.nl/collab/projects/submin/report/6
+
+Changes in 2.2.0:
+ - Hints to user to set Trac permissions (fixes #314)
+ - Option to disallow anonymous trac access (fixes #316)
+ - Login redirect bug fixes (fixes #334)
+ - Submin2-admin improvements (fixes #323, #336, #352, #363, #368, #369, #383)
+ - Make 'git init' more robust when adding a system user (fixes #324)
+ - More robust diagnostics (fixes #325, #326, #330, #331, #348, #349, #358,
+   #359, #360, #371, #375)
+ - uWSGI fixes (bind: Permission denied)
+ - Added configuration for all configuration options (see submin2-admin's
+   'config' command)
+ - Override 'From:' for svn commit email (like for git) (fixes #329)
+ - Allow scheme in configuration to force HTTPS (fixes #338)
+ - More robust (generated) hook handling (fixes #332)
+ - Improved git support, also trac-sync (fixes #341, #342, #376)
+ - Updated git_multimail.py
+ - Debian packages are now split up in multiple packages (fixes #343, #344)
+ - Improved (unit)testing
+ - Better modularity of git/svn modules (fixes #296, #362)
+ - Various interface improvements (fixes #334, #346, #347, #366, #373,
+   #374, #377, #384)
+ - Notifications can be saved in FF again (fixes #372)
+ - Code cleanup (e.g. #321, #322, #327)
+ - Improved internal template engine (error reporting, robustness)
+
+Changes in 2.1.2:
  - Better uWSGI reloading
  - Added email diagnostics
  - submin2-admin fixes
 
-Changes since 2.1.1:
+Changes in 2.1.1:
  - Added NGINX/uWSGI support for the webui (you still need Apache for subversion).
  - Password (re)set functionality is now easier: no need to check your mail multiple times
  - Increased notification performance (sending, saving)
@@ -16,7 +43,7 @@ Changes since 2.1.1:
  - Code cleanup and refactoring
  - Other bugfixes (#307, #310, #311)
 
-Changes since 2.1.0:
+Changes in 2.1.0:
  - Apache config files are now generated separately (Trac, submin web UI, SVN and also CGI, WSGI, FCGI)
  - Web UI: improved correctness, load time, performance and small design improvements.
  - Added 'Diagnostics' page: check common misconfigurations.
