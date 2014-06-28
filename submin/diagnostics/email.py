@@ -14,9 +14,11 @@ def diagnostics():
 	results['email_commit_set'] = commit_email_from != ''
 	match = re.match('(.+) (<[^@>]+@[^@>]+\.[^@>]+>)', commit_email_from)
 	results['email_commit_sane'] = match != None
+	results['email_commit_current_value'] = commit_email_from
 	smtp_from = options.value('smtp_from', '')
 	results['email_from_set'] = smtp_from != ''
 	match = re.match('(.+) (<[^@>]+@[^@>]+\.[^@>]+>)', smtp_from)
 	results['email_from_sane'] = match != None
+	results['email_from_current_value'] = smtp_from
 
 	return add_labels(results, 'email_all', warnings, fails)
