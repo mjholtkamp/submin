@@ -171,13 +171,13 @@
 						</div>]
 					</div>
 				</li>
-				[test:!diag.svn_apache_modules_ok
+				[test:!diag.svn_apache_modules_exec_ok
 				<li>
 					<div class="diag_result">
 						<label class="diag">Apache modules</label>
-						<span class="diag_no"></span>
+						<span class="diag_fail"></span>
 						<div class="diag_note">
-							Could not execute apachectl to test if modules are loaded. Error message was:
+							<p>Could not execute apachectl or load the server-info URL to test if modules are loaded. Error message was:</p>
 							<div class="diag_pre">[val diag.svn_apache_modules_errmsg]</div>
 							<p>If the above commands all fail with 'No such file or directory', then maybe the 'apachectl' binary is named differently on your system. Please report this as a bug.</p>
 
@@ -186,6 +186,8 @@
 
 							<p>By default, this URL is 'http://localhost/server-info?list', but if you need to change it for some reason, you can do so with the following command:
 							<span class="diag_cmd">submin2-admin [val subminenv] config set apache_server_info_url "http://localhost/server-info?list"</span></p>
+
+							<p>If the 'internal URL get' fails this URL could not be used, please check the error message there and try to correct the error.</p>
 						</div>
 					</div>
 				</li>
