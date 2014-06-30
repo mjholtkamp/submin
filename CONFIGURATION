@@ -100,6 +100,18 @@ Options:
     Submin e-mails (e.g. password resets) are sent from this address. Please
     set this to a sane value. Default: "root@localhost"
 
+ * smtp_hostname
+    Hostname to connect to when sending e-mails. By default this is
+    "localhost". If Submin can not connect, it will try locally with a
+    'sendmail'-like binary.
+
+ * smtp_port
+    Port to connect to when sending e-mails. Default is 25. See also smtp_host.
+
+ * smtp_username, smtp_password
+    Username and password used to connect to smtp_host on port smtp_port when
+    sending e-mails. See also smtp_host.
+
  * svn_authz_file
     The location of the svn authz file. If you are really sure you want to
     change this, please regenerate apache config files, since it needs to
