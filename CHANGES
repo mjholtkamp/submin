@@ -1,4 +1,5 @@
-For tickets, see https://ssl.supermind.nl/collab/projects/submin/report/6
+To get more information on tickets (#nnn in text below), see the following URL:
+https://ssl.supermind.nl/collab/projects/submin/report/6
 
 Changes in 2.2.0:
  - Hints to user to set Trac permissions (fixes #314)
@@ -6,8 +7,8 @@ Changes in 2.2.0:
  - Login redirect bug fixes (fixes #334)
  - Submin2-admin improvements (fixes #323, #336, #352, #363, #368, #369, #383)
  - Make 'git init' more robust when adding a system user (fixes #324)
- - More robust diagnostics (fixes #325, #326, #330, #331, #348, #349, #358,
-   #359, #360, #371, #375)
+ - More robust diagnostics (fixes #325, #326, #330, #331, #348, #349, #354,
+   #358, #359, #360, #371, #375, #390)
  - uWSGI fixes (bind: Permission denied)
  - Added configuration for all configuration options (see submin2-admin's
    'config' command)
@@ -24,6 +25,7 @@ Changes in 2.2.0:
  - Notifications can be saved in FF again (fixes #372)
  - Code cleanup (e.g. #321, #322, #327)
  - Improved internal template engine (error reporting, robustness)
+ - Improved documentation (e.g. #391)
 
 Changes in 2.1.2:
  - Better uWSGI reloading
