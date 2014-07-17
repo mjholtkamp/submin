@@ -4,6 +4,7 @@ import os.path
 
 from submin.path.path import Path
 from submin.models import storage
+from submin import VERSION
 
 from .common import SubminAdminCmdException
 
@@ -95,11 +96,11 @@ with the help command for now.
 		return self.execute(self.argv[2:])
 
 	def interactive(self):
-		print '''Welcome to submin2-admin
+		print '''Welcome to submin2-admin - Submin %s
 Interactive Submin administration console.
 
 Use '?' or 'help' for help on commands.
-'''
+''' % (VERSION,)
 		while not self.quit:
 			try:
 				argv = raw_input(self.prompt).split()
@@ -186,5 +187,6 @@ Use '?' or 'help' for help on commands.
 		self.basedir_www = basedir_www
 
 	def usage(self):
+		print("Submin %s" % (VERSION,))
 		print "Usage: %s </path/to/projenv> [command [subcommand] [option]]" \
 				% self.argv[0]
