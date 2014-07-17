@@ -4,7 +4,19 @@
 installbin = install -g root -o root -m 755
 installdata = install -g root -o root -m 644
 
-build:
+test_submin_version:
+	@if [ "$$(bin/getver-submin)" != "$$(bin/getver-dch)" ]; then \
+		echo; \
+		echo "**************************************************"; \
+		echo "Submin and debian/changelog versions do not match!"; \
+		echo " submin/__init__.py:  $$(bin/getver-submin)"; \
+		echo " debian/changelog:  $$(bin/getver-dch)"; \
+		echo "**************************************************"; \
+		echo; \
+		exit 1; \
+	fi
+
+build: test_submin_version
 clean:
 	dh_testdir
 	dh_testroot

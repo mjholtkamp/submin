@@ -1,0 +1,2 @@
+#!/bin/sh
+head -3 debian/changelog | grep 'submin \(.*\)' | sed -e 's/submin (\(.*\)-.*).*/\1/'
