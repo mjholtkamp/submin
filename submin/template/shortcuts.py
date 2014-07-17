@@ -3,11 +3,13 @@ from submin.models import options
 from submin.models.user import User
 from submin.template.template import Template
 from . import template_commands
+from submin import VERSION
 
 def evaluate(templatename, localvars={}):
 	import os
 	template_path = options.static_path('templates')
 	templatename = str(template_path + templatename)
+	localvars['SUBMIN_VERSION'] = VERSION
 	oldcwd = os.getcwd()
 	if os.path.dirname(templatename):
 		os.chdir(os.path.dirname(templatename))

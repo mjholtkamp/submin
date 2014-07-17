@@ -5,7 +5,7 @@
 	<head>
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 		<meta http-equiv="Content-Language" content="en-us" />
-		<title>Submin - login</title>
+		<title>Submin [val SUBMIN_VERSION] - login</title>
 		<link rel="stylesheet" href="[val base_url]css/master.css">
 		<link rel="stylesheet" href="[val base_url]css/login.css">
 		<!--\[if lt IE 7\]>
@@ -24,7 +24,7 @@
 				<li><a href="[val base_url]password/">Forgot your password?</a></li>
 			</ul>
 		</form>
-		<div class="comment">subversion and git web administration</div>
+		<div class="comment">submin [val SUBMIN_VERSION]: subversion and git web administration</div>
 		[test:msg <div class="error">[val msg]</div>]
 		[test:is_authenticated <div class="hint">Hello [val username], you are already logged in. Would you like to continue to <a href="[val base_url]">submin</a> or <a href="[val base_url]logout/">logout</a>?</div>]
 		</div>
