@@ -82,6 +82,10 @@ Usage:
 		vcs_type, repository, hooktype = argv[1:]
 		content = ''.join(sys.stdin.readlines())
 		print 'Notifying Trac of changes...'
+		if hooktype == 'trac-sync' and 'refs/tags' in content:
+			print('Skipping tag (no sync needed)')
+			return
+
 		hookjobs.queue(vcs_type, repository, hooktype, content)
 
 		baseurl = Path(options.http_vhost()
