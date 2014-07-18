@@ -14,8 +14,8 @@ from .common import add_labels
 
 class SyncError(Exception):
 	pass
-
-warnings = ['enabled_trac', 'trac_acl_hook', 'trac_envs_all_connected',
+disabled = ['enabled_trac']
+warnings = ['trac_acl_hook', 'trac_envs_all_connected',
 		'trac_htpasswd_file']
 fails = ['installed_trac', 'trac_dir_set', 'trac_sync_access',
 		'trac_sync_access', 'trac_envs_complete', 'trac_htpasswd_dir_exists']
@@ -25,7 +25,9 @@ def diagnostics():
 	results['enabled_trac'] = options.value('enabled_trac', 'no') != 'no'
 
 	if not results['enabled_trac']:
-		return add_labels(results, 'trac_all', warnings, fails)
+		results['enabled_trac_label'] = 'disabled'
+		results['trac_all_label'] = 'disabled'
+		return results
 
 	results['installed_trac'] = trac.has_trac_admin()
 

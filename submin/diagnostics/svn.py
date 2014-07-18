@@ -12,7 +12,9 @@ def diagnostics():
 	results['enabled_svn'] = 'svn' in options.value('vcs_plugins', '')
 
 	if not results['enabled_svn']:
-		return add_labels(results, 'svn_all', warnings, fails)
+		results['enabled_svn_label'] = 'disabled'
+		results['svn_all_label'] = 'disabled'
+		return results
 
 	try:
 		svn_dir = options.env_path('svn_dir')

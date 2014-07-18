@@ -19,7 +19,9 @@ def diagnostics():
 	results['enabled_git'] = 'git' in options.value('vcs_plugins', '')
 
 	if not results['enabled_git']:
-		return add_labels(results, 'git_all', warnings, fails)
+		results['enabled_git_label'] = 'disabled'
+		results['git_all_label'] = 'disabled'
+		return results
 
 	try:
 		git_dir = options.env_path('git_dir')

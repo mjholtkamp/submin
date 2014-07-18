@@ -215,6 +215,17 @@ div.c_icon.minus {
 .diag_warn:before {
 	content: 'Warn';
 }
+.diag_disabled {
+	color: lightgray;
+	padding: 0 0.2em;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+.diag_disabled:before {
+	content: 'Disabled';
+}
+
 
 .diag_inline {
 	float: right;
