@@ -7,10 +7,10 @@ def export_ssh_keys(*args, **kwargs):
 	except remote.NonZeroExitStatus as e:
 		raise Exception("Could not export ssh-keys: %s" % e)
 
-def export_notifications(**args):
+def export_notifications(**kwargs):
 	repositories = ""
-	if 'reposname' in args.iterkeys():
-		repositories = args['reposname']
+	if 'reposname' in kwargs.iterkeys():
+		repositories = kwargs['reposname']
 
 	try:
 		remote.execute("update-notifications %s" % (repositories,))

@@ -5,7 +5,7 @@ from submin.models import group
 from submin.models import permissions
 from submin.models.user import FakeAdminUser
 
-def export_authz(**args):
+def export_authz(**kwargs):
 	"""Export authorization/authentication info"""
 	# XXX the import here is to prevent a circular import :( design problem!
 	from .repository import list as list_repos
@@ -36,7 +36,7 @@ def export_authz(**args):
 
 	authz.close()
 
-def export_notifications(**args):
+def export_notifications(**kwargs):
 	"""Export a mailer.py config file
 	For each user/repository pair, a config group is created. Only if a user
 	has read or read/write permission to one or multiple paths in that
