@@ -4,4 +4,4 @@ import sys
 sys.path.insert(0, '.')
 
 import submin
-print submin.VERSION
+print submin.__version__

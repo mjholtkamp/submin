@@ -1,3 +1,9 @@
+submin (2.2.1-0) testing; urgency=medium
+
+  * Nightly builds
+
+ -- Michiel Holtkamp <michiel@supermind.nl>  Fri, 18 Jul 2014 23:10:52 +0200
+
 submin (2.2.0-0) testing; urgency=medium
 
   * New release: 2.2.0

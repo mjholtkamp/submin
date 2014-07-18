@@ -41,7 +41,7 @@ def find_package_data(directory, exclude_dirs=()):
 
 def get_version():
 	sys.path.append(".")
-	version = __import__("submin").VERSION
+	version = __import__("submin").__version__
 	sys.path.remove(".")
 	return version
 
@@ -51,10 +51,10 @@ setup(name='Submin',
 	author='Michiel Holtkamp, Jean-Paul van Oosten',
 	author_email='submin@webdevel.nl',
 	url='http://www.supermind.nl/submin/',
-	packages=find_packages("submin", exclude=[".svn"]),
+	packages=find_packages("submin"),
 	package_dir={"submin": "submin"},
 	package_data={
-		"submin": find_package_data("submin/static", ["*.svn*"]),
+		"submin": find_package_data("submin/static"),
 	},
 	data_files=[
 		("share/man/man1", ("man/submin2-admin.1",)),
