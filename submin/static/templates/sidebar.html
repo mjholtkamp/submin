@@ -29,14 +29,12 @@
 	<ul class="showhide c_object" id="repositories">
 	</ul>
 	</div>
-	[test:session_user.is_admin
-	<ul id="addicons">
-		<li><a href="[val main_base_url]users/add/" title="Add a user"><div class="sb_user" id="sidebar_add_user"></div></a></li>
-		<li><a href="[val main_base_url]groups/add/" title="Add a group"><div class="sb_group" id="sidebar_add_group"></div></a></li>
-		<li><a href="[val main_base_url]repositories/add/" title="Add a repository"><div class="sb_repos" id="sidebar_add_repository"></div></a></li>
-	</ul>
-	][else
-	<ul id="addicons">
-	</ul>
-	]
 </div>
+
+<ul id="addicons">
+[test:session_user.is_admin
+	<li><a href="[val main_base_url]users/add/" title="Add a user"><div class="sb_user" id="sidebar_add_user"></div></a></li>
+	<li><a href="[val main_base_url]groups/add/" title="Add a group"><div class="sb_group" id="sidebar_add_group"></div></a></li>
+	<li><a href="[val main_base_url]repositories/add/" title="Add a repository"><div class="sb_repos" id="sidebar_add_repository"></div></a></li>
+]
+</ul>
