@@ -302,7 +302,7 @@ class Users(View):
 					"SSH Key successfully added.")
 		except validators.InvalidSSHKey:
 			return XMLStatusResponse('addSSHKey', False,
-				'Invalid SSH Key provided. If you think this is an error, please report a bug')
+'''Invalid SSH Key provided. Please see 'Need more information about SSH Keys?'. If you think this is an error, please report a bug.''')
 
 	def removeSSHKey(self, req, u):
 		session_user = req.session['user']

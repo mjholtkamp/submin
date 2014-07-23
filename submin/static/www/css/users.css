@@ -8,20 +8,22 @@ li div.help {
 	color: #9A9A9A;
 	padding-left: 100px;
 	width: 30em;
+	cursor: pointer;
 }
 
-li div.help code {
+code {
 	border: 1px solid #898989;
 	background: #DADADA;
 	padding: 0 2px;
 }
 
-#ssh_key_add_form {
-	clear: left;
-	margin-top: 2.5em;
+code.block {
+	display: block;
+	white-space: pre;
 }
 
-p {
+#ssh_key_add_form {
+	clear: left;
 	margin-top: 2.5em;
 }
 

@@ -471,3 +471,79 @@ function AjaxAsyncPostLog(url, params) {
 function escape_plus(string) {
 	return escape(string).replace(/\+/g, "%2b");
 }
+
+/* event handling */
+
+function addEvent(obj, event_name, func_name, useCapture) {
+	if (undefined == useCapture)
+		useCapture = true;
+
+	if (obj.attachEvent) {
+		obj.attachEvent('on' + event_name, func_name);
+	} else if (obj.addEventListener) {
+		obj.addEventListener(event_name, func_name, useCapture);
+	} else {
+		obj['on' + event_name] = func_name;
+    }
+}
+
+// Removes an event from the object
+function removeEvent(obj, event_name, func_name, useCapture) {
+	if (undefined == useCapture)
+		useCapture = true;
+
+	if (obj.detachEvent) {
+		obj.detachEvent('on' + event_name, func_name);
+	} else if (obj.removeEventListener) {
+		obj.removeEventListener(event_name, func_name, useCapture);
+	} else {
+		obj['on' + event_name] = null;
+	}
+}
+
+// Stop an event from bubbling up the event DOM
+function stopEvent(evt) {
+	evt = evt || window.event;
+	if (evt.stopPropagation) {
+		evt.stopPropagation();
+		evt.preventDefault();
+	} else if (typeof evt.cancelBubble != "undefined") {
+        evt.cancelBubble = true;
+        evt.returnValue = false;
+	}
+	return false;
+}
+
+/* lightbox */
+
+var lightbox_context = function(el) {
+	this.container = el;
+	this.close_element = null;
+	this.handler = null;
+}
+
+function lightbox_handle_keypress(ev, context) {
+	console.log(ev.type);
+	if (ev.type == 'keydown' && ev.keyCode != 27) {
+		return;
+	}
+	lightbox_hide(context.container, context.handler);
+}
+
+function lightbox_show(el, close_el) {
+	var handler;
+	var context = new lightbox_context(el);
+	var handler = function(ev) { lightbox_handle_keypress(ev, context); };
+	context.handler = handler;
+	context.close_element = close_el;
+	addEvent(document, 'keydown', handler);
+	addEvent(close_el, 'click', handler);
+
+	el.style.display = 'block';
+}
+
+function lightbox_hide(el, close_el, handler) {
+	el.style.display = 'none';
+	removeEvent(document, 'keydown', handler);
+	removeEvent(close_el, 'click', handler);
+}

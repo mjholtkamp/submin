@@ -31,15 +31,52 @@
 						</li>
 						<li><label for="ssh_key">SSH Key</label>
 							<textarea name="ssh_key" id="ssh_key" rows="10" cols="50"></textarea>
-							<div class="help">SSH saves its public keys in
-								<code>~/.ssh</code> by default, with the
-								extension <code>.pub</code>. Typical names are
-								<code>id_dsa.pub</code> and
-								<code>id_rsa.pub</code></div>
+							<div id="ssh_key_help_source" class="help">
+								Need more information about SSH keys?
+							</div>
 						</li>
 						<li><input type="submit" value="Add SSH Key" /></li>
 					</ul>
-				</form>]
+				</form>
+				<div id="ssh_key_help_target" class="help_container">
+					<div class="help_overlay">
+					</div>
+					<div class="help_content">
+						<h3>OpenSSH format</h3>
+						<p>Only OpenSSH format public keys are supported. OpenSSH
+						saves its public keys in <code>~/.ssh</code> by
+						default, with the extension <code>.pub</code>. Typical
+						names are <code>id_dsa.pub</code> and
+						<code>id_rsa.pub</code></p>
+
+						<p>The contents of this file should look like the following:
+						<ul>
+							<li>it starts with 'ssh-rsa', 'ssh-dss', or similar</li>
+							<li>it is then followed by a long string of seemingly random characters</li>
+							<li>finally there is a comment field, usually in the format user@hostname.</li>
+						</ul>
+						</p>
+
+						<p>For example:</p>
+
+						<code>ssh-rsa AAAAB3...(characters omitted for brievity)...d4QSo0qL user@hostname</code>
+						<h3>PEM style ssh key</h3>
+						<p>Sorry, this format is not supported. You need to
+						convert your key to an OpenSSH style key, or export it
+						as such.</p>
+						<p class="comment">An example of this key is:</p>
+						<code class="block comment">-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC7vbqajDw4o6gJy8UtmIbkcpnk
+O3Kwc4qsEnSZp/TR+fQi62F79RHWmwKOtFmwteURgLbj7D/WGuNLGOfa/2vse3G2
+eHnHl5CB8ruRX9fBl/KgwCVr2JaEuUm66bBQeP5XeBotdR4cvX38uPYivCDdPjJ1
+QWPdspTBKcxeFbccDwIDAQAB
+-----END PUBLIC KEY-----</code>
+
+						<div id="ssh_key_help_close" class="help_close_button">Close or press ESC
+						</div>
+					</div>
+				</div>
+				]
 				[else <div class="comment">(disabled because git support is not enabled)</div>]
 			</div>
 		</div>
@@ -66,3 +103,9 @@
 		</div>
 	</div>
 </div>
+
+<script type="text/javascript">
+	addEvent($('ssh_key_help_source'), 'click', function() {
+		lightbox_show($('ssh_key_help_target'), $('ssh_key_help_close'));
+	});
+</script>
