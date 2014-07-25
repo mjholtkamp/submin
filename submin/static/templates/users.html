@@ -43,11 +43,11 @@
 					</div>
 					<div class="help_content">
 						<h3>OpenSSH format</h3>
-						<p>Only OpenSSH format public keys are supported. OpenSSH
-						saves its public keys in <code>~/.ssh</code> by
-						default, with the extension <code>.pub</code>. Typical
-						names are <code>id_dsa.pub</code> and
-						<code>id_rsa.pub</code></p>
+						<p>OpenSSH saves its public keys in
+						<code>~/.ssh</code> by default, with the extension
+						<code>.pub</code>. Typical names are
+						<code>id_dsa.pub</code> and <code>id_rsa.pub</code>.
+						</p>
 
 						<p>The contents of this file should look like the following:
 						<ul>
@@ -59,18 +59,45 @@
 
 						<p>For example:</p>
 
-						<code>ssh-rsa AAAAB3...(characters omitted for brievity)...d4QSo0qL user@hostname</code>
+						<code>ssh-rsa AAAAB3...(characters omitted for brievity)...Urs+UziQh user@hostname</code>
+
+						<h3>RFC4716 style ssh key</h3>
+						<p>This type is automatically converted to OpenSSH key format. Example:</p>
+<code class="block">---- BEGIN SSH2 PUBLIC KEY ----
+AAAAB3NzaC1yc2EAAAADAQABAAABAQDAsZh0BINgeAUV/HfZGNwrCUH9VN7FP+ZdH6rbYC
+QuWUfD694TRqPTSQSJeJfAtx4R9HhfelSAxlMgwMc+vo/1mDBFpP3sW5pWNGS0BKfswZvn
+ycy6IlrKaAhwPHCEgUSIc77G4jlgGhNzfQEuHuzIIjNh73XyDixqGQ0fOgD/khFRlxCLuo
+Zt+2anP05KRd8E3zP+BEdPGON6xL3Z8FVRp5AN84eAhVmPssgqRbJqyFKFaaXXuJ7PyR/2
+ggr7+1psMxCvDF6mcXFBkDhGfcwF3RXRTJVMPeSUw4oPj6JL6v4h9HBQU+h45Urs+UziQh
+eVK+MJVdoNS6UNLT5nMj67
+---- END SSH2 PUBLIC KEY ----
+</code>
+
+						<h3>PKCS8 style ssh key</h3>
+						<p>This type is automatically converted to OpenSSH key format. Example:</p>
+<code class="block">-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwLGYdASDYHgFFfx32Rjc
+KwlB/VTexT/mXR+q22AkLllHw+veE0aj00kEiXiXwLceEfR4X3pUgMZTIMDHPr6P
+9ZgwRaT97FuaVjRktASn7MGb58nMuiJaymgIcDxwhIFEiHO+xuI5YBoTc30BLh7s
+yCIzYe918g4sahkNHzoA/5IRUZcQi7qGbftmpz9OSkXfBN8z/gRHTxjjesS92fBV
+UaeQDfOHgIVZj7LIKkWyashShWml17iez8kf9oIK+/tabDMQrwxepnFxQZA4Rn3M
+Bd0V0UyVTD3klMOKD4+iS+r+IfRwUFPoeOVK7PlM4kIXlSvjCVXaDUulDS0+ZzI+
+uwIDAQAB
+-----END PUBLIC KEY-----
+</code>
+
 						<h3>PEM style ssh key</h3>
-						<p>Sorry, this format is not supported. You need to
-						convert your key to an OpenSSH style key, or export it
-						as such.</p>
-						<p class="comment">An example of this key is:</p>
-						<code class="block comment">-----BEGIN PUBLIC KEY-----
-MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC7vbqajDw4o6gJy8UtmIbkcpnk
-O3Kwc4qsEnSZp/TR+fQi62F79RHWmwKOtFmwteURgLbj7D/WGuNLGOfa/2vse3G2
-eHnHl5CB8ruRX9fBl/KgwCVr2JaEuUm66bBQeP5XeBotdR4cvX38uPYivCDdPjJ1
-QWPdspTBKcxeFbccDwIDAQAB
------END PUBLIC KEY-----</code>
+						<p>This type is automatically converted to OpenSSH key format. The comment field is optional. Example:</p>
+<code class="block">-----BEGIN RSA PUBLIC KEY-----
+Comment: "rsa-key-20140725"
+MIIBCgKCAQEAwLGYdASDYHgFFfx32RjcKwlB/VTexT/mXR+q22AkLllHw+veE0aj
+00kEiXiXwLceEfR4X3pUgMZTIMDHPr6P9ZgwRaT97FuaVjRktASn7MGb58nMuiJa
+ymgIcDxwhIFEiHO+xuI5YBoTc30BLh7syCIzYe918g4sahkNHzoA/5IRUZcQi7qG
+bftmpz9OSkXfBN8z/gRHTxjjesS92fBVUaeQDfOHgIVZj7LIKkWyashShWml17ie
+z8kf9oIK+/tabDMQrwxepnFxQZA4Rn3MBd0V0UyVTD3klMOKD4+iS+r+IfRwUFPo
+eOVK7PlM4kIXlSvjCVXaDUulDS0+ZzI+uwIDAQAB
+-----END RSA PUBLIC KEY-----
+</code>
 
 						<div id="ssh_key_help_close" class="help_close_button">Close or press ESC
 						</div>

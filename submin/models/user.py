@@ -2,6 +2,7 @@ from submin import models
 from submin.hooks.common import trigger_hook
 from submin.models import options
 from submin.models import repository
+from submin.models import sshkey
 
 from . import validators
 
@@ -225,8 +226,19 @@ class User(object):
 		if title is None:
 			title = ssh_key.strip().split()[-1]
 
-		if not validators.validate_ssh_key(ssh_key):
-			raise validators.InvalidSSHKey(ssh_key)
+		keytype = validators.detect_ssh_key(ssh_key)
+		if keytype == validators.ssh_key_type.RFC4716:
+			ssh_key = sshkey.rfc4716_to_openssh(ssh_key)
+			if title is None:
+				title = 'auto_rfc4716'
+		elif keytype == validators.ssh_key_type.PKCS8:
+			ssh_key = sshkey.pkcs8_to_openssh(ssh_key)
+			if title is None:
+				title = 'auto_pkcs8'
+		elif keytype == validators.ssh_key_type.PEM:
+			ssh_key = sshkey.pem_to_openssh(ssh_key)
+			if title is None:
+				title = 'auto_pem'
 
 		storage.add_ssh_key(self._id, ssh_key, title)
 		trigger_hook('user-update', username=self._name)

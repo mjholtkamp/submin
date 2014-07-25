@@ -10,8 +10,16 @@ USERNAME_REGEX = re.compile('[\n\'"]')
 # regex for quick fullname check. No quotes or newlines allowed.
 FULLNAME_REGEX = re.compile('[\'"\n]')
 
-# regex for SSH Key check.
-SSH_KEY_REGEX = re.compile('^ssh-\w{3} [^ ]+( .+)?$')
+class ssh_key_type:
+	OpenSSH, RFC4716, PKCS8, PEM = 0, 1, 2, 3
+
+# list of tuples of types and their regexes
+ssh_key_types_regexes = [
+	(ssh_key_type.OpenSSH, re.compile('^ssh-\w{3} [^ ]+( .+)?$')),
+	(ssh_key_type.RFC4716, re.compile('^---- BEGIN SSH2 PUBLIC KEY ----')),
+	(ssh_key_type.PKCS8, re.compile('^-----BEGIN PUBLIC KEY-----')),
+	(ssh_key_type.PEM, re.compile('^-----BEGIN RSA PUBLIC KEY-----')),
+]
 
 class InvalidEmail(Exception):
 	def __init__(self, email):
@@ -41,5 +49,9 @@ def validate_username(user):
 def validate_fullname(fullname):
 	return not FULLNAME_REGEX.search(fullname)
 
-def validate_ssh_key(ssh_key):
-	return SSH_KEY_REGEX.search(ssh_key)
+def detect_ssh_key(ssh_key):
+	for (keytype, regex) in ssh_key_types_regexes:
+		if regex.search(ssh_key):
+			return keytype
+
+	raise InvalidSSHKey(ssh_key)
