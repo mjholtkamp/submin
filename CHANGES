@@ -5,6 +5,8 @@ Changes in 2.2.1:
  - Tags are no longer trac-synced (fixes #401)
  - Version is now shown in installed Submin (fixes #387)
  - Diagnostics: show disabled as such, not as warnings (fixes #398)
+ - Fix 'addicons' not displaying in Safari
+ - Support multiple SSH key types (fixes #385)
 
 Changes in 2.2.0:
  - Hints to user to set Trac permissions (fixes #314)
