@@ -98,7 +98,7 @@ def have_trac_sync_access():
 
 	root = ET.fromstring(response.read())
 	command = root.find('./command')
-	if not command:
+	if command is None:
 		raise SyncError(root)
 
 	if 'inacl' not in command.attrib or command.attrib['inacl'].lower() == 'false':
