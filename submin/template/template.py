@@ -25,6 +25,7 @@ class Node(object):
 		self.line = line
 		
 		self.nodes = []
+		self.suppress_newline = False
 	
 	def evaluate(self, template=None):
 		"""Even the most basic node has a evaluate function, although it 
@@ -46,7 +47,13 @@ class TextNode(Node):
 		self.content = content
 	
 	def evaluate(self, template=None):
-		return unicode(self.content)
+		content = self.content
+		pn = self.previous_node
+		newline = len(content) and content[0] == '\n'
+		if pn and pn.suppress_newline and newline:
+			content = content[1:]
+
+		return unicode(content)
 	
 	def __str__(self):
 		return '<text %r>' % self.content
@@ -130,7 +137,11 @@ class Parser(object):
 				# command-name.
 				# The : and . characters also represent the beginning of the
 				# argument-section of the command.
-				self.stack[-1].command = self.data
+				command = self.data
+				if len(command) > 0 and command[0] == '@':
+					command = command[1:]
+					self.stack[-1].suppress_newline = True
+				self.stack[-1].command = command
 				self.data = ''
 				if ch in (':', '.'):
 					self.state = ARGUMENTS

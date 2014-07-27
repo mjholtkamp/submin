@@ -3,7 +3,6 @@ from tempfile import mkstemp
 import os
 
 from .template import Template, UnknownCommandError
-# import template
 from . import template_commands
 template_commands.DEBUG = False
 
@@ -219,6 +218,10 @@ class TestTest(unittest.TestCase):
 		tpl, ev = evaluate('[test:!foo baz]', {})
 		self.assertEquals(ev, 'baz')
 
+	def testNewlineAsSeparator(self):
+		tpl, ev = evaluate('no[test:foo\nbar]newline', {})
+		self.assertEquals(ev, 'nonewline')
+
 class TestIterTest(unittest.TestCase):
 	'Testcase for special iter-variables like ilast'
 
@@ -344,6 +347,49 @@ class IncludeTests(unittest.TestCase):
 
 	def testInvalidInclude(self):
 		self.assertRaises(template_commands.UnknownTemplateError, evaluate, '[include nonexistent.filename]')
+
+class SuppressNewlineTest(unittest.TestCase):
+	'Testcase for the newline suppression modifier'
+
+	def testEmpty(self):
+		tpl, ev = evaluate('[@val foo]\n', {})
+		self.assertEquals(ev, '')
+
+	def testNonEmpty(self):
+		tpl, ev = evaluate('[@val foo]\n', {'foo': 'bar'})
+		self.assertEquals(ev, 'bar')
+
+	def testSuppressOnlyOne(self):
+		tpl, ev = evaluate('[@val foo]\n\n', {})
+		self.assertEquals(ev, '\n')
+
+	def testSuppressOnlyDirectlyFollowing(self):
+		tpl, ev = evaluate('[@val foo] \n', {})
+		self.assertEquals(ev, ' \n')
+
+	def testElseFalse(self):
+		tpl, ev = evaluate('[@test:!foo no newlines.]\n[@else still no newlines.]\n', {})
+		self.assertEquals(ev, 'no newlines.')
+
+	def testElseTrue(self):
+		tpl, ev = evaluate('[@test:foo no newlines.]\n[@else still no newlines.]\n', {})
+		self.assertEquals(ev, 'still no newlines.')
+
+	def testNestedCommands(self):
+		tpl, ev = evaluate('[@test:!foo no [val bar]\nlines ]\nafter', {'bar': 'new'})
+		self.assertEquals(ev, 'no new\nlines after')
+
+	def testDoubleSuppress(self):
+		tpl, ev = evaluate('[@test:!foo no [@val bar]\nlines ]\nat all', {'bar': 'new'})
+		self.assertEquals(ev, 'no newlines at all')
+
+	def testDoubleSuppressOnlyOne(self):
+		tpl, ev = evaluate('[@test:!foo one [@val bar]\n\nline ]\ninbetween', {'bar': 'new'})
+		self.assertEquals(ev, 'one new\nline inbetween')
+
+	def testDoubleSuppressNotInline(self):
+		tpl, ev = evaluate('[@test:!foo\nno [@val\nbar]line ]\ninbetween', {'bar': 'new'})
+		self.assertEquals(ev, 'no newline inbetween')
 
 def runtests():
 	unittest.main()
