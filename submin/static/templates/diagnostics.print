@@ -1,30 +1,34 @@
 Email support correctly configured: [val diag.email_all_label]
  * Commit email set: [val diag.email_commit_set_label]
-[test:!diag.email_commit_set The 'commit_email_from' option is used when
-sending commit emails. This will be set as the 'From:' field and the envelope.
+[@test:!diag.email_commit_set
+   The 'commit_email_from' option is used when sending commit emails. This will
+   be set as the 'From:' field and the envelope.
 
+   If no 'commit_email_from' is set, the mail is sent from a warning email
+   address. This does not always work. To ensure delivery to everyone (and
+   because it looks nicer), please consider setting it to a sane value. To set
+   the commit_email_from, run the following command:
 
-If no 'commit_email_from' is set, the mail is sent from a warning email
-address. This does not always work. To ensure delivery to everyone (and
-because it looks nicer), please consider setting it to a sane value. To set
-the commit_email_from, run the following command:
+     submin2-admin [val subminenv] config set commit_email_from "Submin '<submin@example.tld>'"
 
-  submin2-admin [val subminenv] config set commit_email_from "Submin '<submin@example.tld>'"
 ]
-[test:diag.email_commit_set
+[@test:diag.email_commit_set
  * Commit email sane: [val diag.email_commit_sane_label]
-[test:!diag.email_commit_sane The 'commit_email_from' option is used when sending commit emails.
-This will be set as the 'From:' field and the envelope. It should contain a
-name and a valid email address between angle brackets, e.g.: "Submin '<submin@example.tld'"
+[@test:!diag.email_commit_sane
+   The 'commit_email_from' option is used when sending commit emails. This
+   will be set as the 'From:' field and the envelope. It should contain a name
+   and a valid email address between angle brackets, e.g.:
+   "Submin '<submin@example.tld>'"
 
 The current value is: "[val diag.email_commit_current_value]"
 
 To set the commit_email_from option, run the following command:
 
   submin2-admin [val subminenv] config set commit_email_from "Submin '<submin@example.tld>'"
+
 ]]
  * SMTP From email set in config: [val diag.email_from_set_label]
-[test:!diag.email_from_set The 'smtp_from' option is the From: email address used when sending account
+[@test:!diag.email_from_set The 'smtp_from' option is the From: email address used when sending account
 (re)set emails.
 
 If no 'smtp_from' is set, the mail is sent from 'root@localhost'. This does
@@ -33,10 +37,11 @@ please consider setting it to a sane value. To set the smtp_from, run the
 following command:
 
   submin2-admin [val subminenv] config set smtp_from "Submin '<submin@example.tld>'"
+
 ]
-[test:diag.email_from_set
+[@test:diag.email_from_set
  * SMTP From email sane: [val diag.email_from_sane_label]
-[test:!diag.email_from_sane The 'smtp_from' option is the From: email address used when sending account
+[@test:!diag.email_from_sane The 'smtp_from' option is the From: email address used when sending account
 (re)set emails. It should contain a name and a valid email address between
 angle brackets, e.g. "Submin <submin@example.tld>"
 
@@ -44,23 +49,33 @@ The current value is: "[val diag.email_from_current_value]"
 
 To set the commit_email_from option, run the following command:
   submin2-admin [val subminenv] config set smtp_from "Submin '<submin@example.tld>'"
-]
+
+]]
 
 Git support working correctly: [val diag.git_all_label]
  * Git enabled: [val diag.enabled_git_label]
-[test:diag.enabled_git    To disable, run the following command:
-     submin2-admin [val subminenv] config set vcs_plugins svn]
-[else To enable, run the following command:
-     submin2-admin [val subminenv] git init]
-[test:diag.enabled_git
+[@test:diag.enabled_git
+   To disable, run the following command:
+
+     submin2-admin [val subminenv] config set vcs_plugins svn
+
+]
+[@else
+   To enable, run the following command:
+
+     submin2-admin [val subminenv] git init
+
+]
+[@test:diag.enabled_git 
  * Git dir set in config: [val diag.git_dir_set_label]
-[test:!diag.git_dir_set
+[@test:!diag.git_dir_set
     To set the git_dir, run the following command:
 
   submin2-admin [val subminenv] config set git_dir git
+
 ]
  * Up-to-date hooks: [val diag.git_hooks_all_new_label]
-[test:!diag.git_hooks_all_new
+[@test:!diag.git_hooks_all_new
    The following repositories have outdated hooks:
 [iter:diag.git_old_hook_repos  - [ival.0] ([ival.1])]
 
@@ -71,9 +86,10 @@ Git support working correctly: [val diag.git_all_label]
    If you want to upgrade all repositories at once, run the following command:
 
      submin2-admin [val subminenv] git hook update
+
 ]
  * Git local ssh: [val diag.git_admin_test_label]
-[test:!diag.git_admin_test
+[@test:!diag.git_admin_test
    Could not issue admin commands through SSH. Error message:
 ----- BEGIN ERROR MESSAGE -----
 [val diag.git_admin_test_errmsg]
@@ -101,9 +117,11 @@ Git support working correctly: [val diag.git_all_label]
 
          ssh [val diag.git_user]@[val diag.git_ssh_host_internal] -p [val diag.git_ssh_port] -i [val subminenv]/conf/id_dsa
 
-       (it should give a message like: "submin2-admin git admin is not supposed to be called by users")]
+       (it should give a message like: "submin2-admin git admin is not supposed to be called by users")
+
+]
  * Git public hostname correct: [val diag.git_hostname_ok_label]
-[test:!diag.git_hostname_ok
+[@test:!diag.git_hostname_ok
    The 'git_ssh_host' config is not set, or it is set to a local address. Is
    'git init' run? If not, do this first before re-checking:
 
@@ -112,27 +130,33 @@ Git support working correctly: [val diag.git_all_label]
    If 'git init' has been run and the problem still exists, please set a
    hostname reachable by everyone with the following command:
 
-  submin2-admin [val subminenv] config set git_ssh_host <public_hostname>]
-]
+  submin2-admin [val subminenv] config set git_ssh_host <public_hostname>
+
+]]
 
 Svn support working correctly: [val diag.svn_all_label]
  * SVN enabled: [val diag.enabled_svn_label]
-[test:diag.enabled_svn
+[@test:diag.enabled_svn
    To disable, run the following command:
 
-     submin2-admin [val subminenv] config set vcs_plugins git]
-[else
+     submin2-admin [val subminenv] config set vcs_plugins git
+
+]
+[@else
    To enable, run the following command:
 
-     submin2-admin [val subminenv] config set vcs_plugins git,svn]
-[test:diag.enabled_svn
+     submin2-admin [val subminenv] config set vcs_plugins git,svn
+
+]
+[@test:diag.enabled_svn 
  * SVN dir set in config: [val diag.svn_dir_set_label]
-[test:!diag.svn_dir_set
+[@test:!diag.svn_dir_set
    To set the svn_dir, run the following command:
 
      submin2-admin [val subminenv] config set svn_dir svn
+
 ]
-[test:!diag.svn_apache_modules_exec_ok
+[@test:!diag.svn_apache_modules_exec_ok
  * Apache modules: fail
    Could not execute apachectl or load the server-info URL to test if modules
    are loaded. Error message was:
@@ -157,26 +181,31 @@ Svn support working correctly: [val diag.svn_all_label]
 
    If the 'internal URL get' fails this URL could not be used, please check
    the error message there and try to correct the error.
-][else
+
+][@else
 [iter:diag.svn_apache_modules
  * Apache module '[ikey]' [test:ival ok][else fail]
-[test:!ival
+[@test:!ival
    The module '[ikey]' was not loaded. Please make sure it is.]]]
 ]
 
 Trac support working correctly: [val diag.trac_all_label]
  * Trac enabled: [val diag.enabled_trac_label]
-[test:diag.enabled_trac
+[@test:diag.enabled_trac
    To disable, run the following command:
 
-     submin2-admin [val subminenv] config set enabled_trac no]
-[else
+     submin2-admin [val subminenv] config set enabled_trac no
+
+]
+[@else
    To enable, run the following command:
 
-     submin2-admin [val subminenv] config set enabled_trac yes]
-[test:diag.enabled_trac
+     submin2-admin [val subminenv] config set enabled_trac yes
+
+]
+[@test:diag.enabled_trac
  * Trac installed: [val diag.installed_trac_label]
-[test:!diag.installed_trac
+[@test:!diag.installed_trac
    The 'trac-admin' command was not found, please install Trac. If you have
    installed Trac, but it cannot be found, check if the env_path config value
    is set correctly:
@@ -186,24 +215,27 @@ Trac support working correctly: [val diag.trac_all_label]
    Set it with:
 
      submin2-admin [val subminenv] config set env_path <yourpath>
+
 ]
  * Trac dir set in config: [val diag.trac_dir_set_label]
-[test:!diag.trac_dir_set
+[@test:!diag.trac_dir_set
    To set the trac_dir, run the following command:
 
      submin2-admin [val subminenv] config set trac_dir trac
+
 ]
  * Trac sync configured: [val diag.trac_acl_hook_label]
-[test:!diag.trac_acl_hook
+[@test:!diag.trac_acl_hook
    The variable 'acl_hook' has not been set. It probably works on the defaults,
    but leaving it unconfigured can cause slow down during commits because of
    DNS resolving if trac sync is enabled. We recommend setting the ACL like
    this:
 
      submin2-admin [val subminenv] config set acl_hook "[val diag.trac_acl_hook_recommendation]"
+
 ]
  * Trac sync accessible: [val diag.trac_sync_access_label]
-[test:!diag.trac_sync_access
+[@test:!diag.trac_sync_access
    Git hook does not have access to submin to sync trac.
    Please make sure that the IP-address is in the ACL. Set it with:
 
@@ -214,29 +246,33 @@ Trac support working correctly: [val diag.trac_all_label]
 ----- BEGIN ERROR MESSAGE ---
 [val diag.trac_sync_access_msg]
 ----- END ERROR MESSAGE ---
+
 ]
- * htpasswd export directory exists: [test:diag.trac_htpasswd_file [val diag.trac_htpasswd_dir_exists_label]
-[test:!diag.trac_htpasswd_dir_exists
+ * htpasswd export directory exists: [@test:diag.trac_htpasswd_file [val diag.trac_htpasswd_dir_exists_label]
+[@test:!diag.trac_htpasswd_dir_exists
    The setting htpasswd_file is set, but the directory does not exist. To
    export the htpasswd_file, please make sure that [val diag.trac_htpasswd_dir] exists.
+
 ]
-][else [val diag.trac_htpasswd_file_label]
+][@else [val diag.trac_htpasswd_file_label]
    The setting htpasswd_file is not set. We will not export an htpasswd file
    for trac. If you don't use tracd for running your trac-environment you are
    probably fine. Otherwise, please point htpasswd_file to the proper location
    for your password file.
+
 ]
  * Trac environments connected: [val diag.trac_envs_all_connected_label]
-[test:!diag.trac_envs_all_connected
+[@test:!diag.trac_envs_all_connected
    The following Trac environments are orphaned:
 [iter:diag.trac_envs_orphaned
     - [ival]
 ]
    No repository is found that connects to them (should be the same name as
    the trac name). Maybe it is the result of a deleted repository?
+
 ]
  * Trac environments config: [val diag.trac_envs_complete_label]
-[test:!diag.trac_envs_complete
+[@test:!diag.trac_envs_complete
    The following Trac environments have missing/incorrect configuration.
    Please correct the values to the one below:
 
@@ -251,6 +287,7 @@ Trac support working correctly: [val diag.trac_all_label]
    (Trac may ask you to login first). Other options have to be configured in
    the trac.ini of the corresponding trac environment.]
 ]
+
 Summary:
 
  * Email settings: [val diag.email_all_label]
