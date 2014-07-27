@@ -132,9 +132,6 @@ class Parser(object):
 				# argument-section of the command.
 				self.stack[-1].command = self.data
 				self.data = ''
-				if ch == '\n':
-					# A newline is usually explicitly there to keep your html tidy
-					self.data = '\n'
 				if ch in (':', '.'):
 					self.state = ARGUMENTS
 				else:
@@ -147,9 +144,6 @@ class Parser(object):
 				# node
 				self.stack[-1].arguments = self.data
 				self.data = ''
-				if ch == '\n':
-					# A newline is usually explicitly there to keep your html tidy
-					self.data = '\n'
 				self.state = None
 			elif ch == ']':
 				# The end of a command. Now there is some heavy stuff that 
