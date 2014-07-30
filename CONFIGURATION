@@ -106,11 +106,12 @@ Options:
     'sendmail'-like binary.
 
  * smtp_port
-    Port to connect to when sending e-mails. Default is 25. See also smtp_host.
+    Port to connect to when sending e-mails. Default is 25. See also
+    smtp_hostname.
 
  * smtp_username, smtp_password
-    Username and password used to connect to smtp_host on port smtp_port when
-    sending e-mails. See also smtp_host.
+    Username and password used to connect to smtp_hostname on port smtp_port
+    when sending e-mails. See also smtp_hostname.
 
  * svn_authz_file
     The location of the svn authz file. If you are really sure you want to
