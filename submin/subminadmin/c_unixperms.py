@@ -7,8 +7,8 @@ from .common import www_user
 class c_unixperms():
 	'''Commands regarding unix permissions
 Usage:
-    unixperms fix         - sets permissions and ownerships to sane values
-    unixperms fix <user>  - sets sane permissions and unix owner to <user>'''
+    unixperms fix             - sets permissions and ownerships to sane values
+    unixperms fix <web-user>  - sets sane permissions and unix owner to <user>'''
 
 	def __init__(self, sa, argv):
 		self.sa = sa
