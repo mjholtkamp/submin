@@ -11,7 +11,7 @@ from submin.common import shellscript
 from .common import add_labels
 
 fails = ['git_dir_set', 'git_hooks_all_new', 'git_admin_test',
-		'git_hostname_ok']
+		'git_hostname_ok', 'git_dir_perms']
 warnings = ['enabled_git']
 
 def diagnostics():
@@ -56,7 +56,40 @@ def diagnostics():
 	else:
 		results['git_admin_test'] = True
 
+	wrong_perms = git_dir_wrong_perms()
+	results['git_dir_perms_wrong'] = wrong_perms
+	results['git_dir_perms'] = len(wrong_perms) == 0
+
 	return add_labels(results, 'git_all', warnings, fails)
+
+def git_dir_wrong_perms():
+	from submin.models import options
+	from pwd import getpwnam
+	from submin.subminadmin.common import www_user
+	submin_env = options.env_path()
+	git_dir = options.env_path("git_dir")
+	git_user = getpwnam(options.value("git_user"))
+	apache = www_user()
+
+	wrong_permissions = []
+	checkdir = git_dir
+	while checkdir != '/' and checkdir != submin_env:
+		try:
+			st = os.stat(checkdir)
+		except OSError, e:
+			if e.errno == errno.EACCES:
+				wrong_permissions.append(
+					{'dir': checkdir, 'reason': 'unknown'})
+		else:
+			if (st.st_uid != git_user.pw_uid or st.st_gid != apache.pw_gid or
+						st.st_mode & 0o750 != 0o750) and (
+						st.st_mode & 0o005 != 0o005):
+				wrong_permissions.append(
+					{'dir': checkdir, 'reason': 'incorrect'})
+
+		checkdir = os.path.dirname(checkdir)
+
+	return wrong_permissions
 
 def hook_uptodate(filename, version_re, newest_version):
 	"""For hooks that are generated from a template, they may be out of

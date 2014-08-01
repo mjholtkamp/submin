@@ -93,6 +93,21 @@
 				</li>
 				<li>
 					<div class="diag_result">
+						<label class="diag">Git dir permissions</label>
+						<span class="diag_[val diag.git_dir_perms_label]"></span>
+						[@test:!diag.git_dir_perms
+						<p>The following subdirs of git_dir have wrong permissions:</p>
+						<ul>[iter:diag.git_dir_perms_wrong <li>[ival.dir] ([ival.reason])</li>]</ul>
+						<p>They should be either:
+						<ul>
+							<li>owned by <span class="diag_pre">git-user:web-user</span> and have at least <span class="diag_pre">rwx</span> permissions for 'user' and <span class="diag_pre">r-x</span> permissions for 'group' (final git dir, subdirs)</li>
+							<li>have at least <span class="diag_pre">r-x</span> permissons for 'other' (subdirs)</li>
+						</ul>
+						]
+					</div>
+				</li>
+				<li>
+					<div class="diag_result">
 						<label class="diag">Up-to-date hooks</label>
 						<span class="diag_[val diag.git_hooks_all_new_label]"></span>
 						[test:!diag.git_hooks_all_new

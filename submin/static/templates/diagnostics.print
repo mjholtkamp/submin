@@ -74,6 +74,18 @@ Git support working correctly: [val diag.git_all_label]
   submin2-admin [val subminenv] config set git_dir git
 
 ]
+ * Git dir permissions: [val diag.git_dir_perms_label]
+[@test:!diag.git_dir_perms
+   The following subdirs of git_dir have wrong permissions:
+[iter:diag.git_dir_perms_wrong
+    - [ival.dir] ([ival.reason])
+]
+   They should be either:
+    * owned by <git user>:<web user> and have at least rwx permissions for
+      'user' and r-x permissions for 'group' (final git dir, subdirs)
+    * have at least r-x permissons for 'other' (subdirs)
+
+]
  * Up-to-date hooks: [val diag.git_hooks_all_new_label]
 [@test:!diag.git_hooks_all_new
    The following repositories have outdated hooks:
