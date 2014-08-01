@@ -229,7 +229,31 @@ Usage:
 		cmd = ' '.join(cmd)
 		executeCmd(cmd, "Could not create user %s" % username)
 
+	def create_user_basedir(self, homedir):
+		"""Create basedir of user's homedir
+		If the git_dir is outside of the submin env, but e.g. /var/repos/git,
+		we can not assume all subdirs already exist. The tools useradd/adduser
+		do not both create all subdirs (useradd only creates the final
+		component) and we can not rely on both tools to set the permissions
+		that we require.
+
+		This method both creates intermediate (but not the final) directories
+		and sets permissions. This is only done upon 'git init', and only if
+		the directories do not exist yet. We do not want to mess with already
+		existing directories, if they are outside the submin env."""
+		fixdirs = []
+		checkdir = os.path.dirname(homedir)
+		while not os.path.exists(checkdir):
+			fixdirs.append(checkdir)
+			checkdir = os.path.dirname(checkdir)
+
+		# Create directories in order.
+		for directory in sorted(fixdirs):
+			os.mkdir(directory)
+			os.chmod(directory, 0o755)
+
 	def create_user(self, username, homedir):
+		self.create_user_basedir(homedir)
 		try:
 			self.create_user_adduser(username, homedir)
 		except CmdException as e:

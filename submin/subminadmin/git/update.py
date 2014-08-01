@@ -1,6 +1,8 @@
 import os
 import sys
 import codecs
+import errno
+
 from pwd import getpwnam
 
 from submin.models import options
@@ -11,9 +13,14 @@ def run():
 	filename = os.path.expanduser("~/.ssh/authorized_keys")
 	filename = options.value("git_dev_authorized_keysfile", filename)
 	if not os.path.exists(os.path.dirname(filename)):
-		# create dir and file if one of them doesn't exist
-		os.mkdir(os.path.dirname(filename))
-		file(filename, 'a')
+		try:
+			# create dir and file if one of them doesn't exist
+			os.mkdir(os.path.dirname(filename))
+			file(filename, 'a')
+		except OSError, e:
+			if e.errno != errno.EACCES:
+				raise
+			raise Exception('Could not write "%s", please check that git user can write it.' % filename)
 
 		# Make the authorized_keys file only readable to the git-user
 		gituser = options.value("git_user")
