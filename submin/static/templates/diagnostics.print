@@ -9,7 +9,7 @@ Email support correctly configured: [val diag.email_all_label]
    because it looks nicer), please consider setting it to a sane value. To set
    the commit_email_from, run the following command:
 
-     submin2-admin [val subminenv] config set commit_email_from "Submin '<submin@example.tld>'"
+     submin2-admin [val subminenv] config set commit_email_from "Submin <submin@example.tld>"
 
 ]
 [@test:diag.email_commit_set
@@ -24,7 +24,7 @@ The current value is: "[val diag.email_commit_current_value]"
 
 To set the commit_email_from option, run the following command:
 
-  submin2-admin [val subminenv] config set commit_email_from "Submin '<submin@example.tld>'"
+  submin2-admin [val subminenv] config set commit_email_from "Submin <submin@example.tld>"
 
 ]]
  * SMTP From email set in config: [val diag.email_from_set_label]
@@ -36,7 +36,7 @@ not always work. To ensure delivery to everyone (and because it looks nicer),
 please consider setting it to a sane value. To set the smtp_from, run the
 following command:
 
-  submin2-admin [val subminenv] config set smtp_from "Submin '<submin@example.tld>'"
+  submin2-admin [val subminenv] config set smtp_from "Submin <submin@example.tld>"
 
 ]
 [@test:diag.email_from_set
@@ -48,7 +48,7 @@ angle brackets, e.g. "Submin <submin@example.tld>"
 The current value is: "[val diag.email_from_current_value]"
 
 To set the commit_email_from option, run the following command:
-  submin2-admin [val subminenv] config set smtp_from "Submin '<submin@example.tld>'"
+  submin2-admin [val subminenv] config set smtp_from "Submin <submin@example.tld>"
 
 ]]
 
