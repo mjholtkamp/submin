@@ -151,9 +151,10 @@ div.c_icon.minus {
 /* ==== Log popup ==== */
 #log {
 	border: 1px solid #666;
-	position: fixed;
+	position: absolute;
 	left: 100px;
 	top: 10px;
+	border-radius: 4px;
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 }
@@ -180,9 +181,15 @@ div.c_icon.minus {
 }
 
 #log small {
+	cursor: pointer;
 	color: #822;
 	float: right;
-	padding-right: 10px;
+	margin-right: 10px;
+	padding: 0 1em;
+	border: 1px solid #666;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
 }
 
 .diag_ok {

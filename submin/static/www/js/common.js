@@ -258,13 +258,13 @@ function Log(message, message_type) {
 	log.style.opacity = value/10;
 	log.style.filter = 'alpha(opacity=' + value*10 + ')';
 
-	// remove on click
-	log.onclick = RemoveLog
-
 	if (message_type == 'message') {
 		Log_timeout = setTimeout("FadeLog(" + value + ")", 2000)
 	} else {
-		log.innerHTML += "<br /><small>Click to close</small>";
+		var small = document.createElement('small');
+		small.onclick = RemoveLog;
+		small.innerHTML = 'Click to close';
+		log.appendChild(small);
 	}
 }
 
