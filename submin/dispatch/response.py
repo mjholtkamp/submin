@@ -76,9 +76,10 @@ class XMLResponse(Response):
 		self.headers = {'Content-Type': 'text/xml', 'Cache-Control': 'no-cache'}
 
 class XMLStatusResponse(XMLResponse):
-	def __init__(self, command, success, text):
+	def __init__(self, command, success, text, details=None):
 		from submin.template.shortcuts import evaluate
-		tvars = {'command': command, 'success': str(success), 'text': text}
+		tvars = {'command': command, 'success_str': str(success), 'text': text,
+				'details': details, 'success': success}
 		content = evaluate('ajax/response.xml', tvars)
 
 		XMLResponse.__init__(self, content)

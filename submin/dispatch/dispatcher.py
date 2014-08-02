@@ -86,8 +86,7 @@ the name of the missing option should give you a hint to its value :)""" % \
 			if not request.is_ajax():
 				response = ErrorResponse(str(e), request=request, details=details)
 			else:
-				details = 'Whoops, an internal error occured:\n\n' + str(e) + '\n\n' + details
-				response = XMLStatusResponse('', False, details)
+				response = XMLStatusResponse('', False, str(e), details=details)
 
 	else:
 		response = HTTP404('/'.join(path))

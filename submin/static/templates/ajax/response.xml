@@ -1,5 +1,17 @@
 <response>
-	<command name="[val command]" success="[val success]">
+	<command name="[val command]" success="[val success_str]">
+[@test:success
 		<text>[val text]</text>
+][@else
+		<text>We're very sorry, but an internal error occured:
+
+  [val text]
+
+This should never happen! Please tell the administrator this message and what caused it. Technical details (if any):
+
+[val details]
+
+To the administrator: please run diagnostics to find common problems</text>
+]
 	</command>
 </response>
