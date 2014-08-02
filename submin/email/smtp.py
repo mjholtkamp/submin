@@ -12,7 +12,8 @@ def send(sender, receiver, message):
 	try:
 		server = SMTP(server, int(port))
 		if username != "" and password != "":
-			server.login(username, password)
+			# The .login() function only accepts str, not unicode, so force it
+			server.login(str(username), str(password))
 
 		server.sendmail(sender, [receiver], message)
 		server.quit()
