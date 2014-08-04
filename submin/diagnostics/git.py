@@ -7,6 +7,7 @@ from submin.models.exceptions import UnknownKeyError
 from submin.plugins.vcs.git import remote
 from submin.subminadmin.git.post_receive_hook import HOOK_VERSIONS
 from submin.subminadmin.git.common import signature
+from submin.models.exceptions import UnknownKeyError
 from submin.common import shellscript
 from .common import add_labels
 
@@ -68,7 +69,11 @@ def git_dir_wrong_perms():
 	from submin.subminadmin.common import www_user
 	submin_env = options.env_path()
 	git_dir = options.env_path("git_dir")
-	git_user = getpwnam(options.value("git_user"))
+	try:
+		git_user = getpwnam(options.value("git_user"))
+	except UnknownKeyError:
+		return []
+
 	apache = www_user()
 
 	wrong_permissions = []
