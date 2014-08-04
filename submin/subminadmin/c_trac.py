@@ -43,6 +43,7 @@ Usage:
 			print "install trac and run: `submin2-admin %s trac init`" % options.env_path()
 			return
 
+		print 'Initializing trac files. This might take a while, please wait ...'
 		# first, create a temp trac env, because 'deploy' needs a working trac
 		# env (sigh)
 		trac.initenv(str(tmp_trac_dir), 'dummy', 'svn', '/tmp/non-existing')
@@ -63,6 +64,7 @@ Usage:
 
 		# finally, set all permissions and ownerships
 		self.sa.execute(['unixperms', 'fix'])
+		print 'Done.'
 		return
 
 	def subcmd_hook(self, argv):
