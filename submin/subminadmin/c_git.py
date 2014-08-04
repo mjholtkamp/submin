@@ -4,6 +4,7 @@ import stat
 import socket
 
 from submin.common.osutils import mkdirs
+from submin.models.exceptions import UnknownKeyError
 
 from .common import executeCmd, which, CmdException, SubminAdminCmdException, www_user
 
@@ -286,7 +287,11 @@ Usage:
 	def subcmd_fix_perms(self, args):
 		from submin.models import options
 		from pwd import getpwnam
-		git_user = options.value("git_user")
+		try:
+			git_user = options.value("git_user")
+		except UnknownKeyError, e:
+			return False
+
 		git_pw = getpwnam(git_user)
 		self.chgrp_relevant_files(git_uid=git_pw.pw_uid, git_gid=git_pw.pw_gid)
 
