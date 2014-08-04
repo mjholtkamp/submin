@@ -1,0 +1,98 @@
+Trac support working correctly: [val diag.trac_all_label]
+ * Trac enabled: [val diag.enabled_trac_label]
+[@test:diag.enabled_trac
+   To disable, run the following command:
+
+     submin2-admin [val subminenv] config set enabled_trac no
+
+]
+[@else
+   To enable, run the following command:
+
+     submin2-admin [val subminenv] config set enabled_trac yes
+
+]
+[@test:diag.enabled_trac
+ * Trac installed: [val diag.installed_trac_label]
+[@test:!diag.installed_trac
+   The 'trac-admin' command was not found, please install Trac. If you have
+   installed Trac, but it cannot be found, check if the env_path config value
+   is set correctly:
+
+     submin2-admin [val subminenv] config get env_path
+
+   Set it with:
+
+     submin2-admin [val subminenv] config set env_path <yourpath>
+
+]
+ * Trac dir set in config: [val diag.trac_dir_set_label]
+[@test:!diag.trac_dir_set
+   To set the trac_dir, run the following command:
+
+     submin2-admin [val subminenv] config set trac_dir trac
+
+]
+ * Trac sync configured: [val diag.trac_acl_hook_label]
+[@test:!diag.trac_acl_hook
+   The variable 'acl_hook' has not been set. It probably works on the defaults,
+   but leaving it unconfigured can cause slow down during commits because of
+   DNS resolving if trac sync is enabled. We recommend setting the ACL like
+   this:
+
+     submin2-admin [val subminenv] config set acl_hook "[val diag.trac_acl_hook_recommendation]"
+
+]
+ * Trac sync accessible: [val diag.trac_sync_access_label]
+[@test:!diag.trac_sync_access
+   Git hook does not have access to submin to sync trac.
+   Please make sure that the IP-address is in the ACL. Set it with:
+
+     submin2-admin [val subminenv] config set acl_hooks "[val diag.trac_acl_hook_recommendation]"
+
+   The error message was:
+
+----- BEGIN ERROR MESSAGE ---
+[val diag.trac_sync_access_msg]
+----- END ERROR MESSAGE ---
+
+]
+ * htpasswd export directory exists: [@test:diag.trac_htpasswd_file [val diag.trac_htpasswd_dir_exists_label]
+[@test:!diag.trac_htpasswd_dir_exists
+   The setting htpasswd_file is set, but the directory does not exist. To
+   export the htpasswd_file, please make sure that [val diag.trac_htpasswd_dir] exists.
+
+]
+][@else [val diag.trac_htpasswd_file_label]
+   The setting htpasswd_file is not set. We will not export an htpasswd file
+   for trac. If you don't use tracd for running your trac-environment you are
+   probably fine. Otherwise, please point htpasswd_file to the proper location
+   for your password file.
+
+]
+ * Trac environments connected: [val diag.trac_envs_all_connected_label]
+[@test:!diag.trac_envs_all_connected
+   The following Trac environments are orphaned:
+[iter:diag.trac_envs_orphaned
+    - [ival]
+]
+   No repository is found that connects to them (should be the same name as
+   the trac name). Maybe it is the result of a deleted repository?
+
+]
+ * Trac environments config: [val diag.trac_envs_complete_label]
+[@test:!diag.trac_envs_complete
+   The following Trac environments have missing/incorrect configuration.
+   Please correct the values to the one below:
+
+[iter:diag.trac_envs_missing_config
+    - [ival.trac_env] ([val diag.trac_base_url][val ival.trac_env]/admin/general/plugin#no1)
+      [iter:ival.missing_configs \[[ikey]\] [iter:ival [test:ival.fatal  no ][else warn] [ival.option] = [ival.value]]]
+
+      The trac.ini file is: "[val diag.trac_dir]/[ival.trac_env]/conf/trac.ini"
+]
+
+   Options from the 'components' section can be enabled in its Trac admin panel
+   (Trac may ask you to login first). Other options have to be configured in
+   the trac.ini of the corresponding trac environment.]
+]

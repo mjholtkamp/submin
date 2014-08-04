@@ -1,0 +1,11 @@
+[include diagnostics.email.print]
+[include diagnostics.git.print]
+[include diagnostics.svn.print]
+[include diagnostics.trac.print]
+
+Summary:
+
+ * Email settings: [val diag.email_all_label]
+ * Git:            [val diag.git_all_label]
+ * Subversion:     [val diag.svn_all_label]
+ * Trac:           [val diag.trac_all_label]

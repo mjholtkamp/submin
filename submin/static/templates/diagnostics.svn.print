@@ -1,0 +1,54 @@
+Svn support working correctly: [val diag.svn_all_label]
+ * SVN enabled: [val diag.enabled_svn_label]
+[@test:diag.enabled_svn
+   To disable, run the following command:
+
+     submin2-admin [val subminenv] config set vcs_plugins git
+
+]
+[@else
+   To enable, run the following command:
+
+     submin2-admin [val subminenv] config set vcs_plugins git,svn
+
+]
+[@test:diag.enabled_svn 
+ * SVN dir set in config: [val diag.svn_dir_set_label]
+[@test:!diag.svn_dir_set
+   To set the svn_dir, run the following command:
+
+     submin2-admin [val subminenv] config set svn_dir svn
+
+]
+[@test:!diag.svn_apache_modules_exec_ok
+ * Apache modules: fail
+   Could not execute apachectl or load the server-info URL to test if modules
+   are loaded. Error message was:
+
+----- BEGIN ERROR MESSAGE ---
+[val diag.svn_apache_modules_errmsg]
+----- END ERROR MESSAGE ---
+
+   If the above commands all fail with 'No such file or directory', then maybe
+   the 'apachectl' binary is named differently on your system. Please report
+   this as a bug.
+
+   If the above commands can be found, but fail to verify because 'apachectl'
+   complains about lack of permissions, you can make sure that the apache
+   module 'info' is loaded and reachable from localhost. Submin will then try
+   to get the list of modules from the 'info' modules by retrieving a URL.
+
+   By default, this URL is 'http://localhost/server-info?list', but if you
+   need to change it for some reason, you can do so with the following command:
+
+     submin2-admin [val subminenv] config set apache_server_info_url "http://localhost/server-info?list"
+
+   If the 'internal URL get' fails this URL could not be used, please check
+   the error message there and try to correct the error.
+
+][@else
+[iter:diag.svn_apache_modules
+ * Apache module '[ikey]' [test:ival ok][else fail]
+[@test:!ival
+   The module '[ikey]' was not loaded. Please make sure it is.]]]
+]

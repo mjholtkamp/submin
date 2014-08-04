@@ -1,0 +1,53 @@
+Email support correctly configured: [val diag.email_all_label]
+ * Commit email set: [val diag.email_commit_set_label]
+[@test:!diag.email_commit_set
+   The 'commit_email_from' option is used when sending commit emails. This will
+   be set as the 'From:' field and the envelope.
+
+   If no 'commit_email_from' is set, the mail is sent from a warning email
+   address. This does not always work. To ensure delivery to everyone (and
+   because it looks nicer), please consider setting it to a sane value. To set
+   the commit_email_from, run the following command:
+
+     submin2-admin [val subminenv] config set commit_email_from "Submin <submin@example.tld>"
+
+]
+[@test:diag.email_commit_set
+ * Commit email sane: [val diag.email_commit_sane_label]
+[@test:!diag.email_commit_sane
+   The 'commit_email_from' option is used when sending commit emails. This
+   will be set as the 'From:' field and the envelope. It should contain a name
+   and a valid email address between angle brackets, e.g.:
+   "Submin '<submin@example.tld>'"
+
+The current value is: "[val diag.email_commit_current_value]"
+
+To set the commit_email_from option, run the following command:
+
+  submin2-admin [val subminenv] config set commit_email_from "Submin <submin@example.tld>"
+
+]]
+ * SMTP From email set in config: [val diag.email_from_set_label]
+[@test:!diag.email_from_set The 'smtp_from' option is the From: email address used when sending account
+(re)set emails.
+
+If no 'smtp_from' is set, the mail is sent from 'root@localhost'. This does
+not always work. To ensure delivery to everyone (and because it looks nicer),
+please consider setting it to a sane value. To set the smtp_from, run the
+following command:
+
+  submin2-admin [val subminenv] config set smtp_from "Submin <submin@example.tld>"
+
+]
+[@test:diag.email_from_set
+ * SMTP From email sane: [val diag.email_from_sane_label]
+[@test:!diag.email_from_sane The 'smtp_from' option is the From: email address used when sending account
+(re)set emails. It should contain a name and a valid email address between
+angle brackets, e.g. "Submin <submin@example.tld>"
+
+The current value is: "[val diag.email_from_current_value]"
+
+To set the commit_email_from option, run the following command:
+  submin2-admin [val subminenv] config set smtp_from "Submin <submin@example.tld>"
+
+]]
