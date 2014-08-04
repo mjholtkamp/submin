@@ -1,17 +1,10 @@
-try:
-	import json
-	pickler = json
-	picklerError = ValueError
-except ImportError:
-	import cPickle
-	pickler = cPickle
-	picklerError = cPickle.UnpicklingError
-
 import rfc822
 import time
 import os
 import thread
+import json
 from hashlib import md5
+
 from submin.models import options
 
 class SessionDestroyedError(Exception):
@@ -85,7 +78,7 @@ class FilePickleDict(PickleDict):
 	def load(self):
 		try:
 			filehandle = open(self.filename, 'r')
-			self.dict = pickler.load(filehandle)
+			self.dict = json.load(filehandle)
 			filehandle.close()
 		except:
 			pass
@@ -94,7 +87,7 @@ class FilePickleDict(PickleDict):
 		try:
 			self.lock.acquire()
 			filehandle = open(self.filename, 'w')
-			pickler.dump(self.dict, filehandle)
+			json.dump(self.dict, filehandle)
 			filehandle.close()
 		finally:
 			self.lock.release()
@@ -112,17 +105,17 @@ class DBPickleDict(PickleDict):
 		from submin.models.exceptions import UnknownKeyError
 		try:
 			val, self._expires = sessions.get(self.key)
-			self.dict = pickler.loads(str(val))
+			self.dict = json.loads(str(val))
 		except UnknownKeyError:
 			pass
-		except picklerError:
+		except ValueError:
 			# invalid (old) session, invalidate
 			self.dict = {}
 			sessions.unset(self.key)
 
 	def save(self):
 		from submin.models import sessions
-		val = pickler.dumps(self.dict)
+		val = json.dumps(self.dict)
 		sessions.set(self.key, val, self._expires)
 
 	def cleanup(self):
