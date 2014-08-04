@@ -46,6 +46,7 @@ Notes:
 			'svn_url': Path('svn'),
 			'create_user': 'yes',
 			'enable_features': 'svn, git, apache, nginx',
+			'smtp_from': 'Submin <root@%s>' % socket.getfqdn(),
 		}
 		self.init_vars = {
 			'conf_dir': Path('conf'),
@@ -130,6 +131,14 @@ If you use Trac, it will be accessible from <http base>/trac.
 '''
 		self.prompt_user("HTTP base?", 'http_base')
 
+		print '''
+Submin will send emails for password resets and for commit message (if
+enabled). You can set the sender email address that Submin will use. The
+default might work in some places, but not all.
+'''
+		self.prompt_user("Email from envelope?", 'smtp_from')
+		self.init_vars['commit_email_from'] = self.init_vars['smtp_from']
+
 		self.create_env()
 
 	def create_dir(self, directory):
@@ -174,6 +183,8 @@ If you use Trac, it will be accessible from <http base>/trac.
 			'git_dir': str(self.init_vars['git_dir']),
 			'trac_dir': str(self.init_vars['trac_dir']),
 			'svn_authz_file': str(self.init_vars['authz']),
+			'smtp_from': self.init_vars['smtp_from'],
+			'commit_email_from': self.init_vars['commit_email_from'],
 		}
 		for (key, value) in default_options.iteritems():
 			options.set_value(key, value)
