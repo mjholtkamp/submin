@@ -44,7 +44,8 @@ Notes:
 			'trac_url': Path('trac'),
 			'submin_url': Path('submin'),
 			'svn_url': Path('svn'),
-			'create_user': 'yes'
+			'create_user': 'yes',
+			'enable_features': 'svn, git, apache, nginx',
 		}
 		self.init_vars = {
 			'conf_dir': Path('conf'),
@@ -77,29 +78,41 @@ Notes:
 
 	def interactive(self):
 		print '''
+Submin can enable features for you automatically. Please answer which features
+you want to enable. You can choose to enable: 'svn', 'git', 'trac', 'apache'
+and 'nginx.
+'''
+		self.prompt_user("Which features do you want to enable?",
+				'enable_features')
+
+
+		if 'svn' in self.init_vars['enable_features']:
+			print '''
 Please provide a location for the Subversion repositories. For new Subversion
 repositories, the default setting is ok. If the path is not absolute, it will
 be relative to the submin environment. If you want to use an existing
 repository, please provide the full pathname to the Subversion parent
 directory (ie. /var/lib/svn).
 '''
-		self.prompt_user("Path to the repository?", 'svn_dir')
+			self.prompt_user("Path to the repository?", 'svn_dir')
 
-		print '''
+		if 'git' in self.init_vars['enable_features']:
+			print '''
 Please provide a location for the git repositories. For new git repositories,
 the default setting is ok. If the path is not absolute, it will be relative to
 the submin environment. If you want to use an existing repository, please
 provide the full pathname to the git parent directory (ie. /var/lib/git).
 '''
-		self.prompt_user("Path to the git repositories?", 'git_dir')
+			self.prompt_user("Path to the git repositories?", 'git_dir')
 
-		print '''
+		if 'trac' in self.init_vars['enable_features']:
+			print '''
 Please provide a location for the parent dir of Trac environments. For a new
 installation, the default setting is ok. If you don't want to use Trac, the
 default setting is also ok. For existing Trac environments, please provide
 the full path.
 '''
-		self.prompt_user("Path to trac environment?", 'trac_dir')
+			self.prompt_user("Path to trac environment?", 'trac_dir')
 
 		print '''
 Please provide a hostname that can be used to reach the web interface. This
@@ -180,8 +193,12 @@ If you use Trac, it will be accessible from <http base>/trac.
 
 		self.sa.execute(['upgrade', 'hooks', 'no-fix-unixperms'])
 		self.sa.execute(['unixperms', 'fix'])
-		self.sa.execute(['apacheconf', 'create', 'all'])
-		self.sa.execute(['trac', 'init'])
+		if 'apache' in self.init_vars['enable_features']:
+			self.sa.execute(['apacheconf', 'create', 'all'])
+		if 'nginx' in self.init_vars['enable_features']:
+			self.sa.execute(['nginxconf', 'create', 'all'])
+		if 'trac' in self.init_vars['enable_features']:
+			self.sa.execute(['trac', 'init'])
 
 	def _get_url(self, key):
 		p = self.init_vars[key]
