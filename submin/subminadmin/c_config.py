@@ -121,7 +121,7 @@ sqlite_path = os.path.join(os.path.dirname(__file__), "submin.db")
 			'enabled_trac': 'no',
 			'session_salt': self.session_salt(),
 			'env_path': '/bin:/usr/bin:/usr/local/bin:/opt/local/bin',
-			'vcs_plugins': 'svn',
+			'vcs_plugins': 'git,svn',
 		}
 		for (key, value) in default_options.iteritems():
 			options.set_value(key, value)
