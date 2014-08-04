@@ -122,9 +122,35 @@ received a password reset email. Read your email and click the link. You will
 get another email with the password. You can use this to login.
 
 If you did not receive an e-mail, it could be that your server could not
-send it, or that the mail was blocked somewhere. Please make sure you can
-send emails from the server (for example, test with 'mail' on the command
-line) and then use the 'forgot password' functionality to request a password
+send it, or that the mail was blocked somewhere. Please run diagnostics:
+
+    submin2-admin /var/lib/submin diagnostics email
+
+If you followed the steps there and you still can't get it to work, please
+make sure you can send emails from the server (for example, test with 'mail'
+on the command line) and then use the 'forgot password' functionality to
+request a password (for the user 'admin').
+
+
+Advanced configuration
+======================
+
+For more advanced configuration, see the CONFIGURATION file included in
+the source code. To find an online version, please see:
+
+https://ssl.supermind.nl/collab/projects/submin/browser/CONFIGURATION
+
+
+Troubleshooting
+===============
+To find the common misconfiguration problems, Submin offers diagnostics. There
+is a web-ui version and a command-line version. The web-ui version can be
+found in the sidebar under 'SYSTEM', the command-line version can be run as:
+
+    submin2-admin /var/lib/submin diagnostics
+
+For more information, see the help of diagnostics ('help diagnostics' instead
+of 'diagnostics).
 
 
 Final touches
