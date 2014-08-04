@@ -80,7 +80,7 @@ Notes:
 		print '''
 Submin can enable features for you automatically. Please answer which features
 you want to enable. You can choose to enable: 'svn', 'git', 'trac', 'apache'
-and 'nginx.
+and 'nginx'.
 '''
 		self.prompt_user("Which features do you want to enable?",
 				'enable_features')
