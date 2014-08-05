@@ -66,6 +66,25 @@
 						</div>]
 					</div>
 				</li>]
+				<li>
+					<div class="diag_result">
+						<label class="diag">Might be able to send:</label>
+						<span class="diag_[val diag.email_might_work_smtp_from_label]"></span>
+						[test:!diag.email_might_work_smtp_from
+						<div class="diag_note">
+							<p>There are probably (see disclaimer below) problems sending email:</p>
+
+							<span class="diag_pre">[val diag.email_might_work_smtp_from_msg]</span>
+
+							<p>For normal sending (not this test) Submin will first try to send via SMTP with the various smtp_* options (using sane defaults if not set). If that fails, it will fallback to local (via sendmail executable).</p>
+
+							<p>For this test only SMTP will be tested if smtp_hostname is set, otherwise only local will be tested.</p>
+
+							<p>Due to the nature of e-mail, you will only find out if you can send e-mail by actually sending an e-mail. This test does not send e-mails to prevent annoyance. Therefore, these tests are very limited and can only give an indication; If this test does not detect any problem, it does not guarantee that the email will be deliverd, and if this test does detect a problem in some cases there is none. YMMV.</p>
+
+						</div>]
+					</div>
+				</li>
 			</ul>
 			<a name="git"><h3 class="diag">Git support working correctly: <span class="diag_[val diag.git_all_label]"></span></h3></a>
 			<ul>
