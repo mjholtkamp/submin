@@ -5,6 +5,7 @@ import sys
 import time
 import signal
 import subprocess
+import socket
 import errno
 if not 'SUBMIN_ENV' in os.environ:
 	os.environ['SUBMIN_ENV'] = '/var/lib/submin'
@@ -21,8 +22,11 @@ class NoLogHandler(simple_server.WSGIRequestHandler):
     def log_message(self, *args):
         pass
 
+class WSGIServerV4orV6(simple_server.WSGIServer):
+	address_family = socket.AF_INET6
+
 def run():
-	httpd = simple_server.WSGIServer(('',8000), NoLogHandler)
+	httpd = WSGIServerV4orV6(('::',8000), NoLogHandler)
 	httpd.set_app(application)
 	try:
 		httpd.serve_forever()
