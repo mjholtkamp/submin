@@ -15,3 +15,4 @@
 /dev/conf/ssh_host_dsa_key.pub
 /dev/coverage-annotate
 *.pyc
+*.swp
