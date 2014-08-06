@@ -42,15 +42,20 @@ def generate_acl_list():
 	vhost = options.value('http_vhost', 'localhost')
 	netloc = vhost.replace('https://', '').replace('http://', '')
 	hostname = netloc.split(':')[0]
-	try:
-		submin_addresses = set(
-			[x[4][0] for x in socket.getaddrinfo(hostname, 0)])
-	except socket.gaierror as e:
-		# ok, that failed, just return the local addresses then
-		return acls
 
-	acls.extend(submin_addresses)
-	return acls
+	# get IPv4 addresses
+	try:
+		acls.extend([x[4][0] for x in socket.getaddrinfo(hostname, 0)])
+	except socket.gaierror as e:
+		pass
+
+	# get IPv6 addresses
+	try:
+		acls.extend([x[4][0] for x in socket.getaddrinfo(hostname, 0, socket.AF_INET6)])
+	except socket.gaierror as e:
+		pass
+
+	return set(acls)
 
 def acl_required(acl_name):
 	def _decorator(fun):
