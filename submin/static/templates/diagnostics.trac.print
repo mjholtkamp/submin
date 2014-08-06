@@ -48,7 +48,7 @@ Trac support working correctly: [val diag.trac_all_label]
    Git hook does not have access to submin to sync trac.
    Please make sure that the IP-address is in the ACL. Set it with:
 
-     submin2-admin [val subminenv] config set acl_hooks "[val diag.trac_acl_hook_recommendation]"
+     submin2-admin [val subminenv] config set acl_hook "[val diag.trac_acl_hook_recommendation]"
 
    The error message was:
 
