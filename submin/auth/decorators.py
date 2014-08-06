@@ -1,4 +1,5 @@
 import os
+import re
 import socket
 
 from submin.dispatch.response import Response, Redirect
@@ -40,18 +41,19 @@ def generate_acl_list():
 	"""
 	acls = ['127.0.0.1', '::1']
 	vhost = options.value('http_vhost', 'localhost')
-	netloc = vhost.replace('https://', '').replace('http://', '')
-	hostname = netloc.split(':')[0]
+	netloc = vhost.replace('https://', '').replace('http://', '').strip('/')
+	m = re.search('\[([0-9a-fA-F:]+)\]', netloc)
+	if not m:
+		m = re.search('^([^:]+)', netloc)
 
-	# get IPv4 addresses
+	if not m:
+		return set(acls)
+
+	hostname = m.group(1)
+
+	# get IPv4 and IPv6 addresses
 	try:
 		acls.extend([x[4][0] for x in socket.getaddrinfo(hostname, 0)])
-	except socket.gaierror as e:
-		pass
-
-	# get IPv6 addresses
-	try:
-		acls.extend([x[4][0] for x in socket.getaddrinfo(hostname, 0, socket.AF_INET6)])
 	except socket.gaierror as e:
 		pass
 
