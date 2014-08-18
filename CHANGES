@@ -6,11 +6,18 @@ Changes in 2.2.1:
  - Version is now shown in installed Submin (fixes #387)
  - Diagnostics: show disabled as such, not as warnings (fixes #398)
  - Diagnostics: now also on the command line (submin2-admin)! (fixes #393)
- - Fix 'addicons' not displaying in Safari
- - Fixes/diagnostics for when git_dir is outside submin env (#408, #406)
+ - Diagnostics: crude 'send' email test (fixes #397)
+ - Submin2-admin 'initenv' improvements (fixes #355, #356)
+ - Added 'force authz export' command (fixes #380)
+ - Fix 'addicons' not displaying in Safari (non-ticket change)
+ - Fixes/diagnostics for when git_dir is outside submin env (fixes #408, #406)
  - Support multiple SSH key types (fixes #385)
- - Various text fixes (#405, #407)
- - Various code cleanups
+ - Improved development server for faster testing
+ - Fixed SMTP Auth problem (fixes #409)
+ - IPv6 fixes: development server, generate 'hook ACL' for trac sync.
+ - Various text fixes (fixes #405, #407)
+ - Various code cleanups (fixes #378 and other non-ticket changes)
+ - Updated various Documentation
 
 Changes in 2.2.0:
  - Hints to user to set Trac permissions (fixes #314)
