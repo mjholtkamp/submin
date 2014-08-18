@@ -1,3 +1,9 @@
+submin (2.2.2-0) testing; urgency=medium
+
+  * Nightly builds
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Mon, 18 Aug 2014 21:22:23 +0200
+
 submin (2.2.1-1) testing; urgency=medium
 
   * Bump debian revision: "It is conventional to restart the debian_revision
