@@ -1,3 +1,11 @@
+submin (2.2.1-1) testing; urgency=medium
+
+  * Bump debian revision: "It is conventional to restart the debian_revision
+    at 1 each time the upstream_version is increased.". We will use revision
+    0 for nightlies.
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Mon, 18 Aug 2014 21:17:51 +0200
+
 submin (2.2.1-0) testing; urgency=medium
 
   * New release: 2.2.1
