@@ -32,7 +32,7 @@ def diagnostics():
 	if 'smtp_hostname' in all_options:
 		try:
 			smtp.might_work(sender, 'nonexistent@example.net')
-		except SendEmailError, e:
+		except SendEmailError as e:
 			results['email_might_work_smtp_from'] = False
 			results['email_might_work_smtp_from_msg'] = str(e)
 		else:
@@ -40,7 +40,7 @@ def diagnostics():
 	else:
 		try:
 			local.might_work(sender, 'nonexistent@example.net')
-		except SendEmailError, e:
+		except SendEmailError as e:
 			results['email_might_work_smtp_from'] = False
 			results['email_might_work_smtp_from_msg'] = str(e)
 		else:

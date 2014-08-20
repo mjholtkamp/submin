@@ -85,7 +85,7 @@ class CommandNode(Node):
 				return str(value)
 			# coerce anything else to unicode
 			return unicode(value)
-		raise UnknownCommandError, self.command
+		raise UnknownCommandError(self.command)
 	
 	def __str__(self):
 		if self.arguments:

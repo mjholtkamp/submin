@@ -44,23 +44,23 @@ def set(node, tpl):
 	text = ''.join([x.evaluate(tpl) for x in node.nodes])
 	args = node.arguments
 	if not args:
-		raise MissingRequiredArguments, \
-			"Missing required argument variable at file %s, line %d" % \
-			(tpl.filename, node.line)
+		raise MissingRequiredArguments(
+			"Missing required argument variable at file %s, line %d" %
+			(tpl.filename, node.line))
 	
 	if '.' in args:
-		raise DotInLocalVariable, \
-			"You cannot use a . when setting local variables (file %s, line %d)" % \
-			(tpl.filename, node.line)
+		raise DotInLocalVariable(
+			"You cannot use a . when setting local variables (file %s, line %d)" %
+			(tpl.filename, node.line))
 	tpl.variables[args] = text
 	return ''
 
 @commands.register('val')
 def val(node, tpl):
 	if not node.nodes:
-		raise MissingRequiredArguments, \
-			"Missing required argument variable at file %s, line %d" % \
-			(tpl.filename, node.line)
+		raise MissingRequiredArguments(
+			"Missing required argument variable at file %s, line %d" %
+			(tpl.filename, node.line))
 
 	# evaluate always returns a string (possibly empty), or raises an Exception
 	text = node.nodes[0].evaluate()
@@ -77,8 +77,8 @@ def include(node, tpl):
 		to_include += n.evaluate(tpl)
 
 	if not os.path.exists(to_include):
-		raise UnknownTemplateError, "Could not find '%s' (file %s, line %d)" % \
-		(to_include, tpl.filename, node.line)
+		raise UnknownTemplateError("Could not find '%s' (file %s, line %d)" %
+		(to_include, tpl.filename, node.line))
 	oldcwd = os.getcwd()
 	if os.path.dirname(to_include):
 		os.chdir(os.path.dirname(to_include))
@@ -97,9 +97,9 @@ def include(node, tpl):
 @commands.register('iter')
 def iter(node, tpl):
 	if not node.arguments:
-		raise MissingRequiredArguments, \
-			"Missing required argument variable at file %s, line %d" % \
-			(tpl.filename, node.line)
+		raise MissingRequiredArguments(
+			"Missing required argument variable at file %s, line %d" %
+			(tpl.filename, node.line))
 	
 	if 'ival' not in tpl.node_variables:
 		tpl.node_variables['ival'] = []
@@ -125,9 +125,9 @@ def iter(node, tpl):
 				value = tpl.variable_value('', args, tpl.node_variables['ival'][-2])
 	elif node.arguments == 'ikey':
 		# iterable objects cannot be used as key in python
-		raise IteratingIkey, \
-			"Cannot iterate over ikey at file %s, line %d" % \
-			(tpl.filename, node.line)
+		raise IteratingIkey(
+			"Cannot iterate over ikey at file %s, line %d" %
+			(tpl.filename, node.line))
 	else:
 		value = tpl.variable_value(node.arguments)
 	if not value:
@@ -139,9 +139,9 @@ def iter(node, tpl):
 		import __builtin__ # we need this because this function is also called 'iter'
 		it = __builtin__.iter(value)
 	except TypeError:
-		raise VariableNotIterable, \
-			'Variable "%s" not iterable in template "%s", at line %d' % \
-			 	(node.arguments, tpl.filename, node.line)
+		raise VariableNotIterable(
+			'Variable "%s" not iterable in template "%s", at line %d' %
+				(node.arguments, tpl.filename, node.line))
 
 	evals = []
 	for index, item in enumerate(value):
@@ -167,9 +167,9 @@ def ival(node, tpl):
 		args = None
 	if 'ival' in tpl.node_variables and len(tpl.node_variables['ival']) >= 1:
 		return tpl.variable_value('', args, tpl.node_variables['ival'][-1])
-	raise IvalOutsideIter,\
-		"Ival without enclosing iter at file %s, line %d" % \
-		(tpl.filename, node.line)
+	raise IvalOutsideIter(
+		"Ival without enclosing iter at file %s, line %d" %
+		(tpl.filename, node.line))
 
 @commands.register('ikey')
 def ikey(node, tpl):
@@ -178,9 +178,9 @@ def ikey(node, tpl):
 		args = None
 	if 'ikey' in tpl.node_variables and len(tpl.node_variables['ikey']) >= 1:
 		return tpl.variable_value('', args, tpl.node_variables['ikey'][-1])
-	raise IkeyOutsideIter,\
-		"Ikey without enclosing iter at file %s, line %d" % \
-		(tpl.filename, node.line)
+	raise IkeyOutsideIter(
+		"Ikey without enclosing iter at file %s, line %d" %
+		(tpl.filename, node.line))
 
 def ilast(tpl):
 	if tpl.node_variables['iindex'][-1] \
@@ -190,9 +190,9 @@ def ilast(tpl):
 
 def testTrue(node, tpl):
 	if not node.arguments:
-		raise MissingRequiredArguments, \
-			"Missing required argument variable at file %s, line %d" % \
-			(tpl.filename, node.line)
+		raise MissingRequiredArguments(
+			"Missing required argument variable at file %s, line %d" %
+			(tpl.filename, node.line))
 	negation = False
 	args = node.arguments
 	if args.startswith('!'):
@@ -212,9 +212,9 @@ def testTrue(node, tpl):
 
 def testEquals(node, tpl):
 	if not node.arguments:
-		raise MissingRequiredArguments, \
-			"Missing required argument variable at file %s, line %d" % \
-			(tpl.filename, node.line)
+		raise MissingRequiredArguments(
+			"Missing required argument variable at file %s, line %d" %
+			(tpl.filename, node.line))
 	args = node.arguments.split(':')
 
 	value1 = tpl.variable_value(args[0])
@@ -243,9 +243,9 @@ def else_tag(node, tpl):
 		prev = prev.previous_node
 	if not prev or prev.type != 'command' or (prev.command != 'test' and 
 			prev.command != 'equals'):
-		raise ElseError, \
-			'Previous node to else was not a test-node (file %s, line %d, node %s)' % \
-			(tpl.filename, node.line, str(prev))
+		raise ElseError(
+			'Previous node to else was not a test-node (file %s, line %d, node %s)' %
+			(tpl.filename, node.line, str(prev)))
 
 	if prev.command == 'test':
 		value = testTrue(prev, tpl)

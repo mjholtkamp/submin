@@ -81,7 +81,7 @@ def git_dir_wrong_perms():
 	while checkdir != '/' and checkdir != submin_env:
 		try:
 			st = os.stat(checkdir)
-		except OSError, e:
+		except OSError as e:
 			if e.errno == errno.EACCES:
 				wrong_permissions.append(
 					{'dir': checkdir, 'reason': 'unknown'})

@@ -10,7 +10,7 @@ def openssh_import(sshtype, ssh_key):
 	file(fname, 'w').write(ssh_key)
 	try:
 		openssh_format = check_output(['ssh-keygen', '-i', '-m', sshtype, '-f', fname])
-	except subprocess.CalledProcessError, e:
+	except subprocess.CalledProcessError as e:
 		raise
 	finally:
 		os.unlink(fname)

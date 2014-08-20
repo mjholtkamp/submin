@@ -289,7 +289,7 @@ Usage:
 		from pwd import getpwnam
 		try:
 			git_user = options.value("git_user")
-		except UnknownKeyError, e:
+		except UnknownKeyError as e:
 			return False
 
 		git_pw = getpwnam(git_user)

@@ -17,7 +17,7 @@ def run():
 			# create dir and file if one of them doesn't exist
 			os.mkdir(os.path.dirname(filename))
 			file(filename, 'a')
-		except OSError, e:
+		except OSError as e:
 			if e.errno != errno.EACCES:
 				raise
 			raise Exception('Could not write "%s", please check that git user can write it.' % filename)

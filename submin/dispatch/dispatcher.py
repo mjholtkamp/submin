@@ -53,7 +53,7 @@ def dispatcher(request):
 		tupl = classes[path[0].lower()]
 		cls = tupl[0](request, tupl[1])
 		if not hasattr(cls, handlerName):
-			raise Exception, "No handler %r found for view %r" % (handlerName, path[0].lower())
+			raise Exception("No handler %r found for view %r" % (handlerName, path[0].lower()))
 
 		del path[0]
 		handler = getattr(cls, handlerName)
@@ -61,7 +61,7 @@ def dispatcher(request):
 			response = handler(request, path)
 
 			if not issubclass(response.__class__, Response):
-				raise Exception, "Handler %r should return a Response instance" % handler
+				raise Exception("Handler %r should return a Response instance" % handler)
 		except UnknownKeyError as e:
 			env = options.env_path() # this should never trigger another UnknownKeyError
 			summary = "It seems your installation is missing a configuration option (%s)" % str(e)
