@@ -1,6 +1,10 @@
 To get more information on tickets (#nnn in text below), see the following URL:
 https://ssl.supermind.nl/collab/projects/submin/report/6
 
+Changes in 2.2.2:
+ - packaging according to dh_python (fixes #367)
+
+
 Changes in 2.2.1:
  - Tags are no longer trac-synced (fixes #401)
  - Version is now shown in installed Submin (fixes #387)
