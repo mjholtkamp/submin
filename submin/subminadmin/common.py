@@ -10,7 +10,7 @@ def create_dir(env, directory):
 		directory = env + directory
 
 	try:
-		mkdirs(str(directory), mode=0700)
+		mkdirs(str(directory), mode=0o700)
 	except OSError as e:
 		print 'making dir %s failed, do you have permissions?' % \
 				str(directory)
