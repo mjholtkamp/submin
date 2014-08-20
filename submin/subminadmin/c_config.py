@@ -41,8 +41,7 @@ Usage:
 			else:
 				self._printkeyvalue(argv[0], value, len(argv[0]))
 		else:
-			all_options = options.options()
-			all_options.sort()
+			all_options = sorted(options.options())
 			maxlen = 0
 			for arg in all_options:
 				if len(arg[0]) > maxlen: maxlen = len(arg[0])

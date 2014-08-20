@@ -36,8 +36,7 @@ def trigger_user_hook(event, **args):
 	if not user_hooks_path.exists():
 		return
 
-	user_hooks = glob.glob(str(user_hooks_path + "*"))
-	user_hooks.sort()
+	user_hooks = sorted(glob.glob(str(user_hooks_path + "*")))
 
 	cwd = os.getcwd()
 	os.chdir(str(options.env_path()))

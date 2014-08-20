@@ -147,7 +147,7 @@ def iter(node, tpl):
 	for index, item in enumerate(value):
 		tpl.node_variables['iindex'][-1] = index
 		tpl.node_variables['ikey'][-1] = item
-		if not type(value) == DictType:
+		if not isinstance(value, DictType):
 			tpl.node_variables['ival'][-1] = item
 		else:
 			tpl.node_variables['ival'][-1] = value[item]

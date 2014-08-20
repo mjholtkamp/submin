@@ -9,8 +9,7 @@ display_name = "Mock"
 def list():
 	"""Returns a list of repositories"""
 	repositories = []
-	repository_names = _repositoriesOnDisk()
-	repository_names.sort()
+	repository_names = sorted(_repositoriesOnDisk())
 
 	for repos in repository_names:
 		status = "ok"

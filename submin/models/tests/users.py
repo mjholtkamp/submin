@@ -114,8 +114,7 @@ class UserTests(unittest.TestCase):
 		mock_user = Mock()
 		mock_user.is_admin = True
 		user.add("foo", email="a@a.a", password="x")
-		users = [x for x in user.list(mock_user)]
-		users.sort()
+		users = sorted([x for x in user.list(mock_user)])
 		self.assertEquals(users, ["foo", "test"])
 
 	def testListUsersNonAdmin(self):
@@ -123,8 +122,7 @@ class UserTests(unittest.TestCase):
 		mock_user.is_admin = False
 		mock_user.name = "foo"
 		user.add("foo", email="a@a.a", password="x")
-		users = [x for x in user.list(mock_user)]
-		users.sort()
+		users = sorted([x for x in user.list(mock_user)])
 		self.assertEquals(users, ["foo"])
 
 	def testRemoveUser(self):

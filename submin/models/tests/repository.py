@@ -81,10 +81,8 @@ class RepositoryTests(unittest.TestCase):
 
 	def testRepositoriesOnDisk(self):
 		self._createRepos([x['name'] for x in self.repositories])
-		result = repository.Repository.list_all()
-		result.sort()
-		copy = self.repositories[:]
-		copy.sort()
+		result = sorted(repository.Repository.list_all())
+		copy = sorted(self.repositories[:])
 		self.assertEquals(result, copy)
 
 	def testListRepositoriesAll(self):
@@ -103,8 +101,7 @@ class RepositoryTests(unittest.TestCase):
 
 		result = repository.Repository.list(u)
 		copy = self.repositories[:]
-		copy = [d for d in self.repositories if d.get('name') == 'foo' or d.get('name') == 'subdirs']
-		copy.sort()
+		copy = sorted([d for d in self.repositories if d.get('name') == 'foo' or d.get('name') == 'subdirs'])
 		self.assertEquals(result, copy)
 
 	def testExistingRepository(self):

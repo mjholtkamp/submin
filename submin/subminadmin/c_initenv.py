@@ -70,7 +70,7 @@ Notes:
 
 	def set_init_var(self, key, val):
 		defval = self.defaults[key]
-		if type(Path('')) == type(defval):
+		if isinstance(Path(''), type(defval)):
 			p = Path(str(val), append_slash=defval.append_slash)
 			self.init_vars[key] = p
 			return

@@ -120,7 +120,7 @@ class SubminAdminConfig(unittest.TestCase):
 		expected = [(u'database_version', u'11'), (u'auth_type', u'sql'),
 				(u'svn_dir', u'svn'), (u'git_dir', u'git'),
 				(u'env_path', u'/bin:/usr/bin:/usr/local/bin:/opt/local/bin'),
-				(u'dir_bin', u'static/bin'),(u'base_url_trac', u'/trac'),
+				(u'dir_bin', u'static/bin'), (u'base_url_trac', u'/trac'),
 				(u'base_url_git', u'/git'), (u'base_url_submin', u'/submin'),
 				(u'http_vhost', u'darim'), (u'enabled_trac', u'no'),
 				(u'trac_dir', u'trac'), (u'vcs_plugins', u'git,svn'),
