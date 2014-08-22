@@ -3,7 +3,7 @@ Section: web
 Priority: optional
 Maintainer: Michiel Holtkamp <submin@supermind.nl>
 Standards-Version: 3.6.1
-Build-Depends: dh-python, debhelper(>= 5), python
+Build-Depends: dh-python, debhelper(>= 9), python
 # only for deb files: 2.7, for tarballs, we still support 2.6!
 X-Python-Version: >= 2.7
 
