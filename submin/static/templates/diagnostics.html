@@ -127,6 +127,22 @@
 				</li>
 				<li>
 					<div class="diag_result">
+						<label class="diag">Git repository permissions</label>
+						<span class="diag_[val diag.git_repos_correct_perms_label]"></span>
+						[test:!diag.git_repos_correct_perms
+						<div class="diag_note">
+							<p>The following directories (relative to the git directory) have incorrect permissions or ownerships:</p>
+							<table>
+								<tr><th>Relative path</th><th>Permission bits</th><th>Ownership</th></tr>
+								[iter:diag.git_repos_bad_dirs <tr><td>[ival.name]</td><td>[ival.mode]</td><td>[ival.user]:[ival.group]</td></tr>]
+							</table>
+							<p>The directory should be owned by the git user and set to the web user group. The directory should also be setgid. They can be corrected with:</p>
+							<span class="diag_cmd">submin2-admin [val subminenv] unixperms fix</span>
+						</div>]
+					</div>
+				</li>
+					<li>
+					<div class="diag_result">
 						<label class="diag">Up-to-date hooks</label>
 						<span class="diag_[val diag.git_hooks_all_new_label]"></span>
 						[test:!diag.git_hooks_all_new

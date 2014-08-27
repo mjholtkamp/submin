@@ -1,18 +1,23 @@
 import os
+import stat
 import re
 import errno
+import pwd
+import grp
 
 from submin.models import options
 from submin.models.exceptions import UnknownKeyError
 from submin.plugins.vcs.git import remote
+from submin.subminadmin.common import www_user
 from submin.subminadmin.git.post_receive_hook import HOOK_VERSIONS
 from submin.subminadmin.git.common import signature
 from submin.models.exceptions import UnknownKeyError
 from submin.common import shellscript
+from submin.common import status
 from .common import add_labels
 
 fails = ['git_dir_set', 'git_hooks_all_new', 'git_admin_test',
-		'git_hostname_ok', 'git_dir_perms']
+		'git_hostname_ok', 'git_dir_perms', 'git_repos_correct_perms']
 warnings = ['enabled_git']
 
 def diagnostics():
@@ -35,6 +40,11 @@ def diagnostics():
 		old_repos = list(old_hook_repos(git_dir))
 		results['git_hooks_all_new'] = len(old_repos) == 0
 		results['git_old_hook_repos'] = old_repos
+
+		# check dirs for correct permissions
+		bad_dirs = git_repos_wrong_perms(git_dir)
+		results['git_repos_correct_perms'] = len(bad_dirs) == 0
+		results['git_repos_bad_dirs'] = bad_dirs
 
 	try:
 		git_ssh_host = options.value('git_ssh_host')
@@ -64,13 +74,10 @@ def diagnostics():
 	return add_labels(results, 'git_all', warnings, fails)
 
 def git_dir_wrong_perms():
-	from submin.models import options
-	from pwd import getpwnam
-	from submin.subminadmin.common import www_user
 	submin_env = options.env_path()
 	git_dir = options.env_path("git_dir")
 	try:
-		git_user = getpwnam(options.value("git_user"))
+		git_user = pwd.getpwnam(options.value("git_user"))
 	except UnknownKeyError:
 		return []
 
@@ -95,6 +102,35 @@ def git_dir_wrong_perms():
 		checkdir = os.path.dirname(checkdir)
 
 	return wrong_permissions
+
+def git_repos_wrong_perms(git_dir):
+	bad_dirs = []
+	ssh_dir = git_dir + '.ssh'
+	git_user = pwd.getpwnam(options.value('git_user'))
+	apache = www_user()
+	for root, dirs, files in os.walk(git_dir):
+		for d in dirs:
+			path = os.path.join(root, d)
+			# skip .ssh dir
+			if path == ssh_dir:
+				continue
+
+			st = os.stat(path)
+
+			if stat.S_ISDIR(st.st_mode):
+				user = pwd.getpwuid(st.st_uid)
+				group = grp.getgrgid(st.st_gid)
+				ingroup = group.gr_gid == apache.pw_gid or \
+							apache.pw_name in group.gr_mem
+
+				if not ingroup or not st.st_mode & stat.S_ISGID or \
+							user.pw_name != git_user.pw_name:
+					modestr = status.filemode(st.st_mode)
+					relative = path[len(git_dir) + 1:]
+					bad_dirs.append({'name': relative, 'mode': modestr,
+						'user': user.pw_name, 'group': group.gr_name})
+
+	return bad_dirs
 
 def hook_uptodate(filename, version_re, newest_version):
 	"""For hooks that are generated from a template, they may be out of

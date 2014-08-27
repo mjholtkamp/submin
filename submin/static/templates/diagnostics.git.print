@@ -32,6 +32,19 @@ Git support working correctly: [val diag.git_all_label]
     * have at least r-x permissons for 'other' (subdirs)
 
 ]
+ * Git repository permissions: [val diag.git_repos_correct_perms_label]
+[@test:!diag.git_repos_correct_perms
+   The following directories (relative to the git directory) have incorrect
+   permissions or ownerships:
+[iter:diag.git_repos_bad_dirs
+    - [ival.mode] [ival.user]:[ival.group]	  [ival.name]
+]
+   The directory should be owned by the git user and set to the web user
+   group. The directory should also be setgid. They can be corrected with:
+
+     submin2-admin [val subminenv] unixperms fix
+
+]
  * Up-to-date hooks: [val diag.git_hooks_all_new_label]
 [@test:!diag.git_hooks_all_new
    The following repositories have outdated hooks:
