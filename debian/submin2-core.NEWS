@@ -1,4 +1,4 @@
-submin (2.2.2-0) unstable; urgency=medium
+submin (2.3.0-0) unstable; urgency=medium
 
     We changed the python packaging to a newer format (the old is deprecated),
     but we forgot that installed versions have some references to these paths.
