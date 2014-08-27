@@ -1,0 +1,24 @@
+submin (2.2.2-0) unstable; urgency=medium
+
+    We changed the python packaging to a newer format (the old is deprecated),
+    but we forgot that installed versions have some references to these paths.
+
+    This upgrade (and the one before) will break existing installations.
+    We are sorry for the inconvenience.
+
+    After the upgrade, some configuration files need to be regenerated and
+    services need to be restarted. The following assumes the submin
+    environment is in /var/lib/submin:
+
+    If you use Subversion and/or Trac, run:
+      * submin2-admin /var/lib/submin apacheconf create all
+        (this will recreate apache config files)
+      * service apache2 reload
+
+    If you use Nginx with uwsgi, run:
+      * submin2-admin /var/lib/submin nginxconf create all
+        (this will recreate nginx and uwsgi config files)
+      * service nginx reload
+      * service uwsgi reload
+
+ -- Michiel Holtkamp <submin@supermind.nl>  Wed, 27 Aug 2014 21:10:17 +0200
