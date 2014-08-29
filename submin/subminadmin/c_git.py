@@ -347,11 +347,11 @@ Usage:
 			for d in dirs:
 				path = os.path.join(root, d)
 				os.chown(path, int(git_uid), int(apache.pw_gid))
-				os.chmod(path, 0o750)
+				os.chmod(path, 0o750 | stat.S_ISGID)
 
 		# The git-directory itself should also be available to the apache-user,
 		# So it can list the repositories
-		os.chmod(git_dir, 0o750)
+		os.chmod(git_dir, 0o750 | stat.S_ISGID)
 		os.chown(git_dir, int(git_uid), int(apache.pw_gid))
 
 		# The ssh-directory can be really strict, only allow git
