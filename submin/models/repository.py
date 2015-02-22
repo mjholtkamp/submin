@@ -78,7 +78,7 @@ class Repository(object):
 	def add(vcs_type, name, session_user):
 		vcs = models.vcs.get(vcs_type, "repository")
 		vcs.add(name)
-		trigger_hook('repository-create', admin_username=session_user,
+		trigger_hook('repository-create', admin_username=unicode(session_user),
 			repositoryname=name, vcs_type=vcs_type)
 
 	def __init__(self, repositoryname, vcs_type):
