@@ -15,12 +15,12 @@
 			</div>
 		</div>
 
+        [test:enabled_git
 		<div class="usershowhide">
 			<h3 class="usershowhide c_trigger">
 				<div class="usershowhide c_icon expanded"></div>SSH Keys
 			</h3>
 			<div class="usershowhide c_object">
-				[test:enabled_git
 				<ul id="ssh_keys">
 				</ul>
 				<p><a href="" id="ssh_key_add_link">Add SSH Key</a></p>
@@ -103,10 +103,9 @@ eOVK7PlM4kIXlSvjCVXaDUulDS0+ZzI+uwIDAQAB
 						</div>
 					</div>
 				</div>
-				]
-				[else <div class="comment">(disabled because git support is not enabled)</div>]
 			</div>
 		</div>
+        ]
 
 		<div class="usershowhide">
 			<h3 class="usershowhide c_trigger">
@@ -131,8 +130,10 @@ eOVK7PlM4kIXlSvjCVXaDUulDS0+ZzI+uwIDAQAB
 	</div>
 </div>
 
+[test:enabled_git
 <script type="text/javascript">
 	addEvent($('ssh_key_help_source'), 'click', function() {
 		lightbox_show($('ssh_key_help_target'), $('ssh_key_help_close'));
 	});
 </script>
+]
