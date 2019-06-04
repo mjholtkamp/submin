@@ -15,7 +15,8 @@ class ssh_key_type:
 
 # list of tuples of types and their regexes
 ssh_key_types_regexes = [
-	(ssh_key_type.OpenSSH, re.compile('^ssh-\w{3} [^ ]+( .+)?$')),
+	(ssh_key_type.OpenSSH, re.compile('^ssh-\w+ [^ ]+( .+)?$')),
+        (ssh_key_type.OpenSSH, re.compile('^ecdsa-sha2-\w+ [^ ]+( .+)?$')),
 	(ssh_key_type.RFC4716, re.compile('^---- BEGIN SSH2 PUBLIC KEY ----')),
 	(ssh_key_type.PKCS8, re.compile('^-----BEGIN PUBLIC KEY-----')),
 	(ssh_key_type.PEM, re.compile('^-----BEGIN RSA PUBLIC KEY-----')),
